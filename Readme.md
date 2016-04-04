@@ -2,7 +2,7 @@
 
 **Attention!** This is a paid package, you can not use it in your project if you have not purchased it through [Unity Asset Store](https://www.assetstore.unity3d.com/en/#!/content/56706).
 
-This package provides the software interface for parsing and expression execution written in C#. It is specially designed to work with the [Unity](http://unity3d.com/) on various platforms. Since it is written in C# 3.5, it should work with any version of Unity.
+This package provides the API for parsing and expression execution written in C#. It is specially designed to work with the [Unity](http://unity3d.com/) on various platforms. Since it is written in C# 3.5, it should work with any version of Unity.
 
 It is tested to work on:
 * IOS
@@ -156,5 +156,5 @@ The roadmap depends entirely on how many copies of the package will be sold:
 	* Custom editor with auto-completion for Unity
 
 ## License
-This license does not allow you to include any sourse code or binaries from this package into other packages. If want to do this, contact us support@gamedevware.com.
+This license does not allow you to include any source code or binaries from this package into other packages. If want to do this, contact support@gamedevware.com.
 [Asset Store Terms of Service and EULA](License.md)
