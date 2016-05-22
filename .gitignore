@@ -10,6 +10,7 @@
 *.sdf
 *.suo
 *.swp
+*.meta
 *.user
 *.log
 _ReSharper*
@@ -31,4 +32,3 @@ Assets/StreamingAssets/
 Assets/Bundles/
 ProjectSettings/
 Assets/AssetStoreTools/
-Assets/Plugins/GameDevWare.Dynamic.Expressions/

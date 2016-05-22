@@ -1,6 +1,6 @@
 ﻿# Introduction
 
-**Attention!** This is a paid package, you can not use it in your project if you have not purchased it through [Unity Asset Store](https://www.assetstore.unity3d.com/en/#!/content/56706).
+**Attention!** This is a paid [package](https://www.assetstore.unity3d.com/#!/content/56706), you can not use it in your project if you have not purchased it through [Unity Asset Store](https://www.assetstore.unity3d.com/en/#!/content/56706).
 
 This package provides the API for parsing and expression execution written in C#. It is specially designed to work with the [Unity](http://unity3d.com/) on various platforms. Since it is written in C# 3.5, it should work with any version of Unity.
 
@@ -66,11 +66,11 @@ For security reasons the parser does not provide access to static types, except:
 * primitive types
 * Math class
 
-To access other types your should pass **knownTypes** parameter in **Parse** or **Evaluate** method:
+To access other types your should pass **typeResolutionService** parameter in **Parse** or **Evaluate** method:
 ```csharp
-CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0F, 3.0F)", knownTypes: new[]{ typeof(Mathf), typeof(Time) }); 
+CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0F, 3.0F)", typeResolutionService: new KnownTypeResolutionService(typeof(Mathf), typeof(Time))); 
 ```
-
+If you want to access all types in **UnityEngine** you can pass **AssemblyTypeResolutionService.UnityEngine** as typeResolutionService parameter.
 
 ## AOT Execution
 You can compile expression created by **System.Linq.Expression** and execute it in AOT environment where it is usually impossible. 
@@ -136,7 +136,7 @@ AotCompilation.RegisterForFastCall<MyVectorMath, Vector4, float, Vector4>();
 
 ## Roadmap
 
-You can send suggestions to email support@gamedevware.com.
+You can send suggestions at support@gamedevware.com
 The roadmap depends entirely on how many copies of the package will be sold:
 
 * &gt;50
@@ -155,6 +155,10 @@ The roadmap depends entirely on how many copies of the package will be sold:
 	* Parser: Type initializers, List initializers
 	* Custom editor with auto-completion for Unity
 
+## Contacts
+Please send any questions at support@gamedevware.com
+
 ## License
-This license does not allow you to include any source code or binaries from this package into other packages. If want to do this, contact support@gamedevware.com.
-[Asset Store Terms of Service and EULA](License.md)
+If you embed this package, you MUST provide a [link](https://www.assetstore.unity3d.com/#!/content/56706) and warning about embedded package in the description of your package. 
+
+[Asset Store Terms of Service and EULA](LICENSE.md)
