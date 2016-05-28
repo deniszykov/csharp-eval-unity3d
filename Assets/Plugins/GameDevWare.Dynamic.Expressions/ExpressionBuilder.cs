@@ -210,7 +210,7 @@ namespace GameDevWare.Dynamic.Expressions
 						(
 							((Expression)methodArguments[0]).Type == typeof(string) ||
 							((Expression)methodArguments[1]).Type == typeof(string)
-							) &&
+						) &&
 						(string.Equals(expressionType, "Add", StringComparison.Ordinal) || string.Equals(expressionType, "AddChecked", StringComparison.Ordinal))
 					)
 					{
@@ -220,6 +220,23 @@ namespace GameDevWare.Dynamic.Expressions
 							Expression.Convert((Expression) methodArguments[1], typeof (object))
 						};
 						return Expression.Call(typeof(string), "Concat", Type.EmptyTypes, concatArguments);
+					}
+					// fixing bug in mono expression compiler: Negate on float or double = exception
+					else if
+					(
+						methodArguments.Length == 1 &&
+						methodArguments[0] is Expression &&
+						(
+							((Expression)methodArguments[0]).Type == typeof(float) ||
+							((Expression)methodArguments[0]).Type == typeof(double)
+						) &&
+						(string.Equals(expressionType, "Negate", StringComparison.Ordinal) || string.Equals(expressionType, "NegateChecked", StringComparison.Ordinal))
+					)
+					{
+						var operand = (Expression)methodArguments[0];
+						var negativeConst = operand.Type == typeof(float) ? Expression.Constant(-1.0f) : Expression.Constant(-1.0d);
+
+						return Expression.Multiply(operand, negativeConst);
 					}
 					else
 					{
