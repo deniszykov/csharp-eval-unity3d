@@ -162,7 +162,4 @@ Please send any questions at support@gamedevware.com
 If you embed this package, you must provide a [link](https://www.assetstore.unity3d.com/#!/content/56706) and warning about embedded *C# Eval()* for your customers in the description of your package.
 If your package is free, they could use embedded *C# Eval()* free of charge. In either case, they must acquire this package from Unity Store.
 
-If you embed this package, you MUST provide a [link](https://www.assetstore.unity3d.com/#!/content/56706) and warning about embedded package in the description of your package. 
-If your package is free, they could use embedded C# Eval() free of charge. In either case, they must acquire this package from Unity Store.
-
 [Asset Store Terms of Service and EULA](LICENSE.md)
