@@ -20,6 +20,7 @@ _ReSharper*
 *.exe
 *.dll
 
+.vs
 media/
 bin/
 obj/
