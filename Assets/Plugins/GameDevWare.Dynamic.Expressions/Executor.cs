@@ -238,11 +238,12 @@ namespace GameDevWare.Dynamic.Expressions
 
 			switch (exp.NodeType)
 			{
+				case ExpressionType.ArrayIndex:
+					return ArrayIndex(exp, constantsExprs, localsExprs);
 				case ExpressionType.Add:
 				case ExpressionType.AddChecked:
 				case ExpressionType.And:
 				case ExpressionType.AndAlso:
-				case ExpressionType.ArrayIndex:
 				case ExpressionType.Coalesce:
 				case ExpressionType.Divide:
 				case ExpressionType.Equal:
@@ -263,7 +264,6 @@ namespace GameDevWare.Dynamic.Expressions
 				case ExpressionType.Subtract:
 				case ExpressionType.SubtractChecked:
 					return Binary((BinaryExpression)exp, constantsExprs, localsExprs);
-
 				case ExpressionType.ArrayLength:
 				case ExpressionType.Negate:
 				case ExpressionType.UnaryPlus:
@@ -790,8 +790,33 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> Binary(BinaryExpression binaryExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static Func<Closure, object> ArrayIndex(Expression expression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		{
+			var binaryExpression = expression as BinaryExpression;
+			var leftFn = binaryExpression != null ? Expression(binaryExpression.Left, constantsExprs, localsExprs) : null;
+			var rightFn = binaryExpression != null ? Expression(binaryExpression.Right, constantsExprs, localsExprs) : null;
+			var methodCallExpression = expression as MethodCallExpression;
+
+			if (binaryExpression != null)
+			{
+				return closure =>
+				{
+					var left = leftFn(closure);
+					var right = rightFn(closure);
+
+					return closure.Is<int[]>(right)
+						? closure.Unbox<Array>(left).GetValue(closure.Unbox<int[]>(right))
+						: closure.Unbox<Array>(left).GetValue(closure.Unbox<int>(right));
+				};
+			}
+			else
+			{
+				return Call(methodCallExpression, constantsExprs, localsExprs);
+			}
+		}
+
+
+		private static Func<Closure, object> Binary(BinaryExpression binaryExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var leftFn = Expression(binaryExpression.Left, constantsExprs, localsExprs);
 			var rightFn = Expression(binaryExpression.Right, constantsExprs, localsExprs);
@@ -851,10 +876,6 @@ namespace GameDevWare.Dynamic.Expressions
 						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opAddition);
 					case ExpressionType.And:
 						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseAnd);
-					case ExpressionType.ArrayIndex:
-						return closure.Is<int[]>(right)
-							? closure.Unbox<Array>(left).GetValue(closure.Unbox<int[]>(right))
-							: closure.Unbox<Array>(left).GetValue(closure.Unbox<int>(right));
 					case ExpressionType.Coalesce:
 						return left ?? right;
 					case ExpressionType.Divide:

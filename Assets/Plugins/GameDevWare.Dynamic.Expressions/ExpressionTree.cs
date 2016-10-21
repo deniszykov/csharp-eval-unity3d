@@ -72,6 +72,5 @@ namespace GameDevWare.Dynamic.Expressions
 				value = (T)valueObj;
 			return value;
 		}
-
 	}
 }

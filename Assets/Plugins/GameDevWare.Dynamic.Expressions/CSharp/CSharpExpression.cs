@@ -21,6 +21,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 {
 	public static class CSharpExpression
 	{
+		public const bool DefaultCheckedScope = true;
 		public const string ARG1_DEFAULT_NAME = "arg1";
 		public const string ARG2_DEFAULT_NAME = "arg2";
 		public const string ARG3_DEFAULT_NAME = "arg3";

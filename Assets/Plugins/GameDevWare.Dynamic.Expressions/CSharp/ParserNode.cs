@@ -116,7 +116,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		}
 
-		public ExpressionTree ToExpressionTree(bool checkedScope = true)
+		public ExpressionTree ToExpressionTree(bool checkedScope = CSharpExpression.DefaultCheckedScope)
 		{
 			try
 			{
