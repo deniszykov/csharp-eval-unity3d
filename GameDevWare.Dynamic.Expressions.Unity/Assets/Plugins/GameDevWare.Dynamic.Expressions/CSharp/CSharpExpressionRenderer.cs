@@ -666,6 +666,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		private static void RenderConvert(UnaryExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
+			if (expression.Type.IsInterface == false && expression.Type.IsAssignableFrom(expression.Operand.Type))
+			{
+				// implicit convertion is not rendered
+				Render(expression.Operand, builder, true, checkedScope);
+				return;
+			}
+
 			var checkedOperation = expression.NodeType == ExpressionType.ConvertChecked;
 			if (checkedOperation && !checkedScope)
 				builder.Append("checked(");
@@ -836,7 +843,6 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (expression == null) throw new ArgumentException("expression");
 			if (builder == null) throw new ArgumentException("builder");
 
-			Render(expression.Object, builder, false, checkedScope);
 			if (expression.Method.IsStatic)
 			{
 				var methodType = expression.Method.DeclaringType;
@@ -909,8 +915,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var strValue = Convert.ToString(expression.Value, CultureInfo.InvariantCulture);
 			if (expression.Type == typeof(string))
 				RenderTextLiteral(strValue, builder, isChar: false);
-			if (expression.Type == typeof(char))
+			else if (expression.Type == typeof(char))
 				RenderTextLiteral(strValue, builder, isChar: true);
+			else if (expression.Type == typeof(Type))
+				builder.Append("typeof(").Append(strValue).Append(")");
 			else if (expression.Type == typeof(ushort) || expression.Type == typeof(uint))
 				builder.Append(strValue).Append("u");
 			else if (expression.Type == typeof(ulong))

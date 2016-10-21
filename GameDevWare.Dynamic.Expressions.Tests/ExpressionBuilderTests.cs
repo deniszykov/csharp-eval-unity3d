@@ -44,7 +44,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("2 * (2 + 3)", 2 * (2 + 3))]
 		[InlineData("2 * (2 + 3) << 1 - 1", 2 * (2 + 3) << 1 - 1)]
 		[InlineData("2 * (2 + 3) << 1 + 1 ^ 7", 2 * (2 + 3) << 1 + 1 ^ 7)]
-		[InlineData("2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10", 2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10)]
+		[InlineData("2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10", 2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10)]
 		public void IntArithmeticTests(string expression, int expected)
 		{
 			var actual = CSharpExpression.Evaluate<int>(expression);
@@ -53,9 +53,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
-		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\")", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10)]
-		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(1, 100)", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0)]
-		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(1, 100) + Math.E", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0 + Math.E)]
+		[InlineData("checked((2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + Int32.Parse(\"10\"))", checked((2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10))]
+		[InlineData("checked((2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + Int32.Parse(\"10\") + Math.Pow(10.0, 2))", checked((2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0))]
+		[InlineData("checked((2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + Int32.Parse(\"10\") + Math.Pow(10.0, 2) + Math.E)", checked((2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0 + Math.E))]
 		public void ComplexExpressionTests(string expression, double expected)
 		{
 			var actual = CSharpExpression.Evaluate<double>(expression);
@@ -74,7 +74,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("\"\\\\\" + \"\\\\\"", @"\\")]
 		[InlineData("\"\\\\\" + \"\\\\\\\\\"", @"\\\")]
 		[InlineData("\"a\\r\" + \"\\nb\"", "a\r\nb")]
-		[InlineData("\"\\x038\" + \"\\u0112\"+ \"\\112\"", "8Ēp")]
+		[InlineData("\"\\x038\" + \"\\u0112\"+ \"\\112\"", "8\u0112p")]
 		[InlineData("\"a\" + 1", "a1")] // string concatenation with object
 		[InlineData("1 + \"a\"", "1a")] // string concatenation with object
 		[InlineData("\"1\" + 'a'", "1a")]

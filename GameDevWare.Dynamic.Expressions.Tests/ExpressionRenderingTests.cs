@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace GameDevWare.Dynamic.Expressions.Tests
 {
@@ -37,6 +38,12 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			}
 		}
 
+		private readonly ITestOutputHelper output;
+		public ExpressionRenderingTests(ITestOutputHelper output)
+		{
+			this.output = output;
+		}
+
 		[Theory]
 		[InlineData("10", 10)]
 		[InlineData("10U", 10U)]
@@ -58,6 +65,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ConstantsTest(string expression, object expected)
 		{
 			expression = CSharpExpression.Parse<object>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<object>(expression);
 
 
@@ -81,6 +89,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void IntArithmeticTests(string expression, int expected)
 		{
 			expression = CSharpExpression.Parse<int>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<int>(expression);
 
 			Assert.Equal(expected, actual);
@@ -93,6 +102,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ComplexExpressionTests(string expression, double expected)
 		{
 			expression = CSharpExpression.Parse<double>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<double>(expression);
 
 			Assert.Equal(expected, actual);
@@ -117,6 +127,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void StringConcatenationTest(string expression, string expected)
 		{
 			expression = CSharpExpression.Parse<string>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<string>(expression);
 
 			Assert.Equal(expected, actual);
@@ -130,6 +141,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void MathTest(string expression, double expected)
 		{
 			expression = CSharpExpression.Parse<double>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<double>(expression);
 
 			Assert.Equal(expected, actual);
@@ -143,6 +155,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void TypeOfTest(string expression, Type expected)
 		{
 			expression = CSharpExpression.Parse<Type>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<Type>(expression);
 
 			Assert.Equal(expected, actual);
@@ -151,11 +164,11 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Theory]
 		[InlineData("default(Int32)", default(int))]
 		[InlineData("default(System.Int32)", default(int))]
-		[InlineData("default(short)", default(short))]
-		[InlineData("default(Math)", default(string))]
+		[InlineData("default(String)", default(string))]
 		public void DefaultTest(string expression, object expected)
 		{
 			expression = CSharpExpression.Parse<object>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<object>(expression);
 
 			Assert.Equal(expected, actual);
@@ -169,6 +182,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void IsTest(string expression, bool expected)
 		{
 			expression = CSharpExpression.Parse<bool>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<bool>(expression);
 
 			Assert.Equal(expected, actual);
@@ -183,6 +197,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void AsTest(string expression, object arg1, object expected)
 		{
 			expression = CSharpExpression.Parse<object, string>(expression, arg1Name: "arg1").Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<object, string>(expression, arg1, arg1Name: "arg1");
 			Assert.Equal(expected, actual);
 		}
@@ -194,7 +209,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("\"a\" + new string('b', 1) + \"c\" + (\"d\" + 'e')", "abcde")]
 		public void NewTest(string expression, string expected)
 		{
-			expression = CSharpExpression.Parse<string>(expression).Render();
+			expression = CSharpExpression.Parse<string>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<string>(expression);
 
 			Assert.NotNull(actual);
@@ -209,6 +225,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Expression<Func<int[], int>> firstElementExpr = a => a[0];
 			Expression<Func<int[], int>> tenthExpr = a => a[9];
 
+			output.WriteLine("Rendered: " + firstElementExpr.Body.Render());
+			output.WriteLine("Rendered: " + tenthExpr.Body.Render());
+
 			Assert.NotNull(firstElementExpr.Body.Render());
 			Assert.NotNull(tenthExpr.Body.Render());
 		}
@@ -218,6 +237,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<int[], int>> expression = a => a.Length;
 
+			output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -226,6 +246,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<Expression<Func<int>>>> expression = () => (() => 1);
 
+			output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -234,6 +255,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<Func<int>, int>> expression = a => a();
 
+			output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -250,6 +272,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<int[]>> expression = () => new int[10];
 
+			output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -258,6 +281,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<List<int>>> expression = () => new List<int> { 1, 2, 3, 4 };
 
+			output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -269,6 +293,11 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Expression<Func<ExpressionExecutionTests.TestClass, int>> instanceFieldAccess = t => t.IntField;
 			Expression<Func<ExpressionExecutionTests.TestClass, int>> instancePropertyAccess = t => t.IntProperty;
 
+
+			output.WriteLine("Rendered: " + staticFieldAccess.Body.Render());
+			output.WriteLine("Rendered: " + staticPropertyAccess.Body.Render());
+			output.WriteLine("Rendered: " + instanceFieldAccess.Body.Render());
+			output.WriteLine("Rendered: " + instancePropertyAccess.Body.Render());
 
 			Assert.NotNull(staticFieldAccess.Body.Render());
 			Assert.NotNull(staticPropertyAccess.Body.Render());
@@ -288,6 +317,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 				ListProperty = { 4, 5 }
 			};
 
+			output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -296,6 +326,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<object, Delegate>> expression = a => a as Delegate;
 
+			output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -304,6 +335,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<object, bool>> expression = a => a is Delegate;
 
+			output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -315,6 +347,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
@@ -331,6 +364,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
@@ -346,6 +380,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
@@ -549,6 +584,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
@@ -566,6 +602,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void DecimalTest(string expression, object expectedInt64)
 		{
 			expression = CSharpExpression.Parse<decimal>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var expressionFn = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: true);
 			var actual = expressionFn();
 			var expected = Convert.ToDecimal(expectedInt64);
@@ -581,7 +618,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("2m <= 2m", 2 <= 2m)]
 		public void DecimalComparisonTest(string expression, bool expected)
 		{
-			expression = CSharpExpression.Parse<decimal>(expression).Body.Render();
+			expression = CSharpExpression.Parse<bool>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var expressionFn = CSharpExpression.Parse<bool>(expression).CompileAot(forceAot: true);
 			var actual = expressionFn();
 			Assert.Equal(expected, actual);
@@ -718,6 +756,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
@@ -737,6 +776,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ConvertDecimal(string expression, double expectedDouble)
 		{
 			expression = CSharpExpression.Parse<decimal>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var expressionFn = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: true);
 			var expected = (decimal)expectedDouble;
 			var actual = expressionFn.DynamicInvoke();
@@ -772,6 +812,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void NullableBinaryTest(string expression, int? arg1, int? arg2, int? expected)
 		{
 			expression = CSharpExpression.Parse<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Parse<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
 			Assert.Equal(expected, actual);
 		}
@@ -790,6 +831,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void NullableEquationTest(string expression, int? arg1, int? arg2, bool expected)
 		{
 			expression = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").Body.Render();
+			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
 			Assert.Equal(expected, actual);
 		}

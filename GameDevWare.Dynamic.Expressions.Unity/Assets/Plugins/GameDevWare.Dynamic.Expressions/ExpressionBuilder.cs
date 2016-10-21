@@ -98,7 +98,6 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			return Build(node, context, this.resultType);
 		}
-
 		private Expression Build(ExpressionTree node, Expression context, Type expectedType)
 		{
 			if (node == null) throw new ArgumentNullException("node");
@@ -129,7 +128,7 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 
 				if (expectedType != null && expression.Type != expectedType)
-					expression = Expression.Convert(expression, expectedType);
+					expression = Expression.ConvertChecked(expression, expectedType);
 
 				return expression;
 			}
@@ -146,7 +145,6 @@ namespace GameDevWare.Dynamic.Expressions
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_BUILDFAILED, expressionTypeObj, exception.Message), exception, node);
 			}
 		}
-
 		private Expression BuildByType(ExpressionTree node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
