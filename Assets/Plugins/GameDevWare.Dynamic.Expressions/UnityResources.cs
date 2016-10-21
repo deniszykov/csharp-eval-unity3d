@@ -36,7 +36,11 @@ namespace GameDevWare.Dynamic.Expressions.Properties {
         public const string EXCEPTION_BOUNDEXPR_CANTCONVERTARG = "Can't convert argument '{0}' ('{2}') to required type '{1}'.";
         public const string EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS = "Wrong number of parameters. Make sure parameter count matches expression's signature.";
         public const string EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE = "One of parameters has invalid type. Make sure parameter types matches expression's signature.";
+        public const string EXCEPTION_BUILD_BUILDFAILED = "An error occured while trying to build '{0}' expression: {1}";
+        public const string EXCEPTION_BUILD_INVALIDCHARLITERAL = "Invalid char literal '{0}'. It should be one character length.";
+        public const string EXCEPTION_BUILD_INVALIDCONSTANTEXPRESSION = "Can't convert constant of type '{0}' to literal representation.";
         public const string EXCEPTION_BUILD_MISSINGATTRONNODE = "Missing or wrong '{0}' attribute on one of expression nodes.";
+        public const string EXCEPTION_BUILD_RENDERFAILED = "An error occured while trying to render '{0}' expression: {1}";
         public const string EXCEPTION_BUILD_UNABLETOBINDCALL = "Unable to find method '{0}' on type '{1}' accepting specified arguments.";
         public const string EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR = "Unable to find constructor on type '{0}' accepting specified arguments.";
         public const string EXCEPTION_BUILD_UNABLETOBINDDELEG = "Unable to invoke delegate {0}({1}) with specified arguments.";

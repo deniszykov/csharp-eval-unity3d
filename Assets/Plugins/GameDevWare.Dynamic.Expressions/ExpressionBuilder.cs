@@ -143,7 +143,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			catch (Exception exception)
 			{
-				throw new ExpressionParserException(string.Format("An error occured while trying to build '{0}' expression: {1}", expressionTypeObj, exception.Message), exception, node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_BUILDFAILED, expressionTypeObj, exception.Message), exception, node);
 			}
 		}
 
@@ -370,7 +370,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 				var getMethod = property.GetGetMethod(nonPublic: false);
 				var argumentExpressions = default(Expression[]);
-				if (getMethod == null || TryBindMethod(indexerParameters, arguments, out argumentExpressions, context) == false)
+				if (getMethod == null || TryBindMethod(indexerParameters, arguments, context, out argumentExpressions) <= 0)
 					continue;
 
 				try
@@ -417,6 +417,8 @@ namespace GameDevWare.Dynamic.Expressions
 				isStatic = false;
 			}
 
+			var quality = 0.0f;
+			var callExpression = default(MethodCallExpression);
 			foreach (var member in GetMembers(type, isStatic))
 			{
 				var method = member as MethodInfo;
@@ -426,20 +428,26 @@ namespace GameDevWare.Dynamic.Expressions
 
 				var methodParameters = method.GetParameters();
 				var argumentExpressions = default(Expression[]);
-				if (TryBindMethod(methodParameters, arguments, out argumentExpressions, context) == false)
+				var methodQuality = TryBindMethod(methodParameters, arguments, context, out argumentExpressions);
+				if (methodQuality <= quality)
 					continue;
 
 				try
 				{
-					return expression == null ?
+					callExpression = expression == null ?
 						Expression.Call(method, argumentExpressions) : // static call
 						Expression.Call(expression, method, argumentExpressions); // instance call
+					quality = methodQuality;
 				}
 				catch (Exception exception)
 				{
 					throw new ExpressionParserException(exception.Message, exception, node);
 				}
 			}
+
+			if (callExpression != null)
+				return callExpression;
+
 			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDCALL, methodObj, type), node);
 		}
 		private Expression BuildInvoke(ExpressionTree node, Expression context)
@@ -498,7 +506,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var method = expression.Type.GetMethod("Invoke");
 			var methodParameters = method.GetParameters();
 			var argumentExpressions = default(Expression[]);
-			if (TryBindMethod(methodParameters, arguments, out argumentExpressions, context) == false)
+			if (TryBindMethod(methodParameters, arguments, context, out argumentExpressions) <= 0)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDDELEG, expression.Type, string.Join(", ", Array.ConvertAll(methodParameters, p => p.ParameterType.Name))), node);
 
 			try
@@ -565,7 +573,7 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				var methodParameters = constructorInfo.GetParameters();
 				var argumentExpressions = default(Expression[]);
-				if (TryBindMethod(methodParameters, arguments, out argumentExpressions, context) == false)
+				if (TryBindMethod(methodParameters, arguments, context, out argumentExpressions) <= 0)
 					continue;
 
 				try
@@ -580,22 +588,24 @@ namespace GameDevWare.Dynamic.Expressions
 			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR, type), node);
 		}
 
-		private bool TryBindMethod(ParameterInfo[] methodParameters, IDictionary<string, object> arguments, out Expression[] callArguments, Expression context)
+		private float TryBindMethod(ParameterInfo[] methodParameters, IDictionary<string, object> arguments, Expression context, out Expression[] callArguments)
 		{
 			callArguments = null;
 
 			// check argument count
 			if (arguments.Count > methodParameters.Length)
-				return false; // not all arguments are bound to parameters
+				return 0; // not all arguments are bound to parameters
 
 			var requiredParametersCount = methodParameters.Length - methodParameters.Count(p => p.IsOptional);
 			if (arguments.Count < requiredParametersCount)
-				return false; // not all required parameters has values
+				return 0; // not all required parameters has values
 
 			// bind arguments
 			var parametersByName = methodParameters.ToDictionary(p => p.Name);
 			var parametersByPos = methodParameters.ToDictionary(p => p.Position);
 			var argumentNames = arguments.Keys.ToArray();
+			var parametersQuality = new float[methodParameters.Length];
+
 			callArguments = new Expression[methodParameters.Length];
 			foreach (var argName in argumentNames)
 			{
@@ -605,15 +615,15 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					parameterIndex = int.Parse(argName, Format);
 					if (parametersByPos.TryGetValue(parameterIndex, out parameter) == false)
-						return false; // position out of range
+						return 0; // position out of range
 
 					if (arguments.ContainsKey(parameter.Name))
-						return false; // positional intersects named
+						return 0; // positional intersects named
 				}
 				else
 				{
 					if (parametersByName.TryGetValue(argName, out parameter) == false)
-						return false; // parameter is not found
+						return 0; // parameter is not found
 					parameterIndex = parameter.Position;
 				}
 
@@ -624,21 +634,17 @@ namespace GameDevWare.Dynamic.Expressions
 					// arguments[argName] = argValue // no arguments optimization
 				}
 
-				callArguments[parameterIndex] = argValue;
-
 				var expectedType = parameter.ParameterType;
-				var actualType = argValue.Type;
-
-				if (expectedType == actualType)
-					continue;
-
-				if (TryCastTo(expectedType, ref argValue))
+				var quality = TryCastTo(expectedType, ref argValue);
+				
+				if (quality > 0)
 				{
+					parametersQuality[parameterIndex] = quality; // casted
 					callArguments[parameterIndex] = argValue;
 					continue;
 				}
 
-				return false;
+				return 0;
 			}
 
 			for (var i = 0; i < callArguments.Length; i++)
@@ -646,16 +652,23 @@ namespace GameDevWare.Dynamic.Expressions
 				if (callArguments[i] != null) continue;
 				var parameter = parametersByPos[i];
 				if (parameter.IsOptional == false)
-					return false; // missing required parameter
+					return 0; // missing required parameter
 
 				callArguments[i] = Expression.Constant(GetDefaultValue(parameter.ParameterType), parameter.ParameterType);
 			}
 
-			return true;
+			var qualitySum = 0.0f;
+			foreach (var value in parametersQuality)
+				qualitySum += value;
+
+			return qualitySum / parametersQuality.Length;
 		}
-		private static bool TryCastTo(Type expectedType, ref Expression expression)
+		private static float TryCastTo(Type expectedType, ref Expression expression)
 		{
 			var actualType = expression.Type;
+
+			if (actualType == expectedType)
+				return 1.0f;
 
 			// 1: check if types are convertible
 			// 2: check if value is constant and could be converted
@@ -663,7 +676,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (IsHeirOf(actualType, expectedType))
 			{
 				expression = Expression.Convert(expression, expectedType);
-				return true;
+				return 0.9f; // same type hierarchy
 			}
 
 			// convert to/from enum, nullable
@@ -673,7 +686,7 @@ namespace GameDevWare.Dynamic.Expressions
 				(nullableUnderlyingType != null && nullableUnderlyingType == actualType))
 			{
 				expression = Expression.Convert(expression, expectedType);
-				return true;
+				return 0.9f; // same type hierarchy
 			}
 
 			// implicit convertion on expectedType
@@ -681,7 +694,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (implicitConvertion != null && implicitConvertion.ReturnType == expectedType)
 			{
 				expression = Expression.Convert(expression, expectedType, implicitConvertion);
-				return true;
+				return 0.5f; // converted with operator
 			}
 
 			// implicit convertion on actualType
@@ -689,25 +702,25 @@ namespace GameDevWare.Dynamic.Expressions
 			if (implicitConvertion != null && implicitConvertion.ReturnType == expectedType)
 			{
 				expression = Expression.Convert(expression, expectedType, implicitConvertion);
-				return true;
+				return 0.5f; // converted with operator
 			}
 
 			// try to convert value of constant
 			var constantValue = default(object);
 			var constantType = default(Type);
 			if (!TryExposeConstant(expression, out constantValue, out constantType))
-				return false;
+				return 0.0f;
 
 			if (constantValue == null)
 			{
 				if (constantType == typeof(object) && !expectedType.IsValueType)
 				{
 					expression = Expression.Constant(null, expectedType);
-					return true;
+					return 1.0f; // exact type (null)
 				}
 				else
 				{
-					return false;
+					return 0.0f;
 				}
 			}
 
@@ -718,12 +731,12 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				case TypeCode.Byte: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)byte.MinValue, (ulong)byte.MaxValue); break;
 				case TypeCode.SByte: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)sbyte.MinValue, (ulong)sbyte.MaxValue); break;
-				case TypeCode.UInt16: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)UInt16.MinValue, UInt16.MaxValue); break;
-				case TypeCode.Int16: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)Int16.MinValue, (ulong)Int16.MaxValue); break;
-				case TypeCode.UInt32: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)UInt32.MinValue, UInt32.MaxValue); break;
-				case TypeCode.Int32: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)Int32.MinValue, (ulong)Int32.MaxValue); break;
-				case TypeCode.UInt64: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)UInt64.MinValue, UInt64.MaxValue); break;
-				case TypeCode.Int64: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)Int64.MinValue, (ulong)Int64.MaxValue); break;
+				case TypeCode.UInt16: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)ushort.MinValue, ushort.MaxValue); break;
+				case TypeCode.Int16: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)short.MinValue, (ulong)short.MaxValue); break;
+				case TypeCode.UInt32: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)uint.MinValue, uint.MaxValue); break;
+				case TypeCode.Int32: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)int.MinValue, (ulong)int.MaxValue); break;
+				case TypeCode.UInt64: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)ulong.MinValue, ulong.MaxValue); break;
+				case TypeCode.Int64: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)long.MinValue, (ulong)long.MaxValue); break;
 				case TypeCode.Char:
 				case TypeCode.Double:
 				case TypeCode.Decimal:
@@ -734,10 +747,10 @@ namespace GameDevWare.Dynamic.Expressions
 			if (convertibleToExpectedType)
 			{
 				expression = Expression.Constant(Convert.ChangeType(constantValue, expectedTypeCode, Format));
-				return true;
+				return 0.7f; // converted in-place
 			}
 
-			return false;
+			return 0.0f;
 		}
 		private static ReadOnlyCollection<MemberInfo> GetMembers(Type type, bool isStatic)
 		{
@@ -955,14 +968,14 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			else if (leftType == TypeCode.UInt64)
 			{
-				if (Array.IndexOf(SignedIntegerTypes, rightType) > 0 && TryCastTo(typeof(UInt64), ref right) == false)
+				if (Array.IndexOf(SignedIntegerTypes, rightType) > 0 && TryCastTo(typeof(ulong), ref right) <= 0)
 					return; // will throw exception
 
 				methodArguments[rightIdx] = right.Type != typeof(ulong) ? Expression.Convert(right, typeof(ulong)) : right;
 			}
 			else if (rightType == TypeCode.UInt64)
 			{
-				if (Array.IndexOf(SignedIntegerTypes, leftType) > 0 && TryCastTo(typeof(UInt64), ref left) == false)
+				if (Array.IndexOf(SignedIntegerTypes, leftType) > 0 && TryCastTo(typeof(ulong), ref left) <= 0)
 					return; // will throw exception
 
 				methodArguments[leftIdx] = left.Type != typeof(ulong) ? Expression.Convert(left, typeof(ulong)) : left;
