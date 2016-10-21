@@ -1,0 +1,52 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" linePragmas="true" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(TargetPath)" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".txt" #>
+
+<#
+		var types = typeof(GameDevWare.Dynamic.Expressions.ExpressionBuilder).Assembly.GetTypes().ToList();
+		types.Add(typeof(System.Linq.Expressions.Expression));
+		foreach (var type in types)
+		{
+			if (type.Name.StartsWith("<") || type.IsGenericType)
+				continue;
+			var typeName = type.Name.Replace("+", ".");
+#>
+#<#= type.Name #>
+
+	static <#= type.Name #>()
+	{
+		// AOT
+		if (typeof(<#= type.Name #>).Name == string.Empty)
+		{
+<#
+			foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Instance))
+			{
+				if (method.Name.StartsWith("<") || method.IsGenericMethod)
+					continue;
+
+				Write("			");
+				Write(method.IsStatic ? type.Name + "." : "default(" + type.Name + ").");
+				Write(method.Name);
+				Write("(");
+		        var isFirst = true;
+				foreach(var parameter in method.GetParameters())
+				{
+					if(!isFirst)
+						Write(",");
+					Write("default(" + parameter.ParameterType.FullName.Replace("+", ".") + ")");
+					isFirst = false;
+				}
+				Write(");");
+				Write("\r\n");
+			}
+#>
+		}
+	}
+<#
+		}
+#>
