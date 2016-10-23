@@ -96,9 +96,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
-		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\")", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10)]
-		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(1, 100)", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0)]
-		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(1, 100) + Math.E", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0 + Math.E)]
+		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\")", (2 * (2 + 3) << (1 - 1) & 7 | 25 ^ 10) + 10)]
+		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(100, 1)", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0)]
+		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(100, 1) + Math.E", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0 + Math.E)]
 		public void ComplexExpressionTests(string expression, double expected)
 		{
 			expression = CSharpExpression.Parse<double>(expression).Body.Render();

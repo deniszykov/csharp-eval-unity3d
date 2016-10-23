@@ -53,7 +53,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				foreach (var token in Symbols)
 				{
 					if (!Match(expression, i, token) ||
-						(current.IsValid && token.Length < current.TokenLength))
+						(current.IsKnown && token.Length < current.TokenLength))
 					{
 						continue;
 					}
@@ -61,9 +61,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					current = new Token(TokensBySymbols[token], token, line, col, token.Length);
 				}
 
-				if (!current.IsValid)
+				if (!current.IsKnown)
 				{
-					if (char.IsDigit(charCode)) // numerics
+					if (char.IsDigit(charCode) || charCode == '.') // numerics
 						current = LookForNumber(expression, i, line, col);
 					else if (charCode == '"' || charCode == '\'') // string literal
 						current = LookForLiteral(expression, charCode, i, line, col);
@@ -78,7 +78,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				i += current.TokenLength - 1;
 				col += current.TokenLength - 1;
 
-				if (current.IsValid)
+				if (current.IsKnown)
 					yield return current;
 			}
 		}
@@ -143,10 +143,18 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		}
 		private static Token LookForNumber(string expression, int offset, int line, int col)
 		{
-			var hasSeparator = false;
+			const int STATE_INTEGER = 0;
+			const int STATE_FRACTION = 1;
+			const int STATE_EXPONENT = 2;
+			const int STATE_COMPLETE = 3;
+
+			var state = STATE_INTEGER;
 			var startAt = offset;
 			for (; offset < expression.Length; offset++)
 			{
+				if (state == STATE_COMPLETE)
+					break;
+
 				var charCode = expression[offset];
 				if (charCode >= 48 && charCode <= 57)  // numerics
 					continue;
@@ -154,25 +162,51 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				switch (char.ToLowerInvariant(expression[offset]))
 				{
 					case '.':
-						if (hasSeparator)
-							goto breakScan;
+						if (state == STATE_INTEGER)
+							state = STATE_FRACTION;
 						else
-							hasSeparator = true;
-						continue;
+						{
+							state = STATE_COMPLETE;
+							offset--;
+						}
+						break;
+					case 'e':
+						if (state != STATE_EXPONENT)
+							state = STATE_EXPONENT;
+						else
+						{
+							offset--;
+							state = STATE_COMPLETE;
+						}
+						break;
+					case '+':
+					case '-':
+						if (state != STATE_EXPONENT)
+						{
+							state = STATE_COMPLETE;
+							offset--;
+						}
+						break;
 					case 'f':
 					case 'm':
 					case 'u':
 					case 'l':
 					case 'd':
-						offset++;
-						if (expression.Length > offset && char.ToLowerInvariant(expression[offset - 1]) == 'u' && char.ToLowerInvariant(expression[offset]) == 'l')
+						// check for UL or LU sequence
+						if (expression.Length > offset + 1 &&
+							((char.ToLowerInvariant(expression[offset]) == 'u' && char.ToLowerInvariant(expression[offset + 1]) == 'l') ||
+							 (char.ToLowerInvariant(expression[offset]) == 'l' && char.ToLowerInvariant(expression[offset + 1]) == 'u')))
+						{
 							offset++;
-						goto breakScan;
+						}
+
+						state = STATE_COMPLETE;
+						break;
 					default:
-						goto breakScan;
+						offset--;
+						state = STATE_COMPLETE;
+						break;
 				}
-				breakScan:
-				break;
 			}
 			var result = expression.Substring(startAt, offset - startAt).ToLowerInvariant();
 			return new Token(TokenType.Number, result, line, col, result.Length);

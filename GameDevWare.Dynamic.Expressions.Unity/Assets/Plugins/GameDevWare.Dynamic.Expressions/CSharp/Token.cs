@@ -24,7 +24,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		public readonly int ColumnNumber;
 		public readonly int TokenLength;
 
-		public bool IsValid { get { return this.Type != TokenType.None; } }
+		public bool IsKnown { get { return this.Type != TokenType.None; } }
 		public string Position { get { return string.Format("[{0}:{1}+{2}]", this.LineNumber, this.ColumnNumber, this.TokenLength); } }
 
 		int ILineInfo.LineNumber { get { return this.LineNumber; } }

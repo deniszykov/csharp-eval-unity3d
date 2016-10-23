@@ -58,10 +58,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				new[] {TokenType.Eq, TokenType.Neq},
 				// Logical AND
 				new[] {TokenType.And},
-				// Logical OR
-				new[] {TokenType.Or},
 				// Logical XOR
 				new[] {TokenType.Xor},
+				// Logical OR
+				new[] {TokenType.Or},
 				// Conditional AND
 				new[] {TokenType.AndAlso},
 				// Conditional OR

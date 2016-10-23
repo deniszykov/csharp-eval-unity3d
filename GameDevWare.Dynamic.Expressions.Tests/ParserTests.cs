@@ -1,4 +1,6 @@
 ﻿
+using System;
+using System.Globalization;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
 
@@ -6,6 +8,32 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 {
 	public class ParserTests
 	{
+		[Theory]
+		[InlineData("1", 1)]
+		[InlineData("0.0001f", 0.0001f)]
+		[InlineData("01d", 01d)]
+		[InlineData("0.1d", 0.1d)]
+		[InlineData("1u", 1u)]
+		[InlineData("1ul", 1ul)]
+		[InlineData("1L", 1L)]
+		[InlineData("9.15E+09", 9.15E+09)]
+		[InlineData("9.15E09", 9.15E09)]
+		[InlineData("9.15E-09", 9.15E-09)]
+		[InlineData("9.15e+09", 9.15e+09)]
+		[InlineData("9.15e09", 9.15e09)]
+		[InlineData("9.15e-09", 9.15e-09)]
+		[InlineData("9e-09", 9e-09)]
+		//[InlineData(".01", .01)]
+		//[InlineData(".9e-09", .9e-09)]
+		public void ParseNumbersTest(string expression, object expected)
+		{
+			var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+			var valueStr = node.Value.TrimEnd('d', 'f', 'u', 'l', 'm');
+			Assert.Equal(TokenType.Number, node.Type);
+			Assert.Equal(expected, Convert.ChangeType(valueStr, expected.GetType(), CultureInfo.InvariantCulture));
+		}
+
 		[Theory]
 		[InlineData("a + b", TokenType.Add)]
 		[InlineData("+a", TokenType.Plus)]
