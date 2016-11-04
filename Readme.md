@@ -51,6 +51,7 @@ The parser recognizes the C# 4 grammar only. It includes:
 * [Expression grouping with parentheses](https://msdn.microsoft.com/en-us/library/0z4503sa.aspx)
 * [Checked/Unchecked scopes](https://msdn.microsoft.com/en-us/library/khy08726.aspx)
 * [Aliases for Built-In Types](https://msdn.microsoft.com/en-us/library/ya5y69ds.aspx)
+* [Null-conditional Operators](https://msdn.microsoft.com/en-us/library/dn986595.aspx)
 * "true", "false", "null"
 
 Nullable types are **partially** supported (see roadmap). 
@@ -150,10 +151,16 @@ The roadmap depends entirely on how many copies of the package will be sold:
 	* Parser: Delegate construction from method reference
 	* Parser: Type inference for generics	
 * &gt;300
-	* Parser: C#6 syntax
+	* Parser: Full C#6 syntax
 	* Parser: Extension methods
 	* Parser: Type initializers, List initializers
 	* Custom editor with auto-completion for Unity
+
+## Changes
+# 1.0.1.9
+* added [Null-conditional Operators](https://msdn.microsoft.com/en-us/library/dn986595.aspx) (example: a.?b.?.c)
+* fixed array indexing expressions
+* added array types support in type expressions ('convert', 'typeof', 'is' etc.)
 
 ## Contacts
 Please send any questions at support@gamedevware.com
