@@ -162,6 +162,14 @@ The roadmap depends entirely on how many copies of the package will be sold:
 * fixed array indexing expressions
 * added array types support in type expressions ('convert', 'typeof', 'is' etc.)
 
+## Installation
+Nuget:
+```
+Install-Package GameDevWare.Dynamic.Expressions
+```
+Unity:
+[Unity Asset Store](https://www.assetstore.unity3d.com/en/#!/content/56706)
+
 ## Contacts
 Please send any questions at support@gamedevware.com
 
