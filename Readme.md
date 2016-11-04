@@ -138,6 +138,7 @@ AotCompilation.RegisterForFastCall<MyVectorMath, Vector4, float, Vector4>();
 ## Roadmap
 
 You can send suggestions at support@gamedevware.com
+
 The roadmap depends entirely on how many copies of the package will be sold:
 
 * &gt;50
@@ -168,7 +169,8 @@ Nuget:
 Install-Package GameDevWare.Dynamic.Expressions
 ```
 Unity:
-[Unity Asset Store](https://www.assetstore.unity3d.com/en/#!/content/56706)
+
+[Package at Unity Asset Store](https://www.assetstore.unity3d.com/en/#!/content/56706)
 
 ## Contacts
 Please send any questions at support@gamedevware.com
