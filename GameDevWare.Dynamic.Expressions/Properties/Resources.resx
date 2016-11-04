@@ -147,6 +147,9 @@
   <data name="EXCEPTION_BUILD_RENDERFAILED" xml:space="preserve">
     <value>An error occured while trying to render '{0}' expression: {1}</value>
   </data>
+  <data name="EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF" xml:space="preserve">
+    <value>Unable to apply null-conditional operator on type '{0}'.</value>
+  </data>
   <data name="EXCEPTION_BUILD_UNABLETOBINDCALL" xml:space="preserve">
     <value>Unable to find method '{0}' on type '{1}' accepting specified arguments.</value>
   </data>

@@ -148,6 +148,22 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+		[InlineData("default(Math)?.ToString()", null)]
+		[InlineData("Math.E?.ToString()", "2.71828182845905")]
+		[InlineData("default(Math[])?[0]?.ToString()", null)]
+		public void NullResolveTest(string expression, object expected)
+		{
+			expression = CSharpExpression.Parse<object>(expression).Body.Render();
+			output.WriteLine("Rendered: " + expression);
+			var actual = CSharpExpression.Evaluate<object>(expression);
+
+			if (expected == null)
+				Assert.Null(actual);
+			else
+				Assert.Equal(expected, actual);
+		}
+
+		[Theory]
 		[InlineData("typeof(Int32)", typeof(int))]
 		[InlineData("typeof(System.Int32)", typeof(int))]
 		[InlineData("typeof(short)", typeof(short))]

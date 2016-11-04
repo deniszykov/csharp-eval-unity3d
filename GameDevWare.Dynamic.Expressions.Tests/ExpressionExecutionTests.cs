@@ -18,12 +18,15 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			public static int StaticIntField = 100500;
 			public static int StaticIntProperty { get { return StaticIntField; } set { StaticIntField = value; } }
 
+			public int[] ArrayField;
 			public int IntField = 100500 * 2;
 			public int IntProperty { get { return IntField; } set { IntField = value; } }
 			public TestClass TestClassField;
 			public TestClass TestClassProperty { get { return this.TestClassField; } set { TestClassField = value; } }
 			public List<int> ListField = new List<int>();
 			public List<int> ListProperty { get { return this.ListField; } set { this.ListField = value; } }
+			public int this[int i] { get { return this.ArrayField[i]; } }
+			public int this[int i, int k] { get { return this.ArrayField[i]; } }
 
 			public void Add(int value)
 			{
@@ -65,7 +68,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void ArrayLengthTest()
 		{
-			Expression<Func<int[], int>> expression = a => a.Length;
+			var arrayParameter = Expression.Parameter(typeof(int[]), "array");
+			Expression<Func<int[], int>> expression = Expression.Lambda<Func<int[], int>>(Expression.ArrayLength(arrayParameter), arrayParameter);
 
 			var array = new int[] { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200 };
 
@@ -221,6 +225,28 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 			Assert.Equal(expected, actual);
+		}
+
+		[Theory]
+		[InlineData("arg1.ArrayField?[0].ToString()", "1")]
+		[InlineData("arg1.TestClassField?.IntField", null)]
+		[InlineData("arg1.TestClassField?[0]", null)]
+		[InlineData("arg1.TestClassField?[0,1]", null)]
+		[InlineData("arg1?.ListField?[1]?.ToString()", "2")]
+		public void NullResolveTest(string expression, object expected)
+		{
+			var testClass = new TestClass
+			{
+				ArrayField = new[] { 1, 2, 3 },
+				ListField = new List<int> { 1, 2, 3 }
+			};
+			var expectedType = expected?.GetType() ?? typeof(object);
+			var actual = ExpressionUtils.Evaluate(expression, new[] { testClass.GetType(), expectedType }, forceAot: true, arguments: new object[] { testClass });
+
+			if (expected == null)
+				Assert.Null(actual);
+			else
+				Assert.Equal(expected, actual);
 		}
 
 		[Theory]

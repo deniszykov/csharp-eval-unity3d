@@ -270,6 +270,11 @@ namespace GameDevWare.Dynamic.Expressions
 			if (node.TryGetValue(ExpressionTree.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out propertyOrFieldNameObj) == false || propertyOrFieldNameObj is string == false)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, ExpressionTree.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, "PropertyOrField"), node);
 
+			var useNullPropagation = false;
+			var useNullPropagationObj = default(object);
+			if (node.TryGetValue(ExpressionTree.USE_NULL_PROPAGATION_ATTRIBUTE, out useNullPropagationObj) && useNullPropagationObj != null)
+				useNullPropagation = Convert.ToBoolean(useNullPropagationObj, Format);
+
 			var propertyOrFieldName = (string)propertyOrFieldNameObj;
 			var expression = default(Expression);
 			var typeName = default(string);
@@ -304,7 +309,7 @@ namespace GameDevWare.Dynamic.Expressions
 				type = expression.Type;
 
 			var isStatic = expression == null;
-
+			var memberAccessExpression = default(Expression);
 			foreach (var member in GetMembers(type, isStatic))
 			{
 				if (member is PropertyInfo == false && member is FieldInfo == false)
@@ -315,9 +320,15 @@ namespace GameDevWare.Dynamic.Expressions
 				try
 				{
 					if (member is PropertyInfo)
-						return Expression.Property(expression, member as PropertyInfo);
+					{
+						memberAccessExpression = Expression.Property(expression, member as PropertyInfo);
+						break;
+					}
 					else
-						return Expression.Field(expression, member as FieldInfo);
+					{
+						memberAccessExpression = Expression.Field(expression, member as FieldInfo);
+						break;
+					}
 				}
 				catch (Exception exception)
 				{
@@ -325,10 +336,18 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 			}
 
-			if (expression == null)
+			if (expression == null && memberAccessExpression == null)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVENAME, propertyOrFieldName), node);
-			else
+			else if (memberAccessExpression == null)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, type), node);
+
+			if (useNullPropagation && expression == null)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
+
+			if (useNullPropagation)
+				return MakeNullPropagationExpression(expression, memberAccessExpression);
+			else
+				return memberAccessExpression;
 		}
 		private Expression BuildConstant(ExpressionTree node)
 		{
@@ -357,30 +376,69 @@ namespace GameDevWare.Dynamic.Expressions
 			if (node.TryGetValue(ExpressionTree.ARGUMENTS_ATTRIBUTE, out argumentsObj) && argumentsObj != null && argumentsObj is ExpressionTree == false)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, ExpressionTree.ARGUMENTS_ATTRIBUTE, "Index"), node);
 
+			var useNullPropagation = false;
+			var useNullPropagationObj = default(object);
+			if (node.TryGetValue(ExpressionTree.USE_NULL_PROPAGATION_ATTRIBUTE, out useNullPropagationObj) && useNullPropagationObj != null)
+				useNullPropagation = Convert.ToBoolean(useNullPropagationObj, Format);
+
 			var arguments = (ExpressionTree)argumentsObj ?? EmptyArguments;
 			var expression = Build((ExpressionTree)expressionObj, context, expectedType: null);
-			var properties = expression.Type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-			Array.Sort(properties, (x, y) => x.GetIndexParameters().Length.CompareTo(y.GetIndexParameters().Length));
-			foreach (var property in properties)
-			{
-				var indexerParameters = property.GetIndexParameters();
-				if (indexerParameters.Length == 0) continue;
+			var indexExpression = default(Expression);
 
-				var getMethod = property.GetGetMethod(nonPublic: false);
-				var argumentExpressions = default(Expression[]);
-				if (getMethod == null || TryBindMethod(indexerParameters, arguments, context, out argumentExpressions) <= 0)
-					continue;
+			if (expression.Type.IsArray)
+			{
+				var indexingExpressions = new Expression[arguments.Count];
+				for (var i = 0; i < indexingExpressions.Length; i++)
+				{
+					var argName = i.ToString();
+					var argObj = default(object);
+					if (arguments.TryGetValue(argName, out argObj) && argObj is ExpressionTree)
+						indexingExpressions[i] = Build((ExpressionTree)argObj, context, typeof(int));
+				}
 
 				try
 				{
-					return Expression.Call(expression, getMethod, argumentExpressions);
+					if (indexingExpressions.Length == 1 && indexingExpressions[0] != null)
+						indexExpression = Expression.ArrayIndex(expression, indexingExpressions[0]);
+					else if (indexingExpressions.Length > 1 && Array.TrueForAll(indexingExpressions, a => a != null))
+						indexExpression = Expression.ArrayIndex(expression, indexingExpressions);
 				}
 				catch (Exception exception)
 				{
 					throw new ExpressionParserException(exception.Message, exception, node);
 				}
 			}
-			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDINDEXER, expression.Type), node);
+			else
+			{
+				var properties = expression.Type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+				Array.Sort(properties, (x, y) => x.GetIndexParameters().Length.CompareTo(y.GetIndexParameters().Length));
+				foreach (var property in properties)
+				{
+					var indexerParameters = property.GetIndexParameters();
+					if (indexerParameters.Length == 0) continue;
+
+					var getMethod = property.GetGetMethod(nonPublic: false);
+					var argumentExpressions = default(Expression[]);
+					if (getMethod == null || TryBindMethod(indexerParameters, arguments, context, out argumentExpressions) <= 0)
+						continue;
+
+					try
+					{
+						indexExpression = Expression.Call(expression, getMethod, argumentExpressions);
+					}
+					catch (Exception exception)
+					{
+						throw new ExpressionParserException(exception.Message, exception, node);
+					}
+				}
+			}
+			if (indexExpression == null)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDINDEXER, expression.Type), node);
+
+			if (useNullPropagation)
+				return MakeNullPropagationExpression(expression, indexExpression);
+			else
+				return indexExpression;
 		}
 		private Expression BuildCall(ExpressionTree node, Expression context)
 		{
@@ -397,6 +455,11 @@ namespace GameDevWare.Dynamic.Expressions
 			var methodObj = default(object);
 			if (node.TryGetValue(ExpressionTree.METHOD_ATTRIBUTE, out methodObj) == false || methodObj is string == false)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, ExpressionTree.METHOD_ATTRIBUTE, "Call"), node);
+
+			var useNullPropagation = false;
+			var useNullPropagationObj = default(object);
+			if (node.TryGetValue(ExpressionTree.USE_NULL_PROPAGATION_ATTRIBUTE, out useNullPropagationObj) && useNullPropagationObj != null)
+				useNullPropagation = Convert.ToBoolean(useNullPropagationObj, Format);
 
 			if (expressionObj == null && context == null)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVENAME, methodObj), node);
@@ -427,7 +490,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var methodParameters = method.GetParameters();
 				var argumentExpressions = default(Expression[]);
 				var methodQuality = TryBindMethod(methodParameters, arguments, context, out argumentExpressions);
-				if (methodQuality <= quality)
+				if (float.IsNaN(methodQuality) || methodQuality <= quality)
 					continue;
 
 				try
@@ -443,10 +506,16 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 			}
 
-			if (callExpression != null)
-				return callExpression;
+			if (callExpression == null)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDCALL, methodObj, type), node);
 
-			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDCALL, methodObj, type), node);
+			if (useNullPropagation && expression == null)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
+
+			if (useNullPropagation)
+				return MakeNullPropagationExpression(expression, callExpression);
+			else
+				return callExpression;
 		}
 		private Expression BuildInvoke(ExpressionTree node, Expression context)
 		{
@@ -473,6 +542,10 @@ namespace GameDevWare.Dynamic.Expressions
 				var propertyOrFieldNameObj = default(object);
 				if (expressionTree.TryGetValue(ExpressionTree.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out propertyOrFieldNameObj) == false || propertyOrFieldNameObj is string == false)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, ExpressionTree.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, "PropertyOrField"), node);
+				var useNullPropagation = false;
+				var useNullPropagationObj = default(object);
+				if (expressionTree.TryGetValue(ExpressionTree.USE_NULL_PROPAGATION_ATTRIBUTE, out useNullPropagationObj) && useNullPropagationObj != null)
+					useNullPropagation = Convert.ToBoolean(useNullPropagationObj, Format);
 
 				var methodName = (string)propertyOrFieldNameObj;
 				var typeName = default(string);
@@ -492,6 +565,7 @@ namespace GameDevWare.Dynamic.Expressions
 					var callNode = new Dictionary<string, object>(node);
 					callNode[ExpressionTree.METHOD_ATTRIBUTE] = methodName;
 					callNode[ExpressionTree.EXPRESSION_ATTRIBUTE] = propertyOrFieldExpressionObj;
+					callNode[ExpressionTree.USE_NULL_PROPAGATION_ATTRIBUTE] = useNullPropagation ? ExpressionTree.TrueConst : ExpressionTree.FalseConst;
 					return this.BuildCall(new ExpressionTree(callNode), context);
 				}
 			}
@@ -634,7 +708,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 				var expectedType = parameter.ParameterType;
 				var quality = TryCastTo(expectedType, ref argValue);
-				
+
 				if (quality > 0)
 				{
 					parametersQuality[parameterIndex] = quality; // casted
@@ -654,6 +728,9 @@ namespace GameDevWare.Dynamic.Expressions
 
 				callArguments[i] = Expression.Constant(GetDefaultValue(parameter.ParameterType), parameter.ParameterType);
 			}
+
+			if (parametersQuality.Length == 0)
+				return 1;
 
 			var qualitySum = 0.0f;
 			foreach (var value in parametersQuality)
@@ -846,6 +923,16 @@ namespace GameDevWare.Dynamic.Expressions
 					return true;
 			}
 			return false;
+		}
+
+		private static bool IsNullableType(Type type)
+		{
+			if (type.IsValueType == false)
+				return true;
+			else if (type.IsValueType && type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+				return true;
+			else
+				return type.IsValueType == false;
 		}
 		private static bool TryExposeConstant(Expression expression, out object constantValue, out Type constantType)
 		{
@@ -1080,7 +1167,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
-		public static Expression DefaultExpression(Type forType)
+		private static Expression DefaultExpression(Type forType)
 		{
 			if (forType == null) throw new ArgumentNullException("forType");
 
@@ -1088,6 +1175,22 @@ namespace GameDevWare.Dynamic.Expressions
 				return Expression.Constant(Activator.CreateInstance(forType), forType);
 			else
 				return Expression.Constant(null, forType);
+		}
+		private Expression MakeNullPropagationExpression(Expression testExpression, Expression notNullExpression)
+		{
+			if (!IsNullableType(testExpression.Type)) // no need in null propagation
+				return notNullExpression;
+
+			var resultType = !IsNullableType(notNullExpression.Type) ? typeof(Nullable<>).MakeGenericType(notNullExpression.Type) : notNullExpression.Type;
+			if (resultType != notNullExpression.Type)
+				notNullExpression = Expression.Convert(notNullExpression, resultType);
+
+			return Expression.Condition
+			(
+				test: Expression.NotEqual(testExpression, DefaultExpression(testExpression.Type)),
+				ifTrue: notNullExpression,
+				ifFalse: DefaultExpression(notNullExpression.Type)
+			);
 		}
 	}
 }

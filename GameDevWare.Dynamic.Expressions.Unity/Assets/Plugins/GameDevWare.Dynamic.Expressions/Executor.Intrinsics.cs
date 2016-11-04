@@ -62,7 +62,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var invoker = MethodCall.TryCreate(method);
 			if (invoker != null)
 			{
-				var argFns = new Func<Closure, object>[] { closure => closure.Locals[LOCAL_OPERAND1] };
+				var argFns = new ExecuteFunc[] { closure => closure.Locals[LOCAL_OPERAND1] };
 
 				return (closure, operand) =>
 				{
@@ -98,7 +98,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var invoker = MethodCall.TryCreate(method);
 			if (invoker != null)
 			{
-				var argFns = new Func<Closure, object>[] { closure => closure.Locals[LOCAL_OPERAND1], closure => closure.Locals[LOCAL_OPERAND2] };
+				var argFns = new ExecuteFunc[] { closure => closure.Locals[LOCAL_OPERAND1], closure => closure.Locals[LOCAL_OPERAND2] };
 
 				return (closure, left, right) =>
 				{

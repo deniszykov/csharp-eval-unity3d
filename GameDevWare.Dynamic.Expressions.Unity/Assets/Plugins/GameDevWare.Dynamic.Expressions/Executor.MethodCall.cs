@@ -24,7 +24,7 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	partial class Executor
 	{
-		private delegate object InvokeOperation(Closure closure, Func<Closure, object>[] argumentFns);
+		private delegate object InvokeOperation(Closure closure, ExecuteFunc[] argumentFns);
 		private delegate InvokeOperation InvokeOperationCreator(MethodInfo method, ParameterInfo[] parameters);
 
 		private class MethodCall
@@ -43,29 +43,29 @@ namespace GameDevWare.Dynamic.Expressions
 				this.fn = Delegate.CreateDelegate(delegateType, method, true);
 			}
 
-			private object FuncInvoker<ResultT>(Closure closure, Func<Closure, object>[] argumentFns)
+			private object FuncInvoker<ResultT>(Closure closure, ExecuteFunc[] argumentFns)
 			{
 				return ((Func<ResultT>)this.fn).Invoke();
 			}
-			private object FuncInvoker<Arg1T, ResultT>(Closure closure, Func<Closure, object>[] argumentFns)
+			private object FuncInvoker<Arg1T, ResultT>(Closure closure, ExecuteFunc[] argumentFns)
 			{
 				var arg1 = closure.Unbox<Arg1T>(argumentFns[0](closure));
 				return ((Func<Arg1T, ResultT>)this.fn).Invoke(arg1);
 			}
-			private object FuncInvoker<Arg1T, Arg2T, ResultT>(Closure closure, Func<Closure, object>[] argumentFns)
+			private object FuncInvoker<Arg1T, Arg2T, ResultT>(Closure closure, ExecuteFunc[] argumentFns)
 			{
 				var arg1 = closure.Unbox<Arg1T>(argumentFns[0](closure));
 				var arg2 = closure.Unbox<Arg2T>(argumentFns[1](closure));
 				return ((Func<Arg1T, Arg2T, ResultT>)this.fn).Invoke(arg1, arg2);
 			}
-			private object FuncInvoker<Arg1T, Arg2T, Arg3T, ResultT>(Closure closure, Func<Closure, object>[] argumentFns)
+			private object FuncInvoker<Arg1T, Arg2T, Arg3T, ResultT>(Closure closure, ExecuteFunc[] argumentFns)
 			{
 				var arg1 = closure.Unbox<Arg1T>(argumentFns[0](closure));
 				var arg2 = closure.Unbox<Arg2T>(argumentFns[1](closure));
 				var arg3 = closure.Unbox<Arg3T>(argumentFns[2](closure));
 				return ((Func<Arg1T, Arg2T, Arg3T, ResultT>)this.fn).Invoke(arg1, arg2, arg3);
 			}
-			private object FuncInvoker<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(Closure closure, Func<Closure, object>[] argumentFns)
+			private object FuncInvoker<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(Closure closure, ExecuteFunc[] argumentFns)
 			{
 				var arg1 = closure.Unbox<Arg1T>(argumentFns[0](closure));
 				var arg2 = closure.Unbox<Arg2T>(argumentFns[1](closure));

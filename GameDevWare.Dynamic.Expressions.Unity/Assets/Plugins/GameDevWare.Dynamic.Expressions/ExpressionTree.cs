@@ -37,7 +37,11 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string TYPE_ATTRIBUTE = "type";
 		public const string VALUE_ATTRIBUTE = "value";
 		public const string PROPERTY_OR_FIELD_NAME_ATTRIBUTE = "propertyOrFieldName";
+		public const string USE_NULL_PROPAGATION_ATTRIBUTE = "useNullPropagation";
 		public const string METHOD_ATTRIBUTE = "method";
+
+		public static readonly object TrueConst = true;
+		public static readonly object FalseConst = false;
 
 		public int LineNumber { get { var valueObj = default(object); if (this.TryGetValue(EXPRESSION_LINE, out valueObj) == false) return 0; else return Convert.ToInt32(valueObj); } }
 		public int ColumnNumber { get { var valueObj = default(object); if (this.TryGetValue(EXPRESSION_COLUMN, out valueObj) == false) return 0; else return Convert.ToInt32(valueObj); } }

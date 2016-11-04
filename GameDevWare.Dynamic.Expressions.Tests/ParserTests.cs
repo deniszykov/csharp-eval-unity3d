@@ -59,6 +59,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a != b", TokenType.Neq)]
 		[InlineData("a ?? b", TokenType.Coalesce)]
 		[InlineData("a.b", TokenType.Resolve)]
+		[InlineData("a?.b", TokenType.NullResolve)]
 		public void ParseAlgExpression(string expression, TokenType type)
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
@@ -72,6 +73,27 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			{
 				Assert.Equal(TokenType.Identifier, node.Childs[1].Type);
 				Assert.Equal("b", node.Childs[1].Value);
+			}
+		}
+
+		[Theory]
+		[InlineData("a?[b]", TokenType.Call)]
+		[InlineData("a[b]", TokenType.Call)]
+		[InlineData("a(b)", TokenType.Call)]
+		public void ParseCallExpression(string expression, TokenType type)
+		{
+			var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+			Assert.True(node.Childs.Count >= 1 || node.Childs.Count <= 2, "Wrong child count of expression");
+
+			Assert.Equal(type, node.Type);
+			Assert.Equal(TokenType.Identifier, node.Childs[0].Type);
+			Assert.Equal("a", node.Childs[0].Value);
+			if (node.Childs.Count > 1)
+			{
+				Assert.Equal(TokenType.Arguments, node.Childs[1].Type);
+				Assert.Equal(TokenType.Identifier, node.Childs[1].Childs[0].Type);
+				Assert.Equal("b", node.Childs[1].Childs[0].Value);
 			}
 		}
 

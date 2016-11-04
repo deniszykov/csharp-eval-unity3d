@@ -151,6 +151,15 @@ namespace GameDevWare.Dynamic.Expressions.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to apply null-conditional operator on type &apos;{0}&apos;..
+        /// </summary>
+        public static string EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF {
+            get {
+                return ResourceManager.GetString("EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to find method &apos;{0}&apos; on type &apos;{1}&apos; accepting specified arguments..
         /// </summary>
         public static string EXCEPTION_BUILD_UNABLETOBINDCALL {

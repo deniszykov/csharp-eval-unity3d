@@ -85,12 +85,16 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		// structure
 		[Token(".")]
 		Resolve,
+		[Token("?.")]
+		NullResolve,
 		[Token("(")]
 		Lparen,
 		[Token(")")]
 		Rparen,
 		[Token("[")]
 		Lbracket,
+		[Token("?[")]
+		NullIndex,
 		[Token("]")]
 		Rbracket,
 		Call,

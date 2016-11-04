@@ -29,7 +29,8 @@ namespace GameDevWare.Dynamic.Expressions
 	{
 		private const int LOCAL_OPERAND1 = 0;
 		private const int LOCAL_OPERAND2 = 1;
-		private const int LOCAL_FIRST_PARAMETER = 2; // this is offset of first parameter in Closure locals
+		private const int LOCAL_SLOT1 = 2;
+		private const int LOCAL_FIRST_PARAMETER = 3; // this is offset of first parameter in Closure locals
 
 		private sealed class Closure
 		{
@@ -77,6 +78,7 @@ namespace GameDevWare.Dynamic.Expressions
 				return c;
 			}
 		}
+		private delegate object ExecuteFunc(Closure closure);
 
 		static Executor()
 		{
@@ -129,7 +131,10 @@ namespace GameDevWare.Dynamic.Expressions
 				var locals = new object[] { null, null };
 				var closure = new Closure(constants, locals);
 
-				return (ResultT)compiledFn(closure);
+				var result = (ResultT)compiledFn(closure);
+				Array.Clear(locals, 0, locals.Length);
+				Array.Clear(constants, 0, constants.Length);
+				return result;
 			});
 		}
 		public static Func<Arg1T, ResultT> Prepare<Arg1T, ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
@@ -146,10 +151,13 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return (arg1 =>
 			{
-				var locals = new object[] { null, null, arg1 };
+				var locals = new object[] { null, null, null, arg1 };
 				var closure = new Closure(constants, locals);
 
-				return (ResultT)compiledFn(closure);
+				var result = (ResultT)compiledFn(closure);
+				Array.Clear(locals, 0, locals.Length);
+				Array.Clear(constants, 0, constants.Length);
+				return result;
 			});
 		}
 		public static Func<Arg1T, Arg2T, ResultT> Prepare<Arg1T, Arg2T, ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
@@ -166,10 +174,13 @@ namespace GameDevWare.Dynamic.Expressions
 			return ((arg1, arg2) =>
 			{
 				var constants = Array.ConvertAll(constantsExprs, c => c.Value);
-				var locals = new object[] { null, null, arg1, arg2 };
+				var locals = new object[] { null, null, null, arg1, arg2 };
 				var closure = new Closure(constants, locals);
 
-				return (ResultT)compiledFn(closure);
+				var result = (ResultT)compiledFn(closure);
+				Array.Clear(locals, 0, locals.Length);
+				Array.Clear(constants, 0, constants.Length);
+				return result;
 			});
 		}
 		public static Func<Arg1T, Arg2T, Arg3T, ResultT> Prepare<Arg1T, Arg2T, Arg3T, ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
@@ -186,10 +197,13 @@ namespace GameDevWare.Dynamic.Expressions
 			return ((arg1, arg2, arg3) =>
 			{
 				var constants = Array.ConvertAll(constantsExprs, c => c.Value);
-				var locals = new object[] { null, null, arg1, arg2, arg3 };
+				var locals = new object[] { null, null, null, arg1, arg2, arg3 };
 				var closure = new Closure(constants, locals);
 
-				return (ResultT)compiledFn(closure);
+				var result = (ResultT)compiledFn(closure);
+				Array.Clear(locals, 0, locals.Length);
+				Array.Clear(constants, 0, constants.Length);
+				return result;
 			});
 		}
 		public static Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT> Prepare<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
@@ -206,10 +220,13 @@ namespace GameDevWare.Dynamic.Expressions
 			return ((arg1, arg2, arg3, arg4) =>
 			{
 				var constants = Array.ConvertAll(constantsExprs, c => c.Value);
-				var locals = new object[] { null, null, arg1, arg2, arg3, arg4 };
+				var locals = new object[] { null, null, null, arg1, arg2, arg3, arg4 };
 				var closure = new Closure(constants, locals);
 
-				return (ResultT)compiledFn(closure);
+				var result = (ResultT)compiledFn(closure);
+				Array.Clear(locals, 0, locals.Length);
+				Array.Clear(constants, 0, constants.Length);
+				return result;
 			});
 		}
 
@@ -230,8 +247,7 @@ namespace GameDevWare.Dynamic.Expressions
 			MethodCall.RegisterInstanceMethod<InstanceT, ResultT>();
 		}
 
-		private static Func<Closure, object> Expression(Expression exp, ConstantExpression[] constantsExprs,
-			ParameterExpression[] localsExprs)
+		private static ExecuteFunc Expression(Expression exp, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			if (exp == null)
 				return (closure => null);
@@ -319,24 +335,59 @@ namespace GameDevWare.Dynamic.Expressions
 			throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_UNKNOWNEXPRTYPE, exp.Type));
 		}
 
-		private static Func<Closure, object> Conditional(ConditionalExpression conditionalExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc Conditional(ConditionalExpression conditionalExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
-			var trueFn = Expression(conditionalExpression.IfTrue, constantsExprs, localsExprs);
-			var falseFn = Expression(conditionalExpression.IfFalse, constantsExprs, localsExprs);
-			var testFn = Expression(conditionalExpression.Test, constantsExprs, localsExprs);
+			var testAsNotEqual = conditionalExpression.Test as BinaryExpression;
+			var testAsNotEqualRightConst = testAsNotEqual != null ? testAsNotEqual.Right as ConstantExpression : null;
+			var ifFalseConst = conditionalExpression.IfFalse as ConstantExpression;
+			var ifTrueUnwrapped = conditionalExpression.IfTrue.NodeType == ExpressionType.Convert ? ((UnaryExpression)conditionalExpression.IfTrue).Operand : conditionalExpression.IfTrue;
+			var ifTrueCall = ifTrueUnwrapped as MethodCallExpression;
+			var ifTrueMember = ifTrueUnwrapped as MemberExpression;
+			var ifTrueIndex = ifTrueUnwrapped as BinaryExpression;
 
-			return closure => closure.Unbox<bool>(testFn(closure)) ? trueFn(closure) : falseFn(closure);
+			// try to detect null-propagation operation
+			if (testAsNotEqual != null && testAsNotEqualRightConst != null && testAsNotEqualRightConst.Value == null &&
+				ifFalseConst != null && ifFalseConst.Value == null &&
+				(
+					(ifTrueCall != null && ReferenceEquals(ifTrueCall.Object, testAsNotEqual.Left)) ||
+					(ifTrueMember != null && ReferenceEquals(ifTrueMember.Expression, testAsNotEqual.Left)) ||
+					(ifTrueIndex != null && ReferenceEquals(ifTrueIndex.Left, testAsNotEqual.Left))
+				)
+			)
+			{
+				var slot1ParameterExpression = ConstantExpression.Parameter(testAsNotEqual.Left.Type, "slot1");
+				var baseFn = Expression(testAsNotEqual.Left, constantsExprs, localsExprs);
+				var continueFn = Expression(ifTrueCall != null ? ConstantExpression.Call(slot1ParameterExpression, ifTrueCall.Method, ifTrueCall.Arguments) :
+									ifTrueMember != null ? ConstantExpression.MakeMemberAccess(slot1ParameterExpression, ifTrueMember.Member) :
+									(Expression)ConstantExpression.MakeBinary(ExpressionType.ArrayIndex, slot1ParameterExpression, ifTrueIndex.Right), constantsExprs, localsExprs);
+
+				return closure =>
+				{
+					var baseValue = baseFn(closure);
+					if (baseValue == null)
+						return null;
+
+					closure.Locals[LOCAL_SLOT1] = baseValue;
+					return continueFn(closure);
+				};
+
+			}
+			else
+			{
+				var trueFn = Expression(conditionalExpression.IfTrue, constantsExprs, localsExprs);
+				var falseFn = Expression(conditionalExpression.IfFalse, constantsExprs, localsExprs);
+				var testFn = Expression(conditionalExpression.Test, constantsExprs, localsExprs);
+
+				return closure => closure.Unbox<bool>(testFn(closure)) ? trueFn(closure) : falseFn(closure);
+			}
 		}
 
-		private static Func<Closure, object> Constant(ConstantExpression constantExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc Constant(ConstantExpression constantExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			return closure => closure.Constants[Array.IndexOf(constantsExprs, constantExpression)];
 		}
 
-		private static Func<Closure, object> Invocation(InvocationExpression invocationExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc Invocation(InvocationExpression invocationExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var target = Expression(invocationExpression.Expression, constantsExprs, localsExprs);
 			var argsFns = invocationExpression.Arguments.Select(e => Expression(e, constantsExprs, localsExprs)).ToArray();
@@ -352,14 +403,12 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> Lambda(LambdaExpression lambdaExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc Lambda(LambdaExpression lambdaExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			throw new NotSupportedException();
 		}
 
-		private static Func<Closure, object> ListInit(ListInitExpression listInitExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc ListInit(ListInitExpression listInitExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var newFn = New(listInitExpression.NewExpression, constantsExprs, localsExprs);
 			var listInits =
@@ -388,24 +437,22 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> MemberAccess(MemberExpression memberExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc MemberAccess(MemberExpression memberExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var valueFn = Expression(memberExpression.Expression, constantsExprs, localsExprs);
 
 			return closure =>
 			{
-				var value = valueFn(closure);
+				var target = valueFn(closure);
 				var member = memberExpression.Member;
 				if (member is FieldInfo)
-					return ((FieldInfo)member).GetValue(value);
+					return ((FieldInfo)member).GetValue(target);
 				else
-					return ((PropertyInfo)member).GetValue(value, null);
+					return ((PropertyInfo)member).GetValue(target, null);
 			};
 		}
 
-		private static Func<Closure, object> MemberInit(MemberInitExpression memberInitExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc MemberInit(MemberInitExpression memberInitExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var newFn = New(memberInitExpression.NewExpression, constantsExprs, localsExprs);
 			var memberAssignments = MemberAssignments(memberInitExpression.Bindings, constantsExprs, localsExprs);
@@ -431,8 +478,7 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> MemberAssignments(IEnumerable<MemberBinding> bindings,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc MemberAssignments(IEnumerable<MemberBinding> bindings, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var assignFns = (
 				from bind in bindings
@@ -460,8 +506,7 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> MemberListBindings(IEnumerable<MemberBinding> bindings,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc MemberListBindings(IEnumerable<MemberBinding> bindings, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var listBindGroups =
 			(
@@ -501,8 +546,7 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> MemberMemberBindings(IEnumerable<MemberBinding> bindings,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc MemberMemberBindings(IEnumerable<MemberBinding> bindings, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var bindGroups =
 			(
@@ -546,8 +590,7 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> Call(MethodCallExpression methodCallExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc Call(MethodCallExpression methodCallExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var targetFn = Expression(methodCallExpression.Object, constantsExprs, localsExprs);
 			var argsFns = methodCallExpression.Arguments.Select(e => Expression(e, constantsExprs, localsExprs)).ToArray();
@@ -571,8 +614,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
-		private static Func<Closure, object> New(NewExpression newExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc New(NewExpression newExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var valuesFns = newExpression.Arguments.Select(e => Expression(e, constantsExprs, localsExprs)).ToArray();
 
@@ -600,8 +642,7 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> NewArray(NewArrayExpression newArrayExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc NewArray(NewArrayExpression newArrayExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			if (newArrayExpression.NodeType == ExpressionType.NewArrayBounds)
 			{
@@ -634,15 +675,13 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
-		private static Func<Closure, object> Parameter(ParameterExpression parameterExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc Parameter(ParameterExpression parameterExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			return
 				closure => closure.Locals[LOCAL_FIRST_PARAMETER + Array.IndexOf(localsExprs, parameterExpression)];
 		}
 
-		private static Func<Closure, object> TypeIs(TypeBinaryExpression typeBinaryExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc TypeIs(TypeBinaryExpression typeBinaryExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var valueFn = Expression(typeBinaryExpression.Expression, constantsExprs, localsExprs);
 
@@ -655,8 +694,7 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> TypeAs(UnaryExpression typeAsExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc TypeAs(UnaryExpression typeAsExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			if (typeAsExpression.Type.IsValueType)
 				return Convert(typeAsExpression, constantsExprs, localsExprs);
@@ -675,8 +713,7 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> Convert(UnaryExpression convertExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc Convert(UnaryExpression convertExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var valueFn = Expression(convertExpression.Operand, constantsExprs, localsExprs);
 			var convertOperator = WrapUnaryOperation(convertExpression.Method) ?? WrapUnaryOperation(
@@ -757,8 +794,7 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> Unary(UnaryExpression unaryExpression,
-			ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc Unary(UnaryExpression unaryExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var valueFn = Expression(unaryExpression.Operand, constantsExprs, localsExprs);
 			var opUnaryNegation = WrapUnaryOperation(unaryExpression.Method) ?? WrapUnaryOperation(unaryExpression.Operand.Type, "op_UnaryNegation");
@@ -790,7 +826,7 @@ namespace GameDevWare.Dynamic.Expressions
 			};
 		}
 
-		private static Func<Closure, object> ArrayIndex(Expression expression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc ArrayIndex(Expression expression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var binaryExpression = expression as BinaryExpression;
 			var leftFn = binaryExpression != null ? Expression(binaryExpression.Left, constantsExprs, localsExprs) : null;
@@ -815,8 +851,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
-
-		private static Func<Closure, object> Binary(BinaryExpression binaryExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
+		private static ExecuteFunc Binary(BinaryExpression binaryExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
 			var leftFn = Expression(binaryExpression.Left, constantsExprs, localsExprs);
 			var rightFn = Expression(binaryExpression.Right, constantsExprs, localsExprs);

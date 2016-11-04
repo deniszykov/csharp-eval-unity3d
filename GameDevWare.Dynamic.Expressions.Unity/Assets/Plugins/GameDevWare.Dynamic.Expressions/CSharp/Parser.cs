@@ -41,7 +41,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var tokenPrecedenceList = (new[]
 			{
 				// Primary
-				new[] {TokenType.Resolve, TokenType.Call, TokenType.Typeof, TokenType.Default },
+				new[] {TokenType.Resolve, TokenType.NullResolve, TokenType.Call, TokenType.Typeof, TokenType.Default },
 				// New
 				new[] { TokenType.New },
 				// Unary
@@ -111,7 +111,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					if (ct == 0 && UnaryReplacement.ContainsKey((int)token.Type))
 						token = new Token((TokenType)UnaryReplacement[(int)token.Type], token.Value, token.LineNumber, token.ColumnNumber, token.TokenLength);
 
-					if ((token.Type == TokenType.Lparen && ct > 0) || token.Type == TokenType.Lbracket)
+					if ((token.Type == TokenType.Lparen && ct > 0) || token.Type == TokenType.Lbracket || token.Type == TokenType.NullIndex)
 					{
 						var callToken = new Token(TokenType.Call, token.Value, token.LineNumber, token.ColumnNumber, token.TokenLength);
 						token = new Token(TokenType.Arguments, token.Value, token.LineNumber, token.ColumnNumber, token.TokenLength);
@@ -167,6 +167,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.Eq:
 						case TokenType.Neq:
 						case TokenType.Resolve:
+						case TokenType.NullResolve:
 						case TokenType.Coalesce:
 						case TokenType.Colon:
 						case TokenType.Is:
@@ -222,6 +223,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							this.CombineTernary(node.Lexeme);
 							changed = true;
 							break;
+						case TokenType.NullIndex:
 						case TokenType.Lbracket:
 						case TokenType.Lparen:
 						case TokenType.Arguments:
@@ -236,7 +238,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								this.CheckAndConsumeToken(token.Position, TokenType.Comma);
 							}
 							this.CheckAndConsumeToken(token.Position, TokenType.Rparen, TokenType.Rbracket);
-							if (token.Type == TokenType.Lparen && ct == 0 && node.Childs.Count == 1 && (node.Childs.First().Type == TokenType.Identifier || node.Childs.First().Type == TokenType.Resolve))
+							if (token.Type == TokenType.Lparen && ct == 0 && node.Childs.Count == 1 && (node.Childs.First().Type == TokenType.Identifier || node.Childs.First().Type == TokenType.Resolve || node.Childs.First().Type == TokenType.NullResolve))
 							{
 								node = new ParserNode(TokenType.Convert, node.Lexeme, node.Value, node.Childs);
 								if (this.Expression(node, term) && this.stack.Any(n => n.Childs == node.Childs))

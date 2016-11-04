@@ -96,6 +96,17 @@ namespace GameDevWare.Dynamic.Expressions
 
 		private Type GetTypeInternal(string name, bool throwOnError)
 		{
+			var arrayDepth = 0;
+			var end = name.Length;
+			while (end > 2 && string.CompareOrdinal(name, end - 2, "[]", 0, 2) == 0)
+			{
+				arrayDepth++;
+				end -= 2;
+			}
+
+			if (arrayDepth != 0)
+				name = name.Substring(0, name.Length - arrayDepth * 2);
+
 			var foundTypes = default(Type[]);
 			if (knownTypesByFullName.TryGetValue(name, out foundTypes) == false)
 				knownTypesByName.TryGetValue(name, out foundTypes);
@@ -107,8 +118,11 @@ namespace GameDevWare.Dynamic.Expressions
 				throw new ArgumentException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, name, string.Join(", ", this.knownTypesByFullName.Keys.ToArray())), "name");
 			else if (foundTypes.Length > 1 && throwOnError)
 				throw new ArgumentException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE, name, string.Join(", ", Array.ConvertAll(foundTypes, t => t.FullName))), "name");
-			else
-				return foundTypes.FirstOrDefault();
+
+			var foundType = foundTypes.FirstOrDefault();
+			while (foundType != null && arrayDepth-- > 0)
+				foundType = foundType.MakeArrayType();
+			return foundType;
 		}
 
 		private HashSet<Type> GetKnownTypes(IEnumerable<Type> types)

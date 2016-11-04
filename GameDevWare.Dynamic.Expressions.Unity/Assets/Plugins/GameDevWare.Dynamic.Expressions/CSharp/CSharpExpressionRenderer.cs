@@ -11,6 +11,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 {
 	public static class CSharpExpressionRenderer
 	{
+		private static readonly IFormatProvider Format = CultureInfo.InvariantCulture;
 		private static readonly ReadOnlyDictionary<string, object> EmptyArguments = ReadOnlyDictionary<string, object>.Empty;
 
 		public static string Render(this ExpressionTree node, bool checkedScope = CSharpExpression.DefaultCheckedScope)
@@ -366,13 +367,21 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (node.TryGetValue(ExpressionTree.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out propertyOrFieldNameObj) == false || propertyOrFieldNameObj is string == false)
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, ExpressionTree.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, "PropertyOrField"));
 
+			var nullPropagationObj = default(object);
+			if (node.TryGetValue(ExpressionTree.USE_NULL_PROPAGATION_ATTRIBUTE, out nullPropagationObj) == false)
+				nullPropagationObj = "false";
+
 			var propertyOrFieldName = (string)propertyOrFieldNameObj;
 			var expression = (ExpressionTree)expressionObj;
+			var useNullPropagation = Convert.ToBoolean(nullPropagationObj, Format);
 
 			if (expression != null)
 			{
 				Render(expression, builder, false, checkedScope);
-				builder.Append(".");
+				if (useNullPropagation)
+					builder.Append("?.");
+				else
+					builder.Append(".");
 			}
 			builder.Append(propertyOrFieldName);
 		}
@@ -502,11 +511,16 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (node.TryGetValue(ExpressionTree.ARGUMENTS_ATTRIBUTE, out argumentsObj) && argumentsObj != null && argumentsObj is ExpressionTree == false)
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, ExpressionTree.ARGUMENTS_ATTRIBUTE, expressionType));
 
+			var useNullPropagation = false;
+			var useNullPropagationObj = default(object);
+			if (node.TryGetValue(ExpressionTree.USE_NULL_PROPAGATION_ATTRIBUTE, out useNullPropagationObj) && useNullPropagationObj != null)
+				useNullPropagation = Convert.ToBoolean(useNullPropagationObj, Format);
+
 			var expression = (ExpressionTree)expressionObj;
 			var arguments = (ExpressionTree)argumentsObj ?? EmptyArguments;
 
 			Render(expression, builder, false, checkedScope);
-			builder.Append(expressionType == "Invoke" ? "(" : "[");
+			builder.Append(expressionType == "Invoke" ? "(" : (useNullPropagation ? "?[" : "["));
 			RenderArguments(arguments, builder, checkedScope);
 			builder.Append(expressionType == "Invoke" ? ")" : "]");
 		}
@@ -856,6 +870,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			else
 			{
 				Render(expression.Object, builder, false, checkedScope);
+				builder.Append(".");
 			}
 			builder.Append(expression.Method.Name);
 			builder.Append("(");
@@ -908,7 +923,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			if (expression.Value == null)
 			{
-				builder.Append("null");
+				builder.Append("default(");
+				RenderType(expression.Type, builder);
+				builder.Append(")");
 				return;
 			}
 

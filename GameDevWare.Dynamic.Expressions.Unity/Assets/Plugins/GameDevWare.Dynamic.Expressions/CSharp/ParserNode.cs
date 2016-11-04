@@ -32,6 +32,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private static readonly Dictionary<int, string> ExpressionTypeByToken = new Dictionary<int, string>
 		{
 			{ (int)TokenType.Resolve, "PropertyOrField" },
+			{ (int)TokenType.NullResolve, "PropertyOrField" },
 			{ (int)TokenType.Identifier, "PropertyOrField" },
 			{ (int)TokenType.Literal, "Constant" },
 			{ (int)TokenType.Number, "Constant" },
@@ -130,18 +131,20 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 				switch (this.Type)
 				{
+					case TokenType.NullResolve:
 					case TokenType.Resolve:
 						Ensure(this, 2, TokenType.None, TokenType.Identifier);
 						node[ExpressionTree.EXPRESSION_ATTRIBUTE] = this.Childs[0].ToExpressionTree(checkedScope);
 						node[ExpressionTree.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = this.Childs[1].Value;
+						node[ExpressionTree.USE_NULL_PROPAGATION_ATTRIBUTE] = this.Type == TokenType.NullResolve ? ExpressionTree.TrueConst : ExpressionTree.FalseConst;
 						break;
 					case TokenType.Identifier:
 						if (this.Value == "true" || this.Value == "false" || this.Value == "null")
 						{
 							node[ExpressionTree.EXPRESSION_TYPE_ATTRIBUTE] = ExpressionTypeByToken[(int)TokenType.Literal]; // constant
 							node[ExpressionTree.TYPE_ATTRIBUTE] = this.Value == "null" ? "Object" : "Boolean";
-							node[ExpressionTree.VALUE_ATTRIBUTE] = this.Value == "true" ? (object)true :
-																	this.Value == "false" ? (object)false : null;
+							node[ExpressionTree.VALUE_ATTRIBUTE] = this.Value == "true" ? ExpressionTree.TrueConst :
+																	this.Value == "false" ? ExpressionTree.FalseConst : null;
 						}
 						node[ExpressionTree.EXPRESSION_ATTRIBUTE] = null;
 						node[ExpressionTree.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = this.Value;
@@ -245,11 +248,16 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case TokenType.Call:
 						Ensure(this, 1);
 
-						if (this.Value == "[")
+						var isNullPropagation = false;
+						if (this.Value == "[" || this.Value == "?[")
+						{
 							node[ExpressionTree.EXPRESSION_TYPE_ATTRIBUTE] = ExpressionTypeByToken[(int)TokenType.Lbracket];
+							isNullPropagation = this.Value == "?[";
+						}
 
 						node[ExpressionTree.EXPRESSION_ATTRIBUTE] = this.Childs[0].ToExpressionTree(checkedScope);
 						node[ExpressionTree.ARGUMENTS_ATTRIBUTE] = PrepareArguments(this, checkedScope);
+						node[ExpressionTree.USE_NULL_PROPAGATION_ATTRIBUTE] = isNullPropagation ? ExpressionTree.TrueConst : ExpressionTree.FalseConst;
 						break;
 					case TokenType.New:
 						Ensure(this, 1, TokenType.Call);
@@ -292,6 +300,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					break;
 				case TokenType.Resolve:
 					typeName = this.Childs[0].ToTypeName(denyAliases: true) + "." + this.Childs[1].ToTypeName(denyAliases: true);
+					break;
+				case TokenType.Call:
+					if (this.Childs.Count != 2 || this.Value != "[" || this.Childs[1].Childs.Count != 0) // array syntax
+						goto default;
+					typeName = this.Childs[0].ToTypeName(denyAliases) + "[]";
 					break;
 				default: throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_TYPENAMEEXPECTED, this);
 			}
