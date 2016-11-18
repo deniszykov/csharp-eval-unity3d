@@ -156,7 +156,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 				var result = (ResultT)compiledFn(closure);
 				Array.Clear(locals, 0, locals.Length);
-				Array.Clear(constants, 0, constants.Length);
+				
 				return result;
 			});
 		}
