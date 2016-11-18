@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using GameDevWare.Dynamic.Expressions.CSharp;
 
 namespace GameDevWare.Dynamic.Expressions
 {
@@ -75,6 +76,14 @@ namespace GameDevWare.Dynamic.Expressions
 			else
 				value = (T)valueObj;
 			return value;
+		}
+
+		public override string ToString()
+		{
+			var expression = this.OriginalExpression;
+			if (string.IsNullOrEmpty(expression))
+				expression = this.Render();
+			return expression;
 		}
 	}
 }
