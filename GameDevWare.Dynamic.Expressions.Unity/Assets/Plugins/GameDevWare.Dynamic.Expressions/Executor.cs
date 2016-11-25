@@ -156,7 +156,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 				var result = (ResultT)compiledFn(closure);
 				Array.Clear(locals, 0, locals.Length);
-				
+
 				return result;
 			});
 		}
@@ -337,29 +337,23 @@ namespace GameDevWare.Dynamic.Expressions
 
 		private static ExecuteFunc Conditional(ConditionalExpression conditionalExpression, ConstantExpression[] constantsExprs, ParameterExpression[] localsExprs)
 		{
-			var testAsNotEqual = conditionalExpression.Test as BinaryExpression;
-			var testAsNotEqualRightConst = testAsNotEqual != null ? testAsNotEqual.Right as ConstantExpression : null;
-			var ifFalseConst = conditionalExpression.IfFalse as ConstantExpression;
-			var ifTrueUnwrapped = conditionalExpression.IfTrue.NodeType == ExpressionType.Convert ? ((UnaryExpression)conditionalExpression.IfTrue).Operand : conditionalExpression.IfTrue;
-			var ifTrueCall = ifTrueUnwrapped as MethodCallExpression;
-			var ifTrueMember = ifTrueUnwrapped as MemberExpression;
-			var ifTrueIndex = ifTrueUnwrapped as BinaryExpression;
-
+			var baseExpression = default(Expression);
+			var continuationExpression = default(Expression);
 			// try to detect null-propagation operation
-			if (testAsNotEqual != null && testAsNotEqualRightConst != null && testAsNotEqualRightConst.Value == null &&
-				ifFalseConst != null && ifFalseConst.Value == null &&
-				(
-					(ifTrueCall != null && ReferenceEquals(ifTrueCall.Object, testAsNotEqual.Left)) ||
-					(ifTrueMember != null && ReferenceEquals(ifTrueMember.Expression, testAsNotEqual.Left)) ||
-					(ifTrueIndex != null && ReferenceEquals(ifTrueIndex.Left, testAsNotEqual.Left))
-				)
-			)
+			if (ExpressionBuilder.ExtractNullPropagationExpression(conditionalExpression, out baseExpression, out continuationExpression))
 			{
-				var slot1ParameterExpression = ConstantExpression.Parameter(testAsNotEqual.Left.Type, "slot1");
-				var baseFn = Expression(testAsNotEqual.Left, constantsExprs, localsExprs);
-				var continueFn = Expression(ifTrueCall != null ? ConstantExpression.Call(slot1ParameterExpression, ifTrueCall.Method, ifTrueCall.Arguments) :
-									ifTrueMember != null ? ConstantExpression.MakeMemberAccess(slot1ParameterExpression, ifTrueMember.Member) :
-									(Expression)ConstantExpression.MakeBinary(ExpressionType.ArrayIndex, slot1ParameterExpression, ifTrueIndex.Right), constantsExprs, localsExprs);
+				var methodCallExpression = continuationExpression as MethodCallExpression;
+				var memberExpression = continuationExpression as MemberExpression;
+				var indexExpression = continuationExpression as BinaryExpression;
+
+				if (indexExpression == null && methodCallExpression == null && memberExpression == null)
+					throw new InvalidOperationException(string.Format("Unknown null-propagation pattern met: {0}?.{1}.", baseExpression.NodeType, continuationExpression.NodeType));
+
+				var slot1ParameterExpression = ConstantExpression.Parameter(baseExpression.Type, "slot1");
+				var baseFn = Expression(baseExpression, constantsExprs, localsExprs);
+				var continueFn = Expression(methodCallExpression != null ? ConstantExpression.Call(slot1ParameterExpression, methodCallExpression.Method, methodCallExpression.Arguments) :
+									memberExpression != null ? ConstantExpression.MakeMemberAccess(slot1ParameterExpression, memberExpression.Member) :
+									(Expression)ConstantExpression.MakeBinary(ExpressionType.ArrayIndex, slot1ParameterExpression, indexExpression.Right), constantsExprs, localsExprs);
 
 				return closure =>
 				{

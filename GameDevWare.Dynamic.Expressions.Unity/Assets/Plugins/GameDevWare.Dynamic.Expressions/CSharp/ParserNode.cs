@@ -46,6 +46,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{ (int)TokenType.Compl, "Complement" },
 			{ (int)TokenType.Div, "Divide" },
 			{ (int)TokenType.Mul, "Multiply" },
+			{ (int)TokenType.Pow, "Power" },
 			{ (int)TokenType.Mod, "Modulo" },
 			{ (int)TokenType.Add, "Add" },
 			{ (int)TokenType.Subtract, "Subtract" },
@@ -216,6 +217,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						break;
 					case TokenType.Div:
 					case TokenType.Mul:
+					case TokenType.Pow:
 					case TokenType.Mod:
 					case TokenType.Add:
 					case TokenType.Subtract:

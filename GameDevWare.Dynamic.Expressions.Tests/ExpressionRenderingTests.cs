@@ -77,6 +77,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 		[Theory]
 		[InlineData("2 * 2", 2 * 2)]
+		[InlineData("2 ** 2", 2 * 2)]
 		[InlineData("2 + 2", 2 + 2)]
 		[InlineData("2 * 2 + 3", 2 * 2 + 3)]
 		[InlineData("2 + 2 * 3", 2 + 2 * 3)]

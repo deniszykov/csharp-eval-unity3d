@@ -314,6 +314,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("(SByte)5 % (SByte)2", 5 % 2)]
 		[InlineData("unchecked((SByte)127 * (SByte)2)", unchecked((127 * 2)))]
 		[InlineData("(SByte)2 * (SByte)2", (2 * 2))]
+		[InlineData("(SByte)2 ** (SByte)2", (2 * 2))]
 		// uint8
 		[InlineData("(Byte)2 + (Byte)2", (2 + 2))]
 		[InlineData("unchecked((Byte)256 + (Byte)2)", unchecked(((byte)256 + 2)))]
@@ -334,6 +335,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("(Byte)5 % (Byte)2", 5 % 2)]
 		[InlineData("unchecked((Byte)256 * (Byte)2)", unchecked(((byte)256 * 2)))]
 		[InlineData("(Byte)2 * (Byte)2", (2 * 2))]
+		[InlineData("(Byte)2 ** (Byte)2", (2 * 2))]
 		// int16
 		[InlineData("(Int16)2 + (Int16)2", (2 + 2))]
 		[InlineData("unchecked((Int16)32767 + (Int16)2)", unchecked((32767 + 2)))]
@@ -354,6 +356,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("(Int16)5 % (Int16)2", 5 % 2)]
 		[InlineData("unchecked((Int16)32767 * (Int16)2)", unchecked((32767 * 2)))]
 		[InlineData("(Int16)2 * (Int16)2", (2 * 2))]
+		[InlineData("(Int16)2 ** (Int16)2", (2 * 2))]
 		// int16
 		[InlineData("(UInt16)2 + (UInt16)2", (2 + 2))]
 		[InlineData("unchecked((UInt16)65535 + (UInt16)2)", unchecked((65535 + 2)))]
@@ -374,6 +377,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("(UInt16)5 % (UInt16)2", 5 % 2)]
 		[InlineData("unchecked((UInt16)65535 * (UInt16)2)", unchecked((65535 * 2)))]
 		[InlineData("(UInt16)2 * (UInt16)2", (2 * 2))]
+		[InlineData("(UInt16)2 ** (UInt16)2", (2 * 2))]
 		// int32
 		[InlineData("2 + 2", (2 + 2))]
 		[InlineData("unchecked(2147483647 + 2)", unchecked(2147483647 + 2))]
@@ -394,6 +398,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("5 % 2", 5 % 2)]
 		[InlineData("unchecked(2147483647 * 2)", unchecked(2147483647 * 2))]
 		[InlineData("2 * 2", (2 * 2))]
+		[InlineData("2 ** 2", (2 * 2))]
 		// uint
 		[InlineData("2u + 2u", (2u + 2u))]
 		[InlineData("unchecked(4294967295u + 2u)", unchecked(4294967295u + 2u))]
@@ -414,6 +419,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("5u % 2u", 5u % 2u)]
 		[InlineData("unchecked(4294967295u * 2u)", unchecked(4294967295u * 2u))]
 		[InlineData("2u * 2u", (2u * 2u))]
+		[InlineData("2u ** 2u", (2u * 2u))]
 		// int64
 		[InlineData("2L + 2L", (2L + 2L))]
 		[InlineData("unchecked(9223372036854775807L + 2L)", unchecked(9223372036854775807L + 2L))]
@@ -434,6 +440,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("5L % 2L", 5L % 2L)]
 		[InlineData("unchecked(9223372036854775807L * 2L)", unchecked(9223372036854775807L * 2L))]
 		[InlineData("2L * 2L", (2L * 2L))]
+		[InlineData("2L ** 2L", (2L * 2L))]
 		// uin64
 		[InlineData("2UL + 2UL", (2UL + 2UL))]
 		[InlineData("unchecked(18446744073709551615UL + 2UL)", unchecked(18446744073709551615UL + 2UL))]
@@ -454,6 +461,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("5UL % 2UL", 5UL % 2UL)]
 		[InlineData("unchecked(18446744073709551615UL * 2UL)", unchecked(18446744073709551615UL * 2UL))]
 		[InlineData("2UL * 2UL", (2UL * 2UL))]
+		[InlineData("2UL ** 2UL", (2UL * 2UL))]
 		// single
 		[InlineData("2f + 2f", (2f + 2f))]
 		[InlineData("unchecked(18446744073709551615f + 2f)", unchecked(18446744073709551615f + 2f))]
@@ -469,6 +477,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("5f % 2f", 5f % 2f)]
 		[InlineData("18446744073709551615f * 2f", unchecked(18446744073709551615f * 2f))]
 		[InlineData("2f * 2f", (2f * 2f))]
+		[InlineData("2f ** 2f", (2f * 2f))]
 		// double
 		[InlineData("2d + 2d", (2d + 2d))]
 		[InlineData("unchecked(18446744073709551615d + 2d)", unchecked(18446744073709551615d + 2d))]
@@ -484,6 +493,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("5d % 2d", 5d % 2d)]
 		[InlineData("unchecked(18446744073709551615d * 2d)", unchecked(18446744073709551615d * 2d))]
 		[InlineData("2d * 2d", (2d * 2d))]
+		[InlineData("2d ** 2d", (2d * 2d))]
 		public void BinaryTest(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
@@ -501,6 +511,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("5m % 2m", 5L % 2L)]
 		[InlineData("unchecked(2147483647m * 2m)", unchecked(2147483647L * 2L))]
 		[InlineData("2m * 2m", (2L * 2L))]
+		[InlineData("2 ** 2", (2L * 2L))]
 		public void DecimalTest(string expression, object expectedInt64)
 		{
 			var expressionFn = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: true);

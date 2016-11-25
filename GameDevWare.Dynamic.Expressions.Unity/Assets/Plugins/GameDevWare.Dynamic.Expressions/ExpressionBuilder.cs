@@ -236,6 +236,29 @@ namespace GameDevWare.Dynamic.Expressions
 
 						return Expression.Multiply(operand, negativeConst);
 					}
+					// fix Power variants
+					else if
+					(
+						methodArguments.Length == 2 &&
+						methodArguments[0] is Expression &&
+						methodArguments[1] is Expression &&
+						(
+							((Expression)methodArguments[0]).Type != typeof(double) ||
+							((Expression)methodArguments[1]).Type != typeof(double)
+						) &&
+						string.Equals(expressionType, "Power", StringComparison.Ordinal)
+					)
+					{						
+						return Expression.ConvertChecked
+						(
+							expression: Expression.Power
+							(
+								left: Expression.ConvertChecked((Expression)methodArguments[0], typeof(double)),
+								right: Expression.ConvertChecked((Expression)methodArguments[1], typeof(double))
+							),
+							type: ((Expression)methodArguments[0]).Type
+						);
+					}
 					else
 					{
 						return (Expression)method.Invoke(null, methodArguments);
@@ -1176,7 +1199,7 @@ namespace GameDevWare.Dynamic.Expressions
 			else
 				return Expression.Constant(null, forType);
 		}
-		private Expression MakeNullPropagationExpression(Expression testExpression, Expression notNullExpression)
+		private static Expression MakeNullPropagationExpression(Expression testExpression, Expression notNullExpression)
 		{
 			if (!IsNullableType(testExpression.Type)) // no need in null propagation
 				return notNullExpression;
@@ -1191,6 +1214,42 @@ namespace GameDevWare.Dynamic.Expressions
 				ifTrue: notNullExpression,
 				ifFalse: DefaultExpression(notNullExpression.Type)
 			);
+		}
+
+		internal static bool ExtractNullPropagationExpression(ConditionalExpression conditionalExpression, out Expression baseExpression, out Expression continuationExpression)
+		{
+			if (conditionalExpression == null) throw new ArgumentNullException("conditionalExpression");
+
+			var testAsNotEqual = conditionalExpression.Test as BinaryExpression;
+			var testAsNotEqualRightConst = testAsNotEqual != null ? testAsNotEqual.Right as ConstantExpression : null;
+			var ifFalseConst = conditionalExpression.IfFalse as ConstantExpression;
+			var ifTrueUnwrapped = conditionalExpression.IfTrue.NodeType == ExpressionType.Convert ? ((UnaryExpression)conditionalExpression.IfTrue).Operand : conditionalExpression.IfTrue;
+			var ifTrueCall = ifTrueUnwrapped as MethodCallExpression;
+			var ifTrueMember = ifTrueUnwrapped as MemberExpression;
+			var ifTrueIndex = ifTrueUnwrapped as BinaryExpression;
+
+			// try to detect null-propagation operation
+			if (testAsNotEqual != null && testAsNotEqualRightConst != null && testAsNotEqualRightConst.Value == null &&
+				ifFalseConst != null && ifFalseConst.Value == null &&
+				(
+					(ifTrueCall != null && ReferenceEquals(ifTrueCall.Object, testAsNotEqual.Left)) ||
+					(ifTrueMember != null && ReferenceEquals(ifTrueMember.Expression, testAsNotEqual.Left)) ||
+					(ifTrueIndex != null && ReferenceEquals(ifTrueIndex.Left, testAsNotEqual.Left))
+				)
+			)
+			{
+				baseExpression = testAsNotEqual.Left;
+				continuationExpression = ifTrueUnwrapped;
+
+				return true;
+			}
+			else
+			{
+				baseExpression = null;
+				continuationExpression = null;
+
+				return false;
+			}
 		}
 	}
 }

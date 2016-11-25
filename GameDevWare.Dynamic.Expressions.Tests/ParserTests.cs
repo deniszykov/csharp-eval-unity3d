@@ -40,6 +40,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a - b", TokenType.Subtract)]
 		[InlineData("-a", TokenType.Minus)]
 		[InlineData("a * b", TokenType.Mul)]
+		[InlineData("a ** b", TokenType.Pow)]
 		[InlineData("a / b", TokenType.Div)]
 		[InlineData("a % b", TokenType.Mod)]
 		[InlineData("a & b", TokenType.And)]

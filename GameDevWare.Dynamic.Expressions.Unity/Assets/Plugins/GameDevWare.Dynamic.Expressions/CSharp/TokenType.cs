@@ -33,6 +33,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		Div,
 		[Token("*")]
 		Mul,
+		[Token("**")]
+		Pow,
 		[Token("%")]
 		Mod,
 		// bitwise

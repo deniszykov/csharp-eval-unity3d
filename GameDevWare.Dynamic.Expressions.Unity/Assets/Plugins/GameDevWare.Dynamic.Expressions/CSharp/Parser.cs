@@ -47,7 +47,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				// Unary
 				new[] {TokenType.Plus, TokenType.Minus, TokenType.Not, TokenType.Compl, TokenType.Convert},
 				// Multiplicative
-				new[] {TokenType.Div, TokenType.Mul, TokenType.Mod},
+				new[] {TokenType.Div, TokenType.Mul, TokenType.Pow, TokenType.Mod},
 				// Additive
 				new[] {TokenType.Add, TokenType.Subtract},
 				// Shift
@@ -152,6 +152,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.Subtract:
 						case TokenType.Div:
 						case TokenType.Mul:
+						case TokenType.Pow:
 						case TokenType.Mod:
 						case TokenType.And:
 						case TokenType.Or:
