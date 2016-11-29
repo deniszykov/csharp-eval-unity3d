@@ -169,5 +169,10 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return foundTypes;
 		}
+
+		public override string ToString()
+		{
+			return this.GetType().Name + ": " + string.Join(", ", this.knownTypesByName.Keys.ToArray()) + (this.otherTypeResolutionService != null ? " -> " + this.otherTypeResolutionService : string.Empty);
+		}
 	}
 }

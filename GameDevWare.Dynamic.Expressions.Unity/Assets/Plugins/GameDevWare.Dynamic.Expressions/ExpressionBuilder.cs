@@ -248,7 +248,7 @@ namespace GameDevWare.Dynamic.Expressions
 						) &&
 						string.Equals(expressionType, "Power", StringComparison.Ordinal)
 					)
-					{						
+					{
 						return Expression.ConvertChecked
 						(
 							expression: Expression.Power
@@ -333,29 +333,36 @@ namespace GameDevWare.Dynamic.Expressions
 
 			var isStatic = expression == null;
 			var memberAccessExpression = default(Expression);
-			foreach (var member in GetMembers(type, isStatic))
+			if (isStatic && type.IsEnum)
 			{
-				if (member is PropertyInfo == false && member is FieldInfo == false)
-					continue;
-				if (member.Name != propertyOrFieldName)
-					continue;
+				memberAccessExpression = Expression.Constant(Enum.Parse(type, propertyOrFieldName, ignoreCase: false), type);
+			}
+			else
+			{
+				foreach (var member in GetMembers(type, isStatic))
+				{
+					if (member is PropertyInfo == false && member is FieldInfo == false)
+						continue;
+					if (member.Name != propertyOrFieldName)
+						continue;
 
-				try
-				{
-					if (member is PropertyInfo)
+					try
 					{
-						memberAccessExpression = Expression.Property(expression, member as PropertyInfo);
-						break;
+						if (member is PropertyInfo)
+						{
+							memberAccessExpression = Expression.Property(expression, member as PropertyInfo);
+							break;
+						}
+						else
+						{
+							memberAccessExpression = Expression.Field(expression, member as FieldInfo);
+							break;
+						}
 					}
-					else
+					catch (Exception exception)
 					{
-						memberAccessExpression = Expression.Field(expression, member as FieldInfo);
-						break;
+						throw new ExpressionParserException(exception.Message, exception, node);
 					}
-				}
-				catch (Exception exception)
-				{
-					throw new ExpressionParserException(exception.Message, exception, node);
 				}
 			}
 
@@ -1154,7 +1161,7 @@ namespace GameDevWare.Dynamic.Expressions
 			typeName = default(string);
 			if (value is ExpressionTree)
 			{
-				var typeNameParts = new List<string>();
+				var typeNameParts = default(List<string>);
 				var current = (ExpressionTree)value;
 				while (current != null)
 				{
@@ -1175,8 +1182,9 @@ namespace GameDevWare.Dynamic.Expressions
 						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, ExpressionTree.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, "PropertyOrField"), current);
 
 					var typeNamePart = (string)typeNamePartObj;
+					if (typeNameParts == null) typeNameParts = new List<string>();
 					typeNameParts.Add(typeNamePart);
-					current = expressionObj as ExpressionTree;
+					current = (ExpressionTree)expressionObj;
 				}
 
 				typeNameParts.Reverse();
