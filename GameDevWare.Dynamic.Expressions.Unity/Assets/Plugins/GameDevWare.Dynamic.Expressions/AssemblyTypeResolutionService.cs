@@ -27,16 +27,19 @@ namespace GameDevWare.Dynamic.Expressions
 		public static readonly AssemblyTypeResolutionService UnityEngine = new AssemblyTypeResolutionService(typeof(UnityEngine.Application).Assembly);
 #endif
 
+		public AssemblyTypeResolutionService(params Assembly[] assemblies)
+			: this((IEnumerable<Assembly>)assemblies, null)
+		{
+
+		}
 		public AssemblyTypeResolutionService(IEnumerable<Assembly> assemblies)
-			: base((assemblies ?? Enumerable.Empty<Assembly>()).SelectMany(a => a.GetTypes()).Where(t => t.IsPublic))
+			: this(assemblies, null)
+		{
+		}
+		public AssemblyTypeResolutionService(IEnumerable<Assembly> assemblies, ITypeResolutionService otherTypeResolutionService)
+			: base((assemblies ?? Enumerable.Empty<Assembly>()).SelectMany(a => a.GetTypes()).Where(t => t.IsPublic), otherTypeResolutionService)
 		{
 			if (assemblies == null) throw new ArgumentNullException("assemblies");
-		}
-
-		public AssemblyTypeResolutionService(params Assembly[] assemblies)
-			: this((IEnumerable<Assembly>)assemblies)
-		{
-
 		}
 	}
 }

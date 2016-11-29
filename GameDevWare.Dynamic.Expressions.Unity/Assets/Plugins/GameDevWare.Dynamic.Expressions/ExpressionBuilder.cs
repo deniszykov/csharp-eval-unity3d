@@ -82,7 +82,7 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			if (resultType == null) throw new ArgumentNullException("resultType");
 			if (parameters == null) throw new ArgumentNullException("parameters");
-			if (typeResolutionService == null) typeResolutionService = DefaultTypeResolutionService ?? new KnownTypeResolutionService(parameters.Select(p => p.Type));
+			if (typeResolutionService == null) typeResolutionService = new KnownTypeResolutionService(parameters.Select(p => p.Type), DefaultTypeResolutionService);
 
 			if (parameters is ReadOnlyCollection<ParameterExpression> == false)
 				parameters = new ReadOnlyCollection<ParameterExpression>(parameters);

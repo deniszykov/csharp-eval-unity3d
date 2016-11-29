@@ -24,11 +24,11 @@ namespace GameDevWare.Dynamic.Expressions
 	public class KnownTypeResolutionService : ITypeResolutionService
 	{
 		public static readonly HashSet<Type> BuildInTypes;
-
 		public static readonly KnownTypeResolutionService Default;
 
 		private readonly Dictionary<string, Type[]> knownTypesByFullName;
 		private readonly Dictionary<string, Type[]> knownTypesByName;
+		private readonly ITypeResolutionService otherTypeResolutionService;
 
 		static KnownTypeResolutionService()
 		{
@@ -71,7 +71,10 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 
 		}
-		public KnownTypeResolutionService(IEnumerable<Type> knownTypes)
+		public KnownTypeResolutionService(IEnumerable<Type> knownTypes) : this(knownTypes, null)
+		{
+		}
+		public KnownTypeResolutionService(IEnumerable<Type> knownTypes, ITypeResolutionService otherTypeResolutionService)
 		{
 			if (knownTypes == null) knownTypes = Type.EmptyTypes;
 
@@ -82,6 +85,7 @@ namespace GameDevWare.Dynamic.Expressions
 			this.knownTypesByName = allTypes
 				.ToLookup(t => t.Name)
 				.ToDictionary(kv => kv.Key, kv => kv.ToArray());
+			this.otherTypeResolutionService = otherTypeResolutionService;
 		}
 
 		public Type GetType(string name)
@@ -122,6 +126,15 @@ namespace GameDevWare.Dynamic.Expressions
 			var foundType = foundTypes.FirstOrDefault();
 			while (foundType != null && arrayDepth-- > 0)
 				foundType = foundType.MakeArrayType();
+
+			if (foundType == null && otherTypeResolutionService != null)
+			{
+				if (throwOnError)
+					foundType = otherTypeResolutionService.GetType(name);
+				else
+					otherTypeResolutionService.TryGetType(name, out foundType);
+			}
+
 			return foundType;
 		}
 
@@ -131,7 +144,8 @@ namespace GameDevWare.Dynamic.Expressions
 
 			foreach (var type in types)
 			{
-				foundTypes.Add(type);
+				if (foundTypes.Add(type) == false)
+					continue;
 
 				foreach (var property in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
 					foundTypes.Add(property.PropertyType);
