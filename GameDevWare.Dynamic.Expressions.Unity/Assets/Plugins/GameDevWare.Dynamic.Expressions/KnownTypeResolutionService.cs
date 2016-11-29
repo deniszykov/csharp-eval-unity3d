@@ -85,6 +85,7 @@ namespace GameDevWare.Dynamic.Expressions
 			this.knownTypesByName = allTypes
 				.ToLookup(t => t.Name)
 				.ToDictionary(kv => kv.Key, kv => kv.ToArray());
+
 			this.otherTypeResolutionService = otherTypeResolutionService;
 		}
 

@@ -194,9 +194,9 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 
 				if (Array.BinarySearch(OperationWithPromotionForBothOperand, expressionType) >= 0)
-					PromoteBothNumerics(method, methodArguments);
+					PromoteBothArguments(method, methodArguments);
 				if (Array.BinarySearch(OperationWithPromotionForFirstOperand, expressionType) >= 0)
-					PromoteFirstNumeric(method, methodArguments);
+					PromoteFirstArgument(method, methodArguments);
 
 				try
 				{
@@ -966,9 +966,17 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		private static bool TryExposeConstant(Expression expression, out object constantValue, out Type constantType)
 		{
+			// unwrap conversions
+			var convertExpression = expression as UnaryExpression;
+			while (convertExpression != null && (convertExpression.NodeType == ExpressionType.Convert || convertExpression.NodeType == ExpressionType.ConvertChecked))
+			{
+				expression = convertExpression.Operand;
+				convertExpression = expression as UnaryExpression;
+			}
+
 			constantValue = null;
 			constantType = null;
-			var constantExpression = (expression as ConstantExpression);
+			var constantExpression = expression as ConstantExpression;
 			if (constantExpression == null)
 				return false;
 
@@ -997,13 +1005,14 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return type.IsValueType ? Activator.CreateInstance(type) : null;
 		}
-		private static void PromoteBothNumerics(MethodInfo method, object[] methodArguments)
+		private static void PromoteBothArguments(MethodInfo method, object[] methodArguments)
 		{
 			if (method == null) throw new ArgumentNullException("method");
 			if (methodArguments == null) throw new ArgumentNullException("methodArguments");
 
-			var left = default(Expression);
-			var right = default(Expression);
+
+			var originalLeft = default(Expression);
+			var originalRight = default(Expression);
 			var leftIdx = -1;
 			var rightIdx = -1;
 			foreach (var parameter in method.GetParameters())
@@ -1012,116 +1021,139 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					case "left":
 					case "ifTrue":
-						left = (Expression)methodArguments[parameter.Position];
+						originalLeft = (Expression)methodArguments[parameter.Position];
 						leftIdx = parameter.Position;
 						break;
 					case "right":
 					case "ifFalse":
-						right = (Expression)methodArguments[parameter.Position];
+						originalRight = (Expression)methodArguments[parameter.Position];
 						rightIdx = parameter.Position;
 						break;
 				}
 			}
 
-			if (left == null || right == null || leftIdx < 0 || rightIdx < 0)
+			if (originalLeft == null || originalRight == null || leftIdx < 0 || rightIdx < 0)
 				return;
 
-			if (left.Type.IsEnum)
-				left = Expression.Convert(left, Enum.GetUnderlyingType(left.Type));
-			if (right.Type.IsEnum)
-				right = Expression.Convert(right, Enum.GetUnderlyingType(right.Type));
+			var left = originalLeft;
+			var right = originalRight;
+			var leftType = Nullable.GetUnderlyingType(left.Type) ?? left.Type;
+			var rightType = Nullable.GetUnderlyingType(right.Type) ?? right.Type;
+			var liftToNullable = leftType != left.Type || rightType != right.Type;
 
-			//if (Nullable.GetUnderlyingType(left.Type) != null)
-			//	left = Expression.Property(left, "Value");
-			//if (Nullable.GetUnderlyingType(right.Type) != null)
-			//	right = Expression.Property(right, "Value");
+			if (liftToNullable && leftType == left.Type)
+				left = ConvertToNullable(left);
+			if (liftToNullable && rightType != right.Type)
+				right = ConvertToNullable(right);
 
-			if (left.Type == right.Type)
+			if (leftType.IsEnum)
 			{
-				var typeCode = Type.GetTypeCode(left.Type);
+				leftType = Enum.GetUnderlyingType(leftType);
+				methodArguments[leftIdx] = left = Expression.Convert(left, liftToNullable ? typeof(Nullable<>).MakeGenericType(leftType) : leftType);
+			}
+			if (rightType.IsEnum)
+			{
+				rightType = Enum.GetUnderlyingType(rightType);
+				methodArguments[rightIdx] = right = Expression.Convert(right, liftToNullable ? rightType = typeof(Nullable<>).MakeGenericType(rightType) : rightType);
+			}
+
+			if (leftType == rightType)
+			{
+				var typeCode = Type.GetTypeCode(leftType);
 				if (typeCode < TypeCode.SByte || typeCode > TypeCode.UInt16)
 					return;
 
 				// expand smaller integers to int32
-				methodArguments[leftIdx] = Expression.Convert(left, typeof(int));
-				methodArguments[rightIdx] = Expression.Convert(right, typeof(int));
+				methodArguments[leftIdx] = left = Expression.Convert(left, liftToNullable ? typeof(int?) : typeof(int));
+				methodArguments[rightIdx] = right = Expression.Convert(right, liftToNullable ? typeof(int?) : typeof(int));
 				return;
 			}
 
-			if (left.Type == typeof(object))
-				methodArguments[rightIdx] = Expression.Convert(right, typeof(object));
-			else if (right.Type == typeof(object))
-				methodArguments[leftIdx] = Expression.Convert(left, typeof(object));
+			if (leftType == typeof(object))
+			{
+				methodArguments[rightIdx] = right = Expression.Convert(right, typeof(object));
+				return;
+			}
+			else if (rightType == typeof(object))
+			{
+				methodArguments[leftIdx] = left = Expression.Convert(left, typeof(object));
+				return;
+			}
 
-			var leftType = Type.GetTypeCode(left.Type);
-			var rightType = Type.GetTypeCode(right.Type);
-			if (Array.BinarySearch(Numeric, leftType) < 0 || Array.BinarySearch(Numeric, rightType) < 0)
+			var leftTypeCode = Type.GetTypeCode(leftType);
+			var rightTypeCode = Type.GetTypeCode(rightType);
+			if (Array.BinarySearch(Numeric, leftTypeCode) < 0 || Array.BinarySearch(Numeric, rightTypeCode) < 0)
 				return;
 
-			if (leftType == TypeCode.Decimal || rightType == TypeCode.Decimal)
+			if (leftTypeCode == TypeCode.Decimal || rightTypeCode == TypeCode.Decimal)
 			{
-				if (leftType == TypeCode.Double || leftType == TypeCode.Single || rightType == TypeCode.Double || rightType == TypeCode.Single)
+				if (leftTypeCode == TypeCode.Double || leftTypeCode == TypeCode.Single || rightTypeCode == TypeCode.Double || rightTypeCode == TypeCode.Single)
 					return; // will throw exception
-				if (leftType == TypeCode.Decimal)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(decimal));
+				if (leftTypeCode == TypeCode.Decimal)
+					right = Expression.Convert(right, liftToNullable ? typeof(decimal?) : typeof(decimal));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(decimal));
+					left = Expression.Convert(left, liftToNullable ? typeof(decimal?) : typeof(decimal));
 			}
-			else if (leftType == TypeCode.Double || rightType == TypeCode.Double)
+			else if (leftTypeCode == TypeCode.Double || rightTypeCode == TypeCode.Double)
 			{
-				if (leftType == TypeCode.Double)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(double));
+				if (leftTypeCode == TypeCode.Double)
+					right = Expression.Convert(right, liftToNullable ? typeof(double?) : typeof(double));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(double));
+					left = Expression.Convert(left, liftToNullable ? typeof(double?) : typeof(double));
 			}
-			else if (leftType == TypeCode.Single || rightType == TypeCode.Single)
+			else if (leftTypeCode == TypeCode.Single || rightTypeCode == TypeCode.Single)
 			{
-				if (leftType == TypeCode.Single)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(float));
+				if (leftTypeCode == TypeCode.Single)
+					right = Expression.Convert(right, liftToNullable ? typeof(float?) : typeof(float));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(float));
+					left = Expression.Convert(left, liftToNullable ? typeof(float?) : typeof(float));
 			}
-			else if (leftType == TypeCode.UInt64)
+			else if (leftTypeCode == TypeCode.UInt64)
 			{
-				if (Array.IndexOf(SignedIntegerTypes, rightType) > 0 && TryCastTo(typeof(ulong), ref right) <= 0)
-					return; // will throw exception
-
-				methodArguments[rightIdx] = right.Type != typeof(ulong) ? Expression.Convert(right, typeof(ulong)) : right;
-			}
-			else if (rightType == TypeCode.UInt64)
-			{
-				if (Array.IndexOf(SignedIntegerTypes, leftType) > 0 && TryCastTo(typeof(ulong), ref left) <= 0)
+				if (Array.IndexOf(SignedIntegerTypes, rightTypeCode) > 0 && TryCastTo(typeof(ulong), ref right) <= 0)
 					return; // will throw exception
 
-				methodArguments[leftIdx] = left.Type != typeof(ulong) ? Expression.Convert(left, typeof(ulong)) : left;
+				var expectedRightType = liftToNullable ? typeof(ulong?) : typeof(ulong);
+				right = right.Type != expectedRightType ? Expression.Convert(right, expectedRightType) : right;
 			}
-			else if (leftType == TypeCode.Int64 || rightType == TypeCode.Int64)
+			else if (rightTypeCode == TypeCode.UInt64)
 			{
-				if (leftType == TypeCode.Int64)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(long));
+				if (Array.IndexOf(SignedIntegerTypes, leftTypeCode) > 0 && TryCastTo(typeof(ulong), ref left) <= 0)
+					return; // will throw exception
+
+				var expectedLeftType = liftToNullable ? typeof(ulong?) : typeof(ulong);
+				left = left.Type != expectedLeftType ? Expression.Convert(left, expectedLeftType) : left;
+			}
+			else if (leftTypeCode == TypeCode.Int64 || rightTypeCode == TypeCode.Int64)
+			{
+				if (leftTypeCode == TypeCode.Int64)
+					right = Expression.Convert(right, liftToNullable ? typeof(long?) : typeof(long));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(long));
+					left = Expression.Convert(left, liftToNullable ? typeof(long?) : typeof(long));
 			}
-			else if ((leftType == TypeCode.UInt32 && Array.IndexOf(SignedIntegerTypes, rightType) > 0) ||
-				(rightType == TypeCode.UInt32 && Array.IndexOf(SignedIntegerTypes, leftType) > 0))
+			else if ((leftTypeCode == TypeCode.UInt32 && Array.IndexOf(SignedIntegerTypes, rightTypeCode) > 0) ||
+				(rightTypeCode == TypeCode.UInt32 && Array.IndexOf(SignedIntegerTypes, leftTypeCode) > 0))
 			{
-				methodArguments[rightIdx] = Expression.Convert(right, typeof(long));
-				methodArguments[leftIdx] = Expression.Convert(left, typeof(long));
+				right = Expression.Convert(right, liftToNullable ? typeof(long?) : typeof(long));
+				left = Expression.Convert(left, liftToNullable ? typeof(long?) : typeof(long));
 			}
-			else if (leftType == TypeCode.UInt32 || rightType == TypeCode.UInt32)
+			else if (leftTypeCode == TypeCode.UInt32 || rightTypeCode == TypeCode.UInt32)
 			{
-				if (leftType == TypeCode.UInt32)
-					methodArguments[rightIdx] = Expression.Convert(right, typeof(uint));
+				if (leftTypeCode == TypeCode.UInt32)
+					right = Expression.Convert(right, liftToNullable ? typeof(uint?) : typeof(uint));
 				else
-					methodArguments[leftIdx] = Expression.Convert(left, typeof(uint));
+					left = Expression.Convert(left, liftToNullable ? typeof(uint?) : typeof(uint));
 			}
 			else
 			{
-				methodArguments[rightIdx] = Expression.Convert(right, typeof(int));
-				methodArguments[leftIdx] = Expression.Convert(left, typeof(int));
+				right = Expression.Convert(right, liftToNullable ? typeof(int?) : typeof(int));
+				left = Expression.Convert(left, liftToNullable ? typeof(int?) : typeof(int));
 			}
+
+			methodArguments[leftIdx] = left;
+			methodArguments[rightIdx] = right;
 		}
-		private static void PromoteFirstNumeric(MethodInfo method, object[] methodArguments)
+		private static void PromoteFirstArgument(MethodInfo method, object[] methodArguments)
 		{
 			if (method == null) throw new ArgumentNullException("method");
 			if (methodArguments == null) throw new ArgumentNullException("methodArguments");
@@ -1206,6 +1238,15 @@ namespace GameDevWare.Dynamic.Expressions
 				return Expression.Constant(Activator.CreateInstance(forType), forType);
 			else
 				return Expression.Constant(null, forType);
+		}
+		private static Expression ConvertToNullable(Expression notNullableExpression)
+		{
+			if (notNullableExpression == null) throw new ArgumentNullException("notNullableExpression");
+
+			if (notNullableExpression.Type.IsValueType && Nullable.GetUnderlyingType(notNullableExpression.Type) == null)
+				return Expression.Convert(notNullableExpression, typeof(Nullable<>).MakeGenericType(notNullableExpression.Type));
+			else
+				return notNullableExpression;
 		}
 		private static Expression MakeNullPropagationExpression(Expression testExpression, Expression notNullExpression)
 		{
