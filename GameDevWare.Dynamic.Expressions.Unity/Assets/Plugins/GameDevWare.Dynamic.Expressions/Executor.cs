@@ -2,15 +2,15 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 
@@ -619,7 +619,8 @@ namespace GameDevWare.Dynamic.Expressions
 					source[i] = valuesFns[i](closure);
 
 				var args = source.Take(newExpression.Constructor.GetParameters().Length).ToArray();
-				var instance = Activator.CreateInstance(newExpression.Type, args);
+				var typeToCreate = Nullable.GetUnderlyingType(newExpression.Type) ?? newExpression.Type;
+				var instance = Activator.CreateInstance(typeToCreate, args);
 
 				if (newExpression.Members != null)
 				{
@@ -720,14 +721,14 @@ namespace GameDevWare.Dynamic.Expressions
 					m.GetParameters()[0].ParameterType == convertExpression.Operand.Type)
 			);
 			var toType = Nullable.GetUnderlyingType(convertExpression.Type) ?? convertExpression.Type;
-			var toIsNullable = Nullable.GetUnderlyingType(convertExpression.Type) != null;
+			var isToTypeNullable = IsNullable(convertExpression.Type);
 			var fromType = Nullable.GetUnderlyingType(convertExpression.Operand.Type) ?? convertExpression.Operand.Type;
-			var fromIsNullable = IsNullable(convertExpression.Operand);
+			var isFromTypeNullable = IsNullable(convertExpression.Operand);
 
 			return closure =>
 			{
 				var value = closure.Unbox<object>(valueFn(closure));
-				if (value == null && (convertExpression.Type.IsValueType == false || toIsNullable))
+				if (value == null && (convertExpression.Type.IsValueType == false || isToTypeNullable))
 					return null;
 
 				var convertType = convertExpression.NodeType;
@@ -748,7 +749,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else if (fromType.IsValueType && (toType == typeof(object) || toType == typeof(ValueType) || toType.IsInterface))
 				{
 					// typecheck for box
-					return toType.IsAssignableFrom(value.GetType()) ? value : null;
+					return toType.IsInstanceOfType(value) ? value : null;
 				}
 				// to enum
 				else if (toType.IsEnum && (fromType == typeof(byte) || fromType == typeof(sbyte) ||
@@ -775,13 +776,13 @@ namespace GameDevWare.Dynamic.Expressions
 					return value;
 				}
 				// from nullable
-				if (toType.IsValueType && fromIsNullable)
+				if (toType.IsValueType && isFromTypeNullable)
 				{
 					if (value == null) throw new NullReferenceException("Attempt to unbox a null value.");
 
-					value = Intrinsics.Convert(closure, value, Nullable.GetUnderlyingType(toType) ?? toType, convertExpression.NodeType, null);
+					value = Intrinsics.Convert(closure, value, toType, convertExpression.NodeType, null);
 				}
-				else if (toType.IsAssignableFrom(fromType))
+				else if (toType.IsInstanceOfType(value))
 					return value;
 
 				return Intrinsics.Convert(closure, value, toType, convertType, convertOperator);
@@ -945,11 +946,19 @@ namespace GameDevWare.Dynamic.Expressions
 
 		private static bool IsNullable(Expression expression)
 		{
+			if (expression == null) throw new ArgumentException("expression");
+
 			var constantExpression = expression as ConstantExpression;
 			if (constantExpression != null && constantExpression.Type == typeof(Object) && constantExpression.Value == null)
 				return true;
 
-			return Nullable.GetUnderlyingType(expression.Type) != null;
+			return IsNullable(expression.Type);
+		}
+		private static bool IsNullable(Type type)
+		{
+			if (type == null) throw new ArgumentException("type");
+
+			return Nullable.GetUnderlyingType(type) != null;
 		}
 	}
 }

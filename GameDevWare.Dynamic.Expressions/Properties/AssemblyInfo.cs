@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("GameDevWare.Dynamic.Expressions")]
+[assembly: AssemblyTitle("C# Expression Parser for Unity3D")]
 [assembly: AssemblyDescription("C# expression parser and evaluator for Unity3D.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("GameDevWare")]

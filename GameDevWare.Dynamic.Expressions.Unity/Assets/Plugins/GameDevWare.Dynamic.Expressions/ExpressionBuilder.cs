@@ -2,15 +2,15 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 
@@ -1003,7 +1003,13 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
-			return type.IsValueType ? Activator.CreateInstance(type) : null;
+			var underlyingNullableType = Nullable.GetUnderlyingType(type);
+			if (underlyingNullableType != null)
+				return null;
+			else if (type.IsValueType)
+				return Activator.CreateInstance(type);
+			else
+				return null;
 		}
 		private static void PromoteBothArguments(MethodInfo method, object[] methodArguments)
 		{
@@ -1234,10 +1240,7 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			if (forType == null) throw new ArgumentNullException("forType");
 
-			if (forType.IsValueType)
-				return Expression.Constant(Activator.CreateInstance(forType), forType);
-			else
-				return Expression.Constant(null, forType);
+			return Expression.Constant(GetDefaultValue(forType), forType);
 		}
 		private static Expression ConvertToNullable(Expression notNullableExpression)
 		{
