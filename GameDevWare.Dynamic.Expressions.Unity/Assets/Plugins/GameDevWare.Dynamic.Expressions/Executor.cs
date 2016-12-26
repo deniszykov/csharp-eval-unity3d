@@ -619,8 +619,8 @@ namespace GameDevWare.Dynamic.Expressions
 					source[i] = valuesFns[i](closure);
 
 				var args = source.Take(newExpression.Constructor.GetParameters().Length).ToArray();
-				var typeToCreate = Nullable.GetUnderlyingType(newExpression.Type) ?? newExpression.Type;
-				var instance = Activator.CreateInstance(typeToCreate, args);
+				var isNullableType = IsNullable(newExpression.Type);
+				var instance = isNullableType ? null : Activator.CreateInstance(newExpression.Type, args);
 
 				if (newExpression.Members != null)
 				{
