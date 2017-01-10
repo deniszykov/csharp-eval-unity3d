@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
 
@@ -278,6 +279,46 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			{
 				Assert.Null(actual);
 			}
+		}
+
+		[Fact]
+		public void LambdaBindingTest()
+		{
+			var expected = 2;
+			var lambda = CSharpExpression.Parse<Func<int, int>>("a => a + 1").Compile().Invoke();
+			var actual = lambda.Invoke(1);
+
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaClosureBindingTest()
+		{
+			var expected = 3;
+			var lambda = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").Compile().Invoke(1);
+			var actual = lambda.Invoke(1);
+
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaBindingSubstitutionTest()
+		{
+			var expected = 2;
+			var actual = CSharpExpression.Parse<int, int>("a => a + 1", arg1Name: "arg1").Compile().Invoke(1);
+
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaConstructorBindingTest()
+		{
+			var expected = true;
+			var typeResolutionService = new KnownTypeResolutionService(typeof(TypeFilter));
+			var lambda = CSharpExpression.Parse<TypeFilter>("new TypeFilter((t, c) => t != null)", typeResolutionService).Compile().Invoke();
+			var actual = lambda.Invoke(typeof(bool), null);
+
+			Assert.Equal(expected, actual);
 		}
 	}
 }

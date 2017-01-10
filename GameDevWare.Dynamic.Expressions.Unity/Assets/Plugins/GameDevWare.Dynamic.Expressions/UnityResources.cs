@@ -93,6 +93,17 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				}
 			}
 		}
+		public static string EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "A '{0}' operator requires a second operand.";
+					default: return "EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND";
+				}
+			}
+		}
 		public static string EXCEPTION_COMPIL_NOBINARYOPONTYPE 
 		{
 			get 
@@ -145,6 +156,17 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Invalid char literal.";
 					default: return "EXCEPTION_TOKENIZER_INVALIDCHARLITERAL";
+				}
+			}
+		}
+		public static string EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unexpected token type '{0}'.";
+					default: return "EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE";
 				}
 			}
 		}
@@ -291,14 +313,25 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				}
 			}
 		}
-		public static string EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND 
+		public static string EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "A '{0}' operator requires a second operand.";
-					default: return "EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND";
+					case 0: return "An invalid children count '{1}' of node '{0}' while {2} is expected.";
+					default: return "EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE";
+				}
+			}
+		}
+		public static string EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Invalid lambda type '{0}'. A valid delegate type should be specified in lambda type declaration.";
+					default: return "EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED";
 				}
 			}
 		}
@@ -357,14 +390,14 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				}
 			}
 		}
-		public static string EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL 
+		public static string EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unexpected symbol '{0}'.";
-					default: return "EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL";
+					case 0: return "Only System.Func<> lambda types are supported.";
+					default: return "EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED";
 				}
 			}
 		}
@@ -478,14 +511,14 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				}
 			}
 		}
-		public static string EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE 
+		public static string EXCEPTION_BUILD_CLOSEDDELEGATETYPEISEXPECTED 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "An invalid children count '{1}' of node '{0}' while {2} is expected.";
-					default: return "EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE";
+					case 0: return "Invalid lambda type '{0}'. A closed delegate type is expected in lambda type declaration.";
+					default: return "EXCEPTION_BUILD_CLOSEDDELEGATETYPEISEXPECTED";
 				}
 			}
 		}
@@ -574,6 +607,28 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "A one of these '{0}' tokens are expected.";
 					default: return "EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED";
+				}
+			}
+		}
+		public static string EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unexpected symbol '{0}'.";
+					default: return "EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL";
+				}
+			}
+		}
+		public static string EXCEPTION_BUILD_INVALIDLAMBDAARGUMENTS 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Invalid argument types or count for lambda of type '{0}'.";
+					default: return "EXCEPTION_BUILD_INVALIDLAMBDAARGUMENTS";
 				}
 			}
 		}

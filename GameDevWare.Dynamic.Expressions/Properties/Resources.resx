@@ -135,11 +135,17 @@
   <data name="EXCEPTION_BUILD_BUILDFAILED" xml:space="preserve">
     <value>An error occured while trying to build '{0}' expression: {1}</value>
   </data>
+  <data name="EXCEPTION_BUILD_CLOSEDDELEGATETYPEISEXPECTED" xml:space="preserve">
+    <value>Invalid lambda type '{0}'. A closed delegate type is expected in lambda type declaration.</value>
+  </data>
   <data name="EXCEPTION_BUILD_INVALIDCHARLITERAL" xml:space="preserve">
     <value>Invalid char literal '{0}'. It should be one character length.</value>
   </data>
   <data name="EXCEPTION_BUILD_INVALIDCONSTANTEXPRESSION" xml:space="preserve">
     <value>Can't convert constant of type '{0}' to literal representation.</value>
+  </data>
+  <data name="EXCEPTION_BUILD_INVALIDLAMBDAARGUMENTS" xml:space="preserve">
+    <value>Invalid argument types or count for lambda of type '{0}'.</value>
   </data>
   <data name="EXCEPTION_BUILD_MISSINGATTRONNODE" xml:space="preserve">
     <value>Missing or wrong '{0}' attribute on one of expression nodes.</value>
@@ -183,6 +189,9 @@
   <data name="EXCEPTION_BUILD_UNKNOWNEXPRTYPE" xml:space="preserve">
     <value>Unknown expression type '{0}'.</value>
   </data>
+  <data name="EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED" xml:space="preserve">
+    <value>Invalid lambda type '{0}'. A valid delegate type should be specified in lambda type declaration.</value>
+  </data>
   <data name="EXCEPTION_COMPIL_NOBINARYOPONTYPE" xml:space="preserve">
     <value>No binary operation '{0}' is defined on type '{1}'.</value>
   </data>
@@ -191,6 +200,9 @@
   </data>
   <data name="EXCEPTION_COMPIL_NOUNARYOPONTYPE" xml:space="preserve">
     <value>No unary operation '{0}' is defined on type '{1}'.</value>
+  </data>
+  <data name="EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED" xml:space="preserve">
+    <value>Only System.Func&lt;&gt; lambda types are supported.</value>
   </data>
   <data name="EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE" xml:space="preserve">
     <value>Unknown binary expression type '{0}'.</value>
@@ -236,6 +248,9 @@
   </data>
   <data name="EXCEPTION_PARSER_UNEXPECTEDTOKEN" xml:space="preserve">
     <value>Unexpected token '{0}' in current context.</value>
+  </data>
+  <data name="EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE" xml:space="preserve">
+    <value>Unexpected token type '{0}'.</value>
   </data>
   <data name="EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE" xml:space="preserve">
     <value>Unexpected parser node met '{0}' while building expression tree.</value>

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
 
@@ -886,6 +887,46 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void NullableEquationTest(string expression, int? arg1, int? arg2, bool expected)
 		{
 			var actual = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaBindingTest()
+		{
+			var expected = 2;
+			var lambda = CSharpExpression.Parse<Func<int, int>>("a => a + 1").CompileAot(forceAot: true).Invoke();
+			var actual = lambda.Invoke(1);
+
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaClosureBindingTest()
+		{
+			var expected = 3;
+			var lambda = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
+			var actual = lambda.Invoke(1);
+
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaBindingSubstitutionTest()
+		{
+			var expected = 2;
+			var actual = CSharpExpression.Parse<int, int>("a => a + 1", arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
+
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaConstructorBindingTest()
+		{
+			var expected = true;
+			var typeResolutionService = new KnownTypeResolutionService(typeof(Func<Type, object>));
+			var lambda = CSharpExpression.Parse<TypeFilter>("new Func<Type, object>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: true).Invoke();
+			var actual = lambda.Invoke(typeof(bool), null);
+
 			Assert.Equal(expected, actual);
 		}
 	}

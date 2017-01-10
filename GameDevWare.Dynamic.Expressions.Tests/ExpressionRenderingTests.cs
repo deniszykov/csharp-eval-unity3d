@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
 using Xunit.Abstractions;
@@ -850,6 +851,54 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			expression = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").Body.Render();
 			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaBindingTest()
+		{
+			var expression = CSharpExpression.Parse<Func<int, int>>("a => a + 1").Body.Render();
+			output.WriteLine("Rendered: " + expression);
+			var expected = 2;
+			var lambda = CSharpExpression.Parse<Func<int, int>>(expression).CompileAot(forceAot: true).Invoke();
+			var actual = lambda.Invoke(1);
+
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaClosureBindingTest()
+		{
+			var expression = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").Body.Render();
+			output.WriteLine("Rendered: " + expression);
+			var expected = 3;
+			var lambda = CSharpExpression.Parse<int, Func<int, int>>(expression, arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
+			var actual = lambda.Invoke(1);
+
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaBindingSubstitutionTest()
+		{
+			var expression = CSharpExpression.Parse<Func<int, int>>("a => a + 1").Body.Render();
+			output.WriteLine("Rendered: " + expression);
+			var expected = 2;
+			var actual = CSharpExpression.Parse<int, int>(expression, arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
+
+			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void LambdaConstructorBindingTest()
+		{
+			var typeResolutionService = new KnownTypeResolutionService(typeof(Func<Type, object>));
+			var expression = CSharpExpression.Parse<Func<Type, object>>("new Func<Type, object>((t, c) => t != null)", typeResolutionService).Body.Render();
+			output.WriteLine("Rendered: " + expression);
+			var expected = true;
+			var lambda = CSharpExpression.Parse<TypeFilter>(expression).CompileAot(forceAot: true).Invoke();
+			var actual = lambda.Invoke(typeof(bool), null);
+
 			Assert.Equal(expected, actual);
 		}
 	}

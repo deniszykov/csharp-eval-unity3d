@@ -2,15 +2,15 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 
@@ -41,7 +41,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var tokenPrecedenceList = (new[]
 			{
 				// Primary
-				new[] {TokenType.Resolve, TokenType.NullResolve, TokenType.Call, TokenType.Typeof, TokenType.Default },
+				new[] {TokenType.Resolve, TokenType.NullResolve, TokenType.Call, TokenType.Typeof, TokenType.Default},
 				// New
 				new[] { TokenType.New },
 				// Unary
@@ -71,7 +71,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				// Conditional
 				new[] {TokenType.Cond},
 				// Other
-				new[] {TokenType.Colon}
+				new[] {TokenType.Colon, TokenType.Lambda}
 			});
 			for (var i = 0; i < tokenPrecedenceList.Length; i++)
 			{
@@ -171,9 +171,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.NullResolve:
 						case TokenType.Coalesce:
 						case TokenType.Colon:
+						case TokenType.Comma:
 						case TokenType.Is:
 						case TokenType.As:
 						case TokenType.Call:
+						case TokenType.Lambda:
 							if (op.Type != TokenType.None && this.ComputePrecedence(node.Type, op.Type) <= 0)
 							{
 								this.tokens.Insert(0, token);
@@ -185,27 +187,42 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							this.CombineBinary(node.Lexeme);
 
 							if (token.Type == TokenType.Call &&
-								node.Childs.Count == 2 &&
-								node.Childs[0].Type == TokenType.Identifier &&
+								node.Nodes.Count == 2 &&
+								node.Nodes[0].Type == TokenType.Identifier &&
 								(
-									string.Equals(node.Childs[0].Value, "unchecked", StringComparison.Ordinal) ||
-									string.Equals(node.Childs[0].Value, "checked", StringComparison.Ordinal) ||
-									string.Equals(node.Childs[0].Value, "typeof", StringComparison.Ordinal) ||
-									string.Equals(node.Childs[0].Value, "default", StringComparison.Ordinal)
-									) &&
-								node.Childs[1].Childs.Count == 1)
+									string.Equals(node.Nodes[0].Value, "unchecked", StringComparison.Ordinal) ||
+									string.Equals(node.Nodes[0].Value, "checked", StringComparison.Ordinal) ||
+									string.Equals(node.Nodes[0].Value, "typeof", StringComparison.Ordinal) ||
+									string.Equals(node.Nodes[0].Value, "default", StringComparison.Ordinal)
+								) &&
+								node.Nodes[1].Nodes.Count == 1)
 							{
-								var arguments = node.Childs[1];
-								var newType = string.Equals(node.Childs[0].Value, "unchecked", StringComparison.Ordinal) ? TokenType.UncheckedScope :
-									string.Equals(node.Childs[0].Value, "checked", StringComparison.Ordinal) ? TokenType.CheckedScope :
-										string.Equals(node.Childs[0].Value, "typeof", StringComparison.Ordinal) ? TokenType.Typeof :
-											string.Equals(node.Childs[0].Value, "default", StringComparison.Ordinal) ? TokenType.Default :
+								var arguments = node.Nodes[1];
+								var newType = string.Equals(node.Nodes[0].Value, "unchecked", StringComparison.Ordinal) ? TokenType.UncheckedScope :
+									string.Equals(node.Nodes[0].Value, "checked", StringComparison.Ordinal) ? TokenType.CheckedScope :
+										string.Equals(node.Nodes[0].Value, "typeof", StringComparison.Ordinal) ? TokenType.Typeof :
+											string.Equals(node.Nodes[0].Value, "default", StringComparison.Ordinal) ? TokenType.Default :
 												TokenType.Call;
 
 								this.stack.Pop();
-								this.stack.Push(new ParserNode(newType, node.Lexeme, node.Value, arguments.Childs));
+								this.stack.Push(new ParserNode(newType, node.Lexeme, node.Value, arguments.Nodes));
 							}
-
+							else if (token.Type == TokenType.Lambda)
+							{
+								var lambda = this.stack.Pop();
+								var lambdaArguments = lambda.Nodes[0];
+								switch (lambdaArguments.Type)
+								{
+									case TokenType.Identifier:
+										lambda.Nodes[0] = new ParserNode(TokenType.Arguments, lambdaArguments.Lexeme, lambdaArguments.Value, new ParserNode.ParserNodeCollection { lambdaArguments }); break;
+									case TokenType.Convert:
+									case TokenType.Group:
+										lambda.Nodes[0] = new ParserNode(TokenType.Arguments, lambdaArguments.Lexeme, lambdaArguments.Value, lambdaArguments.Nodes); break;
+									default:
+										throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKEN, token), token);
+								}
+								this.stack.Push(lambda);
+							}
 							changed = true;
 							break;
 						case TokenType.Cond:
@@ -229,7 +246,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.Lparen:
 						case TokenType.Arguments:
 							if (token.Type == TokenType.Lparen)
-								node = new ParserNode(TokenType.Group, node.Lexeme, node.Value, node.Childs);
+								node = new ParserNode(TokenType.Group, node.Lexeme, node.Value, node.Nodes);
 							this.stack.Push(node);
 							while (this.Expression(node, DefaultTerm))
 							{
@@ -239,10 +256,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								this.CheckAndConsumeToken(token.Position, TokenType.Comma);
 							}
 							this.CheckAndConsumeToken(token.Position, TokenType.Rparen, TokenType.Rbracket);
-							if (token.Type == TokenType.Lparen && ct == 0 && node.Childs.Count == 1 && (node.Childs.First().Type == TokenType.Identifier || node.Childs.First().Type == TokenType.Resolve || node.Childs.First().Type == TokenType.NullResolve))
+							if (token.Type == TokenType.Lparen && ct == 0 && node.Nodes.Count == 1 && (node.Nodes.First().Type == TokenType.Identifier || node.Nodes.First().Type == TokenType.Resolve || node.Nodes.First().Type == TokenType.NullResolve))
 							{
-								node = new ParserNode(TokenType.Convert, node.Lexeme, node.Value, node.Childs);
-								if (this.Expression(node, term) && this.stack.Any(n => n.Childs == node.Childs))
+								node = new ParserNode(TokenType.Convert, node.Lexeme, node.Value, node.Nodes);
+								if (this.Expression(node, term) && this.stack.Any(n => n.Nodes == node.Nodes))
 								{
 									this.CombineUnary(node.Lexeme);
 									this.stack.Pop();
@@ -300,7 +317,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var operand = this.stack.Pop();
 			var @operator = this.stack.Pop();
 
-			@operator.Childs.Add(operand);
+			@operator.Nodes.Add(operand);
 			this.stack.Push(@operator);
 		}
 		private void CombineBinary(Token op)
@@ -310,8 +327,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var @operator = this.stack.Pop();
 			var leftOperand = this.stack.Pop();
 
-			@operator.Childs.Add(leftOperand);
-			@operator.Childs.Add(rightOperand);
+			@operator.Nodes.Add(leftOperand);
+			@operator.Nodes.Add(rightOperand);
 			this.stack.Push(@operator);
 		}
 		private void CombineTernary(Token op)
@@ -323,9 +340,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var @operator = this.stack.Pop();
 			var baseOperand = this.stack.Pop();
 
-			@operator.Childs.Add(baseOperand);
-			@operator.Childs.Add(leftOperand);
-			@operator.Childs.Add(rightOperand);
+			@operator.Nodes.Add(baseOperand);
+			@operator.Nodes.Add(leftOperand);
+			@operator.Nodes.Add(rightOperand);
 
 			this.stack.Push(@operator);
 		}

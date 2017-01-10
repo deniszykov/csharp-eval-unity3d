@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Globalization;
+using System.Reflection;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
 
@@ -65,15 +66,15 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
 
-			Assert.True(node.Childs.Count >= 1 || node.Childs.Count <= 2, "Wrong child count of expression");
+			Assert.True(node.Nodes.Count >= 1 || node.Nodes.Count <= 2, "Wrong child count of expression");
 
 			Assert.Equal(type, node.Type);
-			Assert.Equal(TokenType.Identifier, node.Childs[0].Type);
-			Assert.Equal("a", node.Childs[0].Value);
-			if (node.Childs.Count > 1)
+			Assert.Equal(TokenType.Identifier, node.Nodes[0].Type);
+			Assert.Equal("a", node.Nodes[0].Value);
+			if (node.Nodes.Count > 1)
 			{
-				Assert.Equal(TokenType.Identifier, node.Childs[1].Type);
-				Assert.Equal("b", node.Childs[1].Value);
+				Assert.Equal(TokenType.Identifier, node.Nodes[1].Type);
+				Assert.Equal("b", node.Nodes[1].Value);
 			}
 		}
 
@@ -85,16 +86,16 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
 
-			Assert.True(node.Childs.Count >= 1 || node.Childs.Count <= 2, "Wrong child count of expression");
+			Assert.True(node.Nodes.Count >= 1 || node.Nodes.Count <= 2, "Wrong child count of expression");
 
 			Assert.Equal(type, node.Type);
-			Assert.Equal(TokenType.Identifier, node.Childs[0].Type);
-			Assert.Equal("a", node.Childs[0].Value);
-			if (node.Childs.Count > 1)
+			Assert.Equal(TokenType.Identifier, node.Nodes[0].Type);
+			Assert.Equal("a", node.Nodes[0].Value);
+			if (node.Nodes.Count > 1)
 			{
-				Assert.Equal(TokenType.Arguments, node.Childs[1].Type);
-				Assert.Equal(TokenType.Identifier, node.Childs[1].Childs[0].Type);
-				Assert.Equal("b", node.Childs[1].Childs[0].Value);
+				Assert.Equal(TokenType.Arguments, node.Nodes[1].Type);
+				Assert.Equal(TokenType.Identifier, node.Nodes[1].Nodes[0].Type);
+				Assert.Equal("b", node.Nodes[1].Nodes[0].Value);
 			}
 		}
 
@@ -140,10 +141,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
 
 			Assert.Equal(node.Type, TokenType.Cond);
-			Assert.Equal(3, node.Childs.Count);
-			Assert.Equal(test, node.Childs[0].Type);
-			Assert.Equal(left, node.Childs[1].Type);
-			Assert.Equal(right, node.Childs[2].Type);
+			Assert.Equal(3, node.Nodes.Count);
+			Assert.Equal(test, node.Nodes[0].Type);
+			Assert.Equal(left, node.Nodes[1].Type);
+			Assert.Equal(right, node.Nodes[2].Type);
 		}
 
 		[Fact]
@@ -152,11 +153,11 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var node = Parser.Parse(Tokenizer.Tokenize("call()"));
 
 			Assert.Equal(TokenType.Call, node.Type);
-			Assert.Equal(2, node.Childs.Count);
-			Assert.Equal(TokenType.Identifier, node.Childs[0].Type);
-			Assert.Equal("call", node.Childs[0].Value);
-			Assert.Equal(TokenType.Arguments, node.Childs[1].Type);
-			Assert.Equal(0, node.Childs[1].Childs.Count);
+			Assert.Equal(2, node.Nodes.Count);
+			Assert.Equal(TokenType.Identifier, node.Nodes[0].Type);
+			Assert.Equal("call", node.Nodes[0].Value);
+			Assert.Equal(TokenType.Arguments, node.Nodes[1].Type);
+			Assert.Equal(0, node.Nodes[1].Nodes.Count);
 		}
 		[Fact]
 		public void ParseTwoArgsCall()
@@ -164,13 +165,13 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var node = Parser.Parse(Tokenizer.Tokenize("call(a, b)"));
 
 			Assert.Equal(TokenType.Call, node.Type);
-			Assert.Equal(2, node.Childs.Count);
-			Assert.Equal(TokenType.Identifier, node.Childs[0].Type);
-			Assert.Equal("call", node.Childs[0].Value);
-			Assert.Equal(TokenType.Arguments, node.Childs[1].Type);
-			Assert.Equal(2, node.Childs[1].Childs.Count);
-			Assert.Equal(TokenType.Identifier, node.Childs[1].Childs[0].Type);
-			Assert.Equal(TokenType.Identifier, node.Childs[1].Childs[1].Type);
+			Assert.Equal(2, node.Nodes.Count);
+			Assert.Equal(TokenType.Identifier, node.Nodes[0].Type);
+			Assert.Equal("call", node.Nodes[0].Value);
+			Assert.Equal(TokenType.Arguments, node.Nodes[1].Type);
+			Assert.Equal(2, node.Nodes[1].Nodes.Count);
+			Assert.Equal(TokenType.Identifier, node.Nodes[1].Nodes[0].Type);
+			Assert.Equal(TokenType.Identifier, node.Nodes[1].Nodes[1].Type);
 		}
 		[Fact]
 		public void ParseTwoNamedArgsCall()
@@ -178,23 +179,23 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var node = Parser.Parse(Tokenizer.Tokenize("call(arg1: a, arg2: b)"));
 
 			Assert.Equal(TokenType.Call, node.Type);
-			Assert.Equal(2, node.Childs.Count);
-			Assert.Equal(TokenType.Identifier, node.Childs[0].Type);
-			Assert.Equal("call", node.Childs[0].Value);
-			Assert.Equal(TokenType.Arguments, node.Childs[1].Type);
-			Assert.Equal(2, node.Childs[1].Childs.Count);
-			Assert.Equal(TokenType.Colon, node.Childs[1].Childs[0].Type);
-			Assert.Equal(TokenType.Colon, node.Childs[1].Childs[1].Type);
-			Assert.Equal(2, node.Childs[1].Childs[0].Childs.Count);
-			Assert.Equal(2, node.Childs[1].Childs[1].Childs.Count);
-			Assert.Equal(TokenType.Identifier, node.Childs[1].Childs[0].Childs[0].Type);
-			Assert.Equal(TokenType.Identifier, node.Childs[1].Childs[0].Childs[1].Type);
-			Assert.Equal("arg1", node.Childs[1].Childs[0].Childs[0].Value);
-			Assert.Equal("a", node.Childs[1].Childs[0].Childs[1].Value);
-			Assert.Equal(TokenType.Identifier, node.Childs[1].Childs[1].Childs[0].Type);
-			Assert.Equal(TokenType.Identifier, node.Childs[1].Childs[1].Childs[1].Type);
-			Assert.Equal("arg2", node.Childs[1].Childs[1].Childs[0].Value);
-			Assert.Equal("b", node.Childs[1].Childs[1].Childs[1].Value);
+			Assert.Equal(2, node.Nodes.Count);
+			Assert.Equal(TokenType.Identifier, node.Nodes[0].Type);
+			Assert.Equal("call", node.Nodes[0].Value);
+			Assert.Equal(TokenType.Arguments, node.Nodes[1].Type);
+			Assert.Equal(2, node.Nodes[1].Nodes.Count);
+			Assert.Equal(TokenType.Colon, node.Nodes[1].Nodes[0].Type);
+			Assert.Equal(TokenType.Colon, node.Nodes[1].Nodes[1].Type);
+			Assert.Equal(2, node.Nodes[1].Nodes[0].Nodes.Count);
+			Assert.Equal(2, node.Nodes[1].Nodes[1].Nodes.Count);
+			Assert.Equal(TokenType.Identifier, node.Nodes[1].Nodes[0].Nodes[0].Type);
+			Assert.Equal(TokenType.Identifier, node.Nodes[1].Nodes[0].Nodes[1].Type);
+			Assert.Equal("arg1", node.Nodes[1].Nodes[0].Nodes[0].Value);
+			Assert.Equal("a", node.Nodes[1].Nodes[0].Nodes[1].Value);
+			Assert.Equal(TokenType.Identifier, node.Nodes[1].Nodes[1].Nodes[0].Type);
+			Assert.Equal(TokenType.Identifier, node.Nodes[1].Nodes[1].Nodes[1].Type);
+			Assert.Equal("arg2", node.Nodes[1].Nodes[1].Nodes[0].Value);
+			Assert.Equal("b", node.Nodes[1].Nodes[1].Nodes[1].Value);
 		}
 		[Fact]
 		public void ParseDeepHierarchyCall()
@@ -202,11 +203,84 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var node = Parser.Parse(Tokenizer.Tokenize("a.b.c.d()"));
 
 			Assert.Equal(TokenType.Call, node.Type);
-			Assert.Equal(2, node.Childs.Count);
-			Assert.Equal(TokenType.Resolve, node.Childs[0].Type);
-			Assert.Equal(2, node.Childs[0].Childs.Count);
-			Assert.Equal(TokenType.Identifier, node.Childs[0].Childs[1].Type);
-			Assert.Equal("d", node.Childs[0].Childs[1].Value);
+			Assert.Equal(2, node.Nodes.Count);
+			Assert.Equal(TokenType.Resolve, node.Nodes[0].Type);
+			Assert.Equal(2, node.Nodes[0].Nodes.Count);
+			Assert.Equal(TokenType.Identifier, node.Nodes[0].Nodes[1].Type);
+			Assert.Equal("d", node.Nodes[0].Nodes[1].Value);
+		}
+
+		[Theory]
+		[InlineData("() => 0", typeof(Func<int>))]
+		[InlineData("a => 0", typeof(Func<int, int>))]
+		[InlineData("(a) => 0", typeof(Func<int, int>))]
+		[InlineData("(a,b) => 0", typeof(Func<int, int, int>))]
+		public void ParseLambda(string expression, Type lambdaType)
+		{
+			var node = Parser.Parse(Tokenizer.Tokenize(expression));
+			var lambdaSig = lambdaType.GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance);
+
+			Assert.Equal(TokenType.Lambda, node.Type);
+			Assert.Equal(2, node.Nodes.Count);
+			Assert.Equal(TokenType.Arguments, node.Nodes[0].Type);
+			Assert.Equal(lambdaSig.GetParameters().Length, node.Nodes[0].Nodes.Count);
+			Assert.Equal(TokenType.Number, node.Nodes[1].Type);
+		}
+
+		[Fact]
+		public void ParseFourLambdaCalls()
+		{
+			var node = Parser.Parse(Tokenizer.Tokenize("call(a => a + 1, (x,y) => null, () => true || false, (b) => b)"));
+
+			Assert.Equal(TokenType.Call, node.Type);
+			Assert.Equal(2, node.Nodes.Count);
+			Assert.Equal(TokenType.Identifier, node.Nodes[0].Type);
+			Assert.Equal("call", node.Nodes[0].Value);
+			Assert.Equal(TokenType.Arguments, node.Nodes[1].Type);
+			var callArgumentsNode = node.Nodes[1];
+			Assert.Equal(4, callArgumentsNode.Nodes.Count); // call arguments count
+
+			var lambda1 = node.Nodes[1].Nodes[0];
+			var lambda1Args = lambda1.Nodes[0];
+			var lambda1Body = lambda1.Nodes[1];
+			Assert.Equal(TokenType.Lambda, lambda1.Type);
+			Assert.Equal(1, lambda1Args.Nodes.Count); // lambda arguments count
+			Assert.Equal(TokenType.Identifier, lambda1Args.Nodes[0].Type);
+			Assert.Equal("a", lambda1Args.Nodes[0].Value);
+			Assert.Equal(TokenType.Add, lambda1Body.Type); // lambda body type
+
+			var lambda2 = node.Nodes[1].Nodes[1];
+			var lambda2Args = lambda2.Nodes[0];
+			var lambda2Body = lambda2.Nodes[1];
+			Assert.Equal(TokenType.Lambda, lambda2.Type);
+			Assert.Equal(2, lambda2Args.Nodes.Count); // lambda arguments count
+			Assert.Equal(TokenType.Identifier, lambda2Args.Nodes[0].Type);
+			Assert.Equal("x", lambda2Args.Nodes[0].Value);
+			Assert.Equal(TokenType.Identifier, lambda2Args.Nodes[1].Type);
+			Assert.Equal("y", lambda2Args.Nodes[1].Value);
+			Assert.Equal(TokenType.Identifier, lambda2Body.Type); // lambda body type
+			Assert.Equal("null", lambda2Body.Value); // lambda body type
+
+			var lambda3 = node.Nodes[1].Nodes[2];
+			var lambda3Args = lambda3.Nodes[0];
+			var lambda3Body = lambda3.Nodes[1];
+			Assert.Equal(TokenType.Lambda, lambda3.Type);
+			Assert.Equal(0, lambda3Args.Nodes.Count); // lambda arguments count
+			Assert.Equal(TokenType.OrElse, lambda3Body.Type); // lambda body type
+			Assert.Equal(TokenType.Identifier, lambda3Body.Nodes[0].Type);
+			Assert.Equal("true", lambda3Body.Nodes[0].Value);
+			Assert.Equal(TokenType.Identifier, lambda3Body.Nodes[1].Type);
+			Assert.Equal("false", lambda3Body.Nodes[1].Value);
+
+			var lambda4 = node.Nodes[1].Nodes[3];
+			var lambda4Args = lambda4.Nodes[0];
+			var lambda4Body = lambda4.Nodes[1];
+			Assert.Equal(TokenType.Lambda, lambda4.Type);
+			Assert.Equal(1, lambda4Args.Nodes.Count); // lambda arguments count
+			Assert.Equal(TokenType.Identifier, lambda4Args.Nodes[0].Type);
+			Assert.Equal("b", lambda4Args.Nodes[0].Value);
+			Assert.Equal(TokenType.Identifier, lambda4Body.Type); // lambda body type
+			Assert.Equal("b", lambda4Body.Value); // lambda body type
 		}
 
 		[Theory]
@@ -226,9 +300,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
 
 			Assert.Equal(TokenType.Convert, node.Type);
-			Assert.Equal(2, node.Childs.Count);
-			if (node.Childs[0].Type != TokenType.Resolve)
-				Assert.Equal(TokenType.Identifier, node.Childs[0].Type);
+			Assert.Equal(2, node.Nodes.Count);
+			if (node.Nodes[0].Type != TokenType.Resolve)
+				Assert.Equal(TokenType.Identifier, node.Nodes[0].Type);
 		}
 
 		[Theory]
@@ -239,8 +313,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
 
-			Assert.Equal(2, node.Childs.Count);
-			Assert.Equal(TokenType.Group, node.Childs[1].Type);
+			Assert.Equal(2, node.Nodes.Count);
+			Assert.Equal(TokenType.Group, node.Nodes[1].Type);
 
 		}
 	}

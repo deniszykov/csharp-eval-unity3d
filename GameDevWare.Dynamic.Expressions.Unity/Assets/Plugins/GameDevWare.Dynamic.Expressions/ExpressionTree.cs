@@ -2,15 +2,15 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 
@@ -22,34 +22,6 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	public class ExpressionTree : ReadOnlyDictionary<string, object>, ILineInfo
 	{
-		public const string EXPRESSION_LINE = "$lineNum";
-		public const string EXPRESSION_COLUMN = "$columnNum";
-		public const string EXPRESSION_LENGTH = "$tokenLength";
-		public const string EXPRESSION_ORIGINAL = "$originalExpression";
-
-		public const string EXPRESSION_TYPE_ATTRIBUTE = "expressionType";
-		public const string EXPRESSION_ATTRIBUTE = "expression";
-		public const string ARGUMENTS_ATTRIBUTE = "arguments";
-		public const string LEFT_ATTRIBUTE = "left";
-		public const string RIGHT_ATTRIBUTE = "right";
-		public const string TEST_ATTRIBUTE = "test";
-		public const string IFTRUE_ATTRIBUTE = "ifTrue";
-		public const string IFFALSE_ATTRIBUTE = "ifFalse";
-		public const string TYPE_ATTRIBUTE = "type";
-		public const string VALUE_ATTRIBUTE = "value";
-		public const string PROPERTY_OR_FIELD_NAME_ATTRIBUTE = "propertyOrFieldName";
-		public const string USE_NULL_PROPAGATION_ATTRIBUTE = "useNullPropagation";
-		public const string METHOD_ATTRIBUTE = "method";
-
-		public static readonly object TrueConst = true;
-		public static readonly object FalseConst = false;
-
-		public int LineNumber { get { var valueObj = default(object); if (this.TryGetValue(EXPRESSION_LINE, out valueObj) == false) return 0; else return Convert.ToInt32(valueObj); } }
-		public int ColumnNumber { get { var valueObj = default(object); if (this.TryGetValue(EXPRESSION_COLUMN, out valueObj) == false) return 0; else return Convert.ToInt32(valueObj); } }
-		public int TokenLength { get { var valueObj = default(object); if (this.TryGetValue(EXPRESSION_LENGTH, out valueObj) == false) return 0; else return Convert.ToInt32(valueObj); } }
-		public string Position { get { return string.Format("[{0}:{1}+{2}]", this.LineNumber, this.ColumnNumber, this.TokenLength); } }
-		public string OriginalExpression { get { return this.GetValueOrDefault(EXPRESSION_ORIGINAL, default(string)); } }
-
 		public ExpressionTree(IDictionary<string, object> node) : base(PrepareNode(node))
 		{
 		}
@@ -67,7 +39,7 @@ namespace GameDevWare.Dynamic.Expressions
 			return newNode;
 		}
 
-		private T GetValueOrDefault<T>(string key, T defaultValue = default(T))
+		public T GetValueOrDefault<T>(string key, T defaultValue = default(T))
 		{
 			var valueObj = default(object);
 			var value = default(T);
@@ -78,12 +50,192 @@ namespace GameDevWare.Dynamic.Expressions
 			return value;
 		}
 
+		public string GetExpressionType(bool throwOnError)
+		{
+			var expressionTypeObj = default(object);
+			if (this.TryGetValue(Constants.EXPRESSION_TYPE_ATTRIBUTE, out expressionTypeObj) == false || expressionTypeObj is string == false)
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+				else
+					return null;
+			}
+
+			var expressionType = (string)expressionTypeObj;
+			return expressionType;
+		}
+		public string GetTypeName(bool throwOnError)
+		{
+			var typeObj = default(object);
+			if (this.TryGetValue(Constants.TYPE_ATTRIBUTE, out typeObj) == false || typeObj is string == false)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.TYPE_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+
+			var typeName = (string)typeObj;
+			return typeName;
+		}
+		public object GetValue(bool throwOnError)
+		{
+			var valueObj = default(object);
+			if (this.TryGetValue(Constants.VALUE_ATTRIBUTE, out valueObj) == false)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.VALUE_ATTRIBUTE, this.GetExpressionType(throwOnError: true), this));
+			return valueObj;
+		}
+		public ExpressionTree GetExpression(bool throwOnError)
+		{
+			var expressionObj = default(object);
+			if (this.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj == null || expressionObj is ExpressionTree == false)
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, this.GetExpressionType(true)), this);
+				else
+					return null;
+			}
+
+			var expression = (ExpressionTree)expressionObj;
+			return expression;
+		}
+		public Dictionary<string, ExpressionTree> GetArguments(bool throwOnError)
+		{
+			var arguments = new Dictionary<string, ExpressionTree>();
+			var argumentsObj = default(object);
+			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is ExpressionTree == false)
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(true)), this);
+				else
+					return arguments;
+			}
+
+			foreach (var kv in (ExpressionTree)argumentsObj)
+			{
+				var argument = kv.Value as ExpressionTree;
+				if (argument == null)
+				{
+					if (throwOnError)
+						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(true)), this);
+				}
+				arguments.Add(kv.Key, argument);
+			}
+			return arguments;
+		}
+		public string GetPropertyOrFieldName(bool throwOnError)
+		{
+			var propertyOrFieldNameObj = default(object);
+			if (this.TryGetValue(Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out propertyOrFieldNameObj) == false || propertyOrFieldNameObj is string == false)
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+				else
+					return null;
+			}
+
+			var propertyOrFieldName = (string)propertyOrFieldNameObj;
+			return propertyOrFieldName;
+		}
+		public bool GetUseNullPropagation(bool throwOnError)
+		{
+			var useNullPropagationObj = default(object);
+			if (this.TryGetValue(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, out useNullPropagationObj) == false || useNullPropagationObj == null)
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.USE_NULL_PROPAGATION_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+				else
+					return false;
+			}
+			var useNullPropagation = Convert.ToBoolean(useNullPropagationObj, Constants.DefaultFormatProvider);
+			return useNullPropagation;
+		}
+
+		public int GetLineNumber(bool throwOnError)
+		{
+			var valueObj = default(object);
+			var value = default(int);
+			if (this.TryGetValue(Constants.EXPRESSION_LINE_NUMBER, out valueObj) == false)
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_LINE_NUMBER, this.GetExpressionType(throwOnError: true)), this);
+				else
+					return value;
+			}
+
+			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_LINE_NUMBER, this.GetExpressionType(throwOnError: true)), this);
+
+			return value;
+		}
+		public int GetColumnNumber(bool throwOnError)
+		{
+			var valueObj = default(object);
+			var value = default(int);
+			if (this.TryGetValue(Constants.EXPRESSION_COLUMN_NUMBER, out valueObj) == false)
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_COLUMN_NUMBER, this.GetExpressionType(throwOnError: true)), this);
+				else
+					return value;
+			}
+
+			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_COLUMN_NUMBER, this.GetExpressionType(throwOnError: true)), this);
+
+			return value;
+		}
+		public int GetTokenLength(bool throwOnError)
+		{
+			var valueObj = default(object);
+			var value = default(int);
+			if (this.TryGetValue(Constants.EXPRESSION_TOKEN_LENGTH, out valueObj) == false)
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_TOKEN_LENGTH, this.GetExpressionType(throwOnError: true)), this);
+				else
+					return value;
+			}
+
+			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_TOKEN_LENGTH, this.GetExpressionType(throwOnError: true)), this);
+
+			return value;
+		}
+		public string GetPosition(bool throwOnError)
+		{
+			return string.Format(Constants.DefaultFormatProvider, "[{0}:{1}+{2}]", this.GetLineNumber(throwOnError).ToString(), this.GetColumnNumber(throwOnError).ToString(), this.GetTokenLength(throwOnError).ToString());
+		}
+		public string GetOriginalExpression(bool throwOnError)
+		{
+			var valueObj = default(object);
+			var value = default(string);
+			if (this.TryGetValue(Constants.EXPRESSION_ORIGINAL, out valueObj) == false)
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ORIGINAL, this.GetExpressionType(throwOnError: true)), this);
+				else
+					// ReSharper disable once ExpressionIsAlwaysNull
+					return value;
+			}
+
+			return Convert.ToString(valueObj, Constants.DefaultFormatProvider);
+		}
+
 		public override string ToString()
 		{
-			var expression = this.OriginalExpression;
+			var expression = this.GetOriginalExpression(throwOnError: false);
 			if (string.IsNullOrEmpty(expression))
 				expression = this.Render();
 			return expression;
+		}
+
+		int ILineInfo.GetLineNumber()
+		{
+			return this.GetLineNumber(throwOnError: false);
+		}
+		int ILineInfo.GetColumnNumber()
+		{
+			return this.GetColumnNumber(throwOnError: false);
+		}
+		int ILineInfo.GetTokenLength()
+		{
+			return this.GetTokenLength(throwOnError: false);
 		}
 	}
 }

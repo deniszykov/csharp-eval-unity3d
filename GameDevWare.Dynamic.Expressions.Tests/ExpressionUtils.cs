@@ -14,7 +14,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var compileMethod = typeof(ExpressionExtentions)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
-				.Single(m => m.Name == nameof(ExpressionExtentions.CompileAot) && m.IsGenericMethod && m.GetGenericArguments().Length == types.Length)
+				.Single(m => m.Name == "CompileAot" && m.IsGenericMethod && m.GetGenericArguments().Length == types.Length)
 				.MakeGenericMethod(types);
 
 			var @delegate = (Delegate)compileMethod.Invoke(null, new object[] { expressionObj, forceAot });
@@ -25,7 +25,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var parseMethod = typeof(CSharpExpression)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
-				.Single(m => m.Name == nameof(CSharpExpression.Parse) && m.IsGenericMethod && m.GetGenericArguments().Length == types.Length)
+				.Single(m => m.Name == "Parse" && m.IsGenericMethod && m.GetGenericArguments().Length == types.Length)
 				.MakeGenericMethod(types);
 
 			var parseArguments = new object[parseMethod.GetParameters().Length];

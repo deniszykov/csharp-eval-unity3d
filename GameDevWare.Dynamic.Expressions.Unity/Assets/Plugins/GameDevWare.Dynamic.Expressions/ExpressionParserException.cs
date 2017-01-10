@@ -2,15 +2,15 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 
@@ -21,9 +21,39 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	public sealed class ExpressionParserException : Exception, ILineInfo
 	{
-		public int LineNumber { get; set; }
-		public int ColumnNumber { get; set; }
-		public int TokenLength { get; set; }
+		private int _tokenLength;
+		private int _columnNumber;
+		private int _lineNumber;
+
+		public int LineNumber
+		{
+			set { _lineNumber = value; }
+		}
+
+		public int GetLineNumber()
+		{
+			return _lineNumber;
+		}
+
+		public int ColumnNumber
+		{
+			set { _columnNumber = value; }
+		}
+
+		public int GetColumnNumber()
+		{
+			return _columnNumber;
+		}
+
+		public int TokenLength
+		{
+			set { _tokenLength = value; }
+		}
+
+		public int GetTokenLength()
+		{
+			return _tokenLength;
+		}
 
 		public ExpressionParserException()
 		{
@@ -49,9 +79,9 @@ namespace GameDevWare.Dynamic.Expressions
 			if (lineInfo == null)
 				return;
 
-			this.LineNumber = lineInfo.LineNumber;
-			this.ColumnNumber = lineInfo.ColumnNumber;
-			this.TokenLength = lineInfo.TokenLength;
+			this.LineNumber = lineInfo.GetLineNumber();
+			this.ColumnNumber = lineInfo.GetColumnNumber();
+			this.TokenLength = lineInfo.GetTokenLength();
 		}
 		internal ExpressionParserException(string message, Exception innerException, ILineInfo lineInfo)
 			: base(message, innerException)
@@ -59,9 +89,9 @@ namespace GameDevWare.Dynamic.Expressions
 			if (lineInfo == null)
 				return;
 
-			this.LineNumber = lineInfo.LineNumber;
-			this.ColumnNumber = lineInfo.ColumnNumber;
-			this.TokenLength = lineInfo.TokenLength;
+			this.LineNumber = lineInfo.GetLineNumber();
+			this.ColumnNumber = lineInfo.GetColumnNumber();
+			this.TokenLength = lineInfo.GetTokenLength();
 		}
 		// ReSharper disable once UnusedMember.Local
 		private ExpressionParserException(SerializationInfo info, StreamingContext context)
@@ -74,17 +104,17 @@ namespace GameDevWare.Dynamic.Expressions
 
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue("LineNumber", (int)this.LineNumber);
-			info.AddValue("ColumnNumber", (int)this.ColumnNumber);
-			info.AddValue("TokenLength", (int)this.TokenLength);
+			info.AddValue("LineNumber", (int)this.GetLineNumber());
+			info.AddValue("ColumnNumber", (int)this.GetColumnNumber());
+			info.AddValue("TokenLength", (int)this.GetTokenLength());
 
 			base.GetObjectData(info, context);
 		}
 
 		public override string ToString()
 		{
-			if (this.TokenLength != 0)
-				return string.Format("[{0},{1}+{2}]{3}", this.LineNumber, this.ColumnNumber, this.TokenLength, base.ToString());
+			if (this.GetTokenLength() != 0)
+				return string.Format("[{0},{1}+{2}]{3}", this.GetLineNumber(), this.GetColumnNumber(), this.GetTokenLength(), base.ToString());
 			else
 				return base.ToString();
 		}

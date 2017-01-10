@@ -11,7 +11,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void TokenizeAllTokens()
 		{
 			var expression = "(MyType) my.name(arg1: +1 >> -2 | 3 & 4 ^ 5, 6 > 7 >= 8 < 9 <= 10 == 11 != 12 && 13 || 14 ?? 15, true ? 16 : 17)(arg1: \" string literal \", arg2: null)" +
-							 "[18] + (~19d - !20.0f) * 21m / 22u % 23l << 24UL + emptycall() ** a?.x + a?[]";
+							 "[18] + (~19d - !20.0f) * 21m / 22u % 23l << 24UL + emptycall() ** a?.x + a?[] =>";
 			var expectedTokens = new TokenType[]
 			{
 				TokenType.Lparen, TokenType.Identifier, TokenType.Rparen, TokenType.Identifier, TokenType.Resolve, TokenType.Identifier, TokenType.Lparen, TokenType.Identifier, TokenType.Colon,
@@ -21,7 +21,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 				TokenType.Number, TokenType.Rparen, TokenType.Lparen, TokenType.Identifier, TokenType.Colon, TokenType.Literal, TokenType.Comma, TokenType.Identifier, TokenType.Colon, TokenType.Identifier,
 				TokenType.Rparen, TokenType.Lbracket, TokenType.Number, TokenType.Rbracket, TokenType.Add, TokenType.Lparen, TokenType.Compl, TokenType.Number, TokenType.Subtract, TokenType.Not, TokenType.Number,
 				TokenType.Rparen, TokenType.Mul, TokenType.Number, TokenType.Div, TokenType.Number, TokenType.Mod, TokenType.Number, TokenType.Lshift, TokenType.Number, TokenType.Add, TokenType.Identifier, TokenType.Lparen, TokenType.Rparen,
-				TokenType.Pow,  TokenType.Identifier, TokenType.NullResolve, TokenType.Identifier,  TokenType.Add, TokenType.Identifier, TokenType.NullIndex, TokenType.Rbracket, 
+				TokenType.Pow,  TokenType.Identifier, TokenType.NullResolve, TokenType.Identifier,  TokenType.Add, TokenType.Identifier, TokenType.NullIndex, TokenType.Rbracket, TokenType.Lambda
 			};
 
 			var actualTokens = Tokenizer.Tokenize(expression).Select(l => l.Type).ToArray();
