@@ -135,8 +135,11 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\AotCompilation.cs">
       <Link>AotCompilation.cs</Link>
     </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\AssemblyTypeResolutionService.cs">
-      <Link>AssemblyTypeResolutionService.cs</Link>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\AssemblyTypeResolver.cs">
+      <Link>AssemblyTypeResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Constants.cs">
+      <Link>Constants.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\CSharpExpression.cs">
       <Link>CSharp\CSharpExpression.cs</Link>
@@ -189,6 +192,9 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionParserException.cs">
       <Link>ExpressionParserException.cs</Link>
     </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionSubstitutor.cs">
+      <Link>ExpressionSubstitutor.cs</Link>
+    </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionTree.cs">
       <Link>ExpressionTree.cs</Link>
     </Compile>
@@ -198,11 +204,11 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ILineInfo.cs">
       <Link>ILineInfo.cs</Link>
     </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ITypeResolutionService.cs">
-      <Link>ITypeResolutionService.cs</Link>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ITypeResolver.cs">
+      <Link>ITypeResolver.cs</Link>
     </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\KnownTypeResolutionService.cs">
-      <Link>KnownTypeResolutionService.cs</Link>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\KnownTypeResolver.cs">
+      <Link>KnownTypeResolver.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\MethodCallSignature.cs">
       <Link>MethodCallSignature.cs</Link>
@@ -210,10 +216,15 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ReadOnlyDictionary.cs">
       <Link>ReadOnlyDictionary.cs</Link>
     </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\TypeDiscoveryOptions.cs">
+      <Link>TypeDiscoveryOptions.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\TypeReference.cs">
+      <Link>TypeReference.cs</Link>
+    </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\UnboundExpression.cs">
       <Link>UnboundExpression.cs</Link>
     </Compile>
-    <Compile Include="Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnityResources.cs">
       <AutoGen>True</AutoGen>
@@ -231,7 +242,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExpressionSubstitutor.cs" />
     <None Include="sn.snk" />
     <None Include="UnityResources.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

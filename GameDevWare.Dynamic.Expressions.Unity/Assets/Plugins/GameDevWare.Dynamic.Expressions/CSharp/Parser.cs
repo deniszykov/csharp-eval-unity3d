@@ -25,7 +25,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private static readonly Dictionary<int, int> UnaryReplacement;
 		private static readonly Dictionary<int, int> TokenPrecedence;
 		private static readonly TokenType[] CondTerm = new[] { TokenType.Colon };
+		private static readonly TokenType[] NewTerm = new[] { TokenType.Call };
+		private static readonly TokenType[] GenArgTerm = new[] { TokenType.Comma, TokenType.Gt, TokenType.Rshift };
 		private static readonly TokenType[] DefaultTerm = new[] { TokenType.Comma, TokenType.Rparen, TokenType.Rbracket };
+		private static readonly TokenType[] NullableTerm = new[] { TokenType.Comma, TokenType.Rparen, TokenType.Gt, TokenType.Rshift };
 
 		private readonly List<Token> tokens;
 		private readonly Stack<ParserNode> stack;
@@ -43,7 +46,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				// Primary
 				new[] {TokenType.Resolve, TokenType.NullResolve, TokenType.Call, TokenType.Typeof, TokenType.Default},
 				// New
-				new[] { TokenType.New },
+				new[] {TokenType.New },
 				// Unary
 				new[] {TokenType.Plus, TokenType.Minus, TokenType.Not, TokenType.Compl, TokenType.Convert},
 				// Multiplicative
@@ -141,11 +144,29 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.Plus:
 						case TokenType.Convert:
 						case TokenType.Minus:
-						case TokenType.New:
 							this.stack.Push(node);
 							if (!this.Expression(node, term))
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESOPERAND, token.Type), token);
 							this.CombineUnary(node.Lexeme);
+							changed = true;
+							break;
+						case TokenType.New:
+							this.stack.Push(node);
+							if (!this.Expression(node, UnionTerms(term, NewTerm)))
+								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESOPERAND, token.Type), token);
+							this.CombineUnary(node.Lexeme); // collect Type for 'NEW'
+							this.CheckAndConsumeToken(TokenType.Call);
+							var argumentsNode = new ParserNode(this.tokens.Dequeue());
+							this.stack.Push(argumentsNode); // push 'ARGUMENTS' into stack
+							while (this.Expression(argumentsNode, DefaultTerm))
+							{
+								this.CombineUnary(argumentsNode.Lexeme); // push argument
+								if (this.tokens.Count == 0 || this.tokens[0].Type != TokenType.Comma)
+									break;
+								this.CheckAndConsumeToken(TokenType.Comma);
+							}
+							this.CheckAndConsumeToken(TokenType.Rparen, TokenType.Rbracket);
+							this.CombineUnary(argumentsNode.Lexeme); // collect Arguments for 'NEW'
 							changed = true;
 							break;
 						case TokenType.Add:
@@ -176,11 +197,18 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.As:
 						case TokenType.Call:
 						case TokenType.Lambda:
+							if (token.Type == TokenType.Lt && this.GenericArguments(token))
+							{
+								changed = true;
+								continue;
+							}
+
 							if (op.Type != TokenType.None && this.ComputePrecedence(node.Type, op.Type) <= 0)
 							{
 								this.tokens.Insert(0, token);
 								return changed;
 							}
+
 							this.stack.Push(node);
 							if (!this.Expression(node, term))
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND, token.Type), token);
@@ -231,13 +259,20 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								this.tokens.Insert(0, token);
 								return changed;
 							}
+
+							if (NullableType(token))
+							{
+								changed = true;
+								continue;
+							}
+
 							this.stack.Push(node);
 							var colonIdx = this.FindCondClosingToken();
 							if (colonIdx < 0)
 								throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_COLONISEXPRECTED, token);
 							this.Expression(term: CondTerm);
-							this.CheckAndConsumeToken(token.Position, TokenType.Colon);
-							this.Expression(term: DefaultTerm.Union(term ?? new TokenType[0]).ToArray());
+							this.CheckAndConsumeToken(TokenType.Colon);
+							this.Expression(term: UnionTerms(DefaultTerm, term).ToArray());
 							this.CombineTernary(node.Lexeme);
 							changed = true;
 							break;
@@ -253,9 +288,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								this.CombineUnary(node.Lexeme);
 								if (this.tokens.Count == 0 || this.tokens[0].Type != TokenType.Comma)
 									break;
-								this.CheckAndConsumeToken(token.Position, TokenType.Comma);
+								this.CheckAndConsumeToken(TokenType.Comma);
 							}
-							this.CheckAndConsumeToken(token.Position, TokenType.Rparen, TokenType.Rbracket);
+							this.CheckAndConsumeToken(TokenType.Rparen, TokenType.Rbracket);
 							if (token.Type == TokenType.Lparen && ct == 0 && node.Nodes.Count == 1 && (node.Nodes.First().Type == TokenType.Identifier || node.Nodes.First().Type == TokenType.Resolve || node.Nodes.First().Type == TokenType.NullResolve))
 							{
 								node = new ParserNode(TokenType.Convert, node.Lexeme, node.Value, node.Nodes);
@@ -289,6 +324,78 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return changed;
 		}
 
+		private bool GenericArguments(Token currentToken)
+		{
+			if (this.stack.Count == 0 || this.stack.Peek().Type != TokenType.Identifier)
+				return false;
+
+			var closingTokenIndex = this.FindGenericArgClosingToken();
+			if (closingTokenIndex < 0)
+				return false;
+
+			var argumentsNode = new ParserNode(TokenType.Arguments, currentToken, currentToken.Value);
+			this.stack.Push(argumentsNode);
+
+			var closingToken = default(Token);
+			do
+			{
+				var argumentAdded = false;
+
+				while (this.Expression(argumentsNode, GenArgTerm))
+				{
+					argumentAdded = true;
+					// put argument into 'Arguments' node
+					this.CombineUnary(currentToken);
+
+					if (this.tokens.Count == 0 || this.tokens[0].Type != TokenType.Comma)
+						break;
+					this.CheckAndConsumeToken(TokenType.Comma);
+					argumentAdded = false;
+				}
+
+				closingToken = tokens.Dequeue();
+				if (closingToken.Type == TokenType.Rshift) // split '>>' into 2 '>' tokens
+					this.tokens.Insert(0, new Token(TokenType.Gt, ">", closingToken.LineNumber, closingToken.ColumnNumber + 1, closingToken.TokenLength - 1));
+				else if (closingToken.Type != TokenType.Comma && closingToken.Type != TokenType.Gt)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED, TokenType.Gt), closingToken);
+
+				if (argumentAdded)
+					continue;
+
+				// add 'None' as argument if empty argument is specified
+				this.stack.Push(new ParserNode(TokenType.Identifier, closingToken, string.Empty));
+				this.CombineUnary(currentToken);
+
+			} while (closingToken.Type != TokenType.Gt && closingToken.Type != TokenType.Rshift);
+
+			// put 'Arguments' into 'Identifier' node
+			this.CombineUnary(currentToken);
+
+			return true;
+		}
+		private bool NullableType(Token currentToken)
+		{
+			if (this.stack.Count == 0)
+				return false;
+
+			// '.' or 'Identifier' should be at top of stack
+			// and ')' '>' ',' token ahead
+			var stackTop = this.stack.Peek();
+			if ((stackTop.Type != TokenType.Identifier && stackTop.Type != TokenType.Resolve) ||
+				(this.tokens.Count != 0 && Array.IndexOf(NullableTerm, this.tokens[0].Type) < 0))
+				return false;
+
+			var identifier = this.stack.Pop();
+			var argumentsNode = new ParserNode(TokenType.Arguments, currentToken, "<");
+			var nullableNode = new ParserNode(TokenType.Identifier, currentToken, typeof(Nullable).Name);
+
+			argumentsNode.Nodes.Add(identifier);
+			nullableNode.Nodes.Add(argumentsNode);
+
+			this.stack.Push(nullableNode);
+			return true;
+		}
+
 		private int FindCondClosingToken()
 		{
 			var lastTokenIdx = -1;
@@ -301,13 +408,47 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			return lastTokenIdx;
 		}
+		private int FindGenericArgClosingToken()
+		{
+			const int NOT_FOUND = -1;
 
-		private void CheckAndConsumeToken(string position, params TokenType[] tokens)
+			var depth = 0;
+			for (var i = 0; i < this.tokens.Count; i++)
+			{
+				switch (this.tokens[i].Type)
+				{
+					case TokenType.Identifier:
+					case TokenType.Resolve:
+					case TokenType.Comma:
+					case TokenType.Cond:
+						continue;
+					case TokenType.Gt:
+						depth--;
+						if (depth < 0)
+							return i;
+						break;
+					case TokenType.Rshift:
+						depth -= 2;
+						if (depth < 0)
+							return i;
+						break;
+					case TokenType.Lt:
+						depth++;
+						break;
+					default:
+						return NOT_FOUND;
+				}
+			}
+			return NOT_FOUND;
+		}
+
+		private void CheckAndConsumeToken(TokenType expectedType1, TokenType expectedType2 = TokenType.None)
 		{
 			var token = this.tokens.Count > 0 ? this.tokens.Dequeue() : default(Token);
-			if (token.Type == TokenType.None || Array.IndexOf(tokens, token.Type) < 0)
+			var actualType = token.Type;
+			if (actualType == TokenType.None || (actualType != expectedType1 && actualType != expectedType2))
 			{
-				var expectedTokens = string.Join(", ", Array.ConvertAll(tokens, t => t.ToString()));
+				var expectedTokens = expectedType2 != TokenType.None ? string.Concat(expectedType1.ToString(), ", ", expectedType2.ToString()) : expectedType1.ToString();
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED, expectedTokens), token);
 			}
 		}
@@ -345,6 +486,36 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			@operator.Nodes.Add(rightOperand);
 
 			this.stack.Push(@operator);
+		}
+
+		private static TokenType[] UnionTerms(TokenType[] first, TokenType[] second)
+		{
+			if (first == null)
+				return second;
+			else if (second == null)
+				return first;
+			if (ReferenceEquals(first, second))
+				return first;
+
+			// check if 'first' is subset of 'second'
+			var firstMatches = 0;
+			foreach (var item in second)
+				firstMatches += Array.IndexOf(first, item) >= 0 ? 1 : 0;
+			if (firstMatches == second.Length)
+				return first; // 'second' is subset of 'first'
+
+			// check if 'second' is subset of 'first'
+			var secondMatches = 0;
+			foreach (var item in first)
+				secondMatches += Array.IndexOf(second, item) >= 0 ? 1 : 0;
+			if (secondMatches == first.Length)
+				return second; // 'second' is subset of 'first'
+
+			// just combine them
+			var newTerms = new TokenType[first.Length + second.Length];
+			first.CopyTo(newTerms, 0);
+			second.CopyTo(newTerms, first.Length);
+			return newTerms;
 		}
 
 		private int ComputePrecedence(TokenType tokenType1, TokenType tokenType2)

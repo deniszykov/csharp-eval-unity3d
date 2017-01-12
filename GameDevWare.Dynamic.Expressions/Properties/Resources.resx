@@ -138,6 +138,9 @@
   <data name="EXCEPTION_BUILD_CLOSEDDELEGATETYPEISEXPECTED" xml:space="preserve">
     <value>Invalid lambda type '{0}'. A closed delegate type is expected in lambda type declaration.</value>
   </data>
+  <data name="EXCEPTION_BUILD_FAILEDTOBINDGENERICARGUMENTSTOTYPE" xml:space="preserve">
+    <value>Failed to bind generic arguments '{0}' to type '{1}'.</value>
+  </data>
   <data name="EXCEPTION_BUILD_INVALIDCHARLITERAL" xml:space="preserve">
     <value>Invalid char literal '{0}'. It should be one character length.</value>
   </data>
@@ -150,8 +153,14 @@
   <data name="EXCEPTION_BUILD_MISSINGATTRONNODE" xml:space="preserve">
     <value>Missing or wrong '{0}' attribute on one of expression nodes.</value>
   </data>
+  <data name="EXCEPTION_BUILD_MISSINGORWRONGARGUMENT" xml:space="preserve">
+    <value>Missing or wrong '{0}' argument.</value>
+  </data>
   <data name="EXCEPTION_BUILD_RENDERFAILED" xml:space="preserve">
     <value>An error occured while trying to render '{0}' expression: {1}</value>
+  </data>
+  <data name="EXCEPTION_BUILD_TOOMANYARGUMENTS" xml:space="preserve">
+    <value>Too many arguments. Maximum number of supported arguments '{0}'.</value>
   </data>
   <data name="EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF" xml:space="preserve">
     <value>Unable to apply null-conditional operator on type '{0}'.</value>
@@ -181,7 +190,7 @@
     <value>Unable to resolve '{0}'. There is no formal parameter with this name.</value>
   </data>
   <data name="EXCEPTION_BUILD_UNABLETORESOLVETYPE" xml:space="preserve">
-    <value>Unable to resolve type '{0}'. Known types are: '{1}'.</value>
+    <value>Unable to resolve type '{0}'.</value>
   </data>
   <data name="EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE" xml:space="preserve">
     <value>Unable to resolve type '{0}'. Can't choose from: '{1}'.</value>

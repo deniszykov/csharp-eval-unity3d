@@ -1,4 +1,14 @@
-﻿/*
+﻿
+
+
+
+
+
+
+
+
+
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -49,6 +59,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		}
 
 
+
 		public static string EXCEPTION_BUILD_UNABLETOINVOKENONDELEG 
 		{
 			get 
@@ -56,10 +67,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Unable to invoke non-delegate type '{0}'.";
+
 					default: return "EXCEPTION_BUILD_UNABLETOINVOKENONDELEG";
 				}
 			}
 		}
+
 		public static string EXCEPTION_PARSER_COLONISEXPRECTED 
 		{
 			get 
@@ -67,10 +80,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "A colon ':' symbol is expected in conditional '?' expression.";
+
 					default: return "EXCEPTION_PARSER_COLONISEXPRECTED";
 				}
 			}
 		}
+
 		public static string EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES 
 		{
 			get 
@@ -78,10 +93,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "No conversion operation is defined from '{0}' to '{1}'.";
+
 					default: return "EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES";
 				}
 			}
 		}
+
 		public static string EXCEPTION_BOUNDEXPR_CANTCONVERTARG 
 		{
 			get 
@@ -89,10 +106,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Can't convert argument '{0}' ('{2}') to required type '{1}'.";
+
 					default: return "EXCEPTION_BOUNDEXPR_CANTCONVERTARG";
 				}
 			}
 		}
+
 		public static string EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND 
 		{
 			get 
@@ -100,10 +119,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "A '{0}' operator requires a second operand.";
+
 					default: return "EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND";
 				}
 			}
 		}
+
 		public static string EXCEPTION_COMPIL_NOBINARYOPONTYPE 
 		{
 			get 
@@ -111,10 +132,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "No binary operation '{0}' is defined on type '{1}'.";
+
 					default: return "EXCEPTION_COMPIL_NOBINARYOPONTYPE";
 				}
 			}
 		}
+
 		public static string EXCEPTION_BUILD_UNABLETORESOLVEMEMBERONTYPE 
 		{
 			get 
@@ -122,10 +145,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Unable to find public property or field '{0}' on '{1}'.";
+
 					default: return "EXCEPTION_BUILD_UNABLETORESOLVEMEMBERONTYPE";
 				}
 			}
 		}
+
 		public static string EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF 
 		{
 			get 
@@ -133,10 +158,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Unable to apply null-conditional operator on type '{0}'.";
+
 					default: return "EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF";
 				}
 			}
 		}
+
 		public static string EXCEPTION_BUILD_INVALIDCONSTANTEXPRESSION 
 		{
 			get 
@@ -144,10 +171,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Can't convert constant of type '{0}' to literal representation.";
+
 					default: return "EXCEPTION_BUILD_INVALIDCONSTANTEXPRESSION";
 				}
 			}
 		}
+
 		public static string EXCEPTION_TOKENIZER_INVALIDCHARLITERAL 
 		{
 			get 
@@ -155,10 +184,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Invalid char literal.";
+
 					default: return "EXCEPTION_TOKENIZER_INVALIDCHARLITERAL";
 				}
 			}
 		}
+
 		public static string EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE 
 		{
 			get 
@@ -166,10 +197,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Unexpected token type '{0}'.";
+
 					default: return "EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE";
 				}
 			}
 		}
+
 		public static string EXCEPTION_PARSER_TERNARYOPREQOPERAND 
 		{
 			get 
@@ -177,10 +210,25 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "A ternary operation requires three parameters.";
+
 					default: return "EXCEPTION_PARSER_TERNARYOPREQOPERAND";
 				}
 			}
 		}
+
+		public static string EXCEPTION_BUILD_MISSINGORWRONGARGUMENT 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Missing or wrong '{0}' argument.";
+
+					default: return "EXCEPTION_BUILD_MISSINGORWRONGARGUMENT";
+				}
+			}
+		}
+
 		public static string EXCEPTION_COMPIL_UNKNOWNEXPRTYPE 
 		{
 			get 
@@ -188,10 +236,25 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Unknown expression type {0}.";
+
 					default: return "EXCEPTION_COMPIL_UNKNOWNEXPRTYPE";
 				}
 			}
 		}
+
+		public static string EXCEPTION_BUILD_FAILEDTOBINDGENERICARGUMENTSTOTYPE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Failed to bind generic arguments '{0}' to type '{1}'.";
+
+					default: return "EXCEPTION_BUILD_FAILEDTOBINDGENERICARGUMENTSTOTYPE";
+				}
+			}
+		}
+
 		public static string EXCEPTION_BUILD_BUILDFAILED 
 		{
 			get 
@@ -199,10 +262,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "An error occured while trying to build '{0}' expression: {1}";
+
 					default: return "EXCEPTION_BUILD_BUILDFAILED";
 				}
 			}
 		}
+
 		public static string EXCEPTION_BUILD_UNABLETOBINDINDEXER 
 		{
 			get 
@@ -210,120 +275,12 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Unable to find indexing property on type '{0}' accepting specified arguments.";
+
 					default: return "EXCEPTION_BUILD_UNABLETOBINDINDEXER";
 				}
 			}
 		}
-		public static string EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Length of types array doesn't match length of names array.";
-					default: return "EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES";
-				}
-			}
-		}
-		public static string EXCEPTION_BUILD_UNABLETOBINDCALL 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Unable to find method '{0}' on type '{1}' accepting specified arguments.";
-					default: return "EXCEPTION_BUILD_UNABLETOBINDCALL";
-				}
-			}
-		}
-		public static string EXCEPTION_PARSER_OPREQUIRESOPERAND 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "A '{0}' operator requires an operand.";
-					default: return "EXCEPTION_PARSER_OPREQUIRESOPERAND";
-				}
-			}
-		}
-		public static string EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Wrong number of parameters. Make sure parameter count matches expression's signature.";
-					default: return "EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS";
-				}
-			}
-		}
-		public static string EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Invalid parameters count.";
-					default: return "EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT";
-				}
-			}
-		}
-		public static string EXCEPTION_PARSER_BINARYOPREQOPERAND 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "A binary operation requires two parameters.";
-					default: return "EXCEPTION_PARSER_BINARYOPREQOPERAND";
-				}
-			}
-		}
-		public static string EXCEPTION_PARSER_UNARYOPREQOPERAND 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "An unary operation requires one parameter.";
-					default: return "EXCEPTION_PARSER_UNARYOPREQOPERAND";
-				}
-			}
-		}
-		public static string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Unexpected parser node met '{0}' while building expression tree.";
-					default: return "EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE";
-				}
-			}
-		}
-		public static string EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Unknown binary expression type '{0}'.";
-					default: return "EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE";
-				}
-			}
-		}
-		public static string EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "An invalid children count '{1}' of node '{0}' while {2} is expected.";
-					default: return "EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE";
-				}
-			}
-		}
+
 		public static string EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED 
 		{
 			get 
@@ -331,296 +288,142 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Invalid lambda type '{0}'. A valid delegate type should be specified in lambda type declaration.";
+
 					default: return "EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED";
 				}
 			}
 		}
-		public static string EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR 
+
+		public static string EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unable to find constructor on type '{0}' accepting specified arguments.";
-					default: return "EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR";
+					case 0: return "Length of types array doesn't match length of names array.";
+
+					default: return "EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES";
 				}
 			}
 		}
-		public static string EXCEPTION_PARSER_TYPENAMEEXPECTED 
+
+		public static string EXCEPTION_BUILD_UNABLETOBINDCALL 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "A type name is expected.";
-					default: return "EXCEPTION_PARSER_TYPENAMEEXPECTED";
+					case 0: return "Unable to find method '{0}' on type '{1}' accepting specified arguments.";
+
+					default: return "EXCEPTION_BUILD_UNABLETOBINDCALL";
 				}
 			}
 		}
-		public static string EXCEPTION_BUILD_UNABLETOBINDDELEG 
+
+		public static string EXCEPTION_PARSER_OPREQUIRESOPERAND 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unable to invoke delegate {0}({1}) with specified arguments.";
-					default: return "EXCEPTION_BUILD_UNABLETOBINDDELEG";
+					case 0: return "A '{0}' operator requires an operand.";
+
+					default: return "EXCEPTION_PARSER_OPREQUIRESOPERAND";
 				}
 			}
 		}
-		public static string EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE 
+
+		public static string EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "An invalid type of children nodes '{1}' of node '{0}' while '{2}' is expected.";
-					default: return "EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE";
+					case 0: return "Wrong number of parameters. Make sure parameter count matches expression's signature.";
+
+					default: return "EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS";
 				}
 			}
 		}
-		public static string EXCEPTION_BUILD_UNABLETORESOLVETYPE 
+
+		public static string EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unable to resolve type '{0}'. Known types are: '{1}'.";
-					default: return "EXCEPTION_BUILD_UNABLETORESOLVETYPE";
+					case 0: return "Invalid parameters count.";
+
+					default: return "EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT";
 				}
 			}
 		}
-		public static string EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED 
+
+		public static string EXCEPTION_PARSER_BINARYOPREQOPERAND 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Only System.Func<> lambda types are supported.";
-					default: return "EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED";
+					case 0: return "A binary operation requires two parameters.";
+
+					default: return "EXCEPTION_PARSER_BINARYOPREQOPERAND";
 				}
 			}
 		}
-		public static string EXCEPTION_BUILD_UNKNOWNEXPRTYPE 
+
+		public static string EXCEPTION_PARSER_UNARYOPREQOPERAND 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unknown expression type '{0}'.";
-					default: return "EXCEPTION_BUILD_UNKNOWNEXPRTYPE";
+					case 0: return "An unary operation requires one parameter.";
+
+					default: return "EXCEPTION_PARSER_UNARYOPREQOPERAND";
 				}
 			}
 		}
-		public static string EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE 
+
+		public static string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unknown unary expression type '{0}'.";
-					default: return "EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE";
+					case 0: return "Unexpected parser node met '{0}' while building expression tree.";
+
+					default: return "EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE";
 				}
 			}
 		}
-		public static string EXCEPTION_COMPIL_NOUNARYOPONTYPE 
+
+		public static string EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "No unary operation '{0}' is defined on type '{1}'.";
-					default: return "EXCEPTION_COMPIL_NOUNARYOPONTYPE";
+					case 0: return "Unknown binary expression type '{0}'.";
+
+					default: return "EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE";
 				}
 			}
 		}
-		public static string EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE 
+
+		public static string EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE 
 		{
 			get 
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Body's result type doesn't match expression's result type.";
-					default: return "EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE";
+					case 0: return "An invalid children count '{1}' of node '{0}' while {2} is expected.";
+
+					default: return "EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE";
 				}
 			}
 		}
-		public static string EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Duplicate parameter name '{0}'.";
-					default: return "EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME";
-				}
-			}
-		}
-		public static string EXCEPTION_PARSER_UNEXPECTEDTOKEN 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Unexpected token '{0}' in current context.";
-					default: return "EXCEPTION_PARSER_UNEXPECTEDTOKEN";
-				}
-			}
-		}
-		public static string EXCEPTION_BUILD_UNABLETORESOLVENAME 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Unable to resolve '{0}'. There is no formal parameter with this name.";
-					default: return "EXCEPTION_BUILD_UNABLETORESOLVENAME";
-				}
-			}
-		}
-		public static string EXCEPTION_BUILD_MISSINGATTRONNODE 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Missing or wrong '{0}' attribute on one of expression nodes.";
-					default: return "EXCEPTION_BUILD_MISSINGATTRONNODE";
-				}
-			}
-		}
-		public static string EXCEPTION_LIST_LISTISEMPTY 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "List is empty.";
-					default: return "EXCEPTION_LIST_LISTISEMPTY";
-				}
-			}
-		}
-		public static string EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "One of parameters has invalid type. Make sure parameter types matches expression's signature.";
-					default: return "EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE";
-				}
-			}
-		}
-		public static string EXCEPTION_BUILD_CLOSEDDELEGATETYPEISEXPECTED 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Invalid lambda type '{0}'. A closed delegate type is expected in lambda type declaration.";
-					default: return "EXCEPTION_BUILD_CLOSEDDELEGATETYPEISEXPECTED";
-				}
-			}
-		}
-		public static string EXCEPTION_PARSER_EXPRESSIONISEMPTY 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Expression is empty";
-					default: return "EXCEPTION_PARSER_EXPRESSIONISEMPTY";
-				}
-			}
-		}
-		public static string EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Unable to create '{0}' expression with these '{1}' parameters.";
-					default: return "EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS";
-				}
-			}
-		}
-		public static string EXCEPTION_BUILD_RENDERFAILED 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "An error occured while trying to render '{0}' expression: {1}";
-					default: return "EXCEPTION_BUILD_RENDERFAILED";
-				}
-			}
-		}
-		public static string EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Count of passed arguments doesn't match parameters count.";
-					default: return "EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS";
-				}
-			}
-		}
-		public static string EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Unknown escape sequence '{0}'.";
-					default: return "EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ";
-				}
-			}
-		}
-		public static string EXCEPTION_BUILD_INVALIDCHARLITERAL 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Invalid char literal '{0}'. It should be one character length.";
-					default: return "EXCEPTION_BUILD_INVALIDCHARLITERAL";
-				}
-			}
-		}
-		public static string EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Unable to resolve type '{0}'. Can't choose from: '{1}'.";
-					default: return "EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE";
-				}
-			}
-		}
-		public static string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "A one of these '{0}' tokens are expected.";
-					default: return "EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED";
-				}
-			}
-		}
-		public static string EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL 
-		{
-			get 
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Unexpected symbol '{0}'.";
-					default: return "EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL";
-				}
-			}
-		}
+
 		public static string EXCEPTION_BUILD_INVALIDLAMBDAARGUMENTS 
 		{
 			get 
@@ -628,10 +431,363 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				switch (currentLanguageIdx)
 				{
 					case 0: return "Invalid argument types or count for lambda of type '{0}'.";
+
 					default: return "EXCEPTION_BUILD_INVALIDLAMBDAARGUMENTS";
 				}
 			}
 		}
+
+		public static string EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unable to find constructor on type '{0}' accepting specified arguments.";
+
+					default: return "EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR";
+				}
+			}
+		}
+
+		public static string EXCEPTION_PARSER_TYPENAMEEXPECTED 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "A type name is expected.";
+
+					default: return "EXCEPTION_PARSER_TYPENAMEEXPECTED";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_UNABLETOBINDDELEG 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unable to invoke delegate {0}({1}) with specified arguments.";
+
+					default: return "EXCEPTION_BUILD_UNABLETOBINDDELEG";
+				}
+			}
+		}
+
+		public static string EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "An invalid type of children nodes '{1}' of node '{0}' while '{2}' is expected.";
+
+					default: return "EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_UNABLETORESOLVETYPE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unable to resolve type '{0}'.";
+
+					default: return "EXCEPTION_BUILD_UNABLETORESOLVETYPE";
+				}
+			}
+		}
+
+		public static string EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Only System.Func<> lambda types are supported.";
+
+					default: return "EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_UNKNOWNEXPRTYPE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unknown expression type '{0}'.";
+
+					default: return "EXCEPTION_BUILD_UNKNOWNEXPRTYPE";
+				}
+			}
+		}
+
+		public static string EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unknown unary expression type '{0}'.";
+
+					default: return "EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE";
+				}
+			}
+		}
+
+		public static string EXCEPTION_COMPIL_NOUNARYOPONTYPE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "No unary operation '{0}' is defined on type '{1}'.";
+
+					default: return "EXCEPTION_COMPIL_NOUNARYOPONTYPE";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Body's result type doesn't match expression's result type.";
+
+					default: return "EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE";
+				}
+			}
+		}
+
+		public static string EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Duplicate parameter name '{0}'.";
+
+					default: return "EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME";
+				}
+			}
+		}
+
+		public static string EXCEPTION_PARSER_UNEXPECTEDTOKEN 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unexpected token '{0}' in current context.";
+
+					default: return "EXCEPTION_PARSER_UNEXPECTEDTOKEN";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_UNABLETORESOLVENAME 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unable to resolve '{0}'. There is no formal parameter with this name.";
+
+					default: return "EXCEPTION_BUILD_UNABLETORESOLVENAME";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_MISSINGATTRONNODE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Missing or wrong '{0}' attribute on one of expression nodes.";
+
+					default: return "EXCEPTION_BUILD_MISSINGATTRONNODE";
+				}
+			}
+		}
+
+		public static string EXCEPTION_LIST_LISTISEMPTY 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "List is empty.";
+
+					default: return "EXCEPTION_LIST_LISTISEMPTY";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "One of parameters has invalid type. Make sure parameter types matches expression's signature.";
+
+					default: return "EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_CLOSEDDELEGATETYPEISEXPECTED 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Invalid lambda type '{0}'. A closed delegate type is expected in lambda type declaration.";
+
+					default: return "EXCEPTION_BUILD_CLOSEDDELEGATETYPEISEXPECTED";
+				}
+			}
+		}
+
+		public static string EXCEPTION_PARSER_EXPRESSIONISEMPTY 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Expression is empty";
+
+					default: return "EXCEPTION_PARSER_EXPRESSIONISEMPTY";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unable to create '{0}' expression with these '{1}' parameters.";
+
+					default: return "EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_RENDERFAILED 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "An error occured while trying to render '{0}' expression: {1}";
+
+					default: return "EXCEPTION_BUILD_RENDERFAILED";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Count of passed arguments doesn't match parameters count.";
+
+					default: return "EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS";
+				}
+			}
+		}
+
+		public static string EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unknown escape sequence '{0}'.";
+
+					default: return "EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_INVALIDCHARLITERAL 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Invalid char literal '{0}'. It should be one character length.";
+
+					default: return "EXCEPTION_BUILD_INVALIDCHARLITERAL";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unable to resolve type '{0}'. Can't choose from: '{1}'.";
+
+					default: return "EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE";
+				}
+			}
+		}
+
+		public static string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "A one of these '{0}' tokens are expected.";
+
+					default: return "EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED";
+				}
+			}
+		}
+
+		public static string EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unexpected symbol '{0}'.";
+
+					default: return "EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL";
+				}
+			}
+		}
+
+		public static string EXCEPTION_BUILD_TOOMANYARGUMENTS 
+		{
+			get 
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Too many arguments. Maximum number of supported arguments '{0}'.";
+
+					default: return "EXCEPTION_BUILD_TOOMANYARGUMENTS";
+				}
+			}
+		}
+
 	}
 }
 

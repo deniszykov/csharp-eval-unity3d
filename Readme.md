@@ -139,23 +139,14 @@ AotCompilation.RegisterForFastCall<MyVectorMath, Vector4, float, Vector4>();
 
 You can send suggestions at support@gamedevware.com
 
-The roadmap depends entirely on how many copies of the package will be sold:
-
-* &gt;50
-	* Parser: Specifying generic arguments for types and methods
-	* Parser: Nullable types specification (like Int32?)
-* &gt;100
-	* Expression serialization	
-	* Void expressions (System.Action delegates)
-* &gt;200
-	* AOT: Lambda expressions
-	* Parser: Delegate construction from method reference
-	* Parser: Type inference for generics	
-* &gt;300
-	* Parser: Full C#6 syntax
-	* Parser: Extension methods
-	* Parser: Type initializers, List initializers
-	* Custom editor with auto-completion for Unity
+* Expression serialization	
+* Void expressions (System.Action delegates)
+* Parser: Delegate construction from method reference
+* Parser: Type inference for generics	
+* Parser: Full C#6 syntax
+* Parser: Extension methods
+* Parser: Type initializers, List initializers
+* Custom editor with auto-completion for Unity
 
 ## Changes
 # 1.0.1.9

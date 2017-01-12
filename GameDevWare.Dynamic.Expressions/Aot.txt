@@ -81,14 +81,14 @@
 			default(ExpressionBuilder).BuildConstant(default(GameDevWare.Dynamic.Expressions.ExpressionTree));
 			default(ExpressionBuilder).BuildPropertyOrField(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Linq.Expressions.Expression));
 			default(ExpressionBuilder).BuildIndex(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Linq.Expressions.Expression));
-			default(ExpressionBuilder).BuildCall(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Linq.Expressions.Expression));
+			default(ExpressionBuilder).BuildCall(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Boolean),default(GameDevWare.Dynamic.Expressions.ReadOnlyDictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.ExpressionTree, GameDevWare.Dynamic.Expressions, Version=1.0.1.11, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]),default(GameDevWare.Dynamic.Expressions.TypeReference),default(System.Linq.Expressions.Expression));
 			default(ExpressionBuilder).BuildInvoke(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Linq.Expressions.Expression));
 			default(ExpressionBuilder).BuildDefault(default(GameDevWare.Dynamic.Expressions.ExpressionTree));
 			default(ExpressionBuilder).BuildTypeOf(default(GameDevWare.Dynamic.Expressions.ExpressionTree));
 			default(ExpressionBuilder).BuildNewArrayBounds(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Linq.Expressions.Expression));
 			default(ExpressionBuilder).BuildNew(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Linq.Expressions.Expression));
 			default(ExpressionBuilder).BuildLambda(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Type),default(System.Linq.Expressions.Expression));
-			default(ExpressionBuilder).TryBindMethod(default(System.Reflection.ParameterInfo[]),default(System.Collections.Generic.Dictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.ExpressionTree, GameDevWare.Dynamic.Expressions, Version=1.0.1.11, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]),default(System.Linq.Expressions.Expression),default(System.Linq.Expressions.Expression[]&));
+			default(ExpressionBuilder).TryBindMethod(default(System.Reflection.ParameterInfo[]),default(GameDevWare.Dynamic.Expressions.ReadOnlyDictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.ExpressionTree, GameDevWare.Dynamic.Expressions, Version=1.0.1.11, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]),default(System.Linq.Expressions.Expression),default(System.Linq.Expressions.Expression[]&));
 			ExpressionBuilder.TryCastTo(default(System.Type),default(System.Linq.Expressions.Expression&));
 			ExpressionBuilder.GetMembers(default(System.Type),default(System.Boolean));
 			ExpressionBuilder.IsHeirOf(default(System.Type),default(System.Type));
@@ -99,7 +99,8 @@
 			ExpressionBuilder.GetDefaultValue(default(System.Type));
 			ExpressionBuilder.PromoteBothArguments(default(System.Reflection.MethodInfo),default(System.Object[]));
 			ExpressionBuilder.PromoteFirstArgument(default(System.Reflection.MethodInfo),default(System.Object[]));
-			default(ExpressionBuilder).TryGetTypeName(default(System.Object),default(System.String&));
+			ExpressionBuilder.TryGetTypeReference(default(System.Object),default(GameDevWare.Dynamic.Expressions.TypeReference&));
+			ExpressionBuilder.TryGetMethodReference(default(System.Object),default(GameDevWare.Dynamic.Expressions.TypeReference&));
 			ExpressionBuilder.DefaultExpression(default(System.Type));
 			ExpressionBuilder.ConvertToNullable(default(System.Linq.Expressions.Expression));
 			ExpressionBuilder.MakeNullPropagationExpression(default(System.Linq.Expressions.Expression),default(System.Linq.Expressions.Expression));
@@ -213,8 +214,7 @@
 		// AOT
 		if (typeof(ITypeResolutionService).Name == string.Empty)
 		{
-			default(ITypeResolutionService).GetType(default(System.String));
-			default(ITypeResolutionService).TryGetType(default(System.String),default(System.Type&));
+			default(ITypeResolutionService).TryGetType(default(GameDevWare.Dynamic.Expressions.TypeReference),default(System.Type&));
 		}
 	}
 #KnownTypeResolutionService
@@ -224,10 +224,13 @@
 		// AOT
 		if (typeof(KnownTypeResolutionService).Name == string.Empty)
 		{
-			default(KnownTypeResolutionService).GetType(default(System.String));
-			default(KnownTypeResolutionService).TryGetType(default(System.String),default(System.Type&));
-			default(KnownTypeResolutionService).GetTypeInternal(default(System.String),default(System.Boolean));
-			default(KnownTypeResolutionService).GetKnownTypes(default(System.Collections.Generic.IEnumerable`1[[System.Type, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]));
+			default(KnownTypeResolutionService).TryGetType(default(GameDevWare.Dynamic.Expressions.TypeReference),default(System.Type&));
+			KnownTypeResolutionService.GetKnownTypes(default(System.Collections.Generic.IEnumerable`1[[System.Type, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]),default(System.Collections.Generic.HashSet`1[[System.Type, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]),default(GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions));
+			KnownTypeResolutionService.GetTypeNames(default(System.Type));
+			KnownTypeResolutionService.GetTypeFullNames(default(System.Type));
+			KnownTypeResolutionService.WriteFullName(default(System.Type),default(System.Text.StringBuilder));
+			KnownTypeResolutionService.WriteName(default(System.Type),default(System.Text.StringBuilder));
+			KnownTypeResolutionService.RemoveGenericSuffix(default(System.String));
 			default(KnownTypeResolutionService).ToString();
 		}
 	}
@@ -274,6 +277,38 @@
 		// AOT
 		if (typeof(Constants).Name == string.Empty)
 		{
+			Constants.GetIndexAsString(default(System.Int32));
+		}
+	}
+#TypeDiscoveryOptions
+
+	static TypeDiscoveryOptions()
+	{
+		// AOT
+		if (typeof(TypeDiscoveryOptions).Name == string.Empty)
+		{
+		}
+	}
+#TypeReference
+
+	static TypeReference()
+	{
+		// AOT
+		if (typeof(TypeReference).Name == string.Empty)
+		{
+			default(TypeReference).get_FullName();
+			default(TypeReference).get_Name();
+			default(TypeReference).get_Namespace();
+			default(TypeReference).get_TypeArguments();
+			default(TypeReference).CombineParts(default(System.Int32),default(System.Text.StringBuilder));
+			default(TypeReference).Format(default(System.Text.StringBuilder));
+			default(TypeReference).Equals(default(System.Object));
+			default(TypeReference).Equals(default(GameDevWare.Dynamic.Expressions.TypeReference));
+			default(TypeReference).GetHashCode();
+			TypeReference.op_Equality(default(GameDevWare.Dynamic.Expressions.TypeReference),default(GameDevWare.Dynamic.Expressions.TypeReference));
+			TypeReference.op_Inequality(default(GameDevWare.Dynamic.Expressions.TypeReference),default(GameDevWare.Dynamic.Expressions.TypeReference));
+			TypeReference.ComputeHashCode(default(GameDevWare.Dynamic.Expressions.TypeReference));
+			default(TypeReference).ToString();
 		}
 	}
 #ExpressionSubstitutor
@@ -308,10 +343,14 @@
 			Resources.get_EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF();
 			Resources.get_EXCEPTION_BUILD_INVALIDCONSTANTEXPRESSION();
 			Resources.get_EXCEPTION_TOKENIZER_INVALIDCHARLITERAL();
+			Resources.get_EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE();
 			Resources.get_EXCEPTION_PARSER_TERNARYOPREQOPERAND();
+			Resources.get_EXCEPTION_BUILD_MISSINGORWRONGARGUMENT();
 			Resources.get_EXCEPTION_COMPIL_UNKNOWNEXPRTYPE();
+			Resources.get_EXCEPTION_BUILD_FAILEDTOBINDGENERICARGUMENTSTOTYPE();
 			Resources.get_EXCEPTION_BUILD_BUILDFAILED();
 			Resources.get_EXCEPTION_BUILD_UNABLETOBINDINDEXER();
+			Resources.get_EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED();
 			Resources.get_EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES();
 			Resources.get_EXCEPTION_BUILD_UNABLETOBINDCALL();
 			Resources.get_EXCEPTION_PARSER_OPREQUIRESOPERAND();
@@ -322,7 +361,7 @@
 			Resources.get_EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE();
 			Resources.get_EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE();
 			Resources.get_EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE();
-			Resources.get_EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED();
+			Resources.get_EXCEPTION_BUILD_INVALIDLAMBDAARGUMENTS();
 			Resources.get_EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR();
 			Resources.get_EXCEPTION_PARSER_TYPENAMEEXPECTED();
 			Resources.get_EXCEPTION_BUILD_UNABLETOBINDDELEG();
@@ -349,7 +388,7 @@
 			Resources.get_EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE();
 			Resources.get_EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED();
 			Resources.get_EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL();
-			Resources.get_EXCEPTION_BUILD_INVALIDLAMBDAARGUMENTS();
+			Resources.get_EXCEPTION_BUILD_TOOMANYARGUMENTS();
 		}
 	}
 #CSharpExpression
@@ -382,8 +421,9 @@
 			CSharpExpressionRenderer.RenderConstant(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Text.StringBuilder));
 			CSharpExpressionRenderer.RenderGroup(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Text.StringBuilder),default(System.Boolean));
 			CSharpExpressionRenderer.RenderInvokeOrIndex(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Text.StringBuilder),default(System.Boolean));
-			CSharpExpressionRenderer.RenderArguments(default(GameDevWare.Dynamic.Expressions.ReadOnlyDictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]),default(System.Text.StringBuilder),default(System.Boolean));
 			CSharpExpressionRenderer.RenderLambda(default(GameDevWare.Dynamic.Expressions.ExpressionTree),default(System.Text.StringBuilder),default(System.Boolean),default(System.Boolean));
+			CSharpExpressionRenderer.RenderArguments(default(GameDevWare.Dynamic.Expressions.ReadOnlyDictionary`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.ExpressionTree, GameDevWare.Dynamic.Expressions, Version=1.0.1.11, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]),default(System.Text.StringBuilder),default(System.Boolean));
+			CSharpExpressionRenderer.RenderTypeName(default(System.Object),default(System.Text.StringBuilder));
 			CSharpExpressionRenderer.Render(default(System.Linq.Expressions.Expression),default(System.Text.StringBuilder),default(System.Boolean),default(System.Boolean));
 			CSharpExpressionRenderer.RenderCondition(default(System.Linq.Expressions.ConditionalExpression),default(System.Text.StringBuilder),default(System.Boolean),default(System.Boolean));
 			CSharpExpressionRenderer.RenderConvert(default(System.Linq.Expressions.UnaryExpression),default(System.Text.StringBuilder),default(System.Boolean),default(System.Boolean));
@@ -423,11 +463,15 @@
 		{
 			Parser.Parse(default(System.Collections.Generic.IEnumerable`1[[GameDevWare.Dynamic.Expressions.CSharp.Token, GameDevWare.Dynamic.Expressions, Version=1.0.1.11, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
 			default(Parser).Expression(default(GameDevWare.Dynamic.Expressions.CSharp.ParserNode),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType[]));
+			default(Parser).GenericArguments(default(GameDevWare.Dynamic.Expressions.CSharp.Token));
+			default(Parser).NullableType(default(GameDevWare.Dynamic.Expressions.CSharp.Token));
 			default(Parser).FindCondClosingToken();
-			default(Parser).CheckAndConsumeToken(default(System.String),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType[]));
+			default(Parser).FindGenericArgClosingToken();
+			default(Parser).CheckAndConsumeToken(default(GameDevWare.Dynamic.Expressions.CSharp.TokenType),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType));
 			default(Parser).CombineUnary(default(GameDevWare.Dynamic.Expressions.CSharp.Token));
 			default(Parser).CombineBinary(default(GameDevWare.Dynamic.Expressions.CSharp.Token));
 			default(Parser).CombineTernary(default(GameDevWare.Dynamic.Expressions.CSharp.Token));
+			Parser.UnionTerms(default(GameDevWare.Dynamic.Expressions.CSharp.TokenType[]),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType[]));
 			default(Parser).ComputePrecedence(default(GameDevWare.Dynamic.Expressions.CSharp.TokenType),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType));
 		}
 	}
@@ -442,9 +486,10 @@
 			default(ParserNode).GameDevWare.Dynamic.Expressions.ILineInfo.GetColumnNumber();
 			default(ParserNode).GameDevWare.Dynamic.Expressions.ILineInfo.GetTokenLength();
 			default(ParserNode).ToExpressionTree(default(System.Boolean));
-			default(ParserNode).ToTypeName(default(System.Boolean));
+			default(ParserNode).ToTypeName(default(GameDevWare.Dynamic.Expressions.CSharp.ParserNode.TypeNameOptions));
 			ParserNode.PrepareArguments(default(GameDevWare.Dynamic.Expressions.CSharp.ParserNode),default(System.Int32),default(System.Boolean));
-			ParserNode.Ensure(default(GameDevWare.Dynamic.Expressions.CSharp.ParserNode),default(System.Int32),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType[]));
+			ParserNode.PrepareTypeArguments(default(GameDevWare.Dynamic.Expressions.CSharp.ParserNode),default(System.Int32));
+			ParserNode.Ensure(default(GameDevWare.Dynamic.Expressions.CSharp.ParserNode),default(System.Int32),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType));
 			default(ParserNode).UnescapeAndUnquote(default(System.String));
 			default(ParserNode).Write(default(System.Text.StringBuilder),default(System.Int32));
 			default(ParserNode).ToString();
@@ -1146,6 +1191,15 @@
 	{
 		// AOT
 		if (typeof(ParserNodeCollection).Name == string.Empty)
+		{
+		}
+	}
+#TypeNameOptions
+
+	static TypeNameOptions()
+	{
+		// AOT
+		if (typeof(TypeNameOptions).Name == string.Empty)
 		{
 		}
 	}

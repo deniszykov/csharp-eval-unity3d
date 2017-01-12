@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions
@@ -25,6 +27,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_PROPERTY_OR_FIELD = "PropertyOrField";
 		public const string EXPRESSION_TYPE_CONSTANT = "Constant";
 		public const string EXPRESSION_TYPE_CONVERT = "Convert";
+		public const string EXPRESSION_TYPE_CONVERTCHECKED = "ConvertChecked";
 		public const string EXPRESSION_TYPE_CALL = "Call";
 		public const string EXPRESSION_TYPE_GROUP = "Group";
 		public const string EXPRESSION_TYPE_INVOKE = "Invoke";
@@ -39,6 +42,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_ADD = "Add";
 		public const string EXPRESSION_TYPE_ADD_CHECKED = "AddChecked";
 		public const string EXPRESSION_TYPE_SUBTRACT = "Subtract";
+		public const string EXPRESSION_TYPE_SUBTRACT_CHECKED = "SubtractChecked";
 		public const string EXPRESSION_TYPE_LEFTSHIFT = "LeftShift";
 		public const string EXPRESSION_TYPE_RIGHTSHIFT = "RightShift";
 		public const string EXPRESSION_TYPE_GREATERTHAN = "GreaterThan";
@@ -51,6 +55,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_COMPLEMENT = "Complement";
 		public const string EXPRESSION_TYPE_DIVIDE = "Divide";
 		public const string EXPRESSION_TYPE_MULTIPLY = "Multiply";
+		public const string EXPRESSION_TYPE_MULTIPLY_CHECKED = "MultiplyChecked";
 		public const string EXPRESSION_TYPE_MODULO = "Modulo";
 		public const string EXPRESSION_TYPE_TYPEIS = "TypeIs";
 		public const string EXPRESSION_TYPE_TYPEAS = "TypeAs";
@@ -72,10 +77,23 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string VALUE_FALSE_STRING = "false";
 		public const string VALUE_NULL_STRING = "null";
 
+		public const int MAX_ARGUMENTS_COUNT = 100;
+
+
 		public static readonly object TrueObject = true;
 		public static readonly object FalseObject = false;
 
 		public static readonly CultureInfo DefaultFormatProvider = CultureInfo.InvariantCulture;
 		public static readonly ParameterExpression[] EmptyParameters = new ParameterExpression[0];
+
+		private static readonly string[] IntToString = Array.ConvertAll(Enumerable.Range(0, MAX_ARGUMENTS_COUNT).ToArray(), i => i.ToString());
+
+		public static string GetIndexAsString(int index)
+		{
+			if (index < IntToString.Length)
+				return IntToString[index];
+			else
+				return index.ToString(DefaultFormatProvider);
+		}
 	}
 }

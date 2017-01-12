@@ -1,9 +1,11 @@
 ﻿
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
+using Xunit.Sdk;
 
 namespace GameDevWare.Dynamic.Expressions.Tests
 {
@@ -316,6 +318,97 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Assert.Equal(2, node.Nodes.Count);
 			Assert.Equal(TokenType.Group, node.Nodes[1].Type);
 
+		}
+
+		[Theory]
+		[InlineData("System.Func<A> < 1", 3, TokenType.Lt)]
+		[InlineData("System<A>.Func<B,C>", 5, TokenType.Resolve)]
+		[InlineData("MeMethod<A,B,C>()", 4, TokenType.Call)]
+		[InlineData("MeMythod<Type1<Type2<B, C>, D, E, F>>() != 0", 8, TokenType.Neq)]
+		[InlineData("MyMethod<Type1<Type2<B, C>, D, E, Type3<E>>>() > 0", 9, TokenType.Gt)]
+		[InlineData("MyMethod<Type1<Type2<B, C>, D, E, Type3<Type4<E>>>>() < 0", 10, TokenType.Lt)]
+		[InlineData("arg1.MyMethod<System.Random.Type1<Type2<B, C>, Ns.D, NS.E, Type3<System.Type4<E.F>>>>()", 17, TokenType.Call)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>()", 12, TokenType.Call)]
+		[InlineData("new TestGenericClass<int>.TestSubClass<int,int>(1,2,3).InstanceGenericMethod1<int>(1,2,3)", 7, TokenType.Call)]
+		public void ParseClosedGenericType(string expression, int expectedIdentifiers, TokenType expectedTokenType)
+		{
+			var node = Parser.Parse(Tokenizer.Tokenize(expression));
+			var countIdentifiers = default(Func<ParserNode, int>);
+			countIdentifiers = n => (n.Type == TokenType.Identifier ? 1 : 0) + n.Nodes.Sum(sn => countIdentifiers(sn));
+			var actual = countIdentifiers(node);
+			var actualTokenType = node.Type;
+
+			Assert.Equal(expectedIdentifiers, actual);
+			Assert.Equal(expectedTokenType, actualTokenType);
+
+		}
+
+		[Theory]
+		[InlineData("Func<>", 1)]
+		[InlineData("Func<,>", 2)]
+		[InlineData("Func<,,>", 3)]
+		[InlineData("Func<,,,>", 4)]
+		[InlineData("Func<,,,,>", 5)]
+		[InlineData("Func<,,,,,>", 6)]
+		[InlineData("Func<,,,,,,>", 7)]
+		[InlineData("Func<,,,,,,,>", 8)]
+		[InlineData("Func<,,,,,,,,>", 9)]
+		[InlineData("Func<,,,,,,,,,>", 10)]
+		public void ParseOpenGenericType(string expression, int expectedGenericArguments)
+		{
+			var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+			Assert.Equal(1, node.Nodes.Count);
+			Assert.Equal(TokenType.Arguments, node.Nodes[0].Type);
+
+			var arguments = node.Nodes[0];
+			var actual = arguments.Nodes.Count;
+
+			Assert.Equal(expectedGenericArguments, actual);
+		}
+
+		[Theory]
+		[InlineData("Func<A,>", 1, 1)]
+		[InlineData("Func<, ,A>", 2, 1)]
+		[InlineData("Func< ,A,A,>", 2, 2)]
+		[InlineData("Func<,A,A,A,A>", 1, 4)]
+		[InlineData("Func< ,A<B>,,, , >", 5, 1)]
+		[InlineData("Func<A,A,A,,,, >", 4, 3)]
+		[InlineData("Func<  ,,, ,A,A,A,A>", 4, 4)]
+		[InlineData("Func<A,A,A,A,A,A,,A,A>", 1, 8)]
+		[InlineData("Func<A,A,,   ,,,,, A,A >", 6, 4)]
+		public void ParseHalfOpenGenericType(string expression, int expectedGenericParameters, int expectedGenericArguments)
+		{
+			var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+			Assert.Equal(1, node.Nodes.Count);
+			Assert.Equal(TokenType.Arguments, node.Nodes[0].Type);
+
+			var arguments = node.Nodes[0];
+			var actualGenParams = arguments.Nodes.Count(n => n.Value == string.Empty);
+			var actualGenArgs = arguments.Nodes.Count(n => n.Value != string.Empty);
+
+			Assert.Equal(expectedGenericParameters, actualGenParams);
+			Assert.Equal(expectedGenericArguments, actualGenArgs);
+		}
+
+		[Theory]
+		[InlineData("int?")]
+		[InlineData("System.Int32?")]
+		[InlineData("typeof(int?)")]
+		[InlineData("typeof(System.Int32?)")]
+		[InlineData("Func<A,int?>")]
+		[InlineData("Func<A,System.Int32?>")]
+		[InlineData("Func<int?,System.Int32?>")]
+		[InlineData("Func<System.Int32?,int?>")]
+		public void ParseNullableType(string expression)
+		{
+			var node = Parser.Parse(Tokenizer.Tokenize(expression));
+			var countNullableTypes = default(Func<ParserNode, int>);
+			countNullableTypes = n => (n.Type == TokenType.Identifier && n.Value == typeof(Nullable).Name ? 1 : 0) + n.Nodes.Sum(sn => countNullableTypes(sn));
+			var nullableTypes = countNullableTypes(node);
+
+			Assert.True(nullableTypes > 0, "Nullable type is not found.");
 		}
 	}
 }

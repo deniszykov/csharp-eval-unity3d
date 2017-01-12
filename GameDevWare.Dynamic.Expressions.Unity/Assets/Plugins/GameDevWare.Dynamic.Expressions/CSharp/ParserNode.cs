@@ -26,6 +26,17 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		{
 		}
 
+		[Flags]
+		private enum TypeNameOptions
+		{
+			None = 0,
+			Aliases = 0x1 << 0,
+			ShortNames = 0x1 << 1,
+			Arrays = 0x1 << 2,
+
+			All = Aliases | ShortNames | Arrays
+		}
+
 		private static readonly Dictionary<int, string> ExpressionTypeByToken = new Dictionary<int, string>
 		{
 			{ (int)TokenType.Resolve, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
@@ -148,17 +159,18 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						Ensure(this, 2, TokenType.None, TokenType.Identifier);
 						node[Constants.EXPRESSION_ATTRIBUTE] = this.Nodes[0].ToExpressionTree(checkedScope);
 						node[Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = this.Nodes[1].Value;
+						node[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(this.Nodes[1], 0);
 						node[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = this.Type == TokenType.NullResolve ? Constants.TrueObject : Constants.FalseObject;
 						break;
 					case TokenType.Identifier:
-						if (this.Value == Constants.VALUE_TRUE_STRING || this.Value == Constants.VALUE_FALSE_STRING || this.Value == Constants.VALUE_NULL_STRING)
+						if (this.Nodes.Count == 0 && (this.Value == Constants.VALUE_TRUE_STRING || this.Value == Constants.VALUE_FALSE_STRING || this.Value == Constants.VALUE_NULL_STRING))
 						{
 							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] = ExpressionTypeByToken[(int)TokenType.Literal]; // constant
 							node[Constants.TYPE_ATTRIBUTE] = this.Value == Constants.VALUE_NULL_STRING ? typeof(object).FullName : typeof(bool).FullName;
-							node[Constants.VALUE_ATTRIBUTE] = this.Value == Constants.VALUE_TRUE_STRING ? Constants.TrueObject :
-																	this.Value == Constants.VALUE_FALSE_STRING ? Constants.FalseObject : null;
+							node[Constants.VALUE_ATTRIBUTE] = this.Value == Constants.VALUE_TRUE_STRING ? Constants.TrueObject : this.Value == Constants.VALUE_FALSE_STRING ? Constants.FalseObject : null;
 						}
 						node[Constants.EXPRESSION_ATTRIBUTE] = null;
+						node[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(this, 0);
 						node[Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = this.Value;
 						break;
 					case TokenType.Literal:
@@ -191,7 +203,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						break;
 					case TokenType.Convert:
 						Ensure(this, 2);
-						node[Constants.TYPE_ATTRIBUTE] = this.Nodes[0].ToTypeName();
+						node[Constants.TYPE_ATTRIBUTE] = this.Nodes[0].ToTypeName(TypeNameOptions.All);
 						node[Constants.EXPRESSION_ATTRIBUTE] = this.Nodes[1].ToExpressionTree(checkedScope);
 						if (checkedScope)
 							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKEDSUFFIX;
@@ -209,12 +221,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case TokenType.Is:
 						Ensure(this, 2);
 						node[Constants.EXPRESSION_ATTRIBUTE] = this.Nodes[0].ToExpressionTree(checkedScope);
-						node[Constants.TYPE_ATTRIBUTE] = this.Nodes[1].ToTypeName();
+						node[Constants.TYPE_ATTRIBUTE] = this.Nodes[1].ToTypeName(TypeNameOptions.All);
 						break;
 					case TokenType.Default:
 					case TokenType.Typeof:
 						Ensure(this, 1);
-						node[Constants.TYPE_ATTRIBUTE] = this.Nodes[0].ToTypeName();
+						node[Constants.TYPE_ATTRIBUTE] = this.Nodes[0].ToTypeName(TypeNameOptions.All);
 						break;
 					case TokenType.Group:
 					case TokenType.Plus:
@@ -278,13 +290,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						node[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = isNullPropagation ? Constants.TrueObject : Constants.FalseObject;
 						break;
 					case TokenType.New:
-						Ensure(this, 1, TokenType.Call);
+						Ensure(this, 2, TokenType.None, TokenType.Arguments);
 
-						if (this.Nodes[0].Value == "[")
+						if (this.Nodes[1].Value == "[")
 							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_NEW_ARRAY_BOUNDS;
 
-						node[Constants.TYPE_ATTRIBUTE] = this.Nodes[0].Nodes[0].ToTypeName();
-						node[Constants.ARGUMENTS_ATTRIBUTE] = PrepareArguments(this.Nodes[0], 1, checkedScope);
+						node[Constants.TYPE_ATTRIBUTE] = this.Nodes[0].ToTypeName(TypeNameOptions.All);
+						node[Constants.ARGUMENTS_ATTRIBUTE] = PrepareArguments(this, 1, checkedScope);
 
 						break;
 
@@ -307,32 +319,69 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				throw new ExpressionParserException(exception.Message, exception, this);
 			}
 		}
-		public string ToTypeName(bool denyAliases = false)
+
+		private object ToTypeName(TypeNameOptions options)
 		{
-			var typeName = default(string);
-			switch (this.Type)
+			var allowShortName = (options & TypeNameOptions.ShortNames) != 0;
+			var allowAliases = (options & TypeNameOptions.Aliases) != 0;
+			var allowArrays = (options & TypeNameOptions.Arrays) != 0;
+			if (this.Type == TokenType.Identifier && this.Nodes.Count == 0 && allowShortName)
 			{
-				case TokenType.Identifier:
-					if (denyAliases || TypeAliases.TryGetValue(this.Value, out typeName) == false)
-						typeName = this.Value;
-					break;
-				case TokenType.Resolve:
-					typeName = this.Nodes[0].ToTypeName(denyAliases: true) + "." + this.Nodes[1].ToTypeName(denyAliases: true);
-					break;
-				case TokenType.Call:
-					if (this.Nodes.Count != 2 || this.Value != "[" || this.Nodes[1].Nodes.Count != 0) // array syntax
-						goto default;
-					typeName = this.Nodes[0].ToTypeName(denyAliases) + "[]";
-					break;
-				default: throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_TYPENAMEEXPECTED, this);
+				var typeName = default(string);
+				if (allowAliases && TypeAliases.TryGetValue(this.Value, out typeName))
+					return typeName;
+				else
+					return this.Value;
 			}
-			return typeName;
+
+			if (this.Type == TokenType.Call && this.Nodes.Count == 2 && this.Value == "[" && this.Nodes[1].Nodes.Count == 0 && allowArrays)
+			{
+				var arrayNode = new ParserNode(TokenType.Identifier, this.Lexeme, typeof(Array).Name);
+				var argumentsNode = new ParserNode(TokenType.Arguments, this.Lexeme, "<");
+				argumentsNode.Nodes.Add(this.Nodes[0]);
+				arrayNode.Nodes.Add(argumentsNode);
+				return arrayNode.ToTypeName(TypeNameOptions.None);
+			}
+
+			var node = new Dictionary<string, object>
+			{
+				{ Constants.EXPRESSION_LINE_NUMBER, this.Lexeme.LineNumber },
+				{ Constants.EXPRESSION_COLUMN_NUMBER, this.Lexeme.ColumnNumber },
+				{ Constants.EXPRESSION_TOKEN_LENGTH, this.Lexeme.TokenLength },
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
+			};
+
+			if (this.Type == TokenType.Resolve)
+			{
+				Ensure(this, 2, TokenType.None, TokenType.Identifier);
+				node[Constants.EXPRESSION_ATTRIBUTE] = this.Nodes[0].ToTypeName(TypeNameOptions.None);
+				node[Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = this.Nodes[1].Value;
+				node[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(this.Nodes[1], 0);
+				node[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = Constants.FalseObject;
+			}
+			else if (this.Type == TokenType.Identifier)
+			{
+				var typeName = this.Value;
+				if (allowAliases && TypeAliases.TryGetValue(this.Value, out typeName) == false)
+					typeName = this.Value;
+
+				node[Constants.EXPRESSION_ATTRIBUTE] = null;
+				node[Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = typeName;
+				node[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = Constants.FalseObject;
+				node[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(this, 0);
+			}
+			else
+			{
+				throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_TYPENAMEEXPECTED, this);
+			}
+
+			return new ExpressionTree(node);
 		}
 
 		private static Dictionary<string, object> PrepareArguments(ParserNode node, int argumentChildIndex, bool checkedScope)
 		{
 			var args = default(Dictionary<string, object>);
-			if (node.Nodes.Count < argumentChildIndex || node.Nodes[argumentChildIndex].Nodes.Count <= 0)
+			if (argumentChildIndex >= node.Nodes.Count || node.Nodes[argumentChildIndex].Nodes.Count == 0)
 				return null;
 
 			args = new Dictionary<string, object>();
@@ -348,25 +397,45 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				}
 				else
 				{
-					var argName = (argIdx++).ToString();
+					var argName = Constants.GetIndexAsString(argIdx++);
 					args[argName] = argNode.ToExpressionTree(checkedScope);
 				}
 			}
 			return args;
 		}
-		private static void Ensure(ParserNode node, int childCount, params TokenType[] childTypes)
+		private static Dictionary<string, object> PrepareTypeArguments(ParserNode node, int argumentChildIndex)
 		{
+			var args = default(Dictionary<string, object>);
+			if (argumentChildIndex >= node.Nodes.Count || node.Nodes[argumentChildIndex].Nodes.Count == 0)
+				return null;
+
+			args = new Dictionary<string, object>();
+			var argIdx = 0;
+			foreach (var argNode in node.Nodes[argumentChildIndex].Nodes)
+			{
+				var argName = Constants.GetIndexAsString(argIdx++);
+				args[argName] = argNode.ToTypeName(TypeNameOptions.Aliases | TypeNameOptions.Arrays);
+			}
+			return args;
+		}
+		private static void Ensure(ParserNode node, int childCount, TokenType childType0 = TokenType.None, TokenType childType1 = TokenType.None, TokenType childType2 = TokenType.None)
+		{
+			// ReSharper disable HeapView.BoxingAllocation
 			if (node.Nodes.Count < childCount)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE, node.Type, node.Nodes.Count, childCount), node);
 
-			for (var i = 0; childTypes != null && i < childTypes.Length && i < node.Nodes.Count; i++)
+			for (int i = 0, ct = Math.Min(3, childCount); i < ct; i++)
 			{
-				if (childTypes[i] == TokenType.None)
-					continue;
-
-				if (node.Nodes[i].Type != childTypes[i])
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, node.Type, node.Nodes[i].Type, childTypes[i]), node.Nodes[i]);
+				var childNode = node.Nodes[i];
+				var childNodeType = node.Nodes[i].Type;
+				if (i == 0 && childType0 != TokenType.None && childType0 != childNodeType)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, node.Type, childNodeType, childType0), childNode);
+				if (i == 1 && childType1 != TokenType.None && childType1 != childNodeType)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, node.Type, childNodeType, childType1), childNode);
+				if (i == 2 && childType2 != TokenType.None && childType2 != childNodeType)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, node.Type, childNodeType, childType2), childNode);
 			}
+			// ReSharper restore HeapView.BoxingAllocation
 		}
 		private object UnescapeAndUnquote(string value)
 		{

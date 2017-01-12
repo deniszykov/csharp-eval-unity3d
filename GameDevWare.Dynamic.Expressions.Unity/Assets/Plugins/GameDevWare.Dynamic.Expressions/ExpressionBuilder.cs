@@ -33,12 +33,12 @@ namespace GameDevWare.Dynamic.Expressions
 		private static readonly TypeCode[] SignedIntegerTypes;
 		private static readonly TypeCode[] UnsignedIntegerTypes;
 		private static readonly TypeCode[] Numeric;
-		public static ITypeResolutionService DefaultTypeResolutionService = null;
+		public static ITypeResolver DefaultTypeResolver = null;
 
 		private readonly ReadOnlyCollection<ParameterExpression> parameters;
 		private readonly Type contextType;
 		private readonly Type resultType;
-		private readonly ITypeResolutionService typeResolutionService;
+		private readonly ITypeResolver typeResolver;
 
 		public ReadOnlyCollection<ParameterExpression> Parameters { get { return this.parameters; } }
 		public Type ResultType { get { return this.resultType; } }
@@ -75,11 +75,11 @@ namespace GameDevWare.Dynamic.Expressions
 			Array.Sort(SignedIntegerTypes);
 			Array.Sort(UnsignedIntegerTypes);
 		}
-		public ExpressionBuilder(IList<ParameterExpression> parameters, Type resultType, Type contextType = null, ITypeResolutionService typeResolutionService = null)
+		public ExpressionBuilder(IList<ParameterExpression> parameters, Type resultType, Type contextType = null, ITypeResolver typeResolver = null)
 		{
 			if (resultType == null) throw new ArgumentNullException("resultType");
 			if (parameters == null) throw new ArgumentNullException("parameters");
-			if (typeResolutionService == null) typeResolutionService = new KnownTypeResolutionService(parameters.Select(p => p.Type), DefaultTypeResolutionService);
+			if (typeResolver == null) typeResolver = new KnownTypeResolver(parameters.Select(p => p.Type), DefaultTypeResolver);
 
 			if (parameters is ReadOnlyCollection<ParameterExpression> == false)
 				parameters = new ReadOnlyCollection<ParameterExpression>(parameters);
@@ -87,7 +87,7 @@ namespace GameDevWare.Dynamic.Expressions
 			this.parameters = (ReadOnlyCollection<ParameterExpression>)parameters;
 			this.resultType = resultType;
 			this.contextType = contextType;
-			this.typeResolutionService = typeResolutionService;
+			this.typeResolver = typeResolver;
 
 		}
 
@@ -186,9 +186,10 @@ namespace GameDevWare.Dynamic.Expressions
 					var argument = default(object);
 					if (node.TryGetValue(methodParameter.Name, out argument))
 					{
-						var typeName = default(string);
-						if (argument != null && methodParameter.ParameterType == typeof(Type) && TryGetTypeName(argument, out typeName))
-							argument = this.typeResolutionService.GetType(typeName);
+						var typeReference = default(TypeReference);
+						var type = default(Type);
+						if (argument != null && methodParameter.ParameterType == typeof(Type) && TryGetTypeReference(argument, out typeReference) && this.typeResolver.TryGetType(typeReference, out type))
+							argument = type;
 						else if (argument is ExpressionTree)
 							argument = Build((ExpressionTree)argument, context, expectedType: null, typeHint: methodParameter.ParameterType);
 						else if (argument != null)
@@ -298,7 +299,11 @@ namespace GameDevWare.Dynamic.Expressions
 
 			var valueObj = node.GetValue(throwOnError: true);
 			var typeName = node.GetTypeName(throwOnError: true);
-			var type = this.typeResolutionService.GetType(typeName);
+			var typeReference = default(TypeReference);
+			var type = default(Type);
+			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
+
 			var value = ChangeType(valueObj, type);
 			return Expression.Constant(value);
 		}
@@ -311,9 +316,9 @@ namespace GameDevWare.Dynamic.Expressions
 			var propertyOrFieldName = node.GetPropertyOrFieldName(throwOnError: true);
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
 
-			var typeName = default(string);
+			var typeReference = default(TypeReference);
 			var type = default(Type);
-			if (target != null && TryGetTypeName(target, out typeName) && this.typeResolutionService.TryGetType(typeName, out type))
+			if (target != null && TryGetTypeReference(target, out typeReference) && this.typeResolver.TryGetType(typeReference, out type))
 			{
 				expression = null;
 			}
@@ -404,7 +409,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var indexingExpressions = new Expression[arguments.Count];
 				for (var i = 0; i < indexingExpressions.Length; i++)
 				{
-					var argName = i.ToString();
+					var argName = Constants.GetIndexAsString(i);
 					var argument = default(ExpressionTree);
 					if (arguments.TryGetValue(argName, out argument))
 						indexingExpressions[i] = Build(argument, context, expectedType: typeof(int), typeHint: typeof(int));
@@ -454,28 +459,21 @@ namespace GameDevWare.Dynamic.Expressions
 			else
 				return indexExpression;
 		}
-		private Expression BuildCall(ExpressionTree node, Expression context)
+		private Expression BuildCall(ExpressionTree node, ExpressionTree target, bool useNullPropagation, ReadOnlyDictionary<string, ExpressionTree> arguments, TypeReference methodRef, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
-
-			var target = node.GetExpression(throwOnError: false);
-
-			var methodNameObj = default(object);
-			if (node.TryGetValue(Constants.METHOD_ATTRIBUTE, out methodNameObj) == false || methodNameObj is string == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.METHOD_ATTRIBUTE, Constants.EXPRESSION_TYPE_CALL), node);
-			var methodName = (string)methodNameObj;
-			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
+			if (target == null) throw new ArgumentNullException("target");
+			if (arguments == null) throw new ArgumentNullException("arguments");
+			if (methodRef == null) throw new ArgumentNullException("methodRef");
 
 			if (target == null && context == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVENAME, methodNameObj), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVENAME, methodRef.Name), node);
 
 			var expression = default(Expression);
-			var arguments = node.GetArguments(throwOnError: false);
-
-			var typeName = default(string);
+			var typeReference = default(TypeReference);
 			var type = default(Type);
 			var isStatic = true;
-			if (TryGetTypeName(target, out typeName) == false || this.typeResolutionService.TryGetType(typeName, out type) == false)
+			if (TryGetTypeReference(target, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
 			{
 				expression = Build(target, context, expectedType: null, typeHint: null);
 				type = expression.Type;
@@ -484,12 +482,36 @@ namespace GameDevWare.Dynamic.Expressions
 
 			var quality = 0.0f;
 			var callExpression = default(MethodCallExpression);
+			var isGenericRequired = methodRef.TypeArguments.Count > 0;
+			var genericArguments = default(Type[]);
+			if (isGenericRequired)
+			{
+				genericArguments = new Type[methodRef.TypeArguments.Count];
+				for (var i = 0; i < genericArguments.Length; i++)
+				{
+					var typeArgument = methodRef.TypeArguments[i];
+					if (this.typeResolver.TryGetType(typeArgument, out genericArguments[i]) == false)
+						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeArgument), node);
+				}
+			}
+
 			foreach (var member in GetMembers(type, isStatic))
 			{
 				var method = member as MethodInfo;
 				if (method == null) continue;
-				if (method.IsGenericMethod) continue;
-				if (methodName != method.Name) continue;
+				if (methodRef.Name != method.Name) continue;
+				if (method.IsGenericMethod != isGenericRequired) continue;
+				if (isGenericRequired && method.GetGenericArguments().Length != methodRef.TypeArguments.Count) continue;
+
+				if (method.IsGenericMethod && genericArguments != null)
+				{
+					if (!method.IsGenericMethodDefinition) method = method.GetGenericMethodDefinition();
+					try
+					{
+						method = method.MakeGenericMethod(genericArguments);
+					}
+					catch (ArgumentException) { continue; /* An element of typeArguments does not satisfy the constraints specified for the corresponding type parameter of the current generic method definition. */  }
+				}
 
 				var methodParameters = method.GetParameters();
 				var argumentExpressions = default(Expression[]);
@@ -511,7 +533,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 
 			if (callExpression == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDCALL, methodNameObj, type), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDCALL, methodRef.Name, type), node);
 
 			if (useNullPropagation && expression == null)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
@@ -533,14 +555,12 @@ namespace GameDevWare.Dynamic.Expressions
 			if (targetExpressionType == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
 			{
 				var propertyOrFieldTarget = target.GetExpression(throwOnError: false);
-				var propertyOrFieldName = target.GetPropertyOrFieldName(throwOnError: true);
 				var useNullPropagation = target.GetUseNullPropagation(throwOnError: true);
 
-				var methodName = propertyOrFieldName;
-				var typeName = default(string);
+				var typeReference = default(TypeReference);
 				var type = default(Type);
 				var isStatic = true;
-				if (propertyOrFieldTarget == null || TryGetTypeName(propertyOrFieldTarget, out typeName) == false || this.typeResolutionService.TryGetType(typeName, out type) == false)
+				if (propertyOrFieldTarget == null || TryGetTypeReference(propertyOrFieldTarget, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
 				{
 					var propertyOrFieldExpression = propertyOrFieldTarget != null ? Build(propertyOrFieldTarget, context, expectedType: null, typeHint: null) : context;
 					if (propertyOrFieldExpression != null)
@@ -549,14 +569,9 @@ namespace GameDevWare.Dynamic.Expressions
 						isStatic = false;
 					}
 				}
-				if (type != null && GetMembers(type, isStatic).Any(m => m is MethodInfo && m.Name == methodName))
-				{
-					var callNode = new Dictionary<string, object>(node);
-					callNode[Constants.METHOD_ATTRIBUTE] = methodName;
-					callNode[Constants.EXPRESSION_ATTRIBUTE] = propertyOrFieldTarget;
-					callNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = useNullPropagation ? Constants.TrueObject : Constants.FalseObject;
-					return this.BuildCall(new ExpressionTree(callNode), context);
-				}
+				var methodRef = default(TypeReference);
+				if (type != null && TryGetMethodReference(target, out methodRef) && GetMembers(type, isStatic).Any(m => m is MethodInfo && m.Name == methodRef.Name))
+					return this.BuildCall(node, propertyOrFieldTarget, useNullPropagation, arguments, methodRef, context);
 			}
 
 			expression = Build(target, context, expectedType: null, typeHint: null);
@@ -585,7 +600,10 @@ namespace GameDevWare.Dynamic.Expressions
 			if (node == null) throw new ArgumentNullException("node");
 
 			var typeName = node.GetTypeName(throwOnError: true);
-			var type = this.typeResolutionService.GetType(typeName);
+			var typeReference = default(TypeReference);
+			var type = default(Type);
+			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
 
 			return DefaultExpression(type);
 		}
@@ -594,7 +612,10 @@ namespace GameDevWare.Dynamic.Expressions
 			if (node == null) throw new ArgumentNullException("node");
 
 			var typeName = node.GetTypeName(throwOnError: true);
-			var type = this.typeResolutionService.GetType(typeName);
+			var typeReference = default(TypeReference);
+			var type = default(Type);
+			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
 
 			return Expression.Constant(type, typeof(Type));
 		}
@@ -603,9 +624,21 @@ namespace GameDevWare.Dynamic.Expressions
 			if (node == null) throw new ArgumentNullException("node");
 
 			var typeName = node.GetTypeName(throwOnError: true);
-			var type = this.typeResolutionService.GetType(typeName);
+			var typeReference = default(TypeReference);
+			var type = default(Type);
+			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
+
 			var arguments = node.GetArguments(throwOnError: true);
-			var argumentExpressions = Enumerable.Range(0, arguments.Count).Where(n => arguments.ContainsKey(n.ToString())).Select(n => Build(arguments[n.ToString()], context, typeof(int), typeHint: typeof(int))).ToList();
+			var argumentExpressions = new Expression[arguments.Count];
+			for (var i = 0; i < arguments.Count; i++)
+			{
+				var key = Constants.GetIndexAsString(i);
+				var argument = default(ExpressionTree);
+				if (arguments.TryGetValue(key, out argument) == false)
+					throw new ExpressionParserException(Properties.Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS, node);
+				argumentExpressions[i] = Build(argument, context, typeof(int), typeHint: typeof(int));
+			}
 
 			return Expression.NewArrayBounds(type, argumentExpressions);
 		}
@@ -613,12 +646,17 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
-			var arguments = node.GetArguments(throwOnError: true);
+			var arguments = node.GetArguments(throwOnError: false);
 			var typeName = node.GetTypeName(throwOnError: true);
-			var type = this.typeResolutionService.GetType(typeName);
+			var typeReference = default(TypeReference);
+			var type = default(Type);
+			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
+
 			var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
 			Array.Sort(constructors, (x, y) => x.GetParameters().Length.CompareTo(y.GetParameters().Length));
 
+			// feature: lambda building via new Func()
 			var lambdaArgument = default(ExpressionTree);
 			if (typeof(Delegate).IsAssignableFrom(type) && arguments.Count == 1 && (lambdaArgument = arguments.Values.Single()).GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA)
 				return BuildLambda(lambdaArgument, type, context);
@@ -658,7 +696,7 @@ namespace GameDevWare.Dynamic.Expressions
 			for (var i = 0; i < argumentNames.Length; i++)
 			{
 				var argumentNameTree = default(ExpressionTree);
-				if (arguments.TryGetValue(i.ToString(), out argumentNameTree) == false || argumentNameTree == null || argumentNameTree.GetExpressionType(throwOnError: true) != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
+				if (arguments.TryGetValue(Constants.GetIndexAsString(i), out argumentNameTree) == false || argumentNameTree == null || argumentNameTree.GetExpressionType(throwOnError: true) != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
 				argumentNames[i] = argumentNameTree.GetPropertyOrFieldName(throwOnError: true);
 			}
@@ -674,13 +712,13 @@ namespace GameDevWare.Dynamic.Expressions
 				if (Array.IndexOf(argumentNames, parameterExpr.Name) < 0)
 					builderParameters.Add(parameterExpr);
 			// create builder and bind body
-			var builder = new ExpressionBuilder(builderParameters, lambdaInvokeMethod.ReturnType, this.contextType, this.typeResolutionService);
+			var builder = new ExpressionBuilder(builderParameters, lambdaInvokeMethod.ReturnType, this.contextType, this.typeResolver);
 			var body = builder.Build(expression, context, lambdaInvokeMethod.ReturnType, typeHint: lambdaInvokeMethod.ReturnType);
 
 			return Expression.Lambda(lambdaType, body, lambdaParameters);
 		}
 
-		private float TryBindMethod(ParameterInfo[] methodParameters, Dictionary<string, ExpressionTree> arguments, Expression context, out Expression[] callArguments)
+		private float TryBindMethod(ParameterInfo[] methodParameters, ReadOnlyDictionary<string, ExpressionTree> arguments, Expression context, out Expression[] callArguments)
 		{
 			callArguments = null;
 
@@ -1181,44 +1219,104 @@ namespace GameDevWare.Dynamic.Expressions
 
 		}
 
-		private bool TryGetTypeName(object value, out string typeName)
+		private static bool TryGetTypeReference(object value, out TypeReference typeReference)
 		{
-			typeName = default(string);
+			typeReference = default(TypeReference);
+
 			if (value is ExpressionTree)
 			{
-				var typeNameParts = default(List<string>);
+				var parts = new List<ExpressionTree>(10);
 				var current = (ExpressionTree)value;
 				while (current != null)
 				{
-					var expressionTypeObj = default(object);
-					if (current.TryGetValue(Constants.EXPRESSION_TYPE_ATTRIBUTE, out expressionTypeObj) == false || expressionTypeObj is string == false)
-						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE), current);
-
-					var expressionType = (string)expressionTypeObj;
-					if (expressionType != "PropertyOrField")
+					var expressionType = current.GetExpressionType(throwOnError: true);
+					if (expressionType != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
 						return false;
 
-					var expressionObj = default(object);
-					if (current.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) && expressionObj != null && expressionObj is ExpressionTree == false)
-						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, "PropertyOrField"), current);
-
-					var typeNamePartObj = default(object);
-					if (current.TryGetValue(Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out typeNamePartObj) == false || typeNamePartObj is string == false)
-						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, "PropertyOrField"), current);
-
-					var typeNamePart = (string)typeNamePartObj;
-					if (typeNameParts == null) typeNameParts = new List<string>();
-					typeNameParts.Add(typeNamePart);
-					current = (ExpressionTree)expressionObj;
+					parts.Add(current);
+					current = current.GetExpression(throwOnError: false);
 				}
 
-				typeNameParts.Reverse();
-				typeName = string.Join(".", typeNameParts.ToArray());
+				var typeNameParts = default(List<string>);
+				var typeArguments = default(List<TypeReference>);
+				for (var p = 0; p < parts.Count; p++)
+				{
+					var part = parts[parts.Count - 1 - p]; // reverse order
+					var arguments = part.GetArguments(throwOnError: false);
+					var typeNamePart = part.GetPropertyOrFieldName(throwOnError: true);
+					if (typeNameParts == null) typeNameParts = new List<string>();
+					var typeArgumentsCount = 0;
+					if (arguments != null && arguments.Count > 0)
+					{
+						if (typeArguments == null) typeArguments = new List<TypeReference>(10);
+
+						for (var i = 0; i < arguments.Count; i++)
+						{
+							var typeArgument = default(ExpressionTree);
+							var typeArgumentTypeReference = default(TypeReference);
+							var key = Constants.GetIndexAsString(i);
+							if (arguments.TryGetValue(key, out typeArgument) == false || typeArgument == null)
+								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, key), part);
+
+							if (typeArgument.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD && typeArgument.GetPropertyOrFieldName(throwOnError: true) == string.Empty)
+								typeArgumentTypeReference = TypeReference.Empty;
+							else if (TryGetTypeReference(typeArgument, out typeArgumentTypeReference) == false)
+								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, key), part);
+
+							typeArguments.Add(typeArgumentTypeReference);
+							typeArgumentsCount++;
+						}
+						typeNamePart = typeNamePart + "`" + Constants.GetIndexAsString(typeArgumentsCount);
+					}
+					typeNameParts.Add(typeNamePart);
+				}
+
+				typeReference = new TypeReference(typeNameParts, typeArguments ?? TypeReference.EmptyGenericArguments);
 				return true;
 			}
 			else
 			{
-				typeName = Convert.ToString(value, Constants.DefaultFormatProvider);
+				typeReference = new TypeReference(new[] { Convert.ToString(value, Constants.DefaultFormatProvider) }, TypeReference.EmptyGenericArguments);
+				return true;
+			}
+		}
+		private static bool TryGetMethodReference(object value, out TypeReference methodReference)
+		{
+			methodReference = default(TypeReference);
+
+			if (value is ExpressionTree)
+			{
+				var typeArguments = default(List<TypeReference>);
+				var methodNameTree = (ExpressionTree)value;
+
+				var arguments = methodNameTree.GetArguments(throwOnError: false);
+				var methodName = methodNameTree.GetPropertyOrFieldName(throwOnError: true);
+				if (arguments != null && arguments.Count > 0)
+				{
+					typeArguments = new List<TypeReference>(10);
+
+					for (var i = 0; i < arguments.Count; i++)
+					{
+						var typeArgument = default(ExpressionTree);
+						var typeArgumentTypeReference = default(TypeReference);
+						var key = Constants.GetIndexAsString(i);
+						if (arguments.TryGetValue(key, out typeArgument) == false || typeArgument == null)
+							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, key), methodNameTree);
+
+						var isEmptyTypeArgument = typeArgument.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD && typeArgument.GetPropertyOrFieldName(throwOnError: true) == string.Empty;
+						if (isEmptyTypeArgument || TryGetTypeReference(typeArgument, out typeArgumentTypeReference) == false)
+							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, key), methodNameTree);
+
+						typeArguments.Add(typeArgumentTypeReference);
+					}
+				}
+
+				methodReference = new TypeReference(new[] { methodName }, typeArguments ?? TypeReference.EmptyGenericArguments);
+				return true;
+			}
+			else
+			{
+				methodReference = new TypeReference(new[] { Convert.ToString(value, Constants.DefaultFormatProvider) }, TypeReference.EmptyGenericArguments);
 				return true;
 			}
 		}

@@ -314,7 +314,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaConstructorBindingTest()
 		{
 			var expected = true;
-			var typeResolutionService = new KnownTypeResolutionService(typeof(TypeFilter));
+			var typeResolutionService = new KnownTypeResolver(typeof(TypeFilter));
 			var lambda = CSharpExpression.Parse<TypeFilter>("new TypeFilter((t, c) => t != null)", typeResolutionService).Compile().Invoke();
 			var actual = lambda.Invoke(typeof(bool), null);
 

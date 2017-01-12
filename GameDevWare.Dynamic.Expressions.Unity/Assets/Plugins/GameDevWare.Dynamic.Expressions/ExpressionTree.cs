@@ -64,14 +64,13 @@ namespace GameDevWare.Dynamic.Expressions
 			var expressionType = (string)expressionTypeObj;
 			return expressionType;
 		}
-		public string GetTypeName(bool throwOnError)
+		public object GetTypeName(bool throwOnError)
 		{
-			var typeObj = default(object);
-			if (this.TryGetValue(Constants.TYPE_ATTRIBUTE, out typeObj) == false || typeObj is string == false)
+			var typeNameObj = default(object);
+			if (this.TryGetValue(Constants.TYPE_ATTRIBUTE, out typeNameObj) == false || (typeNameObj is string == false && typeNameObj is ExpressionTree == false))
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.TYPE_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
 
-			var typeName = (string)typeObj;
-			return typeName;
+			return typeNameObj;
 		}
 		public object GetValue(bool throwOnError)
 		{
@@ -94,29 +93,30 @@ namespace GameDevWare.Dynamic.Expressions
 			var expression = (ExpressionTree)expressionObj;
 			return expression;
 		}
-		public Dictionary<string, ExpressionTree> GetArguments(bool throwOnError)
+		public ReadOnlyDictionary<string, ExpressionTree> GetArguments(bool throwOnError)
 		{
-			var arguments = new Dictionary<string, ExpressionTree>();
 			var argumentsObj = default(object);
 			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is ExpressionTree == false)
 			{
 				if (throwOnError)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(true)), this);
 				else
-					return arguments;
+					return ReadOnlyDictionary<string, ExpressionTree>.Empty;
 			}
 
+			var arguments = new Dictionary<string, ExpressionTree>(((ExpressionTree)argumentsObj).Count);
 			foreach (var kv in (ExpressionTree)argumentsObj)
 			{
 				var argument = kv.Value as ExpressionTree;
 				if (argument == null)
-				{
-					if (throwOnError)
-						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(true)), this);
-				}
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, kv.Key), this);
 				arguments.Add(kv.Key, argument);
 			}
-			return arguments;
+
+			if (arguments.Count > Constants.MAX_ARGUMENTS_COUNT)
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_TOOMANYARGUMENTS, Constants.MAX_ARGUMENTS_COUNT.ToString()), this);
+
+			return new ReadOnlyDictionary<string, ExpressionTree>(arguments);
 		}
 		public string GetPropertyOrFieldName(bool throwOnError)
 		{

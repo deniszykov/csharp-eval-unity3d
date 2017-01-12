@@ -892,11 +892,11 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void LambdaConstructorBindingTest()
 		{
-			var typeResolutionService = new KnownTypeResolutionService(typeof(Func<Type, object>));
-			var expression = CSharpExpression.Parse<Func<Type, object>>("new Func<Type, object>((t, c) => t != null)", typeResolutionService).Body.Render();
+			var typeResolutionService = new KnownTypeResolver(typeof(Func<Type, object, bool>));
+			var expression = CSharpExpression.Parse<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).Body.Render();
 			output.WriteLine("Rendered: " + expression);
 			var expected = true;
-			var lambda = CSharpExpression.Parse<TypeFilter>(expression).CompileAot(forceAot: true).Invoke();
+			var lambda = CSharpExpression.Parse<Func<Type, object, bool>>(expression).CompileAot(forceAot: true).Invoke();
 			var actual = lambda.Invoke(typeof(bool), null);
 
 			Assert.Equal(expected, actual);
