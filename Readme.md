@@ -54,43 +54,41 @@ The parser recognizes the C# 4 grammar only. It includes:
 * [Checked/Unchecked scopes](https://msdn.microsoft.com/en-us/library/khy08726.aspx)
 * [Aliases for Built-In Types](https://msdn.microsoft.com/en-us/library/ya5y69ds.aspx)
 * [Null-conditional Operators](https://msdn.microsoft.com/en-us/library/dn986595.aspx)
+* Power operator ``**``
+* [Lambda expressions](https://msdn.microsoft.com/en-us/library/bb397687.aspx)
 * "true", "false", "null"
 
-Nullable types are **partially** supported (see roadmap). 
-
+Nullable types are supported. 
+Generics are supported.
 Enumerations are supported.
-
-Generics are **not** supported (see roadmap).
+[Type inference](https://docs.microsoft.com/en-us/dotnet/articles/fsharp/language-reference/type-inference) is not available and your should always specify generic parameters on types and methods.
 
 **Known Types**
 
 For security reasons the parser does not provide access to static types, except:
 * argument types
 * primitive types
-* Math class
+* Math, Array, Func<> (up to 4 arguments) types
 
-To access other types your should pass **typeResolutionService** parameter in **Parse** or **Evaluate** method:
+To access other types your should pass **typeResolver** parameter in **Parse** or **Evaluate** method:
 ```csharp
 CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0F, 3.0F)", typeResolutionService: new KnownTypeResolutionService(typeof(Mathf), typeof(Time))); 
 ```
-If you want to access all types in **UnityEngine** you can pass **AssemblyTypeResolutionService.UnityEngine** as typeResolutionService parameter.
+If you want to access all types in **UnityEngine** you can pass **AssemblyTypeResolver.UnityEngine** as typeResolver parameter.
 
 ## AOT Execution
-You can compile expression created by **System.Linq.Expression** and execute it in AOT environment where it is usually impossible. 
-Any expression can be compiled, even those that are currently not supported by the parser. For example, expression with type constructor is not supported by Parser, but it can be compiled and executed on IOS (and other AOT environment).
+You can compile and evaluate expression created by **System.Linq.Expression** and execute it in AOT environment where it is usually impossible. 
 ```csharp
 Expression<Func<Vector3>> expression = () => new Vector3(1.0f, 1.0f, 1.0f);
 Func<Vector3> compiledExpression = expression.CompileAot();
-
-compiledExpression();
-// -> Vector3(1.0f, 1.0f, 1.0f)
+compiledExpression(); // -> Vector3(1.0f, 1.0f, 1.0f)
 ```
 
-IOS, WebGL and most consoles use AOT compilation which imposes following restrictions on the dynamic code execution:
+iOS, WebGL and most consoles use AOT compilation which imposes following restrictions on the dynamic code execution:
 
-* only **Expression&lt;Func&lt;...&gt;&gt;** could be used with **CompileAot()**
+* only **Expression&lt;Func&lt;...&gt;&gt;** could be used with **CompileAot()** and Lambda types
 * only static methods using primitives (int, float, string, object ...) are optimized for fast calls
-* all used classes/methods/properties should be visible to Unity's static analyser
+* all used classes/methods/properties should be visible to [Unity's static code analyser](https://docs.unity3d.com/Manual/ScriptingRestrictions.html)
 
 **See Also**
 * [AOT Exception Patterns and Hacks](https://github.com/neuecc/UniRx/wiki/AOT-Exception-Patterns-and-Hacks)
@@ -98,15 +96,21 @@ IOS, WebGL and most consoles use AOT compilation which imposes following restric
 
 ### WebGL
 
-Building under WebGL bears same limitations and recommendations as building under IOS.
+Building under WebGL bears same limitations and recommendations as building under iOS.
 
-### IOS
+### iOS
 
-* Lambda Expressions are not supported (see roadmap)
+* Only [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) (up to 4 arguments) Lambdas are supported
 * Instance methods invocation performs slowly due reflection
 * Moderate boxing for value types (see roadmap)
 
-**Improving methods invocation performance**
+You can ensure that your generic [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) will be callable by registering it with **AotCompilation.RegisterFunc**
+
+```csharp
+AotCompilation.RegisterFunc<int, bool>(); // template: RegisterFunc<Arg1T, ResultT>
+```
+
+**Improving Performance**
 
 You can improve the performance of methods invocation by registering their signatures in **AotCompilation.RegisterForFastCall()**. 
 
@@ -120,7 +124,8 @@ AotCompilation.RegisterForFastCall<InstanceT, Arg1T, ResultT>()
 AotCompilation.RegisterForFastCall<InstanceT, Arg1T, Arg2T, ResultT>()
 AotCompilation.RegisterForFastCall<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>()
 ```
-Example code:
+
+Example:
 ```csharp
 public class MyVectorMath
 {
@@ -166,7 +171,7 @@ You can send suggestions at support@gamedevware.com
 * fixed Embedded Resource addressing problem on IL2CPP WebGL (localized error messages)
 * fixed some cases of nullable types binding
 * fixed Enum member resolution
-* added Power(**) operator into C# syntax
+* added Power(``**``) operator into C# syntax
 * added TypeResolutionService chaining for better KnownTypes re-use
 
 # 1.0.1.10
