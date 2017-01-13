@@ -1,4 +1,6 @@
-﻿# Introduction
+﻿https://travis-ci.org/deniszykov/csharp-eval-unity3d.svg?branch=master
+
+# Introduction
 
 **Attention!** This is a paid [package](https://www.assetstore.unity3d.com/#!/content/56706), you can not use it in your project if you have not purchased it through [Unity Asset Store](https://www.assetstore.unity3d.com/en/#!/content/56706).
 
