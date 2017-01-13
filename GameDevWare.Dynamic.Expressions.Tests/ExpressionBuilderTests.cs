@@ -320,5 +320,26 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			Assert.Equal(expected, actual);
 		}
+
+		[Theory]
+		[InlineData("typeof(Func<int>)", typeof(Func<int>), typeof(Type))]
+		[InlineData("1 is Func<int>", false, typeof(bool))]
+		[InlineData("new Func<int>(() => 1) as Array", null, typeof(object))]
+		[InlineData("default(int?)", null, typeof(object))]
+		public void GenericTypesInExpressionsTest(string expression, object expected, Type expectedType)
+		{
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
+
+			if (expected != null)
+			{
+				Assert.NotNull(actual);
+				Assert.IsAssignableFrom(expectedType, actual);
+				Assert.Equal(expected, actual);
+			}
+			else
+			{
+				Assert.Null(actual);
+			}
+		}
 	}
 }

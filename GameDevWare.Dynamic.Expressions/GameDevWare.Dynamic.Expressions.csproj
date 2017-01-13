@@ -213,6 +213,9 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\MethodCallSignature.cs">
       <Link>MethodCallSignature.cs</Link>
     </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\NameUtils.cs">
+      <Link>NameUtils.cs</Link>
+    </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ReadOnlyDictionary.cs">
       <Link>ReadOnlyDictionary.cs</Link>
     </Compile>

@@ -1,9 +1,26 @@
-﻿using System;
+﻿/*
+	Copyright (c) 2016 Denis Zykov, GameDevWare.com
+
+	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
+	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
+	https://unity3d.com/ru/legal/as_terms
+*/
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
@@ -526,7 +543,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			if (!wrapped) builder.Append("(");
 
-			var arguments = node.GetArguments(throwOnError: true);
+			var arguments = node.GetArguments(throwOnError: false);
 			var body = node.GetExpression(throwOnError: true);
 			if (arguments.Count != 1) builder.Append("(");
 			var firstParam = true;
@@ -870,7 +887,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (expression == null) throw new ArgumentException("expression");
 			if (builder == null) throw new ArgumentException("builder");
 
-			if (!wrapped) builder.Append("(");
+			builder.Append("new ");
+			RenderType(expression.Type, builder);
+			builder.Append(" (");
 
 			if (expression.Parameters.Count != 1) builder.Append("(");
 			var firstParam = true;
@@ -885,7 +904,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			builder.Append(" => ");
 			Render(expression.Body, builder, false, checkedScope);
 
-			if (!wrapped) builder.Append(")");
+			builder.Append(")");
 		}
 		private static void RenderNew(NewExpression expression, StringBuilder builder, bool checkedScope)
 		{
@@ -966,8 +985,20 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			else
 			{
+				var method = expression.Method;
 				builder.Append(".");
-				builder.Append(expression.Method.Name);
+				builder.Append(method.Name);
+				if (method.IsGenericMethod)
+				{
+					builder.Append("<");
+					foreach (var genericArgument in method.GetGenericArguments())
+					{
+						RenderType(genericArgument, builder);
+						builder.Append(',');
+					}
+					builder.Length--;
+					builder.Append(">");
+				}
 				builder.Append("(");
 				RenderArguments(expression.Arguments, builder, checkedScope);
 				builder.Append(")");
@@ -1032,7 +1063,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			else if (expression.Type == typeof(char))
 				RenderTextLiteral(strValue, builder, isChar: true);
 			else if (expression.Type == typeof(Type))
-				builder.Append("typeof(").Append(strValue).Append(")");
+			{
+				builder.Append("typeof(");
+				RenderType((Type)expression.Value, builder);
+				builder.Append(")");
+			}
 			else if (expression.Type == typeof(ushort) || expression.Type == typeof(uint))
 				builder.Append(strValue).Append("u");
 			else if (expression.Type == typeof(ulong))
@@ -1306,12 +1341,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 		}
 
-		private static void RenderType(Type methodType, StringBuilder builder)
+		private static void RenderType(Type type, StringBuilder builder)
 		{
-			if (methodType == null) throw new ArgumentNullException("methodType");
+			if (type == null) throw new ArgumentNullException("type");
 			if (builder == null) throw new ArgumentNullException("builder");
 
-			builder.Append(methodType.FullName.Replace("+", "."));
+			var nameStartIndex = builder.Length;
+			NameUtils.WriteFullName(type, builder, writeGenericArguments: true);
+			NameUtils.RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
 		}
 		private static void RenderTextLiteral(string value, StringBuilder builder, bool isChar)
 		{

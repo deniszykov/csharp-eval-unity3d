@@ -364,7 +364,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void CallTest(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
 			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
@@ -381,7 +381,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ConditionalTest(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
 			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
@@ -397,7 +397,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void UnaryTest(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
 			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
@@ -601,7 +601,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void BinaryTest(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
 			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
@@ -773,7 +773,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ConvertNumbers(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }, forceAot: true).Body.Render();
+			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
 			output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
@@ -855,7 +855,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Fact]
-		public void LambdaBindingTest()
+		public void LambdaTest()
 		{
 			var expression = CSharpExpression.Parse<Func<int, int>>("a => a + 1").Body.Render();
 			output.WriteLine("Rendered: " + expression);
@@ -867,7 +867,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Fact]
-		public void LambdaClosureBindingTest()
+		public void LambdaClosureTest()
 		{
 			var expression = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").Body.Render();
 			output.WriteLine("Rendered: " + expression);
@@ -890,15 +890,60 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Fact]
-		public void LambdaConstructorBindingTest()
+		public void LambdaConstructorTest()
 		{
 			var typeResolutionService = new KnownTypeResolver(typeof(Func<Type, object, bool>));
 			var expression = CSharpExpression.Parse<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).Body.Render();
 			output.WriteLine("Rendered: " + expression);
 			var expected = true;
-			var lambda = CSharpExpression.Parse<Func<Type, object, bool>>(expression).CompileAot(forceAot: true).Invoke();
+			var lambda = CSharpExpression.Parse<Func<Type, object, bool>>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
 			var actual = lambda.Invoke(typeof(bool), null);
 
+			Assert.Equal(expected, actual);
+		}
+
+		[Theory]
+		[InlineData("typeof(Func<int>)", typeof(Func<int>), typeof(Type))]
+		[InlineData("1 is Func<int>", false, typeof(bool))]
+		[InlineData("new Func<int>(() => 1) as Array", null, typeof(object))]
+		[InlineData("default(int?)", null, typeof(object))]
+		public void GenericTypesInExpressionsTest(string expression, object expected, Type expectedType)
+		{
+			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
+			output.WriteLine("Rendered: " + expression);
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+
+			if (expected != null)
+			{
+				Assert.NotNull(actual);
+				Assert.IsAssignableFrom(expectedType, actual);
+				Assert.Equal(expected, actual);
+			}
+			else
+			{
+				Assert.Null(actual);
+			}
+		}
+
+		[Theory]
+		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Field", 0)]
+		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Property", 0)]
+		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceMethod(10)", 10)]
+		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceGenericMethod<int>(11)", 11)]
+		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticGenericMethod<int>(12)", 12)]
+		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticMethod()", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Field1", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Property1", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceMethod1()", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>(1,2,3,4)", 4)]
+		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticGenericMethod1<int>(13)", 13)]
+		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticMethod1(14)", 14)]
+		public void GenericInvocationTest(string expression, int expected)
+		{
+			var typeResolutionService = new KnownTypeResolver(typeof(ExpressionExecutionTests.TestGenericClass<>), typeof(ExpressionExecutionTests.TestGenericClass<>.TestSubClass<,>));
+			expression = CSharpExpression.Parse<int>(expression, typeResolutionService).Body.Render();
+			output.WriteLine("Rendered: " + expression);
+			var actual = CSharpExpression.Parse<int>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
 			Assert.Equal(expected, actual);
 		}
 	}

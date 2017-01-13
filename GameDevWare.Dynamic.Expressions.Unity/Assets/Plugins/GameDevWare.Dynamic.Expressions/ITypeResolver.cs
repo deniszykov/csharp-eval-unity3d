@@ -20,6 +20,6 @@ namespace GameDevWare.Dynamic.Expressions
 	public interface ITypeResolver
 	{
 		bool TryGetType(TypeReference typeReference, out Type type);
-
+		bool IsKnownType(Type type);
 	}
 }

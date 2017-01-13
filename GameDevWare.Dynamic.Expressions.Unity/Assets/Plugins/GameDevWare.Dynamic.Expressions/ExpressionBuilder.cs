@@ -186,10 +186,15 @@ namespace GameDevWare.Dynamic.Expressions
 					var argument = default(object);
 					if (node.TryGetValue(methodParameter.Name, out argument))
 					{
-						var typeReference = default(TypeReference);
-						var type = default(Type);
-						if (argument != null && methodParameter.ParameterType == typeof(Type) && TryGetTypeReference(argument, out typeReference) && this.typeResolver.TryGetType(typeReference, out type))
-							argument = type;
+						if (argument != null && methodParameter.ParameterType == typeof(Type))
+						{
+							var typeReference = default(TypeReference);
+							var type = default(Type);
+							if (TryGetTypeReference(argument, out typeReference) && this.typeResolver.TryGetType(typeReference, out type))
+								argument = type;
+							else
+								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? argument), node);
+						}
 						else if (argument is ExpressionTree)
 							argument = Build((ExpressionTree)argument, context, expectedType: null, typeHint: methodParameter.ParameterType);
 						else if (argument != null)
@@ -562,11 +567,21 @@ namespace GameDevWare.Dynamic.Expressions
 				var isStatic = true;
 				if (propertyOrFieldTarget == null || TryGetTypeReference(propertyOrFieldTarget, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
 				{
-					var propertyOrFieldExpression = propertyOrFieldTarget != null ? Build(propertyOrFieldTarget, context, expectedType: null, typeHint: null) : context;
-					if (propertyOrFieldExpression != null)
+					try
 					{
-						type = propertyOrFieldExpression.Type;
-						isStatic = false;
+						var propertyOrFieldExpression = propertyOrFieldTarget != null ? Build(propertyOrFieldTarget, context, expectedType: null, typeHint: null) : context;
+						if (propertyOrFieldExpression != null)
+						{
+							type = propertyOrFieldExpression.Type;
+							isStatic = false;
+						}
+					}
+					catch (ExpressionParserException)
+					{
+						if (typeReference != null) // throw better error message about wrong type reference
+							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference), node);
+						throw;
+
 					}
 				}
 				var methodRef = default(TypeReference);
@@ -686,7 +701,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			var expressionType = node.GetExpressionType(throwOnError: true);
 			var expression = node.GetExpression(throwOnError: true);
-			var arguments = node.GetArguments(throwOnError: true);
+			var arguments = node.GetArguments(throwOnError: false);
 			var lambdaInvokeMethod = lambdaType.GetMethod(Constants.DELEGATE_INVOKE_NAME, BindingFlags.Public | BindingFlags.Instance);
 			if (lambdaInvokeMethod == null) throw new MissingMethodException(lambdaType.FullName, Constants.DELEGATE_INVOKE_NAME);
 			var lambdaInvokeMethodParameters = lambdaInvokeMethod.GetParameters();

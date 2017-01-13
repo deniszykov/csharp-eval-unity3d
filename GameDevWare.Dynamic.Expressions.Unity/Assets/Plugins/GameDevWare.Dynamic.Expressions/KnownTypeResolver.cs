@@ -94,7 +94,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			foreach (var type in this.knownTypes)
 			{
-				foreach (var name in GetTypeNames(type))
+				foreach (var name in NameUtils.GetTypeNames(type))
 				{
 					var typeList = default(List<Type>);
 					if (this.knownTypesByName.TryGetValue(name, out typeList) == false)
@@ -102,7 +102,7 @@ namespace GameDevWare.Dynamic.Expressions
 					typeList.Add(type);
 				}
 
-				foreach (var fullName in GetTypeFullNames(type))
+				foreach (var fullName in NameUtils.GetTypeFullNames(type))
 				{
 					var typeList = default(List<Type>);
 					if (this.knownTypesByFullName.TryGetValue(fullName, out typeList) == false)
@@ -175,7 +175,10 @@ namespace GameDevWare.Dynamic.Expressions
 					foundType = elementType.MakeArrayType();
 					return true;
 				}
-
+				else if (typeReference.TypeArguments.Count == 0)
+				{
+					return true;
+				}
 				foundType = null;
 			}
 			else if (foundType != null && typeReference.TypeArguments.Count > 0)
@@ -211,6 +214,12 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return foundType != null;
 		}
+		public bool IsKnownType(Type type)
+		{
+			if (type == null) throw new ArgumentNullException("type");
+
+			return this.knownTypes.Contains(type);
+		}
 
 		private static HashSet<Type> GetKnownTypes(IEnumerable<Type> types, HashSet<Type> collection = null, TypeDiscoveryOptions options = TypeDiscoveryOptions.All)
 		{
@@ -218,6 +227,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			foreach (var knownType in types)
 			{
+
 				var genericArguments = Type.EmptyTypes;
 				var type = knownType;
 				if (type.HasElementType) type = type.GetElementType() ?? type;
@@ -226,6 +236,8 @@ namespace GameDevWare.Dynamic.Expressions
 					genericArguments = type.GetGenericArguments();
 					type = type.GetGenericTypeDefinition() ?? type;
 				}
+
+				if (type.IsGenericParameter) continue;
 
 				var alreadyAdded = foundTypes.Add(type) == false;
 
@@ -245,6 +257,7 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					var declaringTypes = default(List<Type>);
 					var declaringType = type.DeclaringType;
+					// ReSharper disable HeuristicUnreachableCode
 					// ReSharper disable ConditionIsAlwaysTrueOrFalse
 					while (declaringType != null)
 					{
@@ -252,104 +265,14 @@ namespace GameDevWare.Dynamic.Expressions
 						declaringTypes.Add(declaringType);
 						declaringType = declaringType.DeclaringType;
 					}
-					// ReSharper restore ConditionIsAlwaysTrueOrFalse
 					if (declaringTypes != null)
 						GetKnownTypes(declaringTypes, foundTypes, options);
+					// ReSharper restore ConditionIsAlwaysTrueOrFalse
+					// ReSharper restore HeuristicUnreachableCode
 				}
 			}
 
 			return foundTypes;
-		}
-
-		private static string[] GetTypeNames(Type type)
-		{
-			if (type == null) throw new ArgumentNullException("type");
-
-			if (type == typeof(Array))
-				return new[] { type.Name, type.Name + "`1" };
-			else if (type.IsNested && type.IsGenericType)
-				return new[] { WriteName(type).ToString(), RemoveGenericSuffix(WriteName(type).ToString()) };
-			else if (type.IsNested)
-				return new[] { WriteName(type).ToString() };
-			else
-				return new[] { type.Name };
-		}
-		private static string[] GetTypeFullNames(Type type)
-		{
-			if (type == null) throw new ArgumentNullException("type");
-
-			if (type == typeof(Array))
-				return new[] { type.FullName, type.FullName + "`1" };
-			else if (type.IsNested && type.IsGenericType)
-				return new[] { WriteFullName(type).ToString(), RemoveGenericSuffix(WriteFullName(type).ToString()) };
-			else if (type.IsNested)
-				return new[] { WriteFullName(type).ToString() };
-			else if (type.IsGenericType)
-				return new[] { type.FullName, RemoveGenericSuffix(type.FullName) };
-			else
-				return new[] { type.FullName };
-		}
-		private static StringBuilder WriteFullName(Type type, StringBuilder builder = null)
-		{
-			if (type == null) throw new ArgumentNullException("type");
-
-			if (builder == null) builder = new StringBuilder();
-
-			// ReSharper disable once ConditionIsAlwaysTrueOrFalse
-			if (type.DeclaringType != null)
-				WriteFullName(type.DeclaringType, builder);
-
-			if (string.IsNullOrEmpty(type.Namespace) == false && type.IsNested == false)
-			{
-				if (builder.Length > 0)
-					builder.Append(".");
-				builder.Append(type.Namespace);
-			}
-
-			if (builder.Length > 0)
-				builder.Append(".");
-			builder.Append(type.Name);
-
-			return builder;
-		}
-		private static StringBuilder WriteName(Type type, StringBuilder builder = null)
-		{
-			if (type == null) throw new ArgumentNullException("type");
-
-			if (builder == null) builder = new StringBuilder();
-
-			// ReSharper disable once ConditionIsAlwaysTrueOrFalse
-			if (type.DeclaringType != null)
-				WriteName(type.DeclaringType, builder);
-
-			if (builder.Length > 0)
-				builder.Append(".");
-
-			builder.Append(type.Name);
-
-			return builder;
-		}
-		private static string RemoveGenericSuffix(string name)
-		{
-			if (name == null) throw new ArgumentNullException("name");
-
-			var markerIndex = name.IndexOf('`');
-			var offset = 0;
-			if (markerIndex < 0) return name;
-
-			var builder = new StringBuilder(name.Length);
-
-			while (markerIndex >= 0)
-			{
-				builder.Append(name, offset, markerIndex - offset);
-				markerIndex++;
-				while (markerIndex < name.Length && char.IsDigit(name[markerIndex]))
-					markerIndex++;
-				offset = markerIndex;
-				markerIndex = name.IndexOf('`', offset);
-			}
-
-			return builder.ToString();
 		}
 
 		public override string ToString()

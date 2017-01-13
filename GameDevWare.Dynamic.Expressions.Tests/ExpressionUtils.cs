@@ -10,7 +10,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 	{
 		public static object Evaluate(string expression, Type[] types, bool forceAot, params object[] arguments)
 		{
-			var expressionObj = Parse(expression, types, forceAot, arguments);
+			var expressionObj = Parse(expression, types);
 
 			var compileMethod = typeof(ExpressionExtentions)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -21,7 +21,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			return @delegate.DynamicInvoke(arguments);
 		}
 
-		public static LambdaExpression Parse(string expression, Type[] types, bool forceAot, params object[] arguments)
+		public static LambdaExpression Parse(string expression, Type[] types)
 		{
 			var parseMethod = typeof(CSharpExpression)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)

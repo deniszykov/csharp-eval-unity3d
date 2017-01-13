@@ -91,25 +91,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			}
 		}
 
-		[Theory]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Field", 0)]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Property", 0)]
-		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceMethod(10)", 10)]
-		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceGenericMethod<int>(11)", 11)]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticGenericMethod<int>(12)", 12)]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticMethod()", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Field1", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Property1", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceMethod1()", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>(1,2,3,4)", 4)]
-		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticGenericMethod1<int>(13)", 13)]
-		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticMethod1(14)", 14)]
-		public void ExecuteGenericMethodTest(string expression, int expected)
-		{
-			var typeResolutionService = new KnownTypeResolver(typeof(TestGenericClass<>), typeof(TestGenericClass<>.TestSubClass<,>));
-			var actual = CSharpExpression.Evaluate<int>(expression, typeResolutionService);
-			Assert.Equal(expected, actual);
-		}
+
 
 		// convert enum
 		[Fact]
@@ -992,6 +974,47 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var lambda = CSharpExpression.Parse<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: true).Invoke();
 			var actual = lambda.Invoke(typeof(bool), null);
 
+			Assert.Equal(expected, actual);
+		}
+
+		[Theory]
+		[InlineData("typeof(Func<int>)", typeof(Func<int>), typeof(Type))]
+		[InlineData("1 is Func<int>", false, typeof(bool))]
+		[InlineData("new Func<int>(() => 1) as Array", null, typeof(object))]
+		[InlineData("default(int?)", null, typeof(object))]
+		public void GenericTypesInExpressionsTest(string expression, object expected, Type expectedType)
+		{
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+
+			if (expected != null)
+			{
+				Assert.NotNull(actual);
+				Assert.IsAssignableFrom(expectedType, actual);
+				Assert.Equal(expected, actual);
+			}
+			else
+			{
+				Assert.Null(actual);
+			}
+		}
+
+		[Theory]
+		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Field", 0)]
+		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Property", 0)]
+		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceMethod(10)", 10)]
+		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceGenericMethod<int>(11)", 11)]
+		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticGenericMethod<int>(12)", 12)]
+		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticMethod()", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Field1", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Property1", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceMethod1()", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>(1,2,3,4)", 4)]
+		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticGenericMethod1<int>(13)", 13)]
+		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticMethod1(14)", 14)]
+		public void GenericMemberInvocationTest(string expression, int expected)
+		{
+			var typeResolutionService = new KnownTypeResolver(typeof(TestGenericClass<>), typeof(TestGenericClass<>.TestSubClass<,>));
+			var actual = CSharpExpression.Parse<int>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
 			Assert.Equal(expected, actual);
 		}
 	}

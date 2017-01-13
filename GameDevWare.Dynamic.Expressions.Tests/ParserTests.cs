@@ -330,6 +330,11 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("arg1.MyMethod<System.Random.Type1<Type2<B, C>, Ns.D, NS.E, Type3<System.Type4<E.F>>>>()", 17, TokenType.Call)]
 		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>()", 12, TokenType.Call)]
 		[InlineData("new TestGenericClass<int>.TestSubClass<int,int>(1,2,3).InstanceGenericMethod1<int>(1,2,3)", 7, TokenType.Call)]
+		[InlineData("typeof(TestGenericClass<int>.TestSubClass<int,int>)", 5, TokenType.Typeof)]
+		[InlineData("default(TestGenericClass<int>.TestSubClass<int,int>)", 5, TokenType.Default)]
+		[InlineData("x is TestGenericClass<int>.TestSubClass<int,int>", 6, TokenType.Is)]
+		[InlineData("x is TestGenericClass<int>", 3, TokenType.Is)]
+		[InlineData("x as TestGenericClass<int>", 3, TokenType.As)]
 		public void ParseClosedGenericType(string expression, int expectedIdentifiers, TokenType expectedTokenType)
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
