@@ -1,0 +1,9 @@
+language: csharp
+mono:
+  - latest
+solution: "./GameDevWare.Dynamic.Expressions.sln"
+install:
+  - travis_retry nuget restore ./GameDevWare.Dynamic.Expressions.sln
+script:
+  - xbuild ./GameDevWare.Dynamic.Expressions.sln
+  - mono ./packages/xunit.runner.console*/tools/xunit.console.exe ./GameDevWare.Dynamic.Expressions.Tests/bin/Debug/GameDevWare.Dynamic.Expressions.Tests.dll
