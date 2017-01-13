@@ -574,7 +574,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("2m > 2m", 2 > 2)]
 		[InlineData("2m >= 2m", 2 >= 2)]
 		[InlineData("2m < 2m", 2 < 2)]
-		[InlineData("2m <= 2m", 2 <= 2m)]
+		[InlineData("2m <= 2m", 2 <= 2)]
 		public void DecimalComparisonTest(string expression, bool expected)
 		{
 			var expressionFn = CSharpExpression.Parse<bool>(expression).CompileAot(forceAot: true);
