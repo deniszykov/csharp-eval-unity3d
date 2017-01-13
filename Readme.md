@@ -104,7 +104,7 @@ Building under WebGL bears same limitations and recommendations as building unde
 * Instance methods invocation performs slowly due reflection
 * Moderate boxing for value types (see roadmap)
 
-You can ensure that your generic [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) will be callable by registering it with **AotCompilation.RegisterFunc**
+You can ensure that your generic [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) pass AOT compilation by registering it with **AotCompilation.RegisterFunc**
 
 ```csharp
 AotCompilation.RegisterFunc<int, bool>(); // template: RegisterFunc<Arg1T, ResultT>
