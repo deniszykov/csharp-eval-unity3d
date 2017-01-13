@@ -148,17 +148,16 @@ You can send suggestions at support@gamedevware.com
 
 ## Changes
 # 1.0.1.12 (future)
-parser: added lambda expression syntax '() => x' and 'new Func(a => x)'
-parser: added generic types and generic methods
-parser: added nullable types via '?' suffix
-binder: added support for expression parameter re-mapping with lambda syntax at beggining of expression
-API: ITypeResolutionService renamed to ITypeResolver
-API: ITypeResolver.GetType removed
-API: ITypeResolver now could be configured with TypeDiscoveryOptions
-API: moved type name rendering functions to NameUtils class
-renderer: fixed error with generic type names
-
-fixed: 'new' expression parsed with error on chained calls new a().b().c()
+* parser: added lambda expression syntax '() => x' and 'new Func(a => x)'
+* parser: added generic types and generic methods
+* parser: added nullable types via '?' suffix
+* binder: added support for expression parameter re-mapping with lambda syntax at beggining of expression
+* API: ITypeResolutionService renamed to ITypeResolver
+* API: ITypeResolver.GetType removed
+* API: ITypeResolver now could be configured with TypeDiscoveryOptions
+* API: moved type name rendering functions to NameUtils class
+* renderer: fixed error with generic type names
+* fixed: 'new' expression parsed with error on chained calls new a().b().c()
 
 # 1.0.1.11
 * fixed error them creating nullable types via "new" keyword
