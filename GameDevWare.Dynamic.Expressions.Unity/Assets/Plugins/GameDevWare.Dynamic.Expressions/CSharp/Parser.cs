@@ -442,7 +442,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return NOT_FOUND;
 		}
 
-		private void CheckAndConsumeToken(TokenType expectedType1, TokenType expectedType2 = TokenType.None)
+		private void CheckAndConsumeToken(TokenType expectedType1, TokenType expectedType2 = 0)
 		{
 			var token = this.tokens.Count > 0 ? this.tokens.Dequeue() : default(Token);
 			var actualType = token.Type;

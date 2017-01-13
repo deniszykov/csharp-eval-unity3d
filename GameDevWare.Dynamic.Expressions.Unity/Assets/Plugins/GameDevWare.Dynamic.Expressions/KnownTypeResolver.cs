@@ -84,7 +84,14 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 
 		}
-		public KnownTypeResolver(IEnumerable<Type> knownTypes, ITypeResolver otherTypeResolver = null, TypeDiscoveryOptions options = TypeDiscoveryOptions.All)
+
+		public KnownTypeResolver(IEnumerable<Type> knownTypes) : this(knownTypes, null, TypeDiscoveryOptions.All)
+		{
+		}
+		public KnownTypeResolver(IEnumerable<Type> knownTypes, ITypeResolver otherTypeResolver) : this(knownTypes, otherTypeResolver, TypeDiscoveryOptions.All)
+		{
+		}
+		public KnownTypeResolver(IEnumerable<Type> knownTypes, ITypeResolver otherTypeResolver, TypeDiscoveryOptions options)
 		{
 			if (knownTypes == null) knownTypes = Type.EmptyTypes;
 
@@ -221,7 +228,7 @@ namespace GameDevWare.Dynamic.Expressions
 			return this.knownTypes.Contains(type);
 		}
 
-		private static HashSet<Type> GetKnownTypes(IEnumerable<Type> types, HashSet<Type> collection = null, TypeDiscoveryOptions options = TypeDiscoveryOptions.All)
+		private static HashSet<Type> GetKnownTypes(IEnumerable<Type> types, HashSet<Type> collection, TypeDiscoveryOptions options)
 		{
 			var foundTypes = collection ?? new HashSet<Type>(BuildInTypes);
 
@@ -242,7 +249,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var alreadyAdded = foundTypes.Add(type) == false;
 
 				if (type.IsGenericType && (options & TypeDiscoveryOptions.GenericArguments) != 0)
-					GetKnownTypes(genericArguments, foundTypes);
+					GetKnownTypes(genericArguments, foundTypes, options);
 
 				if (alreadyAdded)
 					continue;

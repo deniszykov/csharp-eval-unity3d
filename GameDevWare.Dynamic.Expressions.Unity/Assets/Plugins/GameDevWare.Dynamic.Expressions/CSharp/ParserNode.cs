@@ -418,7 +418,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			return args;
 		}
-		private static void Ensure(ParserNode node, int childCount, TokenType childType0 = TokenType.None, TokenType childType1 = TokenType.None, TokenType childType2 = TokenType.None)
+		private static void Ensure(ParserNode node, int childCount, TokenType childType0 = 0, TokenType childType1 = 0, TokenType childType2 = 0)
 		{
 			// ReSharper disable HeapView.BoxingAllocation
 			if (node.Nodes.Count < childCount)

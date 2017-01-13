@@ -172,31 +172,18 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			return -1;
 		}
-		private static ArraySegment<Type> GetGenericArguments(Type type)
-		{
-			if (type == null) throw new ArgumentNullException(nameof(type));
-
-			var genericArguments = type.GetGenericArguments();
-			var offset = 0;
-			var declaringType = GetDeclaringType(type);
-
-			while (declaringType != null)
-			{
-				if (declaringType.IsGenericType)
-					offset += declaringType.GetGenericArguments().Length;
-
-				declaringType = GetDeclaringType(declaringType);
-			}
-
-			return new ArraySegment<Type>(genericArguments, offset, genericArguments.Length - offset);
-		}
 		private static Type GetDeclaringType(Type type)
 		{
+			if (type == null) throw new ArgumentNullException("type");
+
 			return type.DeclaringType;
 		}
 
 		private static void WriteNameInternal(Type type, ArraySegment<Type> genericArguments, StringBuilder builder)
 		{
+			if (type == null) throw new ArgumentNullException("type");
+			if (builder == null) throw new ArgumentNullException("builder");
+
 			builder.Append(type.Name);
 
 			if (genericArguments.Count > 0)
