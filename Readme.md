@@ -1,4 +1,4 @@
-﻿https://travis-ci.org/deniszykov/csharp-eval-unity3d.svg?branch=master
+﻿[![Build Status](https://travis-ci.org/deniszykov/csharp-eval-unity3d.svg?branch=master)](https://github.com/deniszykov/csharp-eval-unity3d)
 
 # Introduction
 

@@ -879,17 +879,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Fact]
-		public void LambdaBindingSubstitutionTest()
-		{
-			var expression = CSharpExpression.Parse<Func<int, int>>("a => a + 1").Body.Render();
-			output.WriteLine("Rendered: " + expression);
-			var expected = 2;
-			var actual = CSharpExpression.Parse<int, int>(expression, arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Fact]
 		public void LambdaConstructorTest()
 		{
 			var typeResolutionService = new KnownTypeResolver(typeof(Func<Type, object, bool>));

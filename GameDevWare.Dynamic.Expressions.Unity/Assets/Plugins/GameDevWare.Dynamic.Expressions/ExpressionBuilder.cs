@@ -94,7 +94,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public Expression Build(ExpressionTree node, Expression context = null)
 		{
 			// lambda binding substitution feature
-			if (node.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA && typeof(Delegate).IsAssignableFrom(resultType) == false)
+			if (node.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA && typeof(Delegate).IsAssignableFrom(this.resultType) == false)
 			{
 				var callParameters = new Expression[this.parameters.Count];
 				var lambdaTypeArgs = new Type[this.parameters.Count + 1];
@@ -111,9 +111,14 @@ namespace GameDevWare.Dynamic.Expressions
 				return ExpressionSubstitutor.Visit(lambdaExpr.Body, substitution);
 			}
 
-			return Build(node, context, this.resultType, this.resultType);
+			var expression = Build(node, context, this.resultType);
+
+			if (expression.Type != this.resultType)
+				expression = Expression.ConvertChecked(expression, this.resultType);
+
+			return expression;
 		}
-		private Expression Build(ExpressionTree node, Expression context, Type expectedType, Type typeHint)
+		private Expression Build(ExpressionTree node, Expression context, Type typeHint)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -139,8 +144,7 @@ namespace GameDevWare.Dynamic.Expressions
 					default: expression = BuildByType(node, context); break;
 				}
 
-				if (expectedType != null && expression.Type != expectedType)
-					expression = Expression.ConvertChecked(expression, expectedType);
+
 
 				return expression;
 			}
@@ -196,7 +200,7 @@ namespace GameDevWare.Dynamic.Expressions
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? argument), node);
 						}
 						else if (argument is ExpressionTree)
-							argument = Build((ExpressionTree)argument, context, expectedType: null, typeHint: methodParameter.ParameterType);
+							argument = Build((ExpressionTree)argument, context, typeHint: methodParameter.ParameterType);
 						else if (argument != null)
 							argument = ChangeType(argument, methodParameter.ParameterType);
 						else if (methodParameter.ParameterType.IsValueType)
@@ -296,7 +300,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			var expression = node.GetExpression(throwOnError: true);
 
-			return Build(expression, context, expectedType: null, typeHint: null);
+			return Build(expression, context, typeHint: null);
 		}
 		private Expression BuildConstant(ExpressionTree node)
 		{
@@ -343,7 +347,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			else
 			{
-				expression = Build(target, context, expectedType: null, typeHint: null);
+				expression = Build(target, context, typeHint: null);
 			}
 
 			if (expression == null && type == null)
@@ -407,7 +411,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
 			var arguments = node.GetArguments(throwOnError: true);
 			var target = node.GetExpression(throwOnError: true);
-			var expression = Build(target, context, expectedType: null, typeHint: null);
+			var expression = Build(target, context, typeHint: null);
 			var indexExpression = default(Expression);
 			if (expression.Type.IsArray)
 			{
@@ -417,7 +421,7 @@ namespace GameDevWare.Dynamic.Expressions
 					var argName = Constants.GetIndexAsString(i);
 					var argument = default(ExpressionTree);
 					if (arguments.TryGetValue(argName, out argument))
-						indexingExpressions[i] = Build(argument, context, expectedType: typeof(int), typeHint: typeof(int));
+						indexingExpressions[i] = Build(argument, context, typeHint: typeof(int));
 				}
 
 				try
@@ -480,7 +484,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var isStatic = true;
 			if (TryGetTypeReference(target, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
 			{
-				expression = Build(target, context, expectedType: null, typeHint: null);
+				expression = Build(target, context, typeHint: null);
 				type = expression.Type;
 				isStatic = false;
 			}
@@ -569,7 +573,7 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					try
 					{
-						var propertyOrFieldExpression = propertyOrFieldTarget != null ? Build(propertyOrFieldTarget, context, expectedType: null, typeHint: null) : context;
+						var propertyOrFieldExpression = propertyOrFieldTarget != null ? Build(propertyOrFieldTarget, context, typeHint: null) : context;
 						if (propertyOrFieldExpression != null)
 						{
 							type = propertyOrFieldExpression.Type;
@@ -589,7 +593,7 @@ namespace GameDevWare.Dynamic.Expressions
 					return this.BuildCall(node, propertyOrFieldTarget, useNullPropagation, arguments, methodRef, context);
 			}
 
-			expression = Build(target, context, expectedType: null, typeHint: null);
+			expression = Build(target, context, typeHint: null);
 
 			if (typeof(Delegate).IsAssignableFrom(expression.Type) == false)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOINVOKENONDELEG, expression.Type), node);
@@ -652,7 +656,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var argument = default(ExpressionTree);
 				if (arguments.TryGetValue(key, out argument) == false)
 					throw new ExpressionParserException(Properties.Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS, node);
-				argumentExpressions[i] = Build(argument, context, typeof(int), typeHint: typeof(int));
+				argumentExpressions[i] = Build(argument, context, typeHint: typeof(int));
 			}
 
 			return Expression.NewArrayBounds(type, argumentExpressions);
@@ -728,7 +732,7 @@ namespace GameDevWare.Dynamic.Expressions
 					builderParameters.Add(parameterExpr);
 			// create builder and bind body
 			var builder = new ExpressionBuilder(builderParameters, lambdaInvokeMethod.ReturnType, this.contextType, this.typeResolver);
-			var body = builder.Build(expression, context, lambdaInvokeMethod.ReturnType, typeHint: lambdaInvokeMethod.ReturnType);
+			var body = builder.Build(expression, context, typeHint: lambdaInvokeMethod.ReturnType);
 
 			return Expression.Lambda(lambdaType, body, lambdaParameters);
 		}
@@ -773,7 +777,7 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 
 				var expectedType = parameter.ParameterType;
-				var argValue = this.Build(arguments[argName], context, expectedType: null, typeHint: expectedType);
+				var argValue = this.Build(arguments[argName], context, typeHint: expectedType);
 				var quality = TryCastTo(expectedType, ref argValue);
 
 				if (quality > 0)
