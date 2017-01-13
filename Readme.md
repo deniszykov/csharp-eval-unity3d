@@ -96,8 +96,6 @@ IOS, WebGL and most consoles use AOT compilation which imposes following restric
 
 ### WebGL
 
-Since WebGL has problems with unsigned types and *long* type, the use of these types in expressions are disabled with *#if !UNITY_WEBGL* define. Once the problems are solved, this "define" will be removed.
-
 Building under WebGL bears same limitations and recommendations as building under IOS.
 
 ### IOS
@@ -149,13 +147,38 @@ You can send suggestions at support@gamedevware.com
 * Custom editor with auto-completion for Unity
 
 ## Changes
+# 1.0.1.12 (future)
+parser: added lambda expression syntax '() => x' and 'new Func(a => x)'
+parser: added generic types and generic methods
+parser: added nullable types via '?' suffix
+binder: added support for expression parameter re-mapping with lambda syntax at beggining of expression
+API: ITypeResolutionService renamed to ITypeResolver
+API: ITypeResolver.GetType removed
+API: ITypeResolver now could be configured with TypeDiscoveryOptions
+API: moved type name rendering functions to NameUtils class
+renderer: fixed error with generic type names
+
+fixed: 'new' expression parsed with error on chained calls new a().b().c()
+
+# 1.0.1.11
+* fixed error them creating nullable types via "new" keyword
+* fixed Embedded Resource addressing problem on IL2CPP WebGL (localized error messages)
+* fixed some cases of nullable types binding
+* fixed Enum member resolution
+* added Power(**) operator into C# syntax
+* added TypeResolutionService chaining for better KnownTypes re-use
+
+# 1.0.1.10
+* fixed error with nulled constants after first call for AOT-ted expression.
+* added ToString() impl for ExpressionTree
+
 # 1.0.1.9
 * added [Null-conditional Operators](https://msdn.microsoft.com/en-us/library/dn986595.aspx) (example: a.?b.?.c)
 * fixed array indexing expressions
 * added array types support in type expressions ('convert', 'typeof', 'is' etc.)
 
 ## Installation
-Nuget:
+[Nuget](https://www.nuget.org/packages/GameDevWare.Dynamic.Expressions/):
 ```
 Install-Package GameDevWare.Dynamic.Expressions
 ```

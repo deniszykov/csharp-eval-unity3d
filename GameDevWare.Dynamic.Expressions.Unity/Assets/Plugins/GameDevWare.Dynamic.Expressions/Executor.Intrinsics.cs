@@ -13,11 +13,15 @@
 	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
+#if !UNITY_WEBGL || UNITY_5 || UNITY_5_0_OR_NEWER
+#define UNSIGNED_TYPES
+#endif
 
 using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
@@ -320,7 +324,7 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				return closure.Box(closure.Unbox<int>(left));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				return closure.Box(closure.Unbox<uint>(left));
@@ -578,7 +582,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<byte>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -812,7 +816,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<sbyte>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1046,7 +1050,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<short>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1280,7 +1284,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<ushort>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1514,7 +1518,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<int>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1559,7 +1563,7 @@ namespace GameDevWare.Dynamic.Expressions
 					return unchecked(closure.Box((decimal)closure.Unbox<int>(left)));
 			}
 		}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 		private static class op_UInt32
 		{
 			static op_UInt32()
@@ -1747,7 +1751,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<uint>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1979,7 +1983,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<long>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2201,7 +2205,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<ulong>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2406,7 +2410,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<float>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2610,7 +2614,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<double>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2814,7 +2818,7 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					return unchecked(closure.Box((int)closure.Unbox<decimal>(left)));
 			}
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
