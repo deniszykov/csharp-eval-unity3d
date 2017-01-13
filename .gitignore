@@ -26,7 +26,7 @@ bin/
 obj/
 packages/
 deploy/
-Assembly*
+Assembly-*
 Library/
 Temp/
 Assets/StreamingAssets/
