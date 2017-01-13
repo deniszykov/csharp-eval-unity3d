@@ -25,13 +25,13 @@ It should work on any other platforms.
 ## Example
 Parsing C# expression:
 ```csharp
-CSharpExpression.Parse<double, double, double>("Math.Max(value1,value2)", arg1Name: "value1", arg2Name: "value2") 
-// -> Expression<Func<double, double, double>>
+var expr = CSharpExpression.Parse<double, double, double>("Math.Max(x, y)", arg1Name: "x", arg2Name: "y") 
+// expr -> Expression<Func<double, double, double>>
 ```
 Evaluating C# expression:
 ```csharp
-CSharpExpression.Evaluate<int>("2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10"); 
-// -> 19
+var v = CSharpExpression.Evaluate<int>("2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10"); 
+// v -> 19
 ```
 
 ## Parser
@@ -72,17 +72,17 @@ For security reasons the parser does not provide access to static types, except:
 
 To access other types your should pass **typeResolver** parameter in **Parse** or **Evaluate** method:
 ```csharp
-var typeResolutionService = new KnownTypeResolutionService(typeof(Mathf), typeof(Time));
-CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0f, 3.0f)", typeResolutionService); 
+var typeResolver = new KnownTypeResolver(typeof(Mathf), typeof(Time));
+CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0f, 3.0f)", typeResolver); 
 ```
 If you want to access all types in **UnityEngine** you can pass **AssemblyTypeResolver.UnityEngine** as typeResolver parameter.
 
 ## AOT Execution
 You can compile and evaluate expression created by **System.Linq.Expression** and execute it in AOT environment where it is usually impossible. 
 ```csharp
-Expression<Func<Vector3>> expression = () => new Vector3(1.0f, 1.0f, 1.0f);
-Func<Vector3> compiledExpression = expression.CompileAot();
-compiledExpression(); // -> Vector3(1.0f, 1.0f, 1.0f)
+Expression<Func<Vector3>> expr = () => new Vector3(1.0f, 1.0f, 1.0f);
+Func<Vector3> compiledExpr = expr.CompileAot();
+compiledExpr(); // -> Vector3(1.0f, 1.0f, 1.0f)
 ```
 
 iOS, WebGL and most consoles use AOT compilation which imposes following restrictions on the dynamic code execution:
