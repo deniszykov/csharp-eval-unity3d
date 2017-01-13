@@ -72,7 +72,8 @@ For security reasons the parser does not provide access to static types, except:
 
 To access other types your should pass **typeResolver** parameter in **Parse** or **Evaluate** method:
 ```csharp
-CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0F, 3.0F)", typeResolutionService: new KnownTypeResolutionService(typeof(Mathf), typeof(Time))); 
+var typeResolutionService = new KnownTypeResolutionService(typeof(Mathf), typeof(Time));
+CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0f, 3.0f)", typeResolutionService); 
 ```
 If you want to access all types in **UnityEngine** you can pass **AssemblyTypeResolver.UnityEngine** as typeResolver parameter.
 
