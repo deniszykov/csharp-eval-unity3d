@@ -31,16 +31,14 @@ namespace GameDevWare.Dynamic.Expressions
 		/// </summary>
 		public static readonly ArgumentsTree Empty = new ArgumentsTree();
 
-		private static readonly Dictionary<string, ExpressionTree> EmptyDictionary = new Dictionary<string, ExpressionTree>();
-
 		private readonly Dictionary<string, ExpressionTree> innerDictionary;
 
 		/// <summary>
 		/// Creates empty list of arguments.
 		/// </summary>
-		public ArgumentsTree()
+		private ArgumentsTree()
 		{
-			this.innerDictionary = EmptyDictionary;
+			this.innerDictionary = new Dictionary<string, ExpressionTree>();
 		}
 		/// <summary>
 		/// Create list of arguments from existing dictionary.
@@ -48,8 +46,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <param name="innerDictionary"></param>
 		public ArgumentsTree(Dictionary<string, ExpressionTree> innerDictionary)
 		{
-			if (innerDictionary == null)
-				throw new ArgumentNullException("innerDictionary");
+			if (innerDictionary == null) throw new ArgumentNullException("innerDictionary");
 
 			this.innerDictionary = innerDictionary;
 		}
