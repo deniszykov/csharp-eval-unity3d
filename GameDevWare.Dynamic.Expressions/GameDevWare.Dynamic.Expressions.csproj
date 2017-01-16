@@ -135,6 +135,9 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\AotCompilation.cs">
       <Link>AotCompilation.cs</Link>
     </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ArgumentsTree.cs">
+      <Link>ArgumentsTree.cs</Link>
+    </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\AssemblyTypeResolver.cs">
       <Link>AssemblyTypeResolver.cs</Link>
     </Compile>
@@ -215,9 +218,6 @@
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\NameUtils.cs">
       <Link>NameUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ReadOnlyDictionary.cs">
-      <Link>ReadOnlyDictionary.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\TypeDiscoveryOptions.cs">
       <Link>TypeDiscoveryOptions.cs</Link>

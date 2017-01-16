@@ -418,9 +418,8 @@ namespace GameDevWare.Dynamic.Expressions
 				var indexingExpressions = new Expression[arguments.Count];
 				for (var i = 0; i < indexingExpressions.Length; i++)
 				{
-					var argName = Constants.GetIndexAsString(i);
 					var argument = default(ExpressionTree);
-					if (arguments.TryGetValue(argName, out argument))
+					if (arguments.TryGetValue(i, out argument))
 						indexingExpressions[i] = Build(argument, context, typeHint: typeof(int));
 				}
 
@@ -468,7 +467,7 @@ namespace GameDevWare.Dynamic.Expressions
 			else
 				return indexExpression;
 		}
-		private Expression BuildCall(ExpressionTree node, ExpressionTree target, bool useNullPropagation, ReadOnlyDictionary<string, ExpressionTree> arguments, TypeReference methodRef, Expression context)
+		private Expression BuildCall(ExpressionTree node, ExpressionTree target, bool useNullPropagation, ArgumentsTree arguments, TypeReference methodRef, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (target == null) throw new ArgumentNullException("target");
@@ -652,9 +651,8 @@ namespace GameDevWare.Dynamic.Expressions
 			var argumentExpressions = new Expression[arguments.Count];
 			for (var i = 0; i < arguments.Count; i++)
 			{
-				var key = Constants.GetIndexAsString(i);
 				var argument = default(ExpressionTree);
-				if (arguments.TryGetValue(key, out argument) == false)
+				if (arguments.TryGetValue(i, out argument) == false)
 					throw new ExpressionParserException(Properties.Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS, node);
 				argumentExpressions[i] = Build(argument, context, typeHint: typeof(int));
 			}
@@ -715,7 +713,7 @@ namespace GameDevWare.Dynamic.Expressions
 			for (var i = 0; i < argumentNames.Length; i++)
 			{
 				var argumentNameTree = default(ExpressionTree);
-				if (arguments.TryGetValue(Constants.GetIndexAsString(i), out argumentNameTree) == false || argumentNameTree == null || argumentNameTree.GetExpressionType(throwOnError: true) != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
+				if (arguments.TryGetValue(i, out argumentNameTree) == false || argumentNameTree == null || argumentNameTree.GetExpressionType(throwOnError: true) != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
 				argumentNames[i] = argumentNameTree.GetPropertyOrFieldName(throwOnError: true);
 			}
@@ -737,7 +735,7 @@ namespace GameDevWare.Dynamic.Expressions
 			return Expression.Lambda(lambdaType, body, lambdaParameters);
 		}
 
-		private float TryBindMethod(ParameterInfo[] methodParameters, ReadOnlyDictionary<string, ExpressionTree> arguments, Expression context, out Expression[] callArguments)
+		private float TryBindMethod(ParameterInfo[] methodParameters, ArgumentsTree arguments, Expression context, out Expression[] callArguments)
 		{
 			callArguments = null;
 

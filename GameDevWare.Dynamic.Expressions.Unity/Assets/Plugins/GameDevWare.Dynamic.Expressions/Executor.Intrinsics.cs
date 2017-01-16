@@ -18,6 +18,7 @@
 #endif
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -123,15 +124,15 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
-		private static class Intrinsics
+		private static class Intrinsic
 		{
-			private static readonly ReadOnlyDictionary<Type, ReadOnlyDictionary<int, Delegate>> Operations;
-			private static readonly ReadOnlyDictionary<Type, ReadOnlyDictionary<Type, Delegate>> Convertions;
+			private static readonly Dictionary<Type, Dictionary<int, Delegate>> Operations;
+			private static readonly Dictionary<Type, Dictionary<Type, Delegate>> Convertions;
 
-			static Intrinsics()
+			static Intrinsic()
 			{
 				// AOT
-				if (typeof(Intrinsics).Name == string.Empty)
+				if (typeof(Intrinsic).Name == string.Empty)
 				{
 					op_Boolean.Not(default(Closure), default(object));
 					op_Byte.Negate(default(Closure), default(object));
@@ -172,8 +173,8 @@ namespace GameDevWare.Dynamic.Expressions
 				.ToDictionary
 				(
 					keySelector: k => k.Key,
-					elementSelector: e => e.ToDictionary(b => (int)b.expressionType, f => f.fn).AsReadOnly()
-				).AsReadOnly();
+					elementSelector: e => e.ToDictionary(b => (int)b.expressionType, f => f.fn)
+				);
 
 				Convertions =
 				(
@@ -191,8 +192,8 @@ namespace GameDevWare.Dynamic.Expressions
 				.ToDictionary
 				(
 					keySelector: k => k.Key,
-					elementSelector: e => e.ToDictionary(b => b.toType, f => f.fn).AsReadOnly()
-				).AsReadOnly();
+					elementSelector: e => e.ToDictionary(b => b.toType, f => f.fn)
+				);
 			}
 
 			public static object BinaryOperation(Closure closure, object left, object right,
@@ -201,7 +202,7 @@ namespace GameDevWare.Dynamic.Expressions
 				if (closure == null) throw new ArgumentNullException("closure");
 
 				var type = left != null ? left.GetType() : right != null ? right.GetType() : typeof(object);
-				var dictionary = default(ReadOnlyDictionary<int, Delegate>);
+				var dictionary = default(Dictionary<int, Delegate>);
 				var func = default(Delegate);
 
 				if (Operations.TryGetValue(type, out dictionary) && dictionary.TryGetValue((int)binaryOperationType, out func))
@@ -224,7 +225,7 @@ namespace GameDevWare.Dynamic.Expressions
 				if (closure == null) throw new ArgumentNullException("closure");
 
 				var type = operand != null ? operand.GetType() : typeof(object);
-				var dictionary = default(ReadOnlyDictionary<int, Delegate>);
+				var dictionary = default(Dictionary<int, Delegate>);
 				var func = default(Delegate);
 
 				if (Operations.TryGetValue(type, out dictionary) && dictionary.TryGetValue((int)unaryOperationType, out func))
@@ -242,7 +243,7 @@ namespace GameDevWare.Dynamic.Expressions
 				if (toType == null) throw new ArgumentNullException("toType");
 
 				var type = value != null ? value.GetType() : typeof(object);
-				var dictionary = default(ReadOnlyDictionary<Type, Delegate>);
+				var dictionary = default(Dictionary<Type, Delegate>);
 				var func = default(Delegate);
 
 				if (Convertions.TryGetValue(type, out dictionary) && dictionary.TryGetValue(toType, out func))

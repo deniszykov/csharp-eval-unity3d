@@ -15,15 +15,19 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using GameDevWare.Dynamic.Expressions.CSharp;
 
 namespace GameDevWare.Dynamic.Expressions
 {
-	public class ExpressionTree : ReadOnlyDictionary<string, object>, ILineInfo
+	public class ExpressionTree : IDictionary<string, object>, ILineInfo
 	{
-		public ExpressionTree(IDictionary<string, object> node) : base(PrepareNode(node))
+		private readonly Dictionary<string, object> innerDictionary;
+
+		public ExpressionTree(IDictionary<string, object> node)
 		{
+			this.innerDictionary = PrepareNode(node);
 		}
 
 		private static Dictionary<string, object> PrepareNode(IDictionary<string, object> node)
@@ -93,7 +97,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var expression = (ExpressionTree)expressionObj;
 			return expression;
 		}
-		public ReadOnlyDictionary<string, ExpressionTree> GetArguments(bool throwOnError)
+		public ArgumentsTree GetArguments(bool throwOnError)
 		{
 			var argumentsObj = default(object);
 			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is ExpressionTree == false)
@@ -101,7 +105,7 @@ namespace GameDevWare.Dynamic.Expressions
 				if (throwOnError)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(true)), this);
 				else
-					return ReadOnlyDictionary<string, ExpressionTree>.Empty;
+					return ArgumentsTree.Empty;
 			}
 
 			var arguments = new Dictionary<string, ExpressionTree>(((ExpressionTree)argumentsObj).Count);
@@ -116,7 +120,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (arguments.Count > Constants.MAX_ARGUMENTS_COUNT)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_TOOMANYARGUMENTS, Constants.MAX_ARGUMENTS_COUNT.ToString()), this);
 
-			return new ReadOnlyDictionary<string, ExpressionTree>(arguments);
+			return new ArgumentsTree(arguments);
 		}
 		public string GetPropertyOrFieldName(bool throwOnError)
 		{
@@ -217,14 +221,6 @@ namespace GameDevWare.Dynamic.Expressions
 			return Convert.ToString(valueObj, Constants.DefaultFormatProvider);
 		}
 
-		public override string ToString()
-		{
-			var expression = this.GetOriginalExpression(throwOnError: false);
-			if (string.IsNullOrEmpty(expression))
-				expression = this.Render();
-			return expression;
-		}
-
 		int ILineInfo.GetLineNumber()
 		{
 			return this.GetLineNumber(throwOnError: false);
@@ -236,6 +232,121 @@ namespace GameDevWare.Dynamic.Expressions
 		int ILineInfo.GetTokenLength()
 		{
 			return this.GetTokenLength(throwOnError: false);
+		}
+
+		#region IDictionary<string,object> Members
+
+		void IDictionary<string, object>.Add(string key, object value)
+		{
+			throw new NotSupportedException();
+		}
+
+		public bool ContainsKey(string key)
+		{
+			return this.innerDictionary.ContainsKey(key);
+		}
+
+		public ICollection<string> Keys
+		{
+			get { return this.innerDictionary.Keys; }
+		}
+
+		bool IDictionary<string, object>.Remove(string key)
+		{
+			throw new NotSupportedException();
+		}
+
+		public bool TryGetValue(string key, out object value)
+		{
+			return this.innerDictionary.TryGetValue(key, out value);
+		}
+
+		public ICollection<object> Values
+		{
+			get { return this.innerDictionary.Values; }
+		}
+
+		public object this[string key]
+		{
+			get { return this.innerDictionary[key]; }
+			set { throw new NotSupportedException(); }
+		}
+
+		#endregion
+
+		#region ICollection<KeyValuePair<string,object>> Members
+
+		void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
+		{
+			throw new NotSupportedException();
+		}
+
+		void ICollection<KeyValuePair<string, object>>.Clear()
+		{
+			throw new NotSupportedException();
+		}
+
+		bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
+		{
+			return ((ICollection<KeyValuePair<string, object>>)this.innerDictionary).Contains(item);
+		}
+
+		void ICollection<KeyValuePair<string, object>>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+		{
+			((ICollection<KeyValuePair<string, object>>)this.innerDictionary).CopyTo(array, arrayIndex);
+		}
+
+		public int Count
+		{
+			get { return this.innerDictionary.Count; }
+		}
+
+		bool ICollection<KeyValuePair<string, object>>.IsReadOnly
+		{
+			get { return ((ICollection<KeyValuePair<string, object>>)this.innerDictionary).IsReadOnly; }
+		}
+
+		bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
+		{
+			return ((ICollection<KeyValuePair<string, object>>)this.innerDictionary).Remove(item);
+		}
+
+		#endregion
+
+		#region IEnumerable<KeyValuePair<string,object>> Members
+
+		IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
+		{
+			return ((ICollection<KeyValuePair<string, object>>)this.innerDictionary).GetEnumerator();
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return ((IEnumerable)this.innerDictionary).GetEnumerator();
+		}
+
+		#endregion
+
+		public override bool Equals(object obj)
+		{
+			return this.innerDictionary.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return this.innerDictionary.GetHashCode();
+		}
+
+		public override string ToString()
+		{
+			var expression = this.GetOriginalExpression(throwOnError: false);
+			if (string.IsNullOrEmpty(expression))
+				expression = this.Render();
+			return expression;
 		}
 	}
 }

@@ -407,7 +407,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{
 					if (i != 0) builder.Append(",");
 					var typeArgument = default(ExpressionTree);
-					if (arguments.TryGetValue(Constants.GetIndexAsString(i), out typeArgument))
+					if (arguments.TryGetValue(i, out typeArgument))
 						Render(typeArgument, builder, true, checkedScope);
 				}
 				builder.Append(">");
@@ -559,7 +559,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			if (!wrapped) builder.Append(")");
 		}
-		private static void RenderArguments(ReadOnlyDictionary<string, ExpressionTree> arguments, StringBuilder builder, bool checkedScope)
+		private static void RenderArguments(ArgumentsTree arguments, StringBuilder builder, bool checkedScope)
 		{
 			if (arguments == null) throw new ArgumentNullException("arguments");
 			if (builder == null) throw new ArgumentNullException("builder");

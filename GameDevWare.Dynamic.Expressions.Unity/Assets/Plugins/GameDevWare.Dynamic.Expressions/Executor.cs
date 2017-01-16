@@ -788,7 +788,7 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					if (value == null) throw new NullReferenceException("Attempt to unbox a null value.");
 
-					value = Intrinsics.Convert(closure, value, Enum.GetUnderlyingType(toType), convertExpression.NodeType, null);
+					value = Intrinsic.Convert(closure, value, Enum.GetUnderlyingType(toType), convertExpression.NodeType, null);
 					return Enum.ToObject(toType, closure.Unbox<object>(value));
 				}
 				// from enum
@@ -801,7 +801,7 @@ namespace GameDevWare.Dynamic.Expressions
 						throw new NullReferenceException("Attempt to unbox a null value.");
 
 					value = System.Convert.ChangeType(value, Enum.GetUnderlyingType(fromType));
-					value = Intrinsics.Convert(closure, value, toType, convertExpression.NodeType, null);
+					value = Intrinsic.Convert(closure, value, toType, convertExpression.NodeType, null);
 					return value;
 				}
 				// from nullable
@@ -809,12 +809,12 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					if (value == null) throw new NullReferenceException("Attempt to unbox a null value.");
 
-					value = Intrinsics.Convert(closure, value, toType, convertExpression.NodeType, null);
+					value = Intrinsic.Convert(closure, value, toType, convertExpression.NodeType, null);
 				}
 				else if (toType.IsInstanceOfType(value))
 					return value;
 
-				return Intrinsics.Convert(closure, value, toType, convertType, convertOperator);
+				return Intrinsic.Convert(closure, value, toType, convertType, convertOperator);
 			};
 		}
 
@@ -837,11 +837,11 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					case ExpressionType.Negate:
 					case ExpressionType.NegateChecked:
-						return Intrinsics.UnaryOperation(closure, operand, unaryExpression.NodeType, opUnaryNegation);
+						return Intrinsic.UnaryOperation(closure, operand, unaryExpression.NodeType, opUnaryNegation);
 					case ExpressionType.UnaryPlus:
-						return Intrinsics.UnaryOperation(closure, operand, unaryExpression.NodeType, opUnaryPlus);
+						return Intrinsic.UnaryOperation(closure, operand, unaryExpression.NodeType, opUnaryPlus);
 					case ExpressionType.Not:
-						return Intrinsics.UnaryOperation(closure, operand, unaryExpression.NodeType, opOnesComplement);
+						return Intrinsic.UnaryOperation(closure, operand, unaryExpression.NodeType, opOnesComplement);
 					case ExpressionType.ArrayLength:
 						return closure.Unbox<Array>(operand).Length;
 				}
@@ -932,41 +932,41 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					case ExpressionType.Add:
 					case ExpressionType.AddChecked:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opAddition);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opAddition);
 					case ExpressionType.And:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseAnd);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseAnd);
 					case ExpressionType.Coalesce:
 						return left ?? right;
 					case ExpressionType.Divide:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opDivision);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opDivision);
 					case ExpressionType.Equal:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opEquality);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opEquality);
 					case ExpressionType.NotEqual:
-						return closure.Box(closure.Unbox<bool>(Intrinsics.BinaryOperation(closure, left, right, ExpressionType.Equal, opEquality)) == false);
+						return closure.Box(closure.Unbox<bool>(Intrinsic.BinaryOperation(closure, left, right, ExpressionType.Equal, opEquality)) == false);
 					case ExpressionType.ExclusiveOr:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opExclusiveOr);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opExclusiveOr);
 					case ExpressionType.GreaterThan:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThan);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThan);
 					case ExpressionType.GreaterThanOrEqual:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThanOrEqual);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThanOrEqual);
 					case ExpressionType.LeftShift:
 					case ExpressionType.Power:
 					case ExpressionType.RightShift:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, null);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, null);
 					case ExpressionType.LessThan:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opLessThan);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opLessThan);
 					case ExpressionType.LessThanOrEqual:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opLessThanOrEqual);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opLessThanOrEqual);
 					case ExpressionType.Modulo:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opModulus);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opModulus);
 					case ExpressionType.Multiply:
 					case ExpressionType.MultiplyChecked:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opMultiply);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opMultiply);
 					case ExpressionType.Or:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseOr);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opBitwiseOr);
 					case ExpressionType.Subtract:
 					case ExpressionType.SubtractChecked:
-						return Intrinsics.BinaryOperation(closure, left, right, binaryExpression.NodeType, opSubtraction);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opSubtraction);
 				}
 
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE, binaryExpression.Type));
