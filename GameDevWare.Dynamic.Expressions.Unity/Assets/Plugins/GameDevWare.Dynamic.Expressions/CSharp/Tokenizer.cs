@@ -2,15 +2,15 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 
@@ -19,6 +19,9 @@ using System.Collections.Generic;
 using System.Linq;
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
+	/// <summary>
+	/// Expression string tokenizer. Produces stream of <see cref="Token"/> from expression <see cref="String"/>.
+	/// </summary>
 	public static class Tokenizer
 	{
 		private static readonly Dictionary<string, TokenType> TokensBySymbols;
@@ -34,6 +37,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			Symbols = TokensBySymbols.Keys.ToArray();
 		}
 
+		/// <summary>
+		/// Produces stream of <see cref="Token"/> from <paramref name="expression"/>.
+		/// </summary>
+		/// <param name="expression">A valid expression string.</param>
+		/// <returns>Stream of <see cref="Token"/>.</returns>
 		public static IEnumerable<Token> Tokenize(string expression)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
@@ -53,7 +61,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				foreach (var token in Symbols)
 				{
 					if (!Match(expression, i, token) ||
-						(current.IsKnown && token.Length < current.TokenLength))
+						(current.IsValid && token.Length < current.TokenLength))
 					{
 						continue;
 					}
@@ -61,7 +69,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					current = new Token(TokensBySymbols[token], token, line, col, token.Length);
 				}
 
-				if (!current.IsKnown)
+				if (!current.IsValid)
 				{
 					if (char.IsDigit(charCode) || charCode == '.') // numerics
 						current = LookForNumber(expression, i, line, col);
@@ -78,7 +86,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				i += current.TokenLength - 1;
 				col += current.TokenLength - 1;
 
-				if (current.IsKnown)
+				if (current.IsValid)
 					yield return current;
 			}
 		}

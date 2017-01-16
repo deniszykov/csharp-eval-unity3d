@@ -18,15 +18,36 @@ using System;
 
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// Options of type discovery on specified types.
+	/// </summary>
 	[Flags]
 	public enum TypeDiscoveryOptions
 	{
+		/// <summary>
+		/// Only specified types is known.
+		/// </summary>
 		Default = 0,
+		/// <summary>
+		/// All interfaces on specified types are known.
+		/// </summary>
 		Interfaces = 0x1 << 1,
+		/// <summary>
+		/// All generic arguments on specified types are known.
+		/// </summary>
 		GenericArguments = 0x1 << 2,
+		/// <summary>
+		/// All types from <see cref="ExpressionKnownTypeAttribute"/> on specified types are known.
+		/// </summary>
 		KnownTypes = 0x1 << 3,
+		/// <summary>
+		/// All <see cref="Type.DeclaringType"/>(recursively) on specified types are known.
+		/// </summary>
 		DeclaringTypes = 0x1 << 4,
 
+		/// <summary>
+		/// All discovery options are active.
+		/// </summary>
 		All = Interfaces | GenericArguments | KnownTypes | DeclaringTypes
 	}
 }

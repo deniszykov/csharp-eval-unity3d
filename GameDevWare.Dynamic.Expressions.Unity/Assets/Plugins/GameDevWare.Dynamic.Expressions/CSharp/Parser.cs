@@ -20,6 +20,9 @@ using System.Linq;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
+	/// <summary>
+	/// Expression parser. Converts stream of <see cref="Token"/> to parser tree(<see cref="ParserNode"/>).
+	/// </summary>
 	public class Parser
 	{
 		private static readonly Dictionary<int, int> UnaryReplacement;
@@ -83,13 +86,18 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					TokenPrecedence.Add((int)token, i);
 			}
 		}
-		public Parser(IEnumerable<Token> tokens)
+		private Parser(IEnumerable<Token> tokens)
 		{
 			if (tokens == null) throw new ArgumentNullException("tokens");
 
 			this.tokens = new List<Token>(tokens as List<Token> ?? new List<Token>(tokens));
 			this.stack = new Stack<ParserNode>();
 		}
+		/// <summary>
+		/// Converts stream of <see cref="Token"/> to parser tree(<see cref="ParserNode"/>).
+		/// </summary>
+		/// <param name="tokens">Stream of <see cref="Token"/>.</param>
+		/// <returns>A parser tree(<see cref="ParserNode"/></returns>
 		public static ParserNode Parse(IEnumerable<Token> tokens)
 		{
 			if (tokens == null) throw new ArgumentNullException("tokens");

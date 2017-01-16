@@ -21,21 +21,37 @@ using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// <see cref="ITypeResolver"/> which allows any public (<see cref="Type.IsPublic"/>) type from specified <see cref="Assembly"/>(or multiple <see cref="Assembly"/>.
+	/// </summary>
 	public sealed class AssemblyTypeResolver : KnownTypeResolver
 	{
 #if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
 		public static readonly AssemblyTypeResolver UnityEngine = new AssemblyTypeResolver(typeof(UnityEngine.Application).Assembly);
 #endif
 
+		/// <summary>
+		/// Creates new <see cref="AssemblyTypeResolver"/> from list of assemblies.
+		/// </summary>
+		/// <param name="assemblies">List of assemblies to add as source of known types.</param>
 		public AssemblyTypeResolver(params Assembly[] assemblies)
 			: this((IEnumerable<Assembly>)assemblies, null)
 		{
 
 		}
+		/// <summary>
+		/// Creates new <see cref="AssemblyTypeResolver"/> from list of assemblies.
+		/// </summary>
+		/// <param name="assemblies">List of assemblies to add as source of known types.</param>
 		public AssemblyTypeResolver(IEnumerable<Assembly> assemblies)
 			: this(assemblies, null)
 		{
 		}
+		/// <summary>
+		/// Creates new <see cref="AssemblyTypeResolver"/> from list of assemblies.
+		/// </summary>
+		/// <param name="otherTypeResolver">Backup type resolver used if current can't find a type.</param>
+		/// <param name="assemblies">List of assemblies to add as source of known types.</param>
 		public AssemblyTypeResolver(IEnumerable<Assembly> assemblies, ITypeResolver otherTypeResolver)
 			: base((assemblies ?? Enumerable.Empty<Assembly>()).SelectMany(a => a.GetTypes()).Where(t => t.IsPublic), otherTypeResolver)
 		{

@@ -25,8 +25,17 @@ using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
+	/// <summary>
+	/// Helper class for rendering parsed C# expressions to it's string representation.
+	/// </summary>
 	public static class CSharpExpressionRenderer
 	{
+		/// <summary>
+		/// Renders syntax tree into string representation.
+		/// </summary>
+		/// <param name="node">Syntax tree.</param>
+		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
+		/// <returns>Rendered expression.</returns>
 		public static string Render(this ExpressionTree node, bool checkedScope = CSharpExpression.DefaultCheckedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
@@ -35,6 +44,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			return builder.ToString();
 		}
+		/// <summary>
+		/// Renders syntax tree into string representation.
+		/// </summary>
+		/// <param name="expression">Syntax tree.</param>
+		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
+		/// <returns>Rendered expression.</returns>
 		public static string Render(this Expression expression, bool checkedScope = CSharpExpression.DefaultCheckedScope)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");

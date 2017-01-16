@@ -24,15 +24,15 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 //------------------------------------------------------------------------------
@@ -47,21 +47,30 @@
 
 // ReSharper disable All
 
-namespace GameDevWare.Dynamic.Expressions.Properties 
+namespace GameDevWare.Dynamic.Expressions.Properties
 {
 	using System;
 
+	/// <summary>
+	/// Localization resource for current assembly
+	/// </summary>
 	public static class Resources
 	{
 		private static readonly string[] supportedLanguages = new string[] { <#= string.Join(", ", resourcesByCulture.Select(r => "\"" + r.Key.Replace("-", "_") + "\"").ToArray()) #> };
 		private static int currentLanguageIdx;
-		
+
+		/// <summary>
+		/// List of supported localization languages. <seealso cref="CurrentLanguage"/>.
+		/// </summary>
 		public static string[] SupportedLanguages { get { return (string[])supportedLanguages.Clone(); } }
-		public static string CurrentLanguage 
-		{ 
-			get { return supportedLanguages[currentLanguageIdx]; } 
-			set 
-			{ 
+		/// <summary>
+		/// Current selected language of localization.
+		/// </summary>
+		public static string CurrentLanguage
+		{
+			get { return supportedLanguages[currentLanguageIdx]; }
+			set
+			{
 				if (value == null) throw new ArgumentNullException("value");
 				var langIndex = Array.IndexOf(supportedLanguages, value);
 				if (langIndex < 0) throw new ArgumentException("Unsupported language '" + value + "'.", "value");
@@ -72,14 +81,17 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 
 
 <#
-	
+
 
 	foreach(DictionaryEntry entry in resourcesByCulture[0].Value)
 	{
 #>
-		public static string <#= entry.Key #> 
+		/// <summary>
+		/// Localization string with key <#= entry.Key #>
+		/// </summary>
+		public static string <#= entry.Key #>
 		{
-			get 
+			get
 			{
 				switch (currentLanguageIdx)
 				{
@@ -102,7 +114,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 	}
 }
 
-<#+ 
+<#+
 public static Hashtable ReadResX(string path)
 {
 	var result = new Hashtable();

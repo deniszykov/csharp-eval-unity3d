@@ -19,8 +19,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 
+#pragma warning disable 1591
+
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// Represents a visitor or rewriter for expression trees.
+	/// </summary>
 	public abstract class ExpressionVisitor
 	{
 		// Methods
@@ -34,6 +39,9 @@ namespace GameDevWare.Dynamic.Expressions
 			throw new InvalidOperationException(string.Format("Unknown expression type '{0}'.", expressionType));
 		}
 
+		/// <summary>
+		/// Dispatches the expression to one of the more specialized visit methods in this class.
+		/// </summary>
 		public Expression Visit(Expression exp)
 		{
 			if (exp == null)

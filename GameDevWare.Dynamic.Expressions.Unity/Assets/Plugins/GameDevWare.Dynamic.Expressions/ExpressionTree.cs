@@ -21,10 +21,17 @@ using GameDevWare.Dynamic.Expressions.CSharp;
 
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// Abstract syntax tree of expression
+	/// </summary>
 	public class ExpressionTree : IDictionary<string, object>, ILineInfo
 	{
 		private readonly Dictionary<string, object> innerDictionary;
 
+		/// <summary>
+		/// Creates new syntax tree from existing dictionary.
+		/// </summary>
+		/// <param name="node">Dictionary containing a valid syntax tree.</param>
 		public ExpressionTree(IDictionary<string, object> node)
 		{
 			this.innerDictionary = PrepareNode(node);
@@ -43,6 +50,13 @@ namespace GameDevWare.Dynamic.Expressions
 			return newNode;
 		}
 
+		/// <summary>
+		/// Tries to retrieve contained node by its name and covert it to <typeparamref name="T"/>.
+		/// </summary>
+		/// <typeparam name="T">Type of expected value.</typeparam>
+		/// <param name="key">Node name.</param>
+		/// <param name="defaultValue">Default value node node with <paramref name="key"/> doesn't exists or value can't be casted to <typeparamref name="T"/>.</param>
+		/// <returns>True is node exists and value successfully casted to <typeparamref name="T"/>, overwise false.</returns>
 		public T GetValueOrDefault<T>(string key, T defaultValue = default(T))
 		{
 			var valueObj = default(object);
@@ -54,7 +68,7 @@ namespace GameDevWare.Dynamic.Expressions
 			return value;
 		}
 
-		public string GetExpressionType(bool throwOnError)
+		internal string GetExpressionType(bool throwOnError)
 		{
 			var expressionTypeObj = default(object);
 			if (this.TryGetValue(Constants.EXPRESSION_TYPE_ATTRIBUTE, out expressionTypeObj) == false || expressionTypeObj is string == false)
@@ -68,7 +82,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var expressionType = (string)expressionTypeObj;
 			return expressionType;
 		}
-		public object GetTypeName(bool throwOnError)
+		internal object GetTypeName(bool throwOnError)
 		{
 			var typeNameObj = default(object);
 			if (this.TryGetValue(Constants.TYPE_ATTRIBUTE, out typeNameObj) == false || (typeNameObj is string == false && typeNameObj is ExpressionTree == false))
@@ -76,14 +90,14 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return typeNameObj;
 		}
-		public object GetValue(bool throwOnError)
+		internal object GetValue(bool throwOnError)
 		{
 			var valueObj = default(object);
 			if (this.TryGetValue(Constants.VALUE_ATTRIBUTE, out valueObj) == false)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.VALUE_ATTRIBUTE, this.GetExpressionType(throwOnError: true), this));
 			return valueObj;
 		}
-		public ExpressionTree GetExpression(bool throwOnError)
+		internal ExpressionTree GetExpression(bool throwOnError)
 		{
 			var expressionObj = default(object);
 			if (this.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj == null || expressionObj is ExpressionTree == false)
@@ -97,7 +111,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var expression = (ExpressionTree)expressionObj;
 			return expression;
 		}
-		public ArgumentsTree GetArguments(bool throwOnError)
+		internal ArgumentsTree GetArguments(bool throwOnError)
 		{
 			var argumentsObj = default(object);
 			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is ExpressionTree == false)
@@ -122,7 +136,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return new ArgumentsTree(arguments);
 		}
-		public string GetPropertyOrFieldName(bool throwOnError)
+		internal string GetPropertyOrFieldName(bool throwOnError)
 		{
 			var propertyOrFieldNameObj = default(object);
 			if (this.TryGetValue(Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out propertyOrFieldNameObj) == false || propertyOrFieldNameObj is string == false)
@@ -136,7 +150,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var propertyOrFieldName = (string)propertyOrFieldNameObj;
 			return propertyOrFieldName;
 		}
-		public bool GetUseNullPropagation(bool throwOnError)
+		internal bool GetUseNullPropagation(bool throwOnError)
 		{
 			var useNullPropagationObj = default(object);
 			if (this.TryGetValue(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, out useNullPropagationObj) == false || useNullPropagationObj == null)
@@ -150,7 +164,7 @@ namespace GameDevWare.Dynamic.Expressions
 			return useNullPropagation;
 		}
 
-		public int GetLineNumber(bool throwOnError)
+		internal int GetLineNumber(bool throwOnError)
 		{
 			var valueObj = default(object);
 			var value = default(int);
@@ -167,7 +181,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return value;
 		}
-		public int GetColumnNumber(bool throwOnError)
+		internal int GetColumnNumber(bool throwOnError)
 		{
 			var valueObj = default(object);
 			var value = default(int);
@@ -184,7 +198,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return value;
 		}
-		public int GetTokenLength(bool throwOnError)
+		internal int GetTokenLength(bool throwOnError)
 		{
 			var valueObj = default(object);
 			var value = default(int);
@@ -201,11 +215,11 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return value;
 		}
-		public string GetPosition(bool throwOnError)
+		internal string GetPosition(bool throwOnError)
 		{
 			return string.Format(Constants.DefaultFormatProvider, "[{0}:{1}+{2}]", this.GetLineNumber(throwOnError).ToString(), this.GetColumnNumber(throwOnError).ToString(), this.GetTokenLength(throwOnError).ToString());
 		}
-		public string GetOriginalExpression(bool throwOnError)
+		internal string GetOriginalExpression(bool throwOnError)
 		{
 			var valueObj = default(object);
 			var value = default(string);
@@ -241,11 +255,18 @@ namespace GameDevWare.Dynamic.Expressions
 			throw new NotSupportedException();
 		}
 
+		/// <summary>
+		/// Check if syntax tree contain node with specified <paramref name="key"/>.
+		/// </summary>
+		/// <param name="key">Name of contained node. Can't be null.</param>
 		public bool ContainsKey(string key)
 		{
 			return this.innerDictionary.ContainsKey(key);
 		}
 
+		/// <summary>
+		/// Returns collection of names of contained nodes.
+		/// </summary>
 		public ICollection<string> Keys
 		{
 			get { return this.innerDictionary.Keys; }
@@ -256,16 +277,28 @@ namespace GameDevWare.Dynamic.Expressions
 			throw new NotSupportedException();
 		}
 
+		/// <summary>
+		/// Tries to retrieve node of syntax tree by its name.
+		/// </summary>
+		/// <returns>True is node exists, overwise false.</returns>
 		public bool TryGetValue(string key, out object value)
 		{
 			return this.innerDictionary.TryGetValue(key, out value);
 		}
 
+		/// <summary>
+		/// Returns collection of contained nodes.
+		/// </summary>
 		public ICollection<object> Values
 		{
 			get { return this.innerDictionary.Values; }
 		}
 
+		/// <summary>
+		/// Returns contained node by its name;
+		/// </summary>
+		/// <param name="key">Name of contained node. Can't be null.</param>
+		/// <returns></returns>
 		public object this[string key]
 		{
 			get { return this.innerDictionary[key]; }
@@ -296,6 +329,9 @@ namespace GameDevWare.Dynamic.Expressions
 			((ICollection<KeyValuePair<string, object>>)this.innerDictionary).CopyTo(array, arrayIndex);
 		}
 
+		/// <summary>
+		/// Returns count of contained nodes.
+		/// </summary>
 		public int Count
 		{
 			get { return this.innerDictionary.Count; }
@@ -331,16 +367,24 @@ namespace GameDevWare.Dynamic.Expressions
 
 		#endregion
 
+		/// <summary>
+		/// Compares two syntax tree by reference.
+		/// </summary>
 		public override bool Equals(object obj)
 		{
 			return this.innerDictionary.Equals(obj);
 		}
-
+		/// <summary>
+		/// Get hash code of syntax tree.
+		/// </summary>
 		public override int GetHashCode()
 		{
 			return this.innerDictionary.GetHashCode();
 		}
 
+		/// <summary>
+		/// Renders syntax tree as C# expression.
+		/// </summary>
 		public override string ToString()
 		{
 			var expression = this.GetOriginalExpression(throwOnError: false);

@@ -20,8 +20,14 @@ using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
+	/// <summary>
+	/// Parser tree node.
+	/// </summary>
 	public struct ParserNode : ILineInfo
 	{
+		/// <summary>
+		/// Collection of parser tree nodes.
+		/// </summary>
 		public class ParserNodeCollection : List<ParserNode>
 		{
 		}
@@ -105,9 +111,21 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			// ReSharper restore StringLiteralTypo
 		};
 
+		/// <summary>
+		/// Type of node.
+		/// </summary>
 		public readonly TokenType Type;
+		/// <summary>
+		/// Lexeme from which node is originated.
+		/// </summary>
 		public readonly Token Lexeme;
+		/// <summary>
+		/// Value of node.
+		/// </summary>
 		public readonly string Value;
+		/// <summary>
+		/// List of child nodes.
+		/// </summary>
 		public readonly ParserNodeCollection Nodes;
 
 		int ILineInfo.GetLineNumber()
@@ -123,6 +141,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return Lexeme.TokenLength;
 		}
 
+		/// <summary>
+		/// Creates new node from <paramref name="type"/>, <paramref name="lexeme"/>, string <paramref name="value"/> and list of child <paramref name="nodes"/>.
+		/// </summary>
+		/// <param name="type">Node type.</param>
+		/// <param name="lexeme">Node lexeme.</param>
+		/// <param name="value">Node value.</param>
+		/// <param name="nodes">Child nodes. Could be null.</param>
 		public ParserNode(TokenType type, Token lexeme, string value, ParserNodeCollection nodes = null)
 		{
 			this.Type = type;
@@ -130,12 +155,21 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			this.Value = value ?? lexeme.Value;
 			this.Nodes = nodes ?? new ParserNodeCollection();
 		}
+		/// <summary>
+		/// Creates new node from <paramref name="lexeme"/>.
+		/// </summary>
+		/// <param name="lexeme">Node lexeme.</param>
 		public ParserNode(Token lexeme)
 			: this(lexeme.Type, lexeme, lexeme.Value)
 		{
 
 		}
 
+		/// <summary>
+		/// Converts parse tree to syntax tree.
+		/// </summary>
+		/// <param name="checkedScope">Conversion and arithmetic operation overflow control. True is "throw on overflows", false is "ignore of overflows".</param>
+		/// <returns></returns>
 		public ExpressionTree ToExpressionTree(bool checkedScope = CSharpExpression.DefaultCheckedScope)
 		{
 			try
@@ -463,6 +497,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 		}
 
+		/// <summary>
+		/// Converts parse tree to string for debugging.
+		/// </summary>
 		public override string ToString()
 		{
 			var sb = new StringBuilder();

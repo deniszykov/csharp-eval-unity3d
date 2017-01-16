@@ -21,10 +21,16 @@ using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// <see cref="ITypeResolver"/> which allows access to specified number of types.
+	/// </summary>
 	public class KnownTypeResolver : ITypeResolver
 	{
-		public static readonly HashSet<Type> BuildInTypes;
+		/// <summary>
+		/// Default instance of <see cref="KnownTypeResolver"/> which knows about <see cref="Math"/>, <see cref="Array"/> and primitive types.
+		/// </summary>
 		public static readonly KnownTypeResolver Default;
+		private static readonly HashSet<Type> BuildInTypes;
 
 		private static readonly string ArrayName;
 		private static readonly string ArrayFullName;
@@ -79,18 +85,37 @@ namespace GameDevWare.Dynamic.Expressions
 			ArrayName = typeof(Array).Name + "`1";
 			ArrayFullName = typeof(Array).FullName + "`1";
 		}
+		/// <summary>
+		/// Creates new <see cref="KnownTypeResolver"/> from specified list of types and <see cref="TypeDiscoveryOptions.All"/>.
+		/// </summary>		
+		/// <param name="knownTypes">List of known types.</param>
 		public KnownTypeResolver(params Type[] knownTypes)
 			: this((IEnumerable<Type>)knownTypes)
 		{
 
 		}
-
+		/// <summary>
+		/// Creates new <see cref="KnownTypeResolver"/> from specified list of types and <see cref="TypeDiscoveryOptions.All"/>.
+		/// </summary>
+		/// <param name="knownTypes">List of known types.</param>
 		public KnownTypeResolver(IEnumerable<Type> knownTypes) : this(knownTypes, null, TypeDiscoveryOptions.All)
 		{
 		}
+
+		/// <summary>
+		/// Creates new <see cref="KnownTypeResolver"/> from specified list of types and <see cref="TypeDiscoveryOptions.All"/>.
+		/// </summary>
+		/// <param name="knownTypes">List of known types.</param>
+		/// <param name="otherTypeResolver">Backup type resolver used if current can't find a type.</param>
 		public KnownTypeResolver(IEnumerable<Type> knownTypes, ITypeResolver otherTypeResolver) : this(knownTypes, otherTypeResolver, TypeDiscoveryOptions.All)
 		{
 		}
+		/// <summary>
+		/// Creates new <see cref="KnownTypeResolver"/> from specified list of types and specified <see cref="TypeDiscoveryOptions"/>.
+		/// </summary>
+		/// <param name="knownTypes">List of known types.</param>
+		/// <param name="otherTypeResolver">Backup type resolver used if current can't find a type.</param>
+		/// <param name="options">Types discovery options.</param>
 		public KnownTypeResolver(IEnumerable<Type> knownTypes, ITypeResolver otherTypeResolver, TypeDiscoveryOptions options)
 		{
 			if (knownTypes == null) knownTypes = Type.EmptyTypes;
@@ -121,6 +146,12 @@ namespace GameDevWare.Dynamic.Expressions
 			this.otherTypeResolver = otherTypeResolver;
 		}
 
+		/// <summary>
+		/// Tries to retrieve type by it's name and generic parameters.
+		/// </summary>
+		/// <param name="typeReference">Type name. Not null. Not <see cref="TypeReference.Empty"/></param>
+		/// <param name="foundType">Found type or null.</param>
+		/// <returns>True if type is found. Overwise is false.</returns>
 		public bool TryGetType(TypeReference typeReference, out Type foundType)
 		{
 			foundType = default(Type);
@@ -221,11 +252,16 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return foundType != null;
 		}
+		/// <summary>
+		/// Checks if specified type is known by current type resolver;
+		/// </summary>
+		/// <param name="type">Type to lookup. Not null.</param>
+		/// <returns>True if type is known by this resolver. Overwise false.</returns>
 		public bool IsKnownType(Type type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
-			return this.knownTypes.Contains(type);
+			return this.knownTypes.Contains(type) || (this.otherTypeResolver != null && this.otherTypeResolver.IsKnownType(type));
 		}
 
 		private static HashSet<Type> GetKnownTypes(IEnumerable<Type> types, HashSet<Type> collection, TypeDiscoveryOptions options)
@@ -282,6 +318,9 @@ namespace GameDevWare.Dynamic.Expressions
 			return foundTypes;
 		}
 
+		/// <summary>
+		/// Converts type resolver to string for debug purpose.
+		/// </summary>
 		public override string ToString()
 		{
 			return this.GetType().Name + ": " + string.Join(", ", this.knownTypesByName.Keys.ToArray()) + (this.otherTypeResolver != null ? " -> " + this.otherTypeResolver : string.Empty);

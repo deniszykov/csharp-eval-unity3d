@@ -23,6 +23,9 @@ using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// Binder which is used for binding syntax tree concrete types and members.
+	/// </summary>
 	public class ExpressionBuilder
 	{
 		private static readonly Dictionary<Type, ReadOnlyCollection<MemberInfo>> InstanceMembersByType = new Dictionary<Type, ReadOnlyCollection<MemberInfo>>();
@@ -33,6 +36,9 @@ namespace GameDevWare.Dynamic.Expressions
 		private static readonly TypeCode[] SignedIntegerTypes;
 		private static readonly TypeCode[] UnsignedIntegerTypes;
 		private static readonly TypeCode[] Numeric;
+		/// <summary>
+		/// Default type resolver which is used if none is specified.
+		/// </summary>
 		public static ITypeResolver DefaultTypeResolver = null;
 
 		private readonly ReadOnlyCollection<ParameterExpression> parameters;
@@ -40,8 +46,17 @@ namespace GameDevWare.Dynamic.Expressions
 		private readonly Type resultType;
 		private readonly ITypeResolver typeResolver;
 
+		/// <summary>
+		/// List of parameters for bound expression.
+		/// </summary>
 		public ReadOnlyCollection<ParameterExpression> Parameters { get { return this.parameters; } }
+		/// <summary>
+		/// Result type of bound expression.
+		/// </summary>
 		public Type ResultType { get { return this.resultType; } }
+		/// <summary>
+		/// Context(global) type of bound expression.
+		/// </summary>
 		public Type ContextType { get { return this.contextType; } }
 
 		static ExpressionBuilder()
@@ -75,6 +90,13 @@ namespace GameDevWare.Dynamic.Expressions
 			Array.Sort(SignedIntegerTypes);
 			Array.Sort(UnsignedIntegerTypes);
 		}
+		/// <summary>
+		/// Creates new binder for expressions with signature contains <paramref name="parameters"/> and <paramref name="resultType"/>. Optionally specified <paramref name="contextType"/> and <paramref name="typeResolver"/>.
+		/// </summary>
+		/// <param name="parameters">List of parameter for bound expression.</param>
+		/// <param name="resultType">Result type of bound expression.</param>
+		/// <param name="contextType">Context type of bound expression.</param>
+		/// <param name="typeResolver">Type resolver for bound expression.</param>
 		public ExpressionBuilder(IList<ParameterExpression> parameters, Type resultType, Type contextType = null, ITypeResolver typeResolver = null)
 		{
 			if (resultType == null) throw new ArgumentNullException("resultType");
@@ -91,6 +113,12 @@ namespace GameDevWare.Dynamic.Expressions
 
 		}
 
+		/// <summary>
+		/// Binds specified syntax tree to concrete types and optional context.
+		/// </summary>
+		/// <param name="node">Syntax tree. Not null.</param>
+		/// <param name="context">Context expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
+		/// <returns></returns>
 		public Expression Build(ExpressionTree node, Expression context = null)
 		{
 			// lambda binding substitution feature
@@ -1288,12 +1316,12 @@ namespace GameDevWare.Dynamic.Expressions
 					typeNameParts.Add(typeNamePart);
 				}
 
-				typeReference = new TypeReference(typeNameParts, typeArguments ?? TypeReference.EmptyGenericArguments);
+				typeReference = new TypeReference(typeNameParts, typeArguments ?? TypeReference.EmptyTypeArguments);
 				return true;
 			}
 			else
 			{
-				typeReference = new TypeReference(new[] { Convert.ToString(value, Constants.DefaultFormatProvider) }, TypeReference.EmptyGenericArguments);
+				typeReference = new TypeReference(new[] { Convert.ToString(value, Constants.DefaultFormatProvider) }, TypeReference.EmptyTypeArguments);
 				return true;
 			}
 		}
@@ -1328,12 +1356,12 @@ namespace GameDevWare.Dynamic.Expressions
 					}
 				}
 
-				methodReference = new TypeReference(new[] { methodName }, typeArguments ?? TypeReference.EmptyGenericArguments);
+				methodReference = new TypeReference(new[] { methodName }, typeArguments ?? TypeReference.EmptyTypeArguments);
 				return true;
 			}
 			else
 			{
-				methodReference = new TypeReference(new[] { Convert.ToString(value, Constants.DefaultFormatProvider) }, TypeReference.EmptyGenericArguments);
+				methodReference = new TypeReference(new[] { Convert.ToString(value, Constants.DefaultFormatProvider) }, TypeReference.EmptyTypeArguments);
 				return true;
 			}
 		}

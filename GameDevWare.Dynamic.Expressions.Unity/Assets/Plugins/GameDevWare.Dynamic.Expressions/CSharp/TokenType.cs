@@ -14,8 +14,12 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 
+#pragma warning disable 1591
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
+	/// <summary>
+	/// Types of tokens
+	/// </summary>
 	public enum TokenType
 	{
 		None,

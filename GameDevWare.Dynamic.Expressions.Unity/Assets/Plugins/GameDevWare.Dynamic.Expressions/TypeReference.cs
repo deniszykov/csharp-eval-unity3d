@@ -22,19 +22,40 @@ using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// Type reference with type arguments.
+	/// </summary>
 	public sealed class TypeReference : IEquatable<TypeReference>
 	{
+		/// <summary>
+		/// Empty type reference. Used for open generic types as parameter placeholder.
+		/// </summary>
 		public static readonly TypeReference Empty = new TypeReference();
-		public static readonly IList<TypeReference> EmptyGenericArguments = Empty.TypeArguments;
+		/// <summary>
+		/// Empt list of type arguments.
+		/// </summary>
+		public static readonly IList<TypeReference> EmptyTypeArguments = Empty.TypeArguments;
 
 		private string fullName;
 		private readonly int hashCode;
 		private readonly ReadOnlyCollection<string> typeName;
 		private readonly ReadOnlyCollection<TypeReference> typeArguments;
 
+		/// <summary>
+		/// Full type name with namespace and declared types.
+		/// </summary>
 		public string FullName { get { return this.fullName ?? (this.fullName = this.CombineParts(this.typeName.Count)); } }
+		/// <summary>
+		/// Type's name without namespace and declared types.
+		/// </summary>
 		public string Name { get { return this.typeName[typeName.Count - 1]; } }
+		/// <summary>
+		/// Types' namespace if any.
+		/// </summary>
 		public string Namespace { get { return this.CombineParts(this.typeName.Count - 1); } }
+		/// <summary>
+		/// Type's generic arguments.
+		/// </summary>
 		public ReadOnlyCollection<TypeReference> TypeArguments { get { return this.typeArguments; } }
 
 		private TypeReference()
@@ -43,6 +64,11 @@ namespace GameDevWare.Dynamic.Expressions
 			this.typeArguments = new ReadOnlyCollection<TypeReference>(new TypeReference[0]);
 			this.fullName = string.Empty;
 		}
+		/// <summary>
+		/// Creates new type reference from type's path and type's generic arguments.
+		/// </summary>
+		/// <param name="typeName">Type path.</param>
+		/// <param name="typeArguments">Type generic arguments.</param>
 		public TypeReference(IList<string> typeName, IList<TypeReference> typeArguments)
 		{
 			if (typeName == null) throw new ArgumentNullException("typeName");
@@ -98,10 +124,16 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
+		/// <summary>
+		/// Compares two type references by value.
+		/// </summary>
 		public override bool Equals(object obj)
 		{
 			return this.Equals(obj as TypeReference);
 		}
+		/// <summary>
+		/// Compares two type references by value.
+		/// </summary>
 		public bool Equals(TypeReference other)
 		{
 			if (other == null) return false;
@@ -110,15 +142,24 @@ namespace GameDevWare.Dynamic.Expressions
 			return this.typeName.Count == other.typeName.Count && this.typeName.SequenceEqual(other.typeName) &&
 				   this.typeArguments.Count == other.typeArguments.Count && this.typeArguments.SequenceEqual(other.typeArguments);
 		}
+		/// <summary>
+		/// Return hash code of type reference.
+		/// </summary>
 		public override int GetHashCode()
 		{
 			return this.hashCode;
 		}
 
+		/// <summary>
+		/// Checks if two type references are equals.
+		/// </summary>
 		public static bool operator ==(TypeReference x, TypeReference y)
 		{
 			return ReferenceEquals(x, y) || Equals(x, y);
 		}
+		/// <summary>
+		/// Checks if two type references are not equals.
+		/// </summary>
 		public static bool operator !=(TypeReference x, TypeReference y)
 		{
 			return Equals(x, y) == false;
@@ -136,6 +177,9 @@ namespace GameDevWare.Dynamic.Expressions
 			return hashCode;
 		}
 
+		/// <summary>
+		/// Converts type reference to string representation for debug purpose.
+		/// </summary>
 		public override string ToString()
 		{
 			if (ReferenceEquals(this, Empty))
@@ -145,7 +189,5 @@ namespace GameDevWare.Dynamic.Expressions
 			this.Format(builder);
 			return builder.ToString();
 		}
-
-
 	}
 }

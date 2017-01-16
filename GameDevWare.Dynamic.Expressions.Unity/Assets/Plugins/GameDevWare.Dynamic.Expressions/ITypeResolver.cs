@@ -17,9 +17,23 @@ using System;
 
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// Interface for type resolution services.
+	/// </summary>
 	public interface ITypeResolver
 	{
-		bool TryGetType(TypeReference typeReference, out Type type);
+		/// <summary>
+		/// Tries to retrieve type by it's name and generic parameters.
+		/// </summary>
+		/// <param name="typeReference">Type name. Not null. Not <see cref="TypeReference.Empty"/></param>
+		/// <param name="foundType">Found type or null.</param>
+		/// <returns>True if type is found. Overwise is false.</returns>
+		bool TryGetType(TypeReference typeReference, out Type foundType);
+		/// <summary>
+		/// Checks if specified type is known by current type resolver;
+		/// </summary>
+		/// <param name="type">Type to lookup. Not null.</param>
+		/// <returns>True if type is known by this resolver. Overwise false.</returns>
 		bool IsKnownType(Type type);
 	}
 }

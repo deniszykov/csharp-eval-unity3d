@@ -19,54 +19,36 @@ using System.Runtime.Serialization;
 
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// Expression parsing exception.
+	/// </summary>
 	public sealed class ExpressionParserException : Exception, ILineInfo
 	{
-		private int _tokenLength;
-		private int _columnNumber;
-		private int _lineNumber;
+		/// <summary>
+		/// Line number related to exception.
+		/// </summary>
+		public int LineNumber { get; set; }
+		/// <summary>
+		/// Column number related to exception.
+		/// </summary>
+		public int ColumnNumber { get; set; }
+		/// <summary>
+		/// Length of token related to exception.
+		/// </summary>
+		public int TokenLength { get; set; }
 
-		public int LineNumber
-		{
-			set { _lineNumber = value; }
-		}
-
-		public int GetLineNumber()
-		{
-			return _lineNumber;
-		}
-
-		public int ColumnNumber
-		{
-			set { _columnNumber = value; }
-		}
-
-		public int GetColumnNumber()
-		{
-			return _columnNumber;
-		}
-
-		public int TokenLength
-		{
-			set { _tokenLength = value; }
-		}
-
-		public int GetTokenLength()
-		{
-			return _tokenLength;
-		}
-
-		public ExpressionParserException()
+		internal ExpressionParserException()
 		{
 
 		}
-		public ExpressionParserException(string message, int lineNumber = 0, int columnNumber = 0, int tokenLength = 0)
+		internal ExpressionParserException(string message, int lineNumber = 0, int columnNumber = 0, int tokenLength = 0)
 			: base(message)
 		{
 			this.LineNumber = lineNumber;
 			this.ColumnNumber = columnNumber;
 			this.TokenLength = tokenLength;
 		}
-		public ExpressionParserException(string message, Exception innerException, int lineNumber = 0, int columnNumber = 0, int tokenLength = 0)
+		internal ExpressionParserException(string message, Exception innerException, int lineNumber = 0, int columnNumber = 0, int tokenLength = 0)
 			: base(message, innerException)
 		{
 			this.LineNumber = lineNumber;
@@ -102,19 +84,39 @@ namespace GameDevWare.Dynamic.Expressions
 			this.TokenLength = info.GetInt32("TokenLength");
 		}
 
+		/// <summary>
+		/// Return data for binary serialization.
+		/// </summary>
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue("LineNumber", (int)this.GetLineNumber());
-			info.AddValue("ColumnNumber", (int)this.GetColumnNumber());
-			info.AddValue("TokenLength", (int)this.GetTokenLength());
+			info.AddValue("LineNumber", (int)this.LineNumber);
+			info.AddValue("ColumnNumber", (int)this.ColumnNumber);
+			info.AddValue("TokenLength", (int)this.TokenLength);
 
 			base.GetObjectData(info, context);
 		}
 
+		int ILineInfo.GetLineNumber()
+		{
+			return LineNumber;
+		}
+		int ILineInfo.GetColumnNumber()
+		{
+			return ColumnNumber;
+		}
+		int ILineInfo.GetTokenLength()
+		{
+			return TokenLength;
+		}
+
+		/// <summary>
+		/// Converts exception to string representation for debug purpose.
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
-			if (this.GetTokenLength() != 0)
-				return string.Format("[{0},{1}+{2}]{3}", this.GetLineNumber(), this.GetColumnNumber(), this.GetTokenLength(), base.ToString());
+			if (this.TokenLength != 0)
+				return string.Format("[{0},{1}+{2}]{3}", this.LineNumber.ToString(), this.ColumnNumber.ToString(), this.TokenLength.ToString(), base.ToString());
 			else
 				return base.ToString();
 		}

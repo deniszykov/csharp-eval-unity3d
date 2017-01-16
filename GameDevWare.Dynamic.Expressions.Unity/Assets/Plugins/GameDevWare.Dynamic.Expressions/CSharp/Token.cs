@@ -16,15 +16,39 @@
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
+	/// <summary>
+	/// Tokenizer's token data.
+	/// </summary>
 	public struct Token : ILineInfo
 	{
+		/// <summary>
+		/// Type of token.
+		/// </summary>
 		public readonly TokenType Type;
+		/// <summary>
+		/// Value of token.
+		/// </summary>
 		public readonly string Value;
+		/// <summary>
+		/// Line number of token (position).
+		/// </summary>
 		public readonly int LineNumber;
+		/// <summary>
+		/// Column number of token (position).
+		/// </summary>
 		public readonly int ColumnNumber;
+		/// <summary>
+		/// Length of token (position).
+		/// </summary>
 		public readonly int TokenLength;
 
-		public bool IsKnown { get { return this.Type != TokenType.None; } }
+		/// <summary>
+		/// Returns true if token is valid.
+		/// </summary>
+		public bool IsValid { get { return this.Type != TokenType.None; } }
+		/// <summary>
+		/// Returns token's position as string.
+		/// </summary>
 		public string Position { get { return string.Format("[{0}:{1}+{2}]", this.LineNumber, this.ColumnNumber, this.TokenLength); } }
 
 		int ILineInfo.GetLineNumber()
@@ -40,6 +64,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return this.TokenLength;
 		}
 
+		/// <summary>
+		/// Creates new token.
+		/// </summary>
 		public Token(TokenType type, string value, int line, int col, int len)
 		{
 			this.Type = type;
@@ -49,6 +76,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			this.TokenLength = len;
 		}
 
+		/// <summary>
+		/// Converts token to string for debugging.
+		/// </summary>
 		public override string ToString()
 		{
 			return this.Type + (this.Type == TokenType.Number || this.Type == TokenType.Identifier || this.Type == TokenType.Literal ? "(" + this.Value + ")" : "");

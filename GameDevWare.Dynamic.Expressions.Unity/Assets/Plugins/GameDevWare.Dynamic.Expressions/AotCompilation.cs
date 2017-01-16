@@ -20,14 +20,20 @@ using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions
 {
+	/// <summary>
+	/// Helper class for Ahead-of-Time(AOT) compiled environments.
+	/// </summary>
 	public static class AotCompilation
 	{
-		public static readonly bool AotRuntime;
+		/// <summary>
+		/// Is current runtime is AOT compiled.
+		/// </summary>
+		public static readonly bool IsAotCompiled;
 
 		static AotCompilation()
 		{
 			try { Expression.Lambda<Func<bool>>(Expression.Constant(true)).Compile(); }
-			catch (Exception) { AotRuntime = true; }
+			catch (Exception) { IsAotCompiled = true; }
 
 			// AOT
 			if (typeof(Expression).Name == string.Empty)
@@ -161,23 +167,57 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
+		/// <summary>
+		/// Prepares method with specified signature for fast execution in AOT compiled environment.
+		/// </summary>
+		/// <typeparam name="InstanceT">Type of instance which method belongs.</typeparam>
+		/// <typeparam name="Arg1T">Method's first argument type.</typeparam>
+		/// <typeparam name="Arg2T">Method's second argument type.</typeparam>
+		/// <typeparam name="Arg3T">Method's third argument type.</typeparam>
+		/// <typeparam name="ResultT">Method's return type.</typeparam>
 		public static void RegisterForFastCall<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>()
 		{
 			Executor.RegisterForFastCall<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>();
 		}
+		/// <summary>
+		/// Prepares method with specified signature for fast execution in AOT compiled environment.
+		/// </summary>
+		/// <typeparam name="InstanceT">Type of instance which method belongs.</typeparam>
+		/// <typeparam name="Arg1T">Method's first argument type.</typeparam>
+		/// <typeparam name="Arg2T">Method's second argument type.</typeparam>
+		/// <typeparam name="ResultT">Method's return type.</typeparam>
 		public static void RegisterForFastCall<InstanceT, Arg1T, Arg2T, ResultT>()
 		{
 			Executor.RegisterForFastCall<InstanceT, Arg1T, Arg2T, ResultT>();
 		}
+		/// <summary>
+		/// Prepares method with specified signature for fast execution in AOT compiled environment.
+		/// </summary>
+		/// <typeparam name="InstanceT">Type of instance which method belongs.</typeparam>
+		/// <typeparam name="Arg1T">Method's first argument type.</typeparam>
+		/// <typeparam name="ResultT">Method's return type.</typeparam>
 		public static void RegisterForFastCall<InstanceT, Arg1T, ResultT>()
 		{
 			Executor.RegisterForFastCall<InstanceT, Arg1T, ResultT>();
 		}
+		/// <summary>
+		/// Prepares method with specified signature for fast execution in AOT compiled environment.
+		/// </summary>
+		/// <typeparam name="InstanceT">Type of instance which method belongs.</typeparam>
+		/// <typeparam name="ResultT">Method's return type.</typeparam>
 		public static void RegisterForFastCall<InstanceT, ResultT>()
 		{
 			Executor.RegisterForFastCall<InstanceT, ResultT>();
 		}
 
+		/// <summary>
+		/// Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,Arg4T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		/// </summary>
+		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
+		/// <typeparam name="Arg2T">Function's second argument.</typeparam>
+		/// <typeparam name="Arg3T">Function's third argument.</typeparam>
+		/// <typeparam name="Arg4T">Function's fourth argument.</typeparam>
+		/// <typeparam name="ResultT">Function result type.</typeparam>
 		public static void RegisterFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>()
 		{
 			if (typeof(AotCompilation).Name == string.Empty)
@@ -189,6 +229,13 @@ namespace GameDevWare.Dynamic.Expressions
 				Executor.Prepare<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
 			}
 		}
+		/// <summary>
+		/// Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		/// </summary>
+		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
+		/// <typeparam name="Arg2T">Function's second argument.</typeparam>
+		/// <typeparam name="Arg3T">Function's third argument.</typeparam>
+		/// <typeparam name="ResultT">Function result type.</typeparam>
 		public static void RegisterFunc<Arg1T, Arg2T, Arg3T, ResultT>()
 		{
 			if (typeof(AotCompilation).Name == string.Empty)
@@ -200,6 +247,12 @@ namespace GameDevWare.Dynamic.Expressions
 				Executor.Prepare<Arg1T, Arg2T, Arg3T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
 			}
 		}
+		/// <summary>
+		/// Prepares function <see cref="System.Func{Arg1T,Arg2T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		/// </summary>
+		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
+		/// <typeparam name="Arg2T">Function's second argument.</typeparam>
+		/// <typeparam name="ResultT">Function result type.</typeparam>
 		public static void RegisterFunc<Arg1T, Arg2T, ResultT>()
 		{
 			if (typeof(AotCompilation).Name == string.Empty)
@@ -211,6 +264,11 @@ namespace GameDevWare.Dynamic.Expressions
 				Executor.Prepare<Arg1T, Arg2T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
 			}
 		}
+		/// <summary>
+		/// Prepares function <see cref="System.Func{Arg1T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		/// </summary>
+		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
+		/// <typeparam name="ResultT">Function result type.</typeparam>
 		public static void RegisterFunc<Arg1T, ResultT>()
 		{
 			if (typeof(AotCompilation).Name == string.Empty)
@@ -222,6 +280,10 @@ namespace GameDevWare.Dynamic.Expressions
 				Executor.Prepare<Arg1T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
 			}
 		}
+		/// <summary>
+		/// Prepares function <see cref="System.Func{ResultT}"/> with specified signature for execution in AOT compiled environment.
+		/// </summary>
+		/// <typeparam name="ResultT">Function result type.</typeparam>
 		public static void RegisterFunc<ResultT>()
 		{
 			if (typeof(AotCompilation).Name == string.Empty)
