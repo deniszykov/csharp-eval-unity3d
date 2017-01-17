@@ -21,7 +21,7 @@ using System.Linq;
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
 	/// <summary>
-	/// Expression parser. Converts stream of <see cref="Token"/> to parser tree(<see cref="ParserNode"/>).
+	/// Expression parser. Converts stream of <see cref="Token"/> to parser tree(<see cref="ParseTreeNode"/>).
 	/// </summary>
 	public class Parser
 	{
@@ -34,7 +34,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private static readonly TokenType[] NullableTerm = new[] { TokenType.Comma, TokenType.Rparen, TokenType.Gt, TokenType.Rshift };
 
 		private readonly List<Token> tokens;
-		private readonly Stack<ParserNode> stack;
+		private readonly Stack<ParseTreeNode> stack;
 
 		static Parser()
 		{
@@ -91,14 +91,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (tokens == null) throw new ArgumentNullException("tokens");
 
 			this.tokens = new List<Token>(tokens as List<Token> ?? new List<Token>(tokens));
-			this.stack = new Stack<ParserNode>();
+			this.stack = new Stack<ParseTreeNode>();
 		}
 		/// <summary>
-		/// Converts stream of <see cref="Token"/> to parser tree(<see cref="ParserNode"/>).
+		/// Converts stream of <see cref="Token"/> to parser tree(<see cref="ParseTreeNode"/>).
 		/// </summary>
 		/// <param name="tokens">Stream of <see cref="Token"/>.</param>
-		/// <returns>A parser tree(<see cref="ParserNode"/></returns>
-		public static ParserNode Parse(IEnumerable<Token> tokens)
+		/// <returns>A parser tree(<see cref="ParseTreeNode"/></returns>
+		public static ParseTreeNode Parse(IEnumerable<Token> tokens)
 		{
 			if (tokens == null) throw new ArgumentNullException("tokens");
 
@@ -138,7 +138,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						break;
 					}
 
-					var node = new ParserNode(token);
+					var node = new ParseTreeNode(token);
 					switch (token.Type)
 					{
 						case TokenType.Identifier:
@@ -164,7 +164,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESOPERAND, token.Type), token);
 							this.CombineUnary(node.Lexeme); // collect Type for 'NEW'
 							this.CheckAndConsumeToken(TokenType.Call);
-							var argumentsNode = new ParserNode(this.tokens.Dequeue());
+							var argumentsNode = new ParseTreeNode(this.tokens.Dequeue());
 							this.stack.Push(argumentsNode); // push 'ARGUMENTS' into stack
 							while (this.Expression(argumentsNode.Type, DefaultTerm))
 							{
@@ -252,7 +252,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								{
 									case TokenType.Identifier:
 										lambda.RemoveAt(0);
-										var newArguments = new ParserNode(TokenType.Arguments, lambdaArguments.Lexeme, "(");
+										var newArguments = new ParseTreeNode(TokenType.Arguments, lambdaArguments.Lexeme, "(");
 										newArguments.Add(lambdaArguments);
 										lambda.Insert(0, newArguments);
 										break;
@@ -348,7 +348,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (closingTokenIndex < 0)
 				return false;
 
-			var argumentsNode = new ParserNode(TokenType.Arguments, currentToken, currentToken.Value);
+			var argumentsNode = new ParseTreeNode(TokenType.Arguments, currentToken, currentToken.Value);
 			this.stack.Push(argumentsNode);
 
 			var closingToken = default(Token);
@@ -378,7 +378,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					continue;
 
 				// add 'None' as argument if empty argument is specified
-				this.stack.Push(new ParserNode(TokenType.Identifier, closingToken, string.Empty));
+				this.stack.Push(new ParseTreeNode(TokenType.Identifier, closingToken, string.Empty));
 				this.CombineUnary(currentToken);
 
 			} while (closingToken.Type != TokenType.Gt && closingToken.Type != TokenType.Rshift);
@@ -401,8 +401,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				return false;
 
 			var identifier = this.stack.Pop();
-			var argumentsNode = new ParserNode(TokenType.Arguments, currentToken, "<");
-			var nullableNode = new ParserNode(TokenType.Identifier, currentToken, typeof(Nullable).Name);
+			var argumentsNode = new ParseTreeNode(TokenType.Arguments, currentToken, "<");
+			var nullableNode = new ParseTreeNode(TokenType.Identifier, currentToken, typeof(Nullable).Name);
 
 			argumentsNode.Add(identifier);
 			nullableNode.Add(argumentsNode);

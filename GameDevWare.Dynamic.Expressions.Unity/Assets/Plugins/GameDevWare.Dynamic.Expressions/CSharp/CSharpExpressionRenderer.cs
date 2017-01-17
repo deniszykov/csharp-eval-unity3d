@@ -36,7 +36,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="node">Syntax tree.</param>
 		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
 		/// <returns>Rendered expression.</returns>
-		public static string Render(this ExpressionTree node, bool checkedScope = CSharpExpression.DefaultCheckedScope)
+		public static string Render(this SyntaxTreeNode node, bool checkedScope = CSharpExpression.DefaultCheckedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			var builder = new StringBuilder();
@@ -60,7 +60,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return builder.ToString();
 		}
 
-		private static void Render(ExpressionTree node, StringBuilder builder, bool wrapped, bool checkedScope)
+		private static void Render(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -135,7 +135,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_RENDERFAILED, expressionTypeObj, exception.Message), exception);
 			}
 		}
-		private static void RenderTypeBinary(ExpressionTree node, StringBuilder builder, bool wrapped, bool checkedScope)
+		private static void RenderTypeBinary(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -193,26 +193,26 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (closeParent)
 				builder.Append(")");
 		}
-		private static void RenderCondition(ExpressionTree node, StringBuilder builder, bool wrapped, bool checkedScope)
+		private static void RenderCondition(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
 
 			var testObj = default(object);
-			if (node.TryGetValue(Constants.TEST_ATTRIBUTE, out testObj) == false || testObj is ExpressionTree == false)
+			if (node.TryGetValue(Constants.TEST_ATTRIBUTE, out testObj) == false || testObj is SyntaxTreeNode == false)
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.TEST_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
 
 			var ifTrueObj = default(object);
-			if (node.TryGetValue(Constants.IFTRUE_ATTRIBUTE, out ifTrueObj) == false || ifTrueObj is ExpressionTree == false)
+			if (node.TryGetValue(Constants.IFTRUE_ATTRIBUTE, out ifTrueObj) == false || ifTrueObj is SyntaxTreeNode == false)
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.IFTRUE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
 
 			var ifFalseObj = default(object);
-			if (node.TryGetValue(Constants.IFFALSE_ATTRIBUTE, out ifFalseObj) == false || ifFalseObj is ExpressionTree == false)
+			if (node.TryGetValue(Constants.IFFALSE_ATTRIBUTE, out ifFalseObj) == false || ifFalseObj is SyntaxTreeNode == false)
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.IFFALSE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
 
-			var test = (ExpressionTree)testObj;
-			var ifTrue = (ExpressionTree)ifTrueObj;
-			var ifFalse = (ExpressionTree)ifFalseObj;
+			var test = (SyntaxTreeNode)testObj;
+			var ifTrue = (SyntaxTreeNode)ifTrueObj;
+			var ifFalse = (SyntaxTreeNode)ifFalseObj;
 
 			if (!wrapped)
 				builder.Append("(");
@@ -224,7 +224,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (!wrapped)
 				builder.Append(")");
 		}
-		private static void RenderBinary(ExpressionTree node, StringBuilder builder, bool wrapped, bool checkedScope)
+		private static void RenderBinary(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -232,14 +232,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var expressionType = node.GetExpressionType(throwOnError: true);
 
 			var leftObj = default(object);
-			if (node.TryGetValue(Constants.LEFT_ATTRIBUTE, out leftObj) == false || leftObj is ExpressionTree == false)
+			if (node.TryGetValue(Constants.LEFT_ATTRIBUTE, out leftObj) == false || leftObj is SyntaxTreeNode == false)
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.LEFT_ATTRIBUTE, expressionType));
 			var rightObj = default(object);
-			if (node.TryGetValue(Constants.RIGHT_ATTRIBUTE, out rightObj) == false || rightObj is ExpressionTree == false)
+			if (node.TryGetValue(Constants.RIGHT_ATTRIBUTE, out rightObj) == false || rightObj is SyntaxTreeNode == false)
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.RIGHT_ATTRIBUTE, expressionType));
 
-			var left = (ExpressionTree)leftObj;
-			var right = (ExpressionTree)rightObj;
+			var left = (SyntaxTreeNode)leftObj;
+			var right = (SyntaxTreeNode)rightObj;
 			var checkedOperation = expressionType == Constants.EXPRESSION_TYPE_MULTIPLY_CHECKED || expressionType == Constants.EXPRESSION_TYPE_ADD_CHECKED || expressionType == Constants.EXPRESSION_TYPE_SUBTRACT_CHECKED ? true :
 				expressionType == Constants.EXPRESSION_TYPE_MULTIPLY || expressionType == Constants.EXPRESSION_TYPE_ADD || expressionType == Constants.EXPRESSION_TYPE_SUBTRACT ? false : checkedScope;
 
@@ -295,7 +295,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (closeParent)
 				builder.Append(")");
 		}
-		private static void RenderUnary(ExpressionTree node, StringBuilder builder, bool wrapped, bool checkedScope)
+		private static void RenderUnary(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -306,10 +306,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var expressionType = (string)expressionTypeObj;
 
 			var expressionObj = default(object);
-			if (node.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj is ExpressionTree == false)
+			if (node.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj is SyntaxTreeNode == false)
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType));
 
-			var expression = (ExpressionTree)expressionObj;
+			var expression = (SyntaxTreeNode)expressionObj;
 			var checkedOperation = expressionType == Constants.EXPRESSION_TYPE_NEGATE_CHECKED ? true :
 				expressionType == Constants.EXPRESSION_TYPE_NEGATE ? false : checkedScope;
 
@@ -354,7 +354,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (closeParent)
 				builder.Append(")");
 		}
-		private static void RenderNew(ExpressionTree node, StringBuilder builder, bool checkedScope)
+		private static void RenderNew(SyntaxTreeNode node, StringBuilder builder, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -377,7 +377,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			else
 				builder.Append(")");
 		}
-		private static void RenderDefault(ExpressionTree node, StringBuilder builder)
+		private static void RenderDefault(SyntaxTreeNode node, StringBuilder builder)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -387,7 +387,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			RenderTypeName(typeName, builder);
 			builder.Append(")");
 		}
-		private static void RenderTypeOf(ExpressionTree node, StringBuilder builder)
+		private static void RenderTypeOf(SyntaxTreeNode node, StringBuilder builder)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -397,7 +397,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			RenderTypeName(typeName, builder);
 			builder.Append(")");
 		}
-		private static void RenderPropertyOrField(ExpressionTree node, StringBuilder builder, bool checkedScope)
+		private static void RenderPropertyOrField(SyntaxTreeNode node, StringBuilder builder, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -421,14 +421,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				for (var i = 0; i < arguments.Count; i++)
 				{
 					if (i != 0) builder.Append(",");
-					var typeArgument = default(ExpressionTree);
+					var typeArgument = default(SyntaxTreeNode);
 					if (arguments.TryGetValue(i, out typeArgument))
 						Render(typeArgument, builder, true, checkedScope);
 				}
 				builder.Append(">");
 			}
 		}
-		private static void RenderConstant(ExpressionTree node, StringBuilder builder)
+		private static void RenderConstant(SyntaxTreeNode node, StringBuilder builder)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -512,7 +512,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			}
 		}
-		private static void RenderGroup(ExpressionTree node, StringBuilder builder, bool checkedScope)
+		private static void RenderGroup(SyntaxTreeNode node, StringBuilder builder, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -523,10 +523,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var expressionType = (string)expressionTypeObj;
 
 			var expressionObj = default(object);
-			if (node.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj is ExpressionTree == false)
+			if (node.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj is SyntaxTreeNode == false)
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType));
 
-			var expression = (ExpressionTree)expressionObj;
+			var expression = (SyntaxTreeNode)expressionObj;
 
 			if (expressionType == Constants.EXPRESSION_TYPE_UNCHECKED_SCOPE)
 				builder.Append("unchecked");
@@ -536,7 +536,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			Render(expression, builder, true, checkedScope);
 			builder.Append(")");
 		}
-		private static void RenderInvokeOrIndex(ExpressionTree node, StringBuilder builder, bool checkedScope)
+		private static void RenderInvokeOrIndex(SyntaxTreeNode node, StringBuilder builder, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -551,7 +551,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			RenderArguments(arguments, builder, checkedScope);
 			builder.Append(expressionType == "Invoke" ? ")" : "]");
 		}
-		private static void RenderLambda(ExpressionTree node, StringBuilder builder, bool wrapped, bool checkedScope)
+		private static void RenderLambda(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentException("node");
 			if (builder == null) throw new ArgumentException("builder");
@@ -582,8 +582,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var firstArgument = true;
 			foreach (var argumentName in arguments.Keys)
 			{
-				var positionalArguments = new SortedDictionary<int, ExpressionTree>();
-				var namedArguments = new SortedDictionary<string, ExpressionTree>();
+				var positionalArguments = new SortedDictionary<int, SyntaxTreeNode>();
+				var namedArguments = new SortedDictionary<string, SyntaxTreeNode>();
 				var position = default(int);
 				if (int.TryParse(argumentName, out position))
 					positionalArguments[position] = arguments[argumentName];
@@ -613,9 +613,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (builder == null) throw new ArgumentNullException("builder");
 
 
-			if (typeName is ExpressionTree)
+			if (typeName is SyntaxTreeNode)
 			{
-				Render((ExpressionTree)typeName, builder, true, true);
+				Render((SyntaxTreeNode)typeName, builder, true, true);
 			}
 			else
 			{
@@ -735,7 +735,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var baseExpression = default(Expression);
 			var continuationExpression = default(Expression);
 			// try to detect null-propagation operation
-			if (ExpressionBuilder.ExtractNullPropagationExpression(expression, out baseExpression, out continuationExpression))
+			if (Binder.ExtractNullPropagationExpression(expression, out baseExpression, out continuationExpression))
 			{
 				var callExpression = continuationExpression as MethodCallExpression;
 				var memberExpression = continuationExpression as MemberExpression;

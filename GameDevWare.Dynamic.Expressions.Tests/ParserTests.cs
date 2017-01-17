@@ -338,7 +338,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ParseClosedGenericType(string expression, int expectedIdentifiers, TokenType expectedTokenType)
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
-			var countIdentifiers = default(Func<ParserNode, int>);
+			var countIdentifiers = default(Func<ParseTreeNode, int>);
 			countIdentifiers = n => (n.Type == TokenType.Identifier ? 1 : 0) + n.Sum(sn => countIdentifiers(sn));
 			var actual = countIdentifiers(node);
 			var actualTokenType = node.Type;
@@ -409,7 +409,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ParseNullableType(string expression)
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
-			var countNullableTypes = default(Func<ParserNode, int>);
+			var countNullableTypes = default(Func<ParseTreeNode, int>);
 			countNullableTypes = n => (n.Type == TokenType.Identifier && n.Value == typeof(Nullable).Name ? 1 : 0) + n.Sum(sn => countNullableTypes(sn));
 			var nullableTypes = countNullableTypes(node);
 

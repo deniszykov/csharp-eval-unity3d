@@ -340,7 +340,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var baseExpression = default(Expression);
 			var continuationExpression = default(Expression);
 			// try to detect null-propagation operation
-			if (ExpressionBuilder.ExtractNullPropagationExpression(conditionalExpression, out baseExpression, out continuationExpression))
+			if (Binder.ExtractNullPropagationExpression(conditionalExpression, out baseExpression, out continuationExpression))
 			{
 				var methodCallExpression = continuationExpression as MethodCallExpression;
 				var memberExpression = continuationExpression as MemberExpression;

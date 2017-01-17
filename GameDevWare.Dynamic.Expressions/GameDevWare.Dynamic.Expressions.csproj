@@ -143,6 +143,9 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\AssemblyTypeResolver.cs">
       <Link>AssemblyTypeResolver.cs</Link>
     </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binder.cs">
+      <Link>Binder.cs</Link>
+    </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
@@ -158,8 +161,8 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\Parser.cs">
       <Link>CSharp\Parser.cs</Link>
     </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\ParserNode.cs">
-      <Link>CSharp\ParserNode.cs</Link>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\ParseTreeNode.cs">
+      <Link>CSharp\ParseTreeNode.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\StringUtils.cs">
       <Link>CSharp\StringUtils.cs</Link>
@@ -185,9 +188,6 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Executor.MethodCall.cs">
       <Link>Executor.MethodCall.cs</Link>
     </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionBuilder.cs">
-      <Link>ExpressionBuilder.cs</Link>
-    </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionExtentions.cs">
       <Link>ExpressionExtentions.cs</Link>
     </Compile>
@@ -199,9 +199,6 @@
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionSubstitutor.cs">
       <Link>ExpressionSubstitutor.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionTree.cs">
-      <Link>ExpressionTree.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionVisitor.cs">
       <Link>ExpressionVisitor.cs</Link>
@@ -220,6 +217,9 @@
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\NameUtils.cs">
       <Link>NameUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\SyntaxTreeNode.cs">
+      <Link>SyntaxTreeNode.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\TypeDiscoveryOptions.cs">
       <Link>TypeDiscoveryOptions.cs</Link>
@@ -263,6 +263,9 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Binding\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">

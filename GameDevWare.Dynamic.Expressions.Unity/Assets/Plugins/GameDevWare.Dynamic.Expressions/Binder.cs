@@ -26,7 +26,7 @@ namespace GameDevWare.Dynamic.Expressions
 	/// <summary>
 	/// Binder which is used for binding syntax tree concrete types and members.
 	/// </summary>
-	public class ExpressionBuilder
+	public class Binder
 	{
 		private static readonly Dictionary<Type, ReadOnlyCollection<MemberInfo>> InstanceMembersByType = new Dictionary<Type, ReadOnlyCollection<MemberInfo>>();
 		private static readonly Dictionary<Type, ReadOnlyCollection<MemberInfo>> StaticMembersByType = new Dictionary<Type, ReadOnlyCollection<MemberInfo>>();
@@ -59,7 +59,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// </summary>
 		public Type ContextType { get { return this.contextType; } }
 
-		static ExpressionBuilder()
+		static Binder()
 		{
 			ExpressionConstructors = typeof(Expression)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -97,7 +97,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <param name="resultType">Result type of bound expression.</param>
 		/// <param name="contextType">Context type of bound expression.</param>
 		/// <param name="typeResolver">Type resolver for bound expression.</param>
-		public ExpressionBuilder(IList<ParameterExpression> parameters, Type resultType, Type contextType = null, ITypeResolver typeResolver = null)
+		public Binder(IList<ParameterExpression> parameters, Type resultType, Type contextType = null, ITypeResolver typeResolver = null)
 		{
 			if (resultType == null) throw new ArgumentNullException("resultType");
 			if (parameters == null) throw new ArgumentNullException("parameters");
@@ -119,7 +119,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <param name="node">Syntax tree. Not null.</param>
 		/// <param name="context">Context expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns></returns>
-		public Expression Build(ExpressionTree node, Expression context = null)
+		public Expression Build(SyntaxTreeNode node, Expression context = null)
 		{
 			// lambda binding substitution feature
 			if (node.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA && typeof(Delegate).IsAssignableFrom(this.resultType) == false)
@@ -146,7 +146,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return expression;
 		}
-		private Expression Build(ExpressionTree node, Expression context, Type typeHint)
+		private Expression Build(SyntaxTreeNode node, Expression context, Type typeHint)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -190,7 +190,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
-		private Expression BuildByType(ExpressionTree node, Expression context)
+		private Expression BuildByType(SyntaxTreeNode node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -227,8 +227,8 @@ namespace GameDevWare.Dynamic.Expressions
 							else
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? argument), node);
 						}
-						else if (argument is ExpressionTree)
-							argument = Build((ExpressionTree)argument, context, typeHint: methodParameter.ParameterType);
+						else if (argument is SyntaxTreeNode)
+							argument = Build((SyntaxTreeNode)argument, context, typeHint: methodParameter.ParameterType);
 						else if (argument != null)
 							argument = ChangeType(argument, methodParameter.ParameterType);
 						else if (methodParameter.ParameterType.IsValueType)
@@ -322,7 +322,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS, expressionType, string.Join(", ", argumentNames.ToArray())), node);
 		}
-		private Expression BuildGroup(ExpressionTree node, Expression context)
+		private Expression BuildGroup(SyntaxTreeNode node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -330,7 +330,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return Build(expression, context, typeHint: null);
 		}
-		private Expression BuildConstant(ExpressionTree node)
+		private Expression BuildConstant(SyntaxTreeNode node)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -344,7 +344,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var value = ChangeType(valueObj, type);
 			return Expression.Constant(value);
 		}
-		private Expression BuildPropertyOrField(ExpressionTree node, Expression context)
+		private Expression BuildPropertyOrField(SyntaxTreeNode node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -432,7 +432,7 @@ namespace GameDevWare.Dynamic.Expressions
 			else
 				return memberAccessExpression;
 		}
-		private Expression BuildIndex(ExpressionTree node, Expression context)
+		private Expression BuildIndex(SyntaxTreeNode node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -446,7 +446,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var indexingExpressions = new Expression[arguments.Count];
 				for (var i = 0; i < indexingExpressions.Length; i++)
 				{
-					var argument = default(ExpressionTree);
+					var argument = default(SyntaxTreeNode);
 					if (arguments.TryGetValue(i, out argument))
 						indexingExpressions[i] = Build(argument, context, typeHint: typeof(int));
 				}
@@ -495,7 +495,7 @@ namespace GameDevWare.Dynamic.Expressions
 			else
 				return indexExpression;
 		}
-		private Expression BuildCall(ExpressionTree node, ExpressionTree target, bool useNullPropagation, ArgumentsTree arguments, TypeReference methodRef, Expression context)
+		private Expression BuildCall(SyntaxTreeNode node, SyntaxTreeNode target, bool useNullPropagation, ArgumentsTree arguments, TypeReference methodRef, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (target == null) throw new ArgumentNullException("target");
@@ -579,7 +579,7 @@ namespace GameDevWare.Dynamic.Expressions
 			else
 				return callExpression;
 		}
-		private Expression BuildInvoke(ExpressionTree node, Expression context)
+		private Expression BuildInvoke(SyntaxTreeNode node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -641,7 +641,7 @@ namespace GameDevWare.Dynamic.Expressions
 				throw new ExpressionParserException(exception.Message, exception, node);
 			}
 		}
-		private Expression BuildDefault(ExpressionTree node)
+		private Expression BuildDefault(SyntaxTreeNode node)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -653,7 +653,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return DefaultExpression(type);
 		}
-		private Expression BuildTypeOf(ExpressionTree node)
+		private Expression BuildTypeOf(SyntaxTreeNode node)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -665,7 +665,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return Expression.Constant(type, typeof(Type));
 		}
-		private Expression BuildNewArrayBounds(ExpressionTree node, Expression context)
+		private Expression BuildNewArrayBounds(SyntaxTreeNode node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -679,7 +679,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var argumentExpressions = new Expression[arguments.Count];
 			for (var i = 0; i < arguments.Count; i++)
 			{
-				var argument = default(ExpressionTree);
+				var argument = default(SyntaxTreeNode);
 				if (arguments.TryGetValue(i, out argument) == false)
 					throw new ExpressionParserException(Properties.Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS, node);
 				argumentExpressions[i] = Build(argument, context, typeHint: typeof(int));
@@ -687,7 +687,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return Expression.NewArrayBounds(type, argumentExpressions);
 		}
-		private Expression BuildNew(ExpressionTree node, Expression context)
+		private Expression BuildNew(SyntaxTreeNode node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -702,7 +702,7 @@ namespace GameDevWare.Dynamic.Expressions
 			Array.Sort(constructors, (x, y) => x.GetParameters().Length.CompareTo(y.GetParameters().Length));
 
 			// feature: lambda building via new Func()
-			var lambdaArgument = default(ExpressionTree);
+			var lambdaArgument = default(SyntaxTreeNode);
 			if (typeof(Delegate).IsAssignableFrom(type) && arguments.Count == 1 && (lambdaArgument = arguments.Values.Single()).GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA)
 				return BuildLambda(lambdaArgument, type, context);
 
@@ -724,7 +724,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR, type), node);
 		}
-		private Expression BuildLambda(ExpressionTree node, Type lambdaType, Expression context)
+		private Expression BuildLambda(SyntaxTreeNode node, Type lambdaType, Expression context)
 		{
 			if (lambdaType == null || typeof(Delegate).IsAssignableFrom(lambdaType) == false || lambdaType.ContainsGenericParameters)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED, lambdaType != null ? lambdaType.ToString() : "<null>"));
@@ -740,7 +740,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var argumentNames = new string[arguments.Count];
 			for (var i = 0; i < argumentNames.Length; i++)
 			{
-				var argumentNameTree = default(ExpressionTree);
+				var argumentNameTree = default(SyntaxTreeNode);
 				if (arguments.TryGetValue(i, out argumentNameTree) == false || argumentNameTree == null || argumentNameTree.GetExpressionType(throwOnError: true) != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
 				argumentNames[i] = argumentNameTree.GetPropertyOrFieldName(throwOnError: true);
@@ -757,7 +757,7 @@ namespace GameDevWare.Dynamic.Expressions
 				if (Array.IndexOf(argumentNames, parameterExpr.Name) < 0)
 					builderParameters.Add(parameterExpr);
 			// create builder and bind body
-			var builder = new ExpressionBuilder(builderParameters, lambdaInvokeMethod.ReturnType, this.contextType, this.typeResolver);
+			var builder = new Binder(builderParameters, lambdaInvokeMethod.ReturnType, this.contextType, this.typeResolver);
 			var body = builder.Build(expression, context, typeHint: lambdaInvokeMethod.ReturnType);
 
 			return Expression.Lambda(lambdaType, body, lambdaParameters);
@@ -1268,10 +1268,10 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			typeReference = default(TypeReference);
 
-			if (value is ExpressionTree)
+			if (value is SyntaxTreeNode)
 			{
-				var parts = new List<ExpressionTree>(10);
-				var current = (ExpressionTree)value;
+				var parts = new List<SyntaxTreeNode>(10);
+				var current = (SyntaxTreeNode)value;
 				while (current != null)
 				{
 					var expressionType = current.GetExpressionType(throwOnError: true);
@@ -1297,7 +1297,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 						for (var i = 0; i < arguments.Count; i++)
 						{
-							var typeArgument = default(ExpressionTree);
+							var typeArgument = default(SyntaxTreeNode);
 							var typeArgumentTypeReference = default(TypeReference);
 							var key = Constants.GetIndexAsString(i);
 							if (arguments.TryGetValue(key, out typeArgument) == false || typeArgument == null)
@@ -1329,10 +1329,10 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			methodReference = default(TypeReference);
 
-			if (value is ExpressionTree)
+			if (value is SyntaxTreeNode)
 			{
 				var typeArguments = default(List<TypeReference>);
-				var methodNameTree = (ExpressionTree)value;
+				var methodNameTree = (SyntaxTreeNode)value;
 
 				var arguments = methodNameTree.GetArguments(throwOnError: false);
 				var methodName = methodNameTree.GetPropertyOrFieldName(throwOnError: true);
@@ -1342,7 +1342,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 					for (var i = 0; i < arguments.Count; i++)
 					{
-						var typeArgument = default(ExpressionTree);
+						var typeArgument = default(SyntaxTreeNode);
 						var typeArgumentTypeReference = default(TypeReference);
 						var key = Constants.GetIndexAsString(i);
 						if (arguments.TryGetValue(key, out typeArgument) == false || typeArgument == null)

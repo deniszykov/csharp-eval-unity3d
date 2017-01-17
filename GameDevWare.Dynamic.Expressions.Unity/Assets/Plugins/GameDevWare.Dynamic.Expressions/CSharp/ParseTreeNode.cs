@@ -17,7 +17,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
@@ -25,7 +24,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 	/// <summary>
 	/// Parse tree node.
 	/// </summary>
-	public class ParserNode : ILineInfo, IEnumerable<ParserNode>
+	public class ParseTreeNode : ILineInfo, IEnumerable<ParseTreeNode>
 	{
 		[Flags]
 		private enum TypeNameOptions
@@ -42,12 +41,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		{
 			public readonly int Count;
 
-			private readonly ParserNode item0;
-			private readonly ParserNode item1;
-			private readonly ParserNode item2;
-			private readonly List<ParserNode> items;
+			private readonly ParseTreeNode item0;
+			private readonly ParseTreeNode item1;
+			private readonly ParseTreeNode item2;
+			private readonly List<ParseTreeNode> items;
 
-			private ParseTreeNodes(ParserNode item0, ParserNode item1, ParserNode item2)
+			private ParseTreeNodes(ParseTreeNode item0, ParseTreeNode item1, ParseTreeNode item2)
 			{
 				if (item2 != null && item1 == null) throw new ArgumentNullException("item1");
 				if (item1 != null && item0 == null) throw new ArgumentNullException("item0");
@@ -60,7 +59,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							 item0 != null ? 1 : 0;
 				this.items = null;
 			}
-			private ParseTreeNodes(List<ParserNode> items)
+			private ParseTreeNodes(List<ParseTreeNode> items)
 			{
 				if (items == null) throw new ArgumentNullException("items");
 
@@ -69,7 +68,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				this.Count = items.Count;
 			}
 
-			public ParserNode this[int index]
+			public ParseTreeNode this[int index]
 			{
 				get
 				{
@@ -88,7 +87,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				}
 			}
 
-			public static void Add(ref ParseTreeNodes nodes, ParserNode node)
+			public static void Add(ref ParseTreeNodes nodes, ParseTreeNode node)
 			{
 				if (node == null) throw new ArgumentNullException("node");
 
@@ -105,11 +104,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case 0: nodes = new ParseTreeNodes(node, null, null); break;
 					case 1: nodes = new ParseTreeNodes(nodes.item0, node, null); break;
 					case 2: nodes = new ParseTreeNodes(nodes.item0, nodes.item1, node); break;
-					case 3: nodes = new ParseTreeNodes(new List<ParserNode> { nodes.item0, nodes.item1, nodes.item2, node }); break;
+					case 3: nodes = new ParseTreeNodes(new List<ParseTreeNode> { nodes.item0, nodes.item1, nodes.item2, node }); break;
 					default: throw new ArgumentOutOfRangeException("node", "Unable to add new node. Tree is full.");
 				}
 			}
-			public static void Insert(ref ParseTreeNodes nodes, int index, ParserNode node)
+			public static void Insert(ref ParseTreeNodes nodes, int index, ParseTreeNode node)
 			{
 				if (node == null) throw new ArgumentNullException("node");
 
@@ -143,7 +142,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						}
 						break;
 					case 3:
-						items = new List<ParserNode> { nodes.item0, nodes.item1, nodes.item2 };
+						items = new List<ParseTreeNode> { nodes.item0, nodes.item1, nodes.item2 };
 						items.Insert(index, node);
 						nodes = new ParseTreeNodes(items);
 						break;
@@ -169,7 +168,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					default: throw new ArgumentOutOfRangeException("index");
 				}
 			}
-			public static bool Remove(ref ParseTreeNodes nodes, ParserNode node)
+			public static bool Remove(ref ParseTreeNodes nodes, ParseTreeNode node)
 			{
 				if (node == null) throw new ArgumentNullException("node");
 
@@ -223,7 +222,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// </summary>
 		/// <param name="index">Index of child node.</param>
 		/// <returns>Child node at index.</returns>
-		public ParserNode this[int index] { get { return this.nodes[index]; } }
+		public ParseTreeNode this[int index] { get { return this.nodes[index]; } }
 		/// <summary>
 		/// Returns number of child nodes.
 		/// </summary>
@@ -242,7 +241,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return Lexeme.TokenLength;
 		}
 
-		static ParserNode()
+		static ParseTreeNode()
 		{
 			ExpressionTypeByToken = new Dictionary<int, string>
 			{
@@ -312,7 +311,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				// ReSharper restore StringLiteralTypo
 			};
 		}
-		private ParserNode(TokenType type, ParserNode otherNode)
+		private ParseTreeNode(TokenType type, ParseTreeNode otherNode)
 		{
 			if (otherNode == null) throw new ArgumentNullException("otherNode");
 
@@ -321,24 +320,24 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			this.Value = otherNode.Value;
 			this.nodes = otherNode.nodes;
 		}
-		internal ParserNode(TokenType type, Token lexeme, string value)
+		internal ParseTreeNode(TokenType type, Token lexeme, string value)
 		{
 			this.Type = type;
 			this.Lexeme = lexeme;
 			this.Value = value ?? lexeme.Value;
 			this.nodes = new ParseTreeNodes();
 		}
-		internal ParserNode(Token lexeme)
+		internal ParseTreeNode(Token lexeme)
 			: this(lexeme.Type, lexeme, lexeme.Value)
 		{
 
 		}
 
-		internal void Add(ParserNode node)
+		internal void Add(ParseTreeNode node)
 		{
 			ParseTreeNodes.Add(ref this.nodes, node);
 		}
-		internal void Insert(int index, ParserNode node)
+		internal void Insert(int index, ParseTreeNode node)
 		{
 			ParseTreeNodes.Insert(ref this.nodes, index, node);
 		}
@@ -346,13 +345,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		{
 			ParseTreeNodes.RemoveAt(ref this.nodes, index);
 		}
-		internal bool Remove(ParserNode node)
+		internal bool Remove(ParseTreeNode node)
 		{
 			return ParseTreeNodes.Remove(ref this.nodes, node);
 		}
-		internal ParserNode ChangeType(TokenType newType)
+		internal ParseTreeNode ChangeType(TokenType newType)
 		{
-			return new ParserNode(newType, this);
+			return new ParseTreeNode(newType, this);
 		}
 
 		/// <summary>
@@ -360,7 +359,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// </summary>
 		/// <param name="checkedScope">Conversion and arithmetic operation overflow control. True is "throw on overflows", false is "ignore of overflows".</param>
 		/// <returns></returns>
-		public ExpressionTree ToExpressionTree(bool checkedScope = CSharpExpression.DefaultCheckedScope)
+		public SyntaxTreeNode ToSyntaxTree(bool checkedScope = CSharpExpression.DefaultCheckedScope)
 		{
 			try
 			{
@@ -381,7 +380,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case TokenType.NullResolve:
 					case TokenType.Resolve:
 						Ensure(this, 2, TokenType.None, TokenType.Identifier);
-						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToExpressionTree(checkedScope);
+						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope);
 						node[Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = this.nodes[1].Value;
 						node[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(this.nodes[1], 0);
 						node[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = this.Type == TokenType.NullResolve ? Constants.TrueObject : Constants.FalseObject;
@@ -428,23 +427,23 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case TokenType.Convert:
 						Ensure(this, 2);
 						node[Constants.TYPE_ATTRIBUTE] = this.nodes[0].ToTypeName(TypeNameOptions.All);
-						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[1].ToExpressionTree(checkedScope);
+						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[1].ToSyntaxTree(checkedScope);
 						if (checkedScope)
 							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKEDSUFFIX;
 						break;
 					case TokenType.CheckedScope:
 						Ensure(this, 1);
 						// ReSharper disable once RedundantArgumentDefaultValue
-						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToExpressionTree(checkedScope: true);
+						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope: true);
 						break;
 					case TokenType.UncheckedScope:
 						Ensure(this, 1);
-						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToExpressionTree(checkedScope: false);
+						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope: false);
 						break;
 					case TokenType.As:
 					case TokenType.Is:
 						Ensure(this, 2);
-						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToExpressionTree(checkedScope);
+						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope);
 						node[Constants.TYPE_ATTRIBUTE] = this.nodes[1].ToTypeName(TypeNameOptions.All);
 						break;
 					case TokenType.Default:
@@ -458,7 +457,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case TokenType.Not:
 					case TokenType.Compl:
 						Ensure(this, 1);
-						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToExpressionTree(checkedScope);
+						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope);
 						if (checkedScope && this.Type == TokenType.Minus)
 							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKEDSUFFIX;
 						break;
@@ -483,21 +482,21 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case TokenType.OrElse:
 					case TokenType.Coalesce:
 						Ensure(this, 2);
-						node[Constants.LEFT_ATTRIBUTE] = this.nodes[0].ToExpressionTree(checkedScope);
-						node[Constants.RIGHT_ATTRIBUTE] = this.nodes[1].ToExpressionTree(checkedScope);
+						node[Constants.LEFT_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope);
+						node[Constants.RIGHT_ATTRIBUTE] = this.nodes[1].ToSyntaxTree(checkedScope);
 						if (checkedScope && (this.Type == TokenType.Add || this.Type == TokenType.Mul || this.Type == TokenType.Subtract))
 							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKEDSUFFIX;
 						break;
 					case TokenType.Cond:
 						Ensure(this, 3);
-						node[Constants.TEST_ATTRIBUTE] = this.nodes[0].ToExpressionTree(checkedScope);
-						node[Constants.IFTRUE_ATTRIBUTE] = this.nodes[1].ToExpressionTree(checkedScope);
-						node[Constants.IFFALSE_ATTRIBUTE] = this.nodes[2].ToExpressionTree(checkedScope);
+						node[Constants.TEST_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope);
+						node[Constants.IFTRUE_ATTRIBUTE] = this.nodes[1].ToSyntaxTree(checkedScope);
+						node[Constants.IFFALSE_ATTRIBUTE] = this.nodes[2].ToSyntaxTree(checkedScope);
 						break;
 					case TokenType.Lambda:
 						Ensure(this, 2, TokenType.Arguments);
 						node[Constants.ARGUMENTS_ATTRIBUTE] = PrepareArguments(this, 0, checkedScope);
-						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[1].ToExpressionTree(checkedScope);
+						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[1].ToSyntaxTree(checkedScope);
 						break;
 					case TokenType.Call:
 						Ensure(this, 1);
@@ -509,7 +508,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							isNullPropagation = this.Value == "?[";
 						}
 
-						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToExpressionTree(checkedScope);
+						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope);
 						node[Constants.ARGUMENTS_ATTRIBUTE] = PrepareArguments(this, 1, checkedScope);
 						node[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = isNullPropagation ? Constants.TrueObject : Constants.FalseObject;
 						break;
@@ -528,7 +527,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE, this.Type), this);
 				}
 
-				return new ExpressionTree(node);
+				return new SyntaxTreeNode(node);
 			}
 			catch (ExpressionParserException)
 			{
@@ -560,8 +559,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			if (this.Type == TokenType.Call && this.nodes.Count == 2 && this.Value == "[" && this.nodes[1].Count == 0 && allowArrays)
 			{
-				var arrayNode = new ParserNode(TokenType.Identifier, this.Lexeme, typeof(Array).Name);
-				var argumentsNode = new ParserNode(TokenType.Arguments, this.Lexeme, "<");
+				var arrayNode = new ParseTreeNode(TokenType.Identifier, this.Lexeme, typeof(Array).Name);
+				var argumentsNode = new ParseTreeNode(TokenType.Arguments, this.Lexeme, "<");
 				argumentsNode.Add(this.nodes[0]);
 				arrayNode.Add(argumentsNode);
 				return arrayNode.ToTypeName(TypeNameOptions.None);
@@ -599,10 +598,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_TYPENAMEEXPECTED, this);
 			}
 
-			return new ExpressionTree(node);
+			return new SyntaxTreeNode(node);
 		}
 
-		private static Dictionary<string, object> PrepareArguments(ParserNode node, int argumentChildIndex, bool checkedScope)
+		private static Dictionary<string, object> PrepareArguments(ParseTreeNode node, int argumentChildIndex, bool checkedScope)
 		{
 			var args = default(Dictionary<string, object>);
 			if (argumentChildIndex >= node.Count || node[argumentChildIndex].Count == 0)
@@ -619,17 +618,17 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					Ensure(argNode, 2, TokenType.Identifier);
 
 					var argName = argNode[0].Value;
-					args[argName] = argNode[1].ToExpressionTree(checkedScope);
+					args[argName] = argNode[1].ToSyntaxTree(checkedScope);
 				}
 				else
 				{
 					var argName = Constants.GetIndexAsString(argIdx++);
-					args[argName] = argNode.ToExpressionTree(checkedScope);
+					args[argName] = argNode.ToSyntaxTree(checkedScope);
 				}
 			}
 			return args;
 		}
-		private static Dictionary<string, object> PrepareTypeArguments(ParserNode node, int argumentChildIndex)
+		private static Dictionary<string, object> PrepareTypeArguments(ParseTreeNode node, int argumentChildIndex)
 		{
 			var args = default(Dictionary<string, object>);
 			if (argumentChildIndex >= node.Count || node[argumentChildIndex].Count == 0)
@@ -646,7 +645,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			return args;
 		}
-		private static void Ensure(ParserNode node, int childCount, TokenType childType0 = 0, TokenType childType1 = 0, TokenType childType2 = 0)
+		private static void Ensure(ParseTreeNode node, int childCount, TokenType childType0 = 0, TokenType childType1 = 0, TokenType childType2 = 0)
 		{
 			// ReSharper disable HeapView.BoxingAllocation
 			if (node.Count < childCount)
@@ -691,7 +690,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 		}
 
-		IEnumerator<ParserNode> IEnumerable<ParserNode>.GetEnumerator()
+		IEnumerator<ParseTreeNode> IEnumerable<ParseTreeNode>.GetEnumerator()
 		{
 			for (var i = 0; i < this.nodes.Count; i++)
 				yield return this.nodes[i];
@@ -709,7 +708,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return ((IEnumerable<ParserNode>)this).GetEnumerator();
+			return ((IEnumerable<ParseTreeNode>)this).GetEnumerator();
 		}
 	}
 }

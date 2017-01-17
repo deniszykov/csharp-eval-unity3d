@@ -50,7 +50,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// </summary>
 		/// <typeparam name="ResultT">Result type.</typeparam>
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>Evaluated value.</returns>
 		public static ResultT Evaluate<ResultT>(string expression, ITypeResolver typeResolver = null)
 		{
@@ -66,7 +66,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="arg1">First argument value.</param>
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>Evaluated value.</returns>
 		public static ResultT Evaluate<Arg1T, ResultT>(string expression, Arg1T arg1, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
@@ -85,7 +85,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg2">Second argument value.</param>
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>Evaluated value.</returns>
 		public static ResultT Evaluate<Arg1T, Arg2T, ResultT>(string expression, Arg1T arg1, Arg2T arg2, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
@@ -107,7 +107,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>Evaluated value.</returns>
 		public static ResultT Evaluate<Arg1T, Arg2T, Arg3T, ResultT>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
@@ -132,7 +132,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg4Name">Fourth argument name or <see cref="ARG4_DEFAULT_NAME"/> if not specified.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>Evaluated value.</returns>
 		public static ResultT Evaluate<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, Arg4T arg4, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
@@ -146,7 +146,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// </summary>
 		/// <typeparam name="ResultT">Result type.</typeparam>
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
 		public static Expression<Func<ResultT>> Parse<ResultT>(string expression, ITypeResolver typeResolver = null)
 		{
@@ -154,8 +154,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToExpressionTree();
-			var expressionBuilder = new ExpressionBuilder(new ParameterExpression[0], resultType: typeof(ResultT), typeResolver: typeResolver);
+			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionBuilder = new Binder(new ParameterExpression[0], resultType: typeof(ResultT), typeResolver: typeResolver);
 			var body = expressionBuilder.Build(expressionTree);
 			return Expression.Lambda<Func<ResultT>>(body, expressionBuilder.Parameters);
 		}
@@ -166,7 +166,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <typeparam name="ResultT">Result type.</typeparam>
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
 		public static Expression<Func<Arg1T, ResultT>> Parse<Arg1T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
@@ -174,8 +174,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToExpressionTree();
-			var expressionBuilder = new ExpressionBuilder(new[]
+			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionBuilder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME)
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
@@ -191,7 +191,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
 		public static Expression<Func<Arg1T, Arg2T, ResultT>> Parse<Arg1T, Arg2T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
@@ -199,8 +199,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToExpressionTree();
-			var expressionBuilder = new ExpressionBuilder(new[]
+			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionBuilder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
@@ -219,7 +219,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
 		public static Expression<Func<Arg1T, Arg2T, Arg3T, ResultT>> Parse<Arg1T, Arg2T, Arg3T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
@@ -227,8 +227,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToExpressionTree();
-			var expressionBuilder = new ExpressionBuilder(new ParameterExpression[]
+			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionBuilder = new Binder(new ParameterExpression[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
@@ -250,7 +250,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg4Name">Fourth argument name or <see cref="ARG4_DEFAULT_NAME"/> if not specified.</param>
-		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="ExpressionBuilder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
 		public static Expression<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>> Parse<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
@@ -258,8 +258,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToExpressionTree();
-			var expressionBuilder = new ExpressionBuilder(new ParameterExpression[]
+			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionBuilder = new Binder(new ParameterExpression[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),

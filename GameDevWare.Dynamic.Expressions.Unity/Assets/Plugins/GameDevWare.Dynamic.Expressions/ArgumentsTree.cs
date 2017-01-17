@@ -24,27 +24,27 @@ namespace GameDevWare.Dynamic.Expressions
 	/// <summary>
 	/// List of expression's arguments by name or position. This collection is read-only.
 	/// </summary>
-	public class ArgumentsTree : IDictionary<string, ExpressionTree>
+	public class ArgumentsTree : IDictionary<string, SyntaxTreeNode>
 	{
 		/// <summary>
 		/// Empty arguments list
 		/// </summary>
 		public static readonly ArgumentsTree Empty = new ArgumentsTree();
 
-		private readonly Dictionary<string, ExpressionTree> innerDictionary;
+		private readonly Dictionary<string, SyntaxTreeNode> innerDictionary;
 
 		/// <summary>
 		/// Creates empty list of arguments.
 		/// </summary>
 		private ArgumentsTree()
 		{
-			this.innerDictionary = new Dictionary<string, ExpressionTree>();
+			this.innerDictionary = new Dictionary<string, SyntaxTreeNode>();
 		}
 		/// <summary>
 		/// Create list of arguments from existing dictionary.
 		/// </summary>
 		/// <param name="innerDictionary"></param>
-		public ArgumentsTree(Dictionary<string, ExpressionTree> innerDictionary)
+		public ArgumentsTree(Dictionary<string, SyntaxTreeNode> innerDictionary)
 		{
 			if (innerDictionary == null) throw new ArgumentNullException("innerDictionary");
 
@@ -53,7 +53,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 		#region IDictionary<string,ExpressionTree> Members
 
-		void IDictionary<string, ExpressionTree>.Add(string key, ExpressionTree value)
+		void IDictionary<string, SyntaxTreeNode>.Add(string key, SyntaxTreeNode value)
 		{
 			throw new NotSupportedException();
 		}
@@ -82,7 +82,7 @@ namespace GameDevWare.Dynamic.Expressions
 			get { return this.innerDictionary.Keys; }
 		}
 
-		bool IDictionary<string, ExpressionTree>.Remove(string key)
+		bool IDictionary<string, SyntaxTreeNode>.Remove(string key)
 		{
 			throw new NotSupportedException();
 		}
@@ -91,7 +91,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// Tries to retrieve argument by its name.
 		/// </summary>
 		/// <returns>true is exists, overwise false.</returns>
-		public bool TryGetValue(string key, out ExpressionTree value)
+		public bool TryGetValue(string key, out SyntaxTreeNode value)
 		{
 			return this.innerDictionary.TryGetValue(key, out value);
 		}
@@ -99,21 +99,21 @@ namespace GameDevWare.Dynamic.Expressions
 		/// Tries to retrieve argument by its position.
 		/// </summary>
 		/// <returns>true is exists, overwise false.</returns>
-		public bool TryGetValue(int position, out ExpressionTree value)
+		public bool TryGetValue(int position, out SyntaxTreeNode value)
 		{
 			return this.innerDictionary.TryGetValue(Constants.GetIndexAsString(position), out value);
 		}
 		/// <summary>
 		/// Returns all arguments in this list.
 		/// </summary>
-		public ICollection<ExpressionTree> Values
+		public ICollection<SyntaxTreeNode> Values
 		{
 			get { return this.innerDictionary.Values; }
 		}
 		/// <summary>
 		/// Returns argument by its name.
 		/// </summary>
-		public ExpressionTree this[string key]
+		public SyntaxTreeNode this[string key]
 		{
 			get { return this.innerDictionary[key]; }
 			set { throw new NotSupportedException(); }
@@ -121,7 +121,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		/// Returns argument by its position.
 		/// </summary>
-		public ExpressionTree this[int position]
+		public SyntaxTreeNode this[int position]
 		{
 			get { return this.innerDictionary[Constants.GetIndexAsString(position)]; }
 			set { throw new NotSupportedException(); }
@@ -131,24 +131,24 @@ namespace GameDevWare.Dynamic.Expressions
 
 		#region ICollection<KeyValuePair<string,ExpressionTree>> Members
 
-		void ICollection<KeyValuePair<string, ExpressionTree>>.Add(KeyValuePair<string, ExpressionTree> item)
+		void ICollection<KeyValuePair<string, SyntaxTreeNode>>.Add(KeyValuePair<string, SyntaxTreeNode> item)
 		{
 			throw new NotSupportedException();
 		}
 
-		void ICollection<KeyValuePair<string, ExpressionTree>>.Clear()
+		void ICollection<KeyValuePair<string, SyntaxTreeNode>>.Clear()
 		{
 			throw new NotSupportedException();
 		}
 
-		bool ICollection<KeyValuePair<string, ExpressionTree>>.Contains(KeyValuePair<string, ExpressionTree> item)
+		bool ICollection<KeyValuePair<string, SyntaxTreeNode>>.Contains(KeyValuePair<string, SyntaxTreeNode> item)
 		{
-			return ((ICollection<KeyValuePair<string, ExpressionTree>>)this.innerDictionary).Contains(item);
+			return ((ICollection<KeyValuePair<string, SyntaxTreeNode>>)this.innerDictionary).Contains(item);
 		}
 
-		void ICollection<KeyValuePair<string, ExpressionTree>>.CopyTo(KeyValuePair<string, ExpressionTree>[] array, int arrayIndex)
+		void ICollection<KeyValuePair<string, SyntaxTreeNode>>.CopyTo(KeyValuePair<string, SyntaxTreeNode>[] array, int arrayIndex)
 		{
-			((ICollection<KeyValuePair<string, ExpressionTree>>)this.innerDictionary).CopyTo(array, arrayIndex);
+			((ICollection<KeyValuePair<string, SyntaxTreeNode>>)this.innerDictionary).CopyTo(array, arrayIndex);
 		}
 
 		/// <summary>
@@ -159,23 +159,23 @@ namespace GameDevWare.Dynamic.Expressions
 			get { return this.innerDictionary.Count; }
 		}
 
-		bool ICollection<KeyValuePair<string, ExpressionTree>>.IsReadOnly
+		bool ICollection<KeyValuePair<string, SyntaxTreeNode>>.IsReadOnly
 		{
-			get { return ((ICollection<KeyValuePair<string, ExpressionTree>>)this.innerDictionary).IsReadOnly; }
+			get { return ((ICollection<KeyValuePair<string, SyntaxTreeNode>>)this.innerDictionary).IsReadOnly; }
 		}
 
-		bool ICollection<KeyValuePair<string, ExpressionTree>>.Remove(KeyValuePair<string, ExpressionTree> item)
+		bool ICollection<KeyValuePair<string, SyntaxTreeNode>>.Remove(KeyValuePair<string, SyntaxTreeNode> item)
 		{
-			return ((ICollection<KeyValuePair<string, ExpressionTree>>)this.innerDictionary).Remove(item);
+			return ((ICollection<KeyValuePair<string, SyntaxTreeNode>>)this.innerDictionary).Remove(item);
 		}
 
 		#endregion
 
 		#region IEnumerable<KeyValuePair<string,ExpressionTree>> Members
 
-		IEnumerator<KeyValuePair<string, ExpressionTree>> IEnumerable<KeyValuePair<string, ExpressionTree>>.GetEnumerator()
+		IEnumerator<KeyValuePair<string, SyntaxTreeNode>> IEnumerable<KeyValuePair<string, SyntaxTreeNode>>.GetEnumerator()
 		{
-			return ((ICollection<KeyValuePair<string, ExpressionTree>>)this.innerDictionary).GetEnumerator();
+			return ((ICollection<KeyValuePair<string, SyntaxTreeNode>>)this.innerDictionary).GetEnumerator();
 		}
 
 		#endregion

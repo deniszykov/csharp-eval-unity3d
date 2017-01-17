@@ -31,11 +31,11 @@ namespace GameDevWare.Dynamic.Expressions
 	{
 		private readonly Dictionary<MethodCallSignature, Expression> compiledExpressions;
 
-		private readonly ExpressionTree expressionTree;
+		private readonly SyntaxTreeNode syntaxTree;
 		/// <summary>
 		/// Syntax tree of this expression.
 		/// </summary>
-		public ExpressionTree ExpressionTree { get { return this.expressionTree; } }
+		public SyntaxTreeNode SyntaxTree { get { return this.syntaxTree; } }
 
 		/// <summary>
 		/// Creates new <see cref="UnboundExpression"/> from syntax tree.
@@ -46,7 +46,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (node == null) throw new ArgumentNullException("node");
 
 			this.compiledExpressions = new Dictionary<MethodCallSignature, Expression>();
-			this.expressionTree = node is ExpressionTree ? (ExpressionTree)node : new ExpressionTree(node);
+			this.syntaxTree = node is SyntaxTreeNode ? (SyntaxTreeNode)node : new SyntaxTreeNode(node);
 		}
 
 		/// <summary>
@@ -63,8 +63,8 @@ namespace GameDevWare.Dynamic.Expressions
 				if (!this.compiledExpressions.TryGetValue(key, out expression))
 				{
 					var parameters = new ReadOnlyCollection<ParameterExpression>(new ParameterExpression[0]);
-					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<ResultT>>(builder.Build(this.ExpressionTree), parameters);
+					var builder = new Binder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<ResultT>>(builder.Build(this.SyntaxTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
@@ -87,8 +87,8 @@ namespace GameDevWare.Dynamic.Expressions
 				if (!this.compiledExpressions.TryGetValue(key, out expression))
 				{
 					var parameters = CreateParameters(new[] { typeof(Arg1T) }, new[] { arg1Name ?? CSharpExpression.ARG1_DEFAULT_NAME });
-					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<Arg1T, ResultT>>(builder.Build(this.ExpressionTree), parameters);
+					var builder = new Binder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<Arg1T, ResultT>>(builder.Build(this.SyntaxTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
@@ -120,8 +120,8 @@ namespace GameDevWare.Dynamic.Expressions
 						new[] { typeof(Arg1T), typeof(Arg2T) },
 						new[] { arg1Name ?? CSharpExpression.ARG1_DEFAULT_NAME, arg2Name ?? CSharpExpression.ARG2_DEFAULT_NAME }
 					);
-					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<Arg1T, Arg2T, ResultT>>(builder.Build(this.ExpressionTree), parameters);
+					var builder = new Binder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<Arg1T, Arg2T, ResultT>>(builder.Build(this.SyntaxTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
@@ -162,8 +162,8 @@ namespace GameDevWare.Dynamic.Expressions
 							arg3Name ?? CSharpExpression.ARG3_DEFAULT_NAME
 						}
 					);
-					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(builder.Build(this.ExpressionTree), parameters);
+					var builder = new Binder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(builder.Build(this.SyntaxTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
@@ -208,8 +208,8 @@ namespace GameDevWare.Dynamic.Expressions
 							arg4Name ?? CSharpExpression.ARG4_DEFAULT_NAME
 						}
 					);
-					var builder = new ExpressionBuilder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(builder.Build(this.ExpressionTree), parameters);
+					var builder = new Binder(parameters, resultType: typeof(ResultT));
+					expression = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(builder.Build(this.SyntaxTree), parameters);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
@@ -241,14 +241,14 @@ namespace GameDevWare.Dynamic.Expressions
 			var other = obj as UnboundExpression;
 			if (other == null) return false;
 
-			return this.expressionTree.SequenceEqual(other.ExpressionTree);
+			return this.syntaxTree.SequenceEqual(other.SyntaxTree);
 		}
 		/// <summary>
 		/// Returns hash code of unbound expression.
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return this.expressionTree.GetHashCode();
+			return this.syntaxTree.GetHashCode();
 		}
 
 		/// <summary>

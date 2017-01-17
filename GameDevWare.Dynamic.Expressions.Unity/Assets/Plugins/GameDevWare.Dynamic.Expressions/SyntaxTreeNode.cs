@@ -24,7 +24,7 @@ namespace GameDevWare.Dynamic.Expressions
 	/// <summary>
 	/// Abstract syntax tree of expression
 	/// </summary>
-	public class ExpressionTree : IDictionary<string, object>, ILineInfo
+	public class SyntaxTreeNode : IDictionary<string, object>, ILineInfo
 	{
 		private readonly Dictionary<string, object> innerDictionary;
 
@@ -32,7 +32,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// Creates new syntax tree from existing dictionary.
 		/// </summary>
 		/// <param name="node">Dictionary containing a valid syntax tree.</param>
-		public ExpressionTree(IDictionary<string, object> node)
+		public SyntaxTreeNode(IDictionary<string, object> node)
 		{
 			this.innerDictionary = PrepareNode(node);
 		}
@@ -42,8 +42,8 @@ namespace GameDevWare.Dynamic.Expressions
 			var newNode = new Dictionary<string, object>(node.Count);
 			foreach (var kv in node)
 			{
-				if (kv.Value is IDictionary<string, object> && kv.Value is ExpressionTree == false)
-					newNode[kv.Key] = new ExpressionTree((IDictionary<string, object>)kv.Value);
+				if (kv.Value is IDictionary<string, object> && kv.Value is SyntaxTreeNode == false)
+					newNode[kv.Key] = new SyntaxTreeNode((IDictionary<string, object>)kv.Value);
 				else
 					newNode[kv.Key] = kv.Value;
 			}
@@ -85,7 +85,7 @@ namespace GameDevWare.Dynamic.Expressions
 		internal object GetTypeName(bool throwOnError)
 		{
 			var typeNameObj = default(object);
-			if (this.TryGetValue(Constants.TYPE_ATTRIBUTE, out typeNameObj) == false || (typeNameObj is string == false && typeNameObj is ExpressionTree == false))
+			if (this.TryGetValue(Constants.TYPE_ATTRIBUTE, out typeNameObj) == false || (typeNameObj is string == false && typeNameObj is SyntaxTreeNode == false))
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.TYPE_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
 
 			return typeNameObj;
@@ -97,10 +97,10 @@ namespace GameDevWare.Dynamic.Expressions
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.VALUE_ATTRIBUTE, this.GetExpressionType(throwOnError: true), this));
 			return valueObj;
 		}
-		internal ExpressionTree GetExpression(bool throwOnError)
+		internal SyntaxTreeNode GetExpression(bool throwOnError)
 		{
 			var expressionObj = default(object);
-			if (this.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj == null || expressionObj is ExpressionTree == false)
+			if (this.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj == null || expressionObj is SyntaxTreeNode == false)
 			{
 				if (throwOnError)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, this.GetExpressionType(true)), this);
@@ -108,13 +108,13 @@ namespace GameDevWare.Dynamic.Expressions
 					return null;
 			}
 
-			var expression = (ExpressionTree)expressionObj;
+			var expression = (SyntaxTreeNode)expressionObj;
 			return expression;
 		}
 		internal ArgumentsTree GetArguments(bool throwOnError)
 		{
 			var argumentsObj = default(object);
-			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is ExpressionTree == false)
+			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is SyntaxTreeNode == false)
 			{
 				if (throwOnError)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(true)), this);
@@ -122,10 +122,10 @@ namespace GameDevWare.Dynamic.Expressions
 					return ArgumentsTree.Empty;
 			}
 
-			var arguments = new Dictionary<string, ExpressionTree>(((ExpressionTree)argumentsObj).Count);
-			foreach (var kv in (ExpressionTree)argumentsObj)
+			var arguments = new Dictionary<string, SyntaxTreeNode>(((SyntaxTreeNode)argumentsObj).Count);
+			foreach (var kv in (SyntaxTreeNode)argumentsObj)
 			{
-				var argument = kv.Value as ExpressionTree;
+				var argument = kv.Value as SyntaxTreeNode;
 				if (argument == null)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, kv.Key), this);
 				arguments.Add(kv.Key, argument);
