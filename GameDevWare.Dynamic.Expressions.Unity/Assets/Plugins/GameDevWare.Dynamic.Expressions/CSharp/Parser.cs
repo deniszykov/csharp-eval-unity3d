@@ -110,7 +110,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return parser.stack.Pop();
 		}
 
-		private bool Expression(ParserNode op = default(ParserNode), TokenType[] term = null)
+		private bool Expression(TokenType @operator = default(TokenType), TokenType[] terminator = null)
 		{
 			var ct = 0;
 			var changed = false;
@@ -132,7 +132,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						continue;
 					}
 
-					if (term != null && Array.IndexOf(term, token.Type) >= 0)
+					if (terminator != null && Array.IndexOf(terminator, token.Type) >= 0)
 					{
 						this.tokens.Insert(0, token);
 						break;
@@ -153,20 +153,20 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.Convert:
 						case TokenType.Minus:
 							this.stack.Push(node);
-							if (!this.Expression(node, term))
+							if (!this.Expression(node.Type, terminator))
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESOPERAND, token.Type), token);
 							this.CombineUnary(node.Lexeme);
 							changed = true;
 							break;
 						case TokenType.New:
 							this.stack.Push(node);
-							if (!this.Expression(node, UnionTerms(term, NewTerm)))
+							if (!this.Expression(node.Type, UnionTerminators(terminator, NewTerm)))
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESOPERAND, token.Type), token);
 							this.CombineUnary(node.Lexeme); // collect Type for 'NEW'
 							this.CheckAndConsumeToken(TokenType.Call);
 							var argumentsNode = new ParserNode(this.tokens.Dequeue());
 							this.stack.Push(argumentsNode); // push 'ARGUMENTS' into stack
-							while (this.Expression(argumentsNode, DefaultTerm))
+							while (this.Expression(argumentsNode.Type, DefaultTerm))
 							{
 								this.CombineUnary(argumentsNode.Lexeme); // push argument
 								if (this.tokens.Count == 0 || this.tokens[0].Type != TokenType.Comma)
@@ -211,49 +211,57 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								continue;
 							}
 
-							if (op.Type != TokenType.None && this.ComputePrecedence(node.Type, op.Type) <= 0)
+							if (@operator != TokenType.None && this.ComputePrecedence(node.Type, @operator) <= 0)
 							{
 								this.tokens.Insert(0, token);
 								return changed;
 							}
 
 							this.stack.Push(node);
-							if (!this.Expression(node, term))
+							if (!this.Expression(node.Type, terminator))
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND, token.Type), token);
 							this.CombineBinary(node.Lexeme);
 
 							if (token.Type == TokenType.Call &&
-								node.Nodes.Count == 2 &&
-								node.Nodes[0].Type == TokenType.Identifier &&
+								node.Count == 2 &&
+								node[0].Type == TokenType.Identifier &&
 								(
-									string.Equals(node.Nodes[0].Value, "unchecked", StringComparison.Ordinal) ||
-									string.Equals(node.Nodes[0].Value, "checked", StringComparison.Ordinal) ||
-									string.Equals(node.Nodes[0].Value, "typeof", StringComparison.Ordinal) ||
-									string.Equals(node.Nodes[0].Value, "default", StringComparison.Ordinal)
+									string.Equals(node[0].Value, "unchecked", StringComparison.Ordinal) ||
+									string.Equals(node[0].Value, "checked", StringComparison.Ordinal) ||
+									string.Equals(node[0].Value, "typeof", StringComparison.Ordinal) ||
+									string.Equals(node[0].Value, "default", StringComparison.Ordinal)
 								) &&
-								node.Nodes[1].Nodes.Count == 1)
+								node[1].Count == 1)
 							{
-								var arguments = node.Nodes[1];
-								var newType = string.Equals(node.Nodes[0].Value, "unchecked", StringComparison.Ordinal) ? TokenType.UncheckedScope :
-									string.Equals(node.Nodes[0].Value, "checked", StringComparison.Ordinal) ? TokenType.CheckedScope :
-										string.Equals(node.Nodes[0].Value, "typeof", StringComparison.Ordinal) ? TokenType.Typeof :
-											string.Equals(node.Nodes[0].Value, "default", StringComparison.Ordinal) ? TokenType.Default :
+								var newType = string.Equals(node[0].Value, "unchecked", StringComparison.Ordinal) ? TokenType.UncheckedScope :
+									string.Equals(node[0].Value, "checked", StringComparison.Ordinal) ? TokenType.CheckedScope :
+										string.Equals(node[0].Value, "typeof", StringComparison.Ordinal) ? TokenType.Typeof :
+											string.Equals(node[0].Value, "default", StringComparison.Ordinal) ? TokenType.Default :
 												TokenType.Call;
 
+								var newNode = node[1].ChangeType(newType);
+
 								this.stack.Pop();
-								this.stack.Push(new ParserNode(newType, node.Lexeme, node.Value, arguments.Nodes));
+								this.stack.Push(newNode);
 							}
 							else if (token.Type == TokenType.Lambda)
 							{
 								var lambda = this.stack.Pop();
-								var lambdaArguments = lambda.Nodes[0];
+								var lambdaArguments = lambda[0];
 								switch (lambdaArguments.Type)
 								{
 									case TokenType.Identifier:
-										lambda.Nodes[0] = new ParserNode(TokenType.Arguments, lambdaArguments.Lexeme, lambdaArguments.Value, new ParserNode.ParserNodeCollection { lambdaArguments }); break;
+										lambda.RemoveAt(0);
+										var newArguments = new ParserNode(TokenType.Arguments, lambdaArguments.Lexeme, "(");
+										newArguments.Add(lambdaArguments);
+										lambda.Insert(0, newArguments);
+										break;
 									case TokenType.Convert:
 									case TokenType.Group:
-										lambda.Nodes[0] = new ParserNode(TokenType.Arguments, lambdaArguments.Lexeme, lambdaArguments.Value, lambdaArguments.Nodes); break;
+										var convertedArguments = lambdaArguments.ChangeType(TokenType.Arguments);
+										lambda.RemoveAt(0);
+										lambda.Insert(0, convertedArguments);
+										break;
 									default:
 										throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKEN, token), token);
 								}
@@ -262,7 +270,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							changed = true;
 							break;
 						case TokenType.Cond:
-							if (op.Type != TokenType.None && this.ComputePrecedence(node.Type, op.Type) <= 0)
+							if (@operator != TokenType.None && this.ComputePrecedence(node.Type, @operator) <= 0)
 							{
 								this.tokens.Insert(0, token);
 								return changed;
@@ -278,9 +286,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							var colonIdx = this.FindCondClosingToken();
 							if (colonIdx < 0)
 								throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_COLONISEXPRECTED, token);
-							this.Expression(term: CondTerm);
+							this.Expression(terminator: CondTerm);
 							this.CheckAndConsumeToken(TokenType.Colon);
-							this.Expression(term: UnionTerms(DefaultTerm, term).ToArray());
+							this.Expression(terminator: UnionTerminators(DefaultTerm, terminator).ToArray());
 							this.CombineTernary(node.Lexeme);
 							changed = true;
 							break;
@@ -289,9 +297,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.Lparen:
 						case TokenType.Arguments:
 							if (token.Type == TokenType.Lparen)
-								node = new ParserNode(TokenType.Group, node.Lexeme, node.Value, node.Nodes);
+								node = node.ChangeType(TokenType.Group);
 							this.stack.Push(node);
-							while (this.Expression(node, DefaultTerm))
+							while (this.Expression(node.Type, DefaultTerm))
 							{
 								this.CombineUnary(node.Lexeme);
 								if (this.tokens.Count == 0 || this.tokens[0].Type != TokenType.Comma)
@@ -299,14 +307,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								this.CheckAndConsumeToken(TokenType.Comma);
 							}
 							this.CheckAndConsumeToken(TokenType.Rparen, TokenType.Rbracket);
-							if (token.Type == TokenType.Lparen && ct == 0 && node.Nodes.Count == 1 && (node.Nodes.First().Type == TokenType.Identifier || node.Nodes.First().Type == TokenType.Resolve || node.Nodes.First().Type == TokenType.NullResolve))
+							if (token.Type == TokenType.Lparen && ct == 0 && node.Count == 1 && (node[0].Type == TokenType.Identifier || node[0].Type == TokenType.Resolve))
 							{
-								node = new ParserNode(TokenType.Convert, node.Lexeme, node.Value, node.Nodes);
-								if (this.Expression(node, term) && this.stack.Any(n => n.Nodes == node.Nodes))
+								if (this.Expression(TokenType.Convert, terminator) && this.stack.Any(n => ReferenceEquals(n, node)))
 								{
 									this.CombineUnary(node.Lexeme);
 									this.stack.Pop();
-									this.stack.Push(node);
+									this.stack.Push(node.ChangeType(TokenType.Convert));
 								}
 							}
 							changed = true;
@@ -349,7 +356,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				var argumentAdded = false;
 
-				while (this.Expression(argumentsNode, GenArgTerm))
+				while (this.Expression(argumentsNode.Type, GenArgTerm))
 				{
 					argumentAdded = true;
 					// put argument into 'Arguments' node
@@ -397,8 +404,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var argumentsNode = new ParserNode(TokenType.Arguments, currentToken, "<");
 			var nullableNode = new ParserNode(TokenType.Identifier, currentToken, typeof(Nullable).Name);
 
-			argumentsNode.Nodes.Add(identifier);
-			nullableNode.Nodes.Add(argumentsNode);
+			argumentsNode.Add(identifier);
+			nullableNode.Add(argumentsNode);
 
 			this.stack.Push(nullableNode);
 			return true;
@@ -466,7 +473,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var operand = this.stack.Pop();
 			var @operator = this.stack.Pop();
 
-			@operator.Nodes.Add(operand);
+			@operator.Add(operand);
 			this.stack.Push(@operator);
 		}
 		private void CombineBinary(Token op)
@@ -476,8 +483,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var @operator = this.stack.Pop();
 			var leftOperand = this.stack.Pop();
 
-			@operator.Nodes.Add(leftOperand);
-			@operator.Nodes.Add(rightOperand);
+			@operator.Add(leftOperand);
+			@operator.Add(rightOperand);
 			this.stack.Push(@operator);
 		}
 		private void CombineTernary(Token op)
@@ -489,14 +496,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var @operator = this.stack.Pop();
 			var baseOperand = this.stack.Pop();
 
-			@operator.Nodes.Add(baseOperand);
-			@operator.Nodes.Add(leftOperand);
-			@operator.Nodes.Add(rightOperand);
+			@operator.Add(baseOperand);
+			@operator.Add(leftOperand);
+			@operator.Add(rightOperand);
 
 			this.stack.Push(@operator);
 		}
 
-		private static TokenType[] UnionTerms(TokenType[] first, TokenType[] second)
+		private static TokenType[] UnionTerminators(TokenType[] first, TokenType[] second)
 		{
 			if (first == null)
 				return second;
