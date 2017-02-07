@@ -87,7 +87,7 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		/// <summary>
 		/// Creates new <see cref="KnownTypeResolver"/> from specified list of types and <see cref="TypeDiscoveryOptions.All"/>.
-		/// </summary>		
+		/// </summary>
 		/// <param name="knownTypes">List of known types.</param>
 		public KnownTypeResolver(params Type[] knownTypes)
 			: this((IEnumerable<Type>)knownTypes)
@@ -171,7 +171,7 @@ namespace GameDevWare.Dynamic.Expressions
 					foundType = type;
 				}
 			}
-			if (this.knownTypesByName.TryGetValue(typeReference.Name, out typesToCheck) || this.knownTypesByName.TryGetValue(typeReference.FullName, out typesToCheck))
+			if (this.knownTypesByName.TryGetValue(typeReference.FullName, out typesToCheck))
 			{
 				foreach (var type in typesToCheck)
 				{

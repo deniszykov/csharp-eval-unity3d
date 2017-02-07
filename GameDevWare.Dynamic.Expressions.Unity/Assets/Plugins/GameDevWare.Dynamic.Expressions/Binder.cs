@@ -419,12 +419,10 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 			}
 
-			if (expression == null && memberAccessExpression == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVENAME, propertyOrFieldName), node);
-			else if (memberAccessExpression == null)
+			if (memberAccessExpression == null)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, type), node);
 
-			if (useNullPropagation && expression == null)
+			if (useNullPropagation && isStatic)
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
 
 			if (useNullPropagation)
@@ -591,7 +589,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (targetExpressionType == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
 			{
 				var propertyOrFieldTarget = target.GetExpression(throwOnError: false);
-				var useNullPropagation = target.GetUseNullPropagation(throwOnError: true);
+				var useNullPropagation = target.GetUseNullPropagation(throwOnError: false);
 
 				var typeReference = default(TypeReference);
 				var type = default(Type);
