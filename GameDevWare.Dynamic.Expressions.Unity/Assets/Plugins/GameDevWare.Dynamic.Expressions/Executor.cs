@@ -485,7 +485,6 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return closure =>
 			{
-
 				var instance = newFn(closure);
 
 				closure.Locals[LOCAL_OPERAND1] = instance;

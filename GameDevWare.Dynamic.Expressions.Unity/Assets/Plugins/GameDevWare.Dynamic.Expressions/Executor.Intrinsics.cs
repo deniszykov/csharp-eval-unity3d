@@ -155,45 +155,58 @@ namespace GameDevWare.Dynamic.Expressions
 					Convert(default(Closure), default(object), default(Type), default(ExpressionType), default(UnaryOperation));
 				}
 
-				Operations =
-				(
-					from opType in typeof(Executor).GetNestedTypes(BindingFlags.NonPublic)
-					where opType.Name.StartsWith("op_", StringComparison.Ordinal)
-					from method in opType.GetMethods(BindingFlags.Public | BindingFlags.Static)
-					let type = Type.GetType("System." + opType.Name.Substring(3), false)
-					where type != null && Array.IndexOf(Enum.GetNames(typeof(ExpressionType)), method.Name) >= 0
-					let expressionType = (ExpressionType)Enum.Parse(typeof(ExpressionType), method.Name)
-					let methodParams = method.GetParameters()
-					let fn = methodParams.Length == 3 ? (Delegate)CreateBinaryOperationFn(method) :
-							 methodParams.Length == 2 ? (Delegate)CreateUnaryOperationFn(method) : null
-					where fn != null
-					select new { type, expressionType, fn }
-				)
-				.ToLookup(t => t.type)
-				.ToDictionary
-				(
-					keySelector: k => k.Key,
-					elementSelector: e => e.ToDictionary(b => (int)b.expressionType, f => f.fn)
-				);
+				var expressionTypeNames = Enum.GetNames(typeof(ExpressionType));
+				Array.Sort(expressionTypeNames, StringComparer.Ordinal);
 
-				Convertions =
-				(
-					from opType in typeof(Executor).GetNestedTypes(BindingFlags.NonPublic)
-					where opType.Name.StartsWith("op_", StringComparison.Ordinal)
-					from method in opType.GetMethods(BindingFlags.Public | BindingFlags.Static)
-					let type = Type.GetType("System." + opType.Name.Substring(3), false)
-					where type != null && method.Name.StartsWith("To", StringComparison.Ordinal)
-					let fn = (Delegate)CreateBinaryOperationFn(method)
-					let toType = Type.GetType("System." + method.Name.Substring(2), false)
-					where toType != null
-					select new { type, toType, fn }
-				)
-				.ToLookup(t => t.type)
-				.ToDictionary
-				(
-					keySelector: k => k.Key,
-					elementSelector: e => e.ToDictionary(b => b.toType, f => f.fn)
-				);
+				Operations = new Dictionary<Type, Dictionary<int, Delegate>>();
+				foreach (var opType in typeof(Executor).GetNestedTypes(BindingFlags.NonPublic))
+				{
+					if (opType.Name.StartsWith("op_", StringComparison.Ordinal) == false) continue;
+					var type = Type.GetType("System." + opType.Name.Substring(3), false);
+					if (type == null) continue;
+
+					var delegatesByExpressionType = default(Dictionary<int, Delegate>);
+					if (Operations.TryGetValue(type, out delegatesByExpressionType) == false)
+						Operations[type] = delegatesByExpressionType = new Dictionary<int, Delegate>();
+
+					foreach (var method in opType.GetMethods(BindingFlags.Public | BindingFlags.Static))
+					{
+						if (Array.BinarySearch(expressionTypeNames, method.Name) < 0)
+							continue;
+
+						var expressionType = (ExpressionType)Enum.Parse(typeof(ExpressionType), method.Name);
+						var methodParams = method.GetParameters();
+						var fn = methodParams.Length == 3 ? (Delegate)CreateBinaryOperationFn(method) :
+								methodParams.Length == 2 ? (Delegate)CreateUnaryOperationFn(method) : null;
+
+						delegatesByExpressionType[(int)expressionType] = fn;
+					}
+				}
+
+				Convertions = new Dictionary<Type, Dictionary<Type, Delegate>>();
+				foreach (var opType in typeof(Executor).GetNestedTypes(BindingFlags.NonPublic))
+				{
+					if (opType.Name.StartsWith("op_", StringComparison.Ordinal) == false) continue;
+					var type = Type.GetType("System." + opType.Name.Substring(3), false);
+					if (type == null) continue;
+
+					var convertorsByType = default(Dictionary<Type, Delegate>);
+					if (Convertions.TryGetValue(type, out convertorsByType) == false)
+						Convertions[type] = convertorsByType = new Dictionary<Type, Delegate>();
+
+					foreach (var method in opType.GetMethods(BindingFlags.Public | BindingFlags.Static))
+					{
+						if (method.Name.StartsWith("To", StringComparison.Ordinal) == false)
+							continue;
+
+						var fn = (Delegate)CreateBinaryOperationFn(method);
+						var toType = Type.GetType("System." + method.Name.Substring(2), false);
+						if (toType == null)
+							continue;
+
+						convertorsByType[toType] = fn;
+					}
+				}
 			}
 
 			public static object BinaryOperation(Closure closure, object left, object right,
