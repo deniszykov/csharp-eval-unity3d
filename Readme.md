@@ -155,17 +155,31 @@ You can send suggestions at support@gamedevware.com
 * Custom editor with auto-completion for Unity
 
 ## Changes
-# 1.0.1.12 (future)
-* parser: added lambda expression syntax '() => x' and 'new Func(a => x)'
-* parser: added generic types and generic methods
-* parser: added nullable types via '?' suffix
-* binder: added support for expression parameter re-mapping with lambda syntax at beggining of expression
-* API: ITypeResolutionService renamed to ITypeResolver
-* API: ITypeResolver.GetType removed
-* API: ITypeResolver now could be configured with TypeDiscoveryOptions
-* API: moved type name rendering functions to NameUtils class
-* renderer: fixed error with generic type names
-* fixed: 'new' expression parsed with error on chained calls new a().b().c()
+# 2.0.0-alpha
+### Features
+* added more descriptive message to member binding error
+* added autodoc comments for public members
+* hidden ReadOnlyDictionary from public access
+* removed WEBGL check for later version of Unity, because unsigned types bug was fixed
+* added generic types and generic methods
+* added nullable types via '?' suffix
+* added lambda expression syntax '() => x' and 'new Func(a => x)'
+* added support for expression parameter re-mapping with lambda syntax at beggining of expression
+* added support for Func<> lambda on AOT environments
+
+###Bug Fixes
+* fixed error with wrongly resolved types (only by name) in KnownTypeResolver
+* fixed bug with ACCESS_VIOLATION on iOS (Unity 5.x.x IL2CPP)
+* fixed few Unity 3.4 related errors in code
+* fixed 'new' expression parsed with error on chained calls new a().b().c()
+
+###Breaking changes
+* ParserNode renamed to ParseTreeNode
+* ExpressionTree renamed to SyntaxTreeNode
+* ExpressionBuilder renamed to Binder
+* ITypeResolutionService renamed to ITypeResolver
+* ITypeResolver.GetType removed
+* ITypeResolver now could be configured with TypeDiscoveryOptions
 
 # 1.0.1.11
 * fixed error them creating nullable types via "new" keyword
