@@ -2,15 +2,15 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 
@@ -27,7 +27,7 @@ namespace Assets
 		private const int PART_TEXT = 0;
 		private const int PART_EXPR = 1;
 
-		private static readonly ExpressionBuilder ExpressionBuilder = new ExpressionBuilder
+		private static readonly Binder ExpressionBinder = new Binder
 		(
 			parameters: new[] { Expression.Parameter(typeof(InstanceT), "p") },
 			resultType: typeof(object),
@@ -70,9 +70,9 @@ namespace Assets
 					// tokenize expression
 					var tokens = Tokenizer.Tokenize(part.Value);
 					// build concrete tree
-					var expressionTree = Parser.Parse(tokens).ToExpressionTree(false);
+					var expressionTree = Parser.Parse(tokens).ToSyntaxTree(false);
 					// build abstract tree
-					var body = ExpressionBuilder.Build(expressionTree, ExpressionBuilder.Parameters[0]);
+					var body = ExpressionBinder.Build(expressionTree, ExpressionBinder.Parameters[0]);
 					// add it as argument for concat
 					concatArguments.Add(body);
 				}
@@ -81,7 +81,7 @@ namespace Assets
 			var transformExpr = Expression.Lambda<Func<InstanceT, string>>
 			(
 				Expression.Call(ConcatFunc.Method, Expression.NewArrayInit(typeof(object), concatArguments)),
-				ExpressionBuilder.Parameters
+				ExpressionBinder.Parameters
 			);
 
 			return transformExpr.CompileAot();
@@ -147,7 +147,7 @@ namespace Assets
 			if (instance == null) throw new ArgumentNullException("instance");
 
 			return new PatternString<InstanceT>(pattern).Tranform(instance);
-		} 
+		}
 	}
 
 }

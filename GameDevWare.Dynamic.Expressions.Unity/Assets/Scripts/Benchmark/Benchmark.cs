@@ -73,38 +73,38 @@ public class Benchmark : MonoBehaviour
 			var parsing = sw.Elapsed;
 
 			// binding
-			var expressionBuilder = new ExpressionBuilder(new ParameterExpression[0], typeof(double));
-			var expressionTree = expressionBuilder.Build(parseTree.ToExpressionTree(checkedScope: true));
+			var expressionBinder = new Binder(new ParameterExpression[0], typeof(double));
+			var expressionTree = expressionBinder.Build(parseTree.ToSyntaxTree(checkedScope: true));
 
 			sw.Reset();
 			sw.Start();
 			for (var i = 0; i < Iterations; i++)
-				expressionBuilder.Build(parseTree.ToExpressionTree(checkedScope: true));
+				expressionBinder.Build(parseTree.ToSyntaxTree(checkedScope: true));
 			sw.Stop();
 			var binding = sw.Elapsed;
 
 
 			// compilation JIT
-			var expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBuilder.Parameters);
+			var expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBinder.Parameters);
 			var fnJit = expressionLambda.Compile();
 			sw.Reset();
 			sw.Start();
 			for (var i = 0; i < Iterations; i++)
 			{
-				expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBuilder.Parameters);
+				expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBinder.Parameters);
 				expressionLambda.Compile();
 			}
 			sw.Stop();
 			var compilationJit = sw.Elapsed;
 
 			// compilation AOT
-			expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBuilder.Parameters);
+			expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBinder.Parameters);
 			var fnAot = expressionLambda.CompileAot(forceAot: true);
 			sw.Reset();
 			sw.Start();
 			for (var i = 0; i < Iterations; i++)
 			{
-				expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBuilder.Parameters);
+				expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBinder.Parameters);
 				expressionLambda.CompileAot(forceAot: true);
 			}
 			sw.Stop();
