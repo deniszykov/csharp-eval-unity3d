@@ -23,33 +23,43 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	internal static class NameUtils
 	{
+		private static readonly string[] EmptyNames = new string[0];
+
 		public static string[] GetTypeNames(Type type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
+			var name = type.Name;
+			if (string.IsNullOrEmpty(name))
+				return EmptyNames;
+
 			if (type == typeof(Array))
-				return new[] { type.Name, type.Name + "`1" };
+				return new[] { name, name + "`1" };
 			else if (type.IsNested && type.IsGenericType)
 				return new[] { WriteName(type).ToString(), RemoveGenericSuffix(WriteName(type).ToString()) };
 			else if (type.IsNested)
 				return new[] { WriteName(type).ToString() };
 			else
-				return new[] { type.Name };
+				return new[] { name };
 		}
 		public static string[] GetTypeFullNames(Type type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
+			var fullName = type.FullName;
+			if (string.IsNullOrEmpty(fullName))
+				return EmptyNames;
+
 			if (type == typeof(Array))
-				return new[] { type.FullName, type.FullName + "`1" };
+				return new[] { fullName, fullName + "`1" };
 			else if (type.IsNested && type.IsGenericType)
 				return new[] { WriteFullName(type).ToString(), RemoveGenericSuffix(WriteFullName(type)).ToString() };
 			else if (type.IsNested)
 				return new[] { WriteFullName(type).ToString() };
 			else if (type.IsGenericType)
-				return new[] { type.FullName, RemoveGenericSuffix(type.FullName) };
+				return new[] { fullName, RemoveGenericSuffix(fullName) };
 			else
-				return new[] { type.FullName };
+				return new[] { fullName };
 		}
 
 		public static StringBuilder WriteFullName(Type type, StringBuilder builder = null, bool writeGenericArguments = false)
