@@ -35,12 +35,10 @@ namespace GameDevWare.Dynamic.Expressions
 
 			if (type == typeof(Array))
 				return new[] { name, name + "`1" };
-			else if (type.IsNested && type.IsGenericType)
-				return new[] { WriteName(type).ToString(), RemoveGenericSuffix(WriteName(type).ToString()) };
-			else if (type.IsNested)
-				return new[] { WriteName(type).ToString() };
+			else if (type.IsGenericType)
+				return new[] { WriteName(type).ToString(), RemoveGenericSuffix(WriteName(type)).ToString() };
 			else
-				return new[] { name };
+				return new[] { WriteName(type).ToString() };
 		}
 		public static string[] GetTypeFullNames(Type type)
 		{
@@ -52,14 +50,10 @@ namespace GameDevWare.Dynamic.Expressions
 
 			if (type == typeof(Array))
 				return new[] { fullName, fullName + "`1" };
-			else if (type.IsNested && type.IsGenericType)
-				return new[] { WriteFullName(type).ToString(), RemoveGenericSuffix(WriteFullName(type)).ToString() };
-			else if (type.IsNested)
-				return new[] { WriteFullName(type).ToString() };
 			else if (type.IsGenericType)
-				return new[] { fullName, RemoveGenericSuffix(fullName) };
+				return new[] { WriteFullName(type).ToString(), RemoveGenericSuffix(WriteFullName(type)).ToString() };
 			else
-				return new[] { fullName };
+				return new[] { WriteFullName(type).ToString() };
 		}
 
 		public static StringBuilder WriteFullName(Type type, StringBuilder builder = null, bool writeGenericArguments = false)
