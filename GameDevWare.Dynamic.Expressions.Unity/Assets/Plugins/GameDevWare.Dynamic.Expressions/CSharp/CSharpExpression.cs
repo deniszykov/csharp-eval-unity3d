@@ -156,7 +156,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree();
 			var expressionBuilder = new Binder(new ParameterExpression[0], resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Build(expressionTree);
+			var body = expressionBuilder.Bind(expressionTree);
 			return Expression.Lambda<Func<ResultT>>(body, expressionBuilder.Parameters);
 		}
 		/// <summary>
@@ -179,7 +179,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME)
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Build(expressionTree);
+			var body = expressionBuilder.Bind(expressionTree);
 			return Expression.Lambda<Func<Arg1T, ResultT>>(body, expressionBuilder.Parameters);
 		}
 		/// <summary>
@@ -205,7 +205,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Build(expressionTree);
+			var body = expressionBuilder.Bind(expressionTree);
 			return Expression.Lambda<Func<Arg1T, Arg2T, ResultT>>(body, expressionBuilder.Parameters);
 		}
 		/// <summary>
@@ -234,7 +234,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg3T), arg3Name ?? ARG3_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Build(expressionTree);
+			var body = expressionBuilder.Bind(expressionTree);
 			return Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(body, expressionBuilder.Parameters);
 		}
 		/// <summary>
@@ -266,7 +266,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg3T), arg3Name ?? ARG3_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg4T), arg3Name ?? ARG4_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Build(expressionTree);
+			var body = expressionBuilder.Bind(expressionTree);
 			return Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(body, expressionBuilder.Parameters);
 		}
 	}

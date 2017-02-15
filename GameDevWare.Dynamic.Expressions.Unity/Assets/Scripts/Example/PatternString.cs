@@ -72,7 +72,7 @@ namespace Assets
 					// build concrete tree
 					var expressionTree = Parser.Parse(tokens).ToSyntaxTree(false);
 					// build abstract tree
-					var body = ExpressionBinder.Build(expressionTree, ExpressionBinder.Parameters[0]);
+					var body = ExpressionBinder.Bind(expressionTree, ExpressionBinder.Parameters[0]);
 					// add it as argument for concat
 					concatArguments.Add(body);
 				}

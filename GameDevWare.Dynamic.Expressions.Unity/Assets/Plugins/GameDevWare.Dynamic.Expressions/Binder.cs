@@ -119,7 +119,18 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <param name="node">Syntax tree. Not null.</param>
 		/// <param name="context">Context expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns></returns>
+		[Obsolete("User Bind() instead.")]
 		public Expression Build(SyntaxTreeNode node, Expression context = null)
+		{
+			return Bind(node, context);
+		}
+		/// <summary>
+		/// Binds specified syntax tree to concrete types and optional context.
+		/// </summary>
+		/// <param name="node">Syntax tree. Not null.</param>
+		/// <param name="context">Context expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
+		/// <returns></returns>
+		public Expression Bind(SyntaxTreeNode node, Expression context = null)
 		{
 			// lambda binding substitution feature
 			if (node.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA && typeof(Delegate).IsAssignableFrom(this.resultType) == false)
@@ -146,6 +157,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return expression;
 		}
+
 		private Expression Build(SyntaxTreeNode node, Expression context, Type typeHint)
 		{
 			if (node == null) throw new ArgumentNullException("node");
@@ -189,7 +201,6 @@ namespace GameDevWare.Dynamic.Expressions
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_BUILDFAILED, expressionType, exception.Message), exception, node);
 			}
 		}
-
 		private Expression BuildByType(SyntaxTreeNode node, Expression context)
 		{
 			if (node == null) throw new ArgumentNullException("node");
