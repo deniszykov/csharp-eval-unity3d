@@ -230,6 +230,30 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\UnboundExpression.cs">
       <Link>UnboundExpression.cs</Link>
     </Compile>
+    <Compile Include="Binding\AnyBinder.cs" />
+    <Compile Include="Binding\ConditionBinder.cs" />
+    <Compile Include="Binding\ExpressionUtils.cs" />
+    <Compile Include="Binding\MemberDescription.cs" />
+    <Compile Include="Binding\Metadata.cs" />
+    <Compile Include="Binding\NumberUtils.cs" />
+    <Compile Include="Binding\TypeBinaryBinder.cs" />
+    <Compile Include="Binding\TypeConversion.cs" />
+    <Compile Include="Binding\TypeDescription.cs" />
+    <Compile Include="Binding\TypeTuple2.cs" />
+    <Compile Include="Binding\UnaryBinder.cs" />
+    <Compile Include="Binding\BindingContext.cs" />
+    <Compile Include="Binding\BinaryBinder.cs" />
+    <Compile Include="Binding\LambdaBinder.cs" />
+    <Compile Include="Binding\NewBinder.cs" />
+    <Compile Include="Binding\NewArrayBoundsBinder.cs" />
+    <Compile Include="Binding\TypeOfBinder.cs" />
+    <Compile Include="Binding\DefaultBinder.cs" />
+    <Compile Include="Binding\InvokeBinder.cs" />
+    <Compile Include="Binding\CallBinder.cs" />
+    <Compile Include="Binding\IndexBinder.cs" />
+    <Compile Include="Binding\PropertyOrFieldBinder.cs" />
+    <Compile Include="Binding\GroupBinder.cs" />
+    <Compile Include="Binding\ConstantBinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnityResources.cs">
       <AutoGen>True</AutoGen>
@@ -264,9 +288,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Binding\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <Copy SourceFiles="$(ProjectDir)UnityResources.cs" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />

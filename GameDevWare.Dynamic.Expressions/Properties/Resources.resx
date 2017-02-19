@@ -132,73 +132,73 @@
   <data name="EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE" xml:space="preserve">
     <value>One of parameters has invalid type. Make sure parameter types matches expression's signature.</value>
   </data>
-  <data name="EXCEPTION_BUILD_BUILDFAILED" xml:space="preserve">
+  <data name="EXCEPTION_BIND_FAILEDTOBIND" xml:space="preserve">
     <value>An error occured while trying to build '{0}' expression: {1}</value>
   </data>
-  <data name="EXCEPTION_BUILD_CLOSEDDELEGATETYPEISEXPECTED" xml:space="preserve">
+  <data name="EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED" xml:space="preserve">
     <value>Invalid lambda type '{0}'. A closed delegate type is expected in lambda type declaration.</value>
   </data>
-  <data name="EXCEPTION_BUILD_FAILEDTOBINDGENERICARGUMENTSTOTYPE" xml:space="preserve">
+  <data name="EXCEPTION_BIND_FAILEDTOBINDGENERICARGUMENTSTOTYPE" xml:space="preserve">
     <value>Failed to bind generic arguments '{0}' to type '{1}'.</value>
   </data>
-  <data name="EXCEPTION_BUILD_INVALIDCHARLITERAL" xml:space="preserve">
+  <data name="EXCEPTION_BIND_INVALIDCHARLITERAL" xml:space="preserve">
     <value>Invalid char literal '{0}'. It should be one character length.</value>
   </data>
-  <data name="EXCEPTION_BUILD_INVALIDCONSTANTEXPRESSION" xml:space="preserve">
+  <data name="EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION" xml:space="preserve">
     <value>Can't convert constant of type '{0}' to literal representation.</value>
   </data>
-  <data name="EXCEPTION_BUILD_INVALIDLAMBDAARGUMENTS" xml:space="preserve">
+  <data name="EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS" xml:space="preserve">
     <value>Invalid argument types or count for lambda of type '{0}'.</value>
   </data>
-  <data name="EXCEPTION_BUILD_MISSINGATTRONNODE" xml:space="preserve">
+  <data name="EXCEPTION_BIND_MISSINGATTRONNODE" xml:space="preserve">
     <value>Missing or wrong '{0}' attribute on one of expression nodes.</value>
   </data>
-  <data name="EXCEPTION_BUILD_MISSINGORWRONGARGUMENT" xml:space="preserve">
+  <data name="EXCEPTION_BIND_MISSINGORWRONGARGUMENT" xml:space="preserve">
     <value>Missing or wrong '{0}' argument.</value>
   </data>
-  <data name="EXCEPTION_BUILD_RENDERFAILED" xml:space="preserve">
+  <data name="EXCEPTION_BIND_RENDERFAILED" xml:space="preserve">
     <value>An error occured while trying to render '{0}' expression: {1}</value>
   </data>
-  <data name="EXCEPTION_BUILD_TOOMANYARGUMENTS" xml:space="preserve">
+  <data name="EXCEPTION_BIND_TOOMANYARGUMENTS" xml:space="preserve">
     <value>Too many arguments. Maximum number of supported arguments '{0}'.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF" xml:space="preserve">
     <value>Unable to apply null-conditional operator on type '{0}'.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETOBINDCALL" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETOBINDCALL" xml:space="preserve">
     <value>Unable to find method '{0}' on type '{1}' accepting specified arguments.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR" xml:space="preserve">
     <value>Unable to find constructor on type '{0}' accepting specified arguments.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETOBINDDELEG" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETOBINDDELEG" xml:space="preserve">
     <value>Unable to invoke delegate {0}({1}) with specified arguments.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETOBINDINDEXER" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETOBINDINDEXER" xml:space="preserve">
     <value>Unable to find indexing property on type '{0}' accepting specified arguments.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETOCREATEEXPRWITHPARAMS" xml:space="preserve">
     <value>Unable to create '{0}' expression with these '{1}' parameters.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETOINVOKENONDELEG" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETOINVOKENONDELEG" xml:space="preserve">
     <value>Unable to invoke non-delegate type '{0}'.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETORESOLVEMEMBERONTYPE" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE" xml:space="preserve">
     <value>Unable to find public property or field '{0}' on '{1}'.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETORESOLVENAME" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETORESOLVENAME" xml:space="preserve">
     <value>Unable to resolve '{0}'. There is no formal parameter with this name.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETORESOLVETYPE" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETORESOLVETYPE" xml:space="preserve">
     <value>Unable to resolve type '{0}'.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNABLETORESOLVETYPEMULTIPLE" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNABLETORESOLVETYPEMULTIPLE" xml:space="preserve">
     <value>Unable to resolve type '{0}'. Can't choose from: '{1}'.</value>
   </data>
-  <data name="EXCEPTION_BUILD_UNKNOWNEXPRTYPE" xml:space="preserve">
+  <data name="EXCEPTION_BIND_UNKNOWNEXPRTYPE" xml:space="preserve">
     <value>Unknown expression type '{0}'.</value>
   </data>
-  <data name="EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED" xml:space="preserve">
+  <data name="EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED" xml:space="preserve">
     <value>Invalid lambda type '{0}'. A valid delegate type should be specified in lambda type declaration.</value>
   </data>
   <data name="EXCEPTION_COMPIL_NOBINARYOPONTYPE" xml:space="preserve">
@@ -284,5 +284,8 @@
   </data>
   <data name="EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES" xml:space="preserve">
     <value>Length of types array doesn't match length of names array.</value>
+  </data>
+  <data name="EXCEPTION_BIND_MISSINGMETHODPARAMETER" xml:space="preserve">
+    <value>Missing required method/indexer '{0}' parameter.</value>
   </data>
 </root>

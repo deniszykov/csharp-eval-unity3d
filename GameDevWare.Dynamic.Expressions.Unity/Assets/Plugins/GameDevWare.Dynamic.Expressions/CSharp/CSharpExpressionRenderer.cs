@@ -67,7 +67,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var expressionTypeObj = default(object);
 			if (node.TryGetValue(Constants.EXPRESSION_TYPE_ATTRIBUTE, out expressionTypeObj) == false || expressionTypeObj is string == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE));
 
 			try
 			{
@@ -119,7 +119,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case "TypeIs":
 					case "TypeAs": RenderTypeBinary(node, builder, wrapped, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_LAMBDA: RenderLambda(node, builder, wrapped, checkedScope); break;
-					default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNKNOWNEXPRTYPE, expressionType));
+					default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType));
 				}
 			}
 			catch (InvalidOperationException)
@@ -132,7 +132,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			catch (Exception exception)
 			{
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_RENDERFAILED, expressionTypeObj, exception.Message), exception);
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_RENDERFAILED, expressionTypeObj, exception.Message), exception);
 			}
 		}
 		private static void RenderTypeBinary(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
@@ -187,7 +187,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					builder.Append(" as ");
 					RenderTypeName(typeName, builder);
 					break;
-				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNKNOWNEXPRTYPE, expressionType));
+				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType));
 			}
 
 			if (closeParent)
@@ -200,15 +200,15 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var testObj = default(object);
 			if (node.TryGetValue(Constants.TEST_ATTRIBUTE, out testObj) == false || testObj is SyntaxTreeNode == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.TEST_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.TEST_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
 
 			var ifTrueObj = default(object);
 			if (node.TryGetValue(Constants.IFTRUE_ATTRIBUTE, out ifTrueObj) == false || ifTrueObj is SyntaxTreeNode == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.IFTRUE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.IFTRUE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
 
 			var ifFalseObj = default(object);
 			if (node.TryGetValue(Constants.IFFALSE_ATTRIBUTE, out ifFalseObj) == false || ifFalseObj is SyntaxTreeNode == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.IFFALSE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.IFFALSE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
 
 			var test = (SyntaxTreeNode)testObj;
 			var ifTrue = (SyntaxTreeNode)ifTrueObj;
@@ -233,10 +233,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var leftObj = default(object);
 			if (node.TryGetValue(Constants.LEFT_ATTRIBUTE, out leftObj) == false || leftObj is SyntaxTreeNode == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.LEFT_ATTRIBUTE, expressionType));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.LEFT_ATTRIBUTE, expressionType));
 			var rightObj = default(object);
 			if (node.TryGetValue(Constants.RIGHT_ATTRIBUTE, out rightObj) == false || rightObj is SyntaxTreeNode == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.RIGHT_ATTRIBUTE, expressionType));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.RIGHT_ATTRIBUTE, expressionType));
 
 			var left = (SyntaxTreeNode)leftObj;
 			var right = (SyntaxTreeNode)rightObj;
@@ -288,7 +288,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				case "AndAlso": builder.Append(" && "); break;
 				case "OrElse": builder.Append(" || "); break;
 				case "Coalesce": builder.Append(" ?? "); break;
-				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNKNOWNEXPRTYPE, expressionType));
+				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType));
 			}
 			Render(right, builder, false, checkedOperation);
 
@@ -302,12 +302,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var expressionTypeObj = default(object);
 			if (node.TryGetValue(Constants.EXPRESSION_TYPE_ATTRIBUTE, out expressionTypeObj) == false || expressionTypeObj is string == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE));
 			var expressionType = (string)expressionTypeObj;
 
 			var expressionObj = default(object);
 			if (node.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj is SyntaxTreeNode == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType));
 
 			var expression = (SyntaxTreeNode)expressionObj;
 			var checkedOperation = expressionType == Constants.EXPRESSION_TYPE_NEGATE_CHECKED ? true :
@@ -347,7 +347,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				case "Complement":
 					builder.Append("~");
 					break;
-				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNKNOWNEXPRTYPE, expressionType));
+				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType));
 			}
 			Render(expression, builder, false, checkedOperation);
 
@@ -436,10 +436,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var typeObj = default(object);
 			var valueObj = default(object);
 			if (node.TryGetValue(Constants.TYPE_ATTRIBUTE, out typeObj) == false || typeObj is string == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.TYPE_ATTRIBUTE, node.GetExpressionType(throwOnError: true)));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.TYPE_ATTRIBUTE, node.GetExpressionType(throwOnError: true)));
 
 			if (node.TryGetValue(Constants.VALUE_ATTRIBUTE, out valueObj) == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.VALUE_ATTRIBUTE, node.GetExpressionType(throwOnError: true)));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.VALUE_ATTRIBUTE, node.GetExpressionType(throwOnError: true)));
 
 			if (valueObj == null)
 			{
@@ -519,12 +519,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var expressionTypeObj = default(object);
 			if (node.TryGetValue(Constants.EXPRESSION_TYPE_ATTRIBUTE, out expressionTypeObj) == false || expressionTypeObj is string == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE));
 			var expressionType = (string)expressionTypeObj;
 
 			var expressionObj = default(object);
 			if (node.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out expressionObj) == false || expressionObj is SyntaxTreeNode == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType));
 
 			var expression = (SyntaxTreeNode)expressionObj;
 
@@ -726,7 +726,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				case ExpressionType.NewArrayBounds:
 					RenderNewArray((NewArrayExpression)expression, builder, checkedScope);
 					break;
-				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNKNOWNEXPRTYPE, expression.Type));
+				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.Type));
 			}
 		}
 
@@ -1056,7 +1056,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			else
 			{
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_INVALIDCONSTANTEXPRESSION, expression.NodeType));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION, expression.NodeType));
 			}
 		}
 		private static void RenderConstant(ConstantExpression expression, StringBuilder builder)
@@ -1111,7 +1111,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			else if (expression.Type == typeof(byte) || expression.Type == typeof(sbyte) || expression.Type == typeof(short) || expression.Type == typeof(int))
 				builder.Append(strValue);
 			else
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_INVALIDCONSTANTEXPRESSION, expression.Type));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION, expression.Type));
 		}
 		private static void RenderUnary(UnaryExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
@@ -1171,7 +1171,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					}
 					break;
 				default:
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNKNOWNEXPRTYPE, expression.Type));
+					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.Type));
 			}
 			Render(expression.Operand, builder, false, checkedScope);
 
@@ -1272,7 +1272,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					builder.Append(" ** ");
 					break;
 				default:
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNKNOWNEXPRTYPE, expression.Type));
+					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.Type));
 			}
 			Render(expression.Right, builder, false, checkedScope);
 
@@ -1370,7 +1370,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (value == null) throw new ArgumentException("value");
 			if (builder == null) throw new ArgumentException("builder");
 
-			if (isChar && value.Length != 1) throw new ArgumentException(string.Format(Properties.Resources.EXCEPTION_BUILD_INVALIDCHARLITERAL, value));
+			if (isChar && value.Length != 1) throw new ArgumentException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDCHARLITERAL, value));
 
 			if (isChar)
 				builder.Append("'");

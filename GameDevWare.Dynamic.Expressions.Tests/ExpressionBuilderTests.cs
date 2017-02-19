@@ -7,6 +7,23 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 {
 	public class ExpressionBuilderTests
 	{
+		public class MyClass
+		{
+			public static MyClass Default = new MyClass();
+			public static MyClass Filled = new MyClass
+			{
+				NullableIntField = 2,
+				IntField =  1,
+				BoolField =  true,
+				OtherField = new MyClass()
+			};
+
+			public int? NullableIntField;
+			public int IntField;
+			public bool BoolField;
+			public MyClass OtherField;
+
+		}
 
 		[Theory]
 		[InlineData("10", 10)]
@@ -104,9 +121,19 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("default(Math)?.ToString()", null)]
 		[InlineData("Math.E?.ToString()", "2.71828182845905")]
 		[InlineData("default(Math[])?[0]", null)]
+		[InlineData("ExpressionBuilderTests.MyClass.Default?.NullableIntField ?? 2", 2)]
+		[InlineData("ExpressionBuilderTests.MyClass.Default?.IntField ?? 2", 0)]
+		[InlineData("ExpressionBuilderTests.MyClass.Default?.BoolField ?? true", false)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?.NullableIntField ?? 1", 2)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?.IntField ?? 2", 1)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?.IntField <= 1", true)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?.BoolField ?? false", true)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?.OtherField.BoolField ?? true", false)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?.OtherField?.OtherField?.OtherField.BoolField ?? true", false)]
 		public void NullResolveTest(string expression, object expected)
 		{
-			var actual = CSharpExpression.Evaluate<object>(expression);
+			var knownTypeResolver = new KnownTypeResolver(typeof(MyClass));
+			var actual = CSharpExpression.Evaluate<object>(expression, knownTypeResolver);
 
 			if (expected == null)
 				Assert.Null(actual);

@@ -8,7 +8,7 @@
 <#@ output extension=".txt" #>
 
 <#
-		var types = typeof(GameDevWare.Dynamic.Expressions.ExpressionBuilder).Assembly.GetTypes().ToList();
+		var types = typeof(GameDevWare.Dynamic.Expressions.Binder).Assembly.GetTypes().ToList();
 		types.Add(typeof(System.Linq.Expressions.Expression));
 		foreach (var type in types)
 		{

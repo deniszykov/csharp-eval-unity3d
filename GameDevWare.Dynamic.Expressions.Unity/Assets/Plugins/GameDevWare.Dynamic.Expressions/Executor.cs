@@ -882,6 +882,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var opBitwiseAnd = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_BitwiseAnd");
 			var opDivision = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_Division");
 			var opEquality = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_Equality");
+			var opInequality = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_Inequality");
 			var opExclusiveOr = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_ExclusiveOr");
 			var opGreaterThan = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_GreaterThan");
 			var opGreaterThanOrEqual = WrapBinaryOperation(binaryExpression.Method) ?? WrapBinaryOperation(binaryExpression.Left.Type, "op_GreaterThanOrEqual");
@@ -941,7 +942,7 @@ namespace GameDevWare.Dynamic.Expressions
 					case ExpressionType.Equal:
 						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opEquality);
 					case ExpressionType.NotEqual:
-						return closure.Box(closure.Unbox<bool>(Intrinsic.BinaryOperation(closure, left, right, ExpressionType.Equal, opEquality)) == false);
+						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opInequality);
 					case ExpressionType.ExclusiveOr:
 						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opExclusiveOr);
 					case ExpressionType.GreaterThan:

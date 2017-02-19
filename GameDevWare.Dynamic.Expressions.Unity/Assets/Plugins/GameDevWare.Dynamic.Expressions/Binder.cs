@@ -198,7 +198,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			catch (Exception exception)
 			{
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_BUILDFAILED, expressionType, exception.Message), exception, node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_FAILEDTOBIND, expressionType, exception.Message), exception, node);
 			}
 		}
 		private Expression BuildByType(SyntaxTreeNode node, Expression context)
@@ -210,7 +210,7 @@ namespace GameDevWare.Dynamic.Expressions
 				expressionType = Constants.EXPRESSION_TYPE_NOT;
 
 			if (ExpressionConstructors.Contains(expressionType) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNKNOWNEXPRTYPE, expressionType), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);
 
 			var argumentNames = new HashSet<string>(node.Keys, StringComparer.Ordinal);
 			argumentNames.Remove(Constants.EXPRESSION_TYPE_ATTRIBUTE);
@@ -236,7 +236,7 @@ namespace GameDevWare.Dynamic.Expressions
 							if (TryGetTypeReference(argument, out typeReference) && this.typeResolver.TryGetType(typeReference, out type))
 								argument = type;
 							else
-								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? argument), node);
+								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference ?? argument), node);
 						}
 						else if (argument is SyntaxTreeNode)
 							argument = Build((SyntaxTreeNode)argument, context, typeHint: methodParameter.ParameterType);
@@ -281,7 +281,6 @@ namespace GameDevWare.Dynamic.Expressions
 						};
 						return Expression.Call(typeof(string), "Concat", Type.EmptyTypes, concatArguments);
 					}
-					// fixing bug in mono expression compiler: Negate on float or double = exception
 					else if
 					(
 						methodArguments.Length == 1 &&
@@ -331,7 +330,7 @@ namespace GameDevWare.Dynamic.Expressions
 					throw new ExpressionParserException(te.InnerException.Message, te.InnerException, node);
 				}
 			}
-			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOCREATEEXPRWITHPARAMS, expressionType, string.Join(", ", argumentNames.ToArray())), node);
+			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOCREATEEXPRWITHPARAMS, expressionType, string.Join(", ", argumentNames.ToArray())), node);
 		}
 		private Expression BuildGroup(SyntaxTreeNode node, Expression context)
 		{
@@ -350,7 +349,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var typeReference = default(TypeReference);
 			var type = default(Type);
 			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
 
 			var value = ChangeType(valueObj, type);
 			return Expression.Constant(value);
@@ -390,7 +389,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 
 			if (expression == null && type == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVENAME, propertyOrFieldName), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, propertyOrFieldName), node);
 
 			if (expression != null)
 				type = expression.Type;
@@ -431,10 +430,10 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 
 			if (memberAccessExpression == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, type), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, type), node);
 
 			if (useNullPropagation && isStatic)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
 
 			if (useNullPropagation)
 				return MakeNullPropagationExpression(expression, memberAccessExpression);
@@ -497,7 +496,7 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 			}
 			if (indexExpression == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDINDEXER, expression.Type), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDINDEXER, expression.Type), node);
 
 			if (useNullPropagation)
 				return MakeNullPropagationExpression(expression, indexExpression);
@@ -512,7 +511,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (methodRef == null) throw new ArgumentNullException("methodRef");
 
 			if (target == null && context == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVENAME, methodRef.Name), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, methodRef.Name), node);
 
 			var expression = default(Expression);
 			var typeReference = default(TypeReference);
@@ -536,7 +535,7 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					var typeArgument = methodRef.TypeArguments[i];
 					if (this.typeResolver.TryGetType(typeArgument, out genericArguments[i]) == false)
-						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeArgument), node);
+						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeArgument), node);
 				}
 			}
 
@@ -578,10 +577,10 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 
 			if (callExpression == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDCALL, methodRef.Name, type), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCALL, methodRef.Name, type), node);
 
 			if (useNullPropagation && expression == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
 
 			if (useNullPropagation)
 				return MakeNullPropagationExpression(expression, callExpression);
@@ -619,7 +618,7 @@ namespace GameDevWare.Dynamic.Expressions
 					catch (ExpressionParserException)
 					{
 						if (typeReference != null) // throw better error message about wrong type reference
-							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference), node);
+							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference), node);
 						throw;
 
 					}
@@ -632,14 +631,14 @@ namespace GameDevWare.Dynamic.Expressions
 			expression = Build(target, context, typeHint: null);
 
 			if (typeof(Delegate).IsAssignableFrom(expression.Type) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOINVOKENONDELEG, expression.Type), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOINVOKENONDELEG, expression.Type), node);
 
 			var method = expression.Type.GetMethod(Constants.DELEGATE_INVOKE_NAME);
 			if (method == null) throw new MissingMethodException(expression.Type.FullName, Constants.DELEGATE_INVOKE_NAME);
 			var methodParameters = method.GetParameters();
 			var argumentExpressions = default(Expression[]);
 			if (TryBindMethod(methodParameters, arguments, context, out argumentExpressions) <= 0)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDDELEG, expression.Type, string.Join(", ", Array.ConvertAll(methodParameters, p => p.ParameterType.Name))), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDDELEG, expression.Type, string.Join(", ", Array.ConvertAll(methodParameters, p => p.ParameterType.Name))), node);
 
 			try
 			{
@@ -658,7 +657,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var typeReference = default(TypeReference);
 			var type = default(Type);
 			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
 
 			return DefaultExpression(type);
 		}
@@ -670,7 +669,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var typeReference = default(TypeReference);
 			var type = default(Type);
 			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
 
 			return Expression.Constant(type, typeof(Type));
 		}
@@ -682,7 +681,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var typeReference = default(TypeReference);
 			var type = default(Type);
 			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
 
 			var arguments = node.GetArguments(throwOnError: true);
 			var argumentExpressions = new Expression[arguments.Count];
@@ -705,7 +704,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var typeReference = default(TypeReference);
 			var type = default(Type);
 			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
 
 			var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
 			Array.Sort(constructors, (x, y) => x.GetParameters().Length.CompareTo(y.GetParameters().Length));
@@ -731,12 +730,12 @@ namespace GameDevWare.Dynamic.Expressions
 					throw new ExpressionParserException(exception.Message, exception, node);
 				}
 			}
-			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_UNABLETOBINDCONSTRUCTOR, type), node);
+			throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, type), node);
 		}
 		private Expression BuildLambda(SyntaxTreeNode node, Type lambdaType, Expression context)
 		{
 			if (lambdaType == null || typeof(Delegate).IsAssignableFrom(lambdaType) == false || lambdaType.ContainsGenericParameters)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_VALIDDELEGATETYPEISEXPECTED, lambdaType != null ? lambdaType.ToString() : "<null>"));
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED, lambdaType != null ? lambdaType.ToString() : "<null>"));
 
 			var expressionType = node.GetExpressionType(throwOnError: true);
 			var expression = node.GetExpression(throwOnError: true);
@@ -745,13 +744,13 @@ namespace GameDevWare.Dynamic.Expressions
 			if (lambdaInvokeMethod == null) throw new MissingMethodException(lambdaType.FullName, Constants.DELEGATE_INVOKE_NAME);
 			var lambdaInvokeMethodParameters = lambdaInvokeMethod.GetParameters();
 			if (lambdaInvokeMethodParameters.Length != arguments.Count)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_INVALIDLAMBDAARGUMENTS, lambdaType));
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS, lambdaType));
 			var argumentNames = new string[arguments.Count];
 			for (var i = 0; i < argumentNames.Length; i++)
 			{
 				var argumentNameTree = default(SyntaxTreeNode);
 				if (arguments.TryGetValue(i, out argumentNameTree) == false || argumentNameTree == null || argumentNameTree.GetExpressionType(throwOnError: true) != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
 				argumentNames[i] = argumentNameTree.GetPropertyOrFieldName(throwOnError: true);
 			}
 			var lambdaParameters = new ParameterExpression[lambdaInvokeMethodParameters.Length];
@@ -1310,12 +1309,12 @@ namespace GameDevWare.Dynamic.Expressions
 							var typeArgumentTypeReference = default(TypeReference);
 							var key = Constants.GetIndexAsString(i);
 							if (arguments.TryGetValue(key, out typeArgument) == false || typeArgument == null)
-								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, key), part);
+								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT, key), part);
 
 							if (typeArgument.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD && typeArgument.GetPropertyOrFieldName(throwOnError: true) == string.Empty)
 								typeArgumentTypeReference = TypeReference.Empty;
 							else if (TryGetTypeReference(typeArgument, out typeArgumentTypeReference) == false)
-								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, key), part);
+								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT, key), part);
 
 							typeArguments.Add(typeArgumentTypeReference);
 							typeArgumentsCount++;
@@ -1355,11 +1354,11 @@ namespace GameDevWare.Dynamic.Expressions
 						var typeArgumentTypeReference = default(TypeReference);
 						var key = Constants.GetIndexAsString(i);
 						if (arguments.TryGetValue(key, out typeArgument) == false || typeArgument == null)
-							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, key), methodNameTree);
+							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT, key), methodNameTree);
 
 						var isEmptyTypeArgument = typeArgument.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD && typeArgument.GetPropertyOrFieldName(throwOnError: true) == string.Empty;
 						if (isEmptyTypeArgument || TryGetTypeReference(typeArgument, out typeArgumentTypeReference) == false)
-							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BUILD_MISSINGORWRONGARGUMENT, key), methodNameTree);
+							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT, key), methodNameTree);
 
 						typeArguments.Add(typeArgumentTypeReference);
 					}
