@@ -5,7 +5,6 @@ using System.Linq;
 using System.Reflection;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
-using Xunit.Sdk;
 
 namespace GameDevWare.Dynamic.Expressions.Tests
 {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
@@ -7,92 +9,106 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 	{
 		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
+			if (node == null) throw new ArgumentNullException("node");
+			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
+			if (expectedType == null) throw new ArgumentNullException("expectedType");
+
 			boundExpression = null;
 			bindingError = null;
-			return false;
-			/*
-			var expression = default(Expression);
-			var target = node.GetExpression(throwOnError: false);
+
+			var target = default(Expression);
+			var targetNode = node.GetExpression(throwOnError: false);
 			var propertyOrFieldName = node.GetPropertyOrFieldName(throwOnError: true);
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
 
-			var typeReference = default(TypeReference);
 			var type = default(Type);
-			if (target != null && TryGetTypeReference(target, out typeReference) && this.typeResolver.TryGetType(typeReference, out type))
+			var isStatic = false;
+			if (bindingContext.TryResolveType(targetNode, out type))
 			{
-				expression = null;
+				target = null;
+				isStatic = true;
 			}
-			else if (target == null)
+			else if (targetNode == null)
 			{
-				var paramExpression = default(Expression);
-				if (propertyOrFieldName == "null")
-					return Expression.Constant(null, typeof(object));
-				else if (propertyOrFieldName == "true")
-					return Expression.Constant(true, typeof(bool));
-				else if (propertyOrFieldName == "false")
-					return Expression.Constant(false, typeof(bool));
-				else if ((paramExpression = parameters.FirstOrDefault(p => p.Name == propertyOrFieldName)) != null)
-					return paramExpression;
-				else if (context != null)
-					expression = context;
+				target = bindingContext.Global;
+				type = target != null ? target.Type : null;
+				isStatic = false;
+
+				switch (propertyOrFieldName)
+				{
+					case Constants.VALUE_NULL_STRING:
+						boundExpression = expectedType.CanBeNull ? expectedType.DefaultExpression : TypeDescription.ObjectType.DefaultExpression;
+						return true;
+					case Constants.VALUE_TRUE_STRING:
+						boundExpression = ExpressionUtils.TrueConstant;
+						return true;
+					case Constants.VALUE_FALSE_STRING:
+						boundExpression = ExpressionUtils.TrueConstant;
+						return false;
+					default:
+						if (bindingContext.TryGetParameter(propertyOrFieldName, out boundExpression))
+							return true;
+						break;
+				}
+			}
+			else if (AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError))
+			{
+				type = target.Type;
+				isStatic = false;
 			}
 			else
 			{
-				expression = Build(target, context, typeHint: null);
+				target = null;
+				type = null;
 			}
 
-			if (expression == null && type == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, propertyOrFieldName), node);
+			if (target == null && type == null)
+			{
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, propertyOrFieldName), node);
+				return false;
+			}
 
-			if (expression != null)
-				type = expression.Type;
+			Debug.Assert(type != null, "type != null");
 
-			var isStatic = expression == null;
-			var memberAccessExpression = default(Expression);
+			var typeDescription = TypeDescription.GetTypeDescription(type);
 			if (isStatic && type.IsEnum)
 			{
-				memberAccessExpression = Expression.Constant(Enum.Parse(type, propertyOrFieldName, ignoreCase: false), type);
+				var fieldMemberDescription = typeDescription.GetMembers(propertyOrFieldName).FirstOrDefault(m => m.IsStatic);
+				if (fieldMemberDescription == null)
+				{
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, type), node);
+					return false;
+				}
+				boundExpression = fieldMemberDescription.ConstantValueExpression;
 			}
 			else
 			{
-				foreach (var member in GetMembers(type, isStatic))
+				foreach (var member in typeDescription.GetMembers(propertyOrFieldName))
 				{
-					if (member is PropertyInfo == false && member is FieldInfo == false)
-						continue;
-					if (member.Name != propertyOrFieldName)
+					if (member.IsStatic != isStatic || member.IsPropertyOrField == false)
 						continue;
 
-					try
-					{
-						if (member is PropertyInfo)
-						{
-							memberAccessExpression = Expression.Property(expression, member as PropertyInfo);
-							break;
-						}
-						else
-						{
-							memberAccessExpression = Expression.Field(expression, member as FieldInfo);
-							break;
-						}
-					}
-					catch (Exception exception)
-					{
-						throw new ExpressionParserException(exception.Message, exception, node);
-					}
+					if (member.TryMakeAccessor(target, out boundExpression))
+						break;
 				}
 			}
 
-			if (memberAccessExpression == null)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, type), node);
+			if (boundExpression == null)
+			{
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, type), node);
+				return false;
+			}
 
 			if (useNullPropagation && isStatic)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
+			{
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
+				return false;
+			}
 
 			if (useNullPropagation)
-				return MakeNullPropagationExpression(expression, memberAccessExpression);
-			else
-				return memberAccessExpression;
-				*/
+				boundExpression = ExpressionUtils.MakeNullPropagationExpression(target, boundExpression);
+
+			return true;
 		}
 	}
 }

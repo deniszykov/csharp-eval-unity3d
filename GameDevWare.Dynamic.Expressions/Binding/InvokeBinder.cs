@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
@@ -7,70 +9,114 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 	{
 		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			boundExpression = null;
-			bindingError = null;
-			return false;
+			if (node == null) throw new ArgumentNullException("node");
+			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
+			if (expectedType == null) throw new ArgumentNullException("expectedType");
 
-			/*
-			var target = node.GetExpression(throwOnError: true);
+			if (TryBindMethodCall(node, bindingContext, expectedType, out boundExpression, out bindingError))
+				return true;
+
+			var targetNode = node.GetExpression(throwOnError: true);
 			var arguments = node.GetArguments(throwOnError: false);
-			var targetExpressionType = target.GetExpressionType(throwOnError: true);
-			var expression = default(Expression);
+			var target = default(Expression);
+			if (AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
+				return false;
 
-			if (targetExpressionType == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
+			var typeDescription = TypeDescription.GetTypeDescription(target.Type);
+			if (typeDescription.IsDelegate == false)
 			{
-				var propertyOrFieldTarget = target.GetExpression(throwOnError: false);
-				var useNullPropagation = target.GetUseNullPropagation(throwOnError: false);
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOINVOKENONDELEG, target.Type), node);
+				return false;
+			}
 
-				var typeReference = default(TypeReference);
-				var type = default(Type);
-				var isStatic = true;
-				if (propertyOrFieldTarget == null || TryGetTypeReference(propertyOrFieldTarget, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
+			var methodDescription = typeDescription.GetMembers(Constants.DELEGATE_INVOKE_NAME).FirstOrDefault(m => m.IsMethod && !m.IsStatic);
+			if (methodDescription == null) throw new MissingMethodException(target.Type.FullName, Constants.DELEGATE_INVOKE_NAME);
+
+			var expressionQuality = 0.0f;
+			if (methodDescription.TryMakeCall(target, arguments, bindingContext, out boundExpression, out expressionQuality) == false)
+			{
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDDELEG, target.Type, methodDescription), node);
+				return false;
+			}
+
+			return true;
+
+		}
+		public static bool TryBindMethodCall(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		{
+			if (node == null) throw new ArgumentNullException("node");
+			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
+			if (expectedType == null) throw new ArgumentNullException("expectedType");
+
+			// bindingError could return null from this method
+			bindingError = null;
+			boundExpression = null;
+
+			var methodNameNode = node.GetExpression(throwOnError: true);
+			var methodNameNodeType = methodNameNode.GetExpressionType(throwOnError: true);
+			if (methodNameNodeType != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
+			{
+				return false;
+			}
+			var methodTargetNode = methodNameNode.GetExpression(throwOnError: false);
+			var methodTarget = default(Expression);
+
+			var type = default(Type);
+			var typeReference = default(TypeReference);
+			var isStatic = false;
+			if (methodTargetNode == null && bindingContext.Global != null)
+			{
+				methodTarget = bindingContext.Global;
+				type = methodTarget.Type;
+				isStatic = false;
+			}
+			else if (methodTargetNode == null)
+			{
+				var methodName = methodNameNode.GetPropertyOrFieldName(throwOnError: false);
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, methodName ?? "<unknown>"), node);
+				return false;
+			}
+			else if (BindingContext.TryGetTypeReference(methodTargetNode, out typeReference) && bindingContext.TryResolveType(typeReference, out type))
+			{
+				isStatic = true;
+			}
+			else if (AnyBinder.TryBind(methodTargetNode, bindingContext, TypeDescription.ObjectType, out methodTarget, out bindingError))
+			{
+				isStatic = false;
+				type = methodTarget.Type;
+			}
+			else
+			{
+				if (typeReference != null && bindingError == null)
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference), node);
+				return false;
+			}
+
+			var methodRef = default(TypeReference);
+			if (type == null || BindingContext.TryGetMethodReference(methodNameNode, out methodRef) == false)
+				return false;
+
+			var typeDescription = TypeDescription.GetTypeDescription(type);
+			foreach (var member in typeDescription.GetMembers(methodRef.Name))
+			{
+				if (member.IsMethod == false || member.IsStatic != isStatic) continue;
+
+				var callNode = new SyntaxTreeNode(new Dictionary<string, object>
 				{
-					try
-					{
-						var propertyOrFieldExpression = propertyOrFieldTarget != null ? Build(propertyOrFieldTarget, context, typeHint: null) : context;
-						if (propertyOrFieldExpression != null)
-						{
-							type = propertyOrFieldExpression.Type;
-							isStatic = false;
-						}
-					}
-					catch (ExpressionParserException)
-					{
-						if (typeReference != null) // throw better error message about wrong type reference
-							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference), node);
-						throw;
+					{ Constants.EXPRESSION_ATTRIBUTE, methodTarget ?? (object)type },
+					{ Constants.ARGUMENTS_ATTRIBUTE, node.GetValueOrDefault(Constants.ARGUMENTS_ATTRIBUTE, default(object)) },
+					{ Constants.METHOD_ATTRIBUTE, methodRef },
+					{ Constants.USE_NULL_PROPAGATION_ATTRIBUTE, node.GetValueOrDefault(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, default(object)) },
 
-					}
-				}
-				var methodRef = default(TypeReference);
-				if (type != null && TryGetMethodReference(target, out methodRef) && GetMembers(type, isStatic).Any(m => m is MethodInfo && m.Name == methodRef.Name))
-					return this.BuildCall(node, propertyOrFieldTarget, useNullPropagation, arguments, methodRef, context);
+					{ Constants.EXPRESSION_LINE_NUMBER, node.GetValueOrDefault(Constants.EXPRESSION_LINE_NUMBER, default(object)) },
+					{ Constants.EXPRESSION_COLUMN_NUMBER, node.GetValueOrDefault(Constants.EXPRESSION_COLUMN_NUMBER, default(object)) },
+					{ Constants.EXPRESSION_TOKEN_LENGTH, node.GetValueOrDefault(Constants.EXPRESSION_TOKEN_LENGTH, default(object)) },
+				});
+
+				return CallBinder.TryBind(callNode, bindingContext, expectedType, out boundExpression, out bindingError);
 			}
 
-			expression = Build(target, context, typeHint: null);
-
-			if (typeof(Delegate).IsAssignableFrom(expression.Type) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOINVOKENONDELEG, expression.Type), node);
-
-			var method = expression.Type.GetMethod(Constants.DELEGATE_INVOKE_NAME);
-			if (method == null) throw new MissingMethodException(expression.Type.FullName, Constants.DELEGATE_INVOKE_NAME);
-			var methodParameters = method.GetParameters();
-			var argumentExpressions = default(Expression[]);
-			if (TryBindMethod(methodParameters, arguments, context, out argumentExpressions) <= 0)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDDELEG, expression.Type, string.Join(", ", Array.ConvertAll(methodParameters, p => p.ParameterType.Name))), node);
-
-			try
-			{
-				return Expression.Invoke(expression, argumentExpressions);
-			}
-			catch (Exception exception)
-			{
-				throw new ExpressionParserException(exception.Message, exception, node);
-			}*/
-
-
+			return false;
 		}
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
@@ -94,7 +93,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			catch (Exception error)
 			{
 				boundExpression = null;
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_FAILEDTOBIND, node.GetExpressionType(throwOnError: false) ?? "<unknown>", error.Message), node);
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_FAILEDTOBIND, node.GetExpressionType(throwOnError: false) ?? "<unknown>", error.Message), error, node);
 				return false;
 			}
 		}

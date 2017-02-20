@@ -123,7 +123,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unable to find public property or field '{0}' on '{1}'.";
+					case 0: return "Unable to find public member with name '{0}' on '{1}' type.";
 					default: return "EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE";
 				}
 			}
@@ -223,6 +223,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Unable to find constructor on type '{0}' accepting specified arguments.";
 					default: return "EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH
+		/// </summary>
+		public static string EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unable to remap expression's parameters with lamda syntax. Parameters count mismatch.";
+					default: return "EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH";
 				}
 			}
 		}

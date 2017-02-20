@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
@@ -10,6 +9,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
+			if (node == null) throw new ArgumentNullException("node");
+			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
+			if (expectedType == null) throw new ArgumentNullException("expectedType");
+
 			boundExpression = null;
 			bindingError = null;
 
@@ -19,9 +22,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var leftOperand = default(Expression);
 			var rightOperand = default(Expression);
 
-			if (AnyBinder.TryBind(left, bindingContext, null, out leftOperand, out bindingError) == false)
+			if (AnyBinder.TryBind(left, bindingContext, TypeDescription.ObjectType, out leftOperand, out bindingError) == false)
 				return false;
-			if (AnyBinder.TryBind(right, bindingContext, null, out rightOperand, out bindingError) == false)
+			if (AnyBinder.TryBind(right, bindingContext, TypeDescription.ObjectType, out rightOperand, out bindingError) == false)
 				return false;
 
 			switch (expressionType)

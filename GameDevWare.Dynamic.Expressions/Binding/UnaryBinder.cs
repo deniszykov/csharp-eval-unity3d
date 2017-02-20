@@ -7,14 +7,18 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 	{
 		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
+			if (node == null) throw new ArgumentNullException("node");
+			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
+			if (expectedType == null) throw new ArgumentNullException("expectedType");
+
 			boundExpression = null;
 			bindingError = null;
 
 			var expressionType = node.GetExpressionType(throwOnError: true);
-			var expression = node.GetExpression(throwOnError: true);
+			var operandNode = node.GetExpression(throwOnError: true);
 			var operand = default(Expression);
 
-			if (AnyBinder.TryBind(expression, bindingContext, null, out operand, out bindingError) == false)
+			if (AnyBinder.TryBind(operandNode, bindingContext, TypeDescription.ObjectType, out operand, out bindingError) == false)
 				return false;
 
 			switch (expressionType)
@@ -23,7 +27,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					ExpressionUtils.PromoteOperand(ref operand, ExpressionType.Negate);
 					// fixing b_u_g in mono expression compiler: Negate on float or double = exception
 					if (operand.Type == typeof(double) || operand.Type == typeof(float))
-						boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? Expression.Constant(-1.0f) : Expression.Constant(-1.0d));
+						boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
 					else
 						boundExpression = Expression.Negate(operand);
 					break;
@@ -31,7 +35,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					ExpressionUtils.PromoteOperand(ref operand, ExpressionType.NegateChecked);
 					// fixing b_u_g in mono expression compiler: Negate on float or double = exception
 					if (operand.Type == typeof(double) || operand.Type == typeof(float))
-						boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? Expression.Constant(-1.0f) : Expression.Constant(-1.0d));
+						boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
 					else
 						boundExpression = Expression.NegateChecked(operand);
 					break;
@@ -49,7 +53,6 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					return false;
 			}
 			return true;
-
 		}
 	}
 }

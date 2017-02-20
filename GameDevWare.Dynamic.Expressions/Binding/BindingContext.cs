@@ -21,7 +21,6 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (typeResolver == null) throw new ArgumentNullException("typeResolver");
 			if (parameters == null) throw new ArgumentNullException("parameters");
 			if (resultType == null) throw new ArgumentNullException("resultType");
-			if (global == null) throw new ArgumentNullException("global");
 
 			this.typeResolver = typeResolver;
 			this.parameters = parameters;
@@ -31,15 +30,31 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public bool TryResolveType(object typeName, out Type type)
 		{
-			if (typeName == null) throw new ArgumentNullException("typeName");
-
 			type = default(Type);
+			if (typeName == null)
+				return false;
+
 			var typeReference = default(TypeReference);
 			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
 				return false;
 
 			return type != null;
 		}
+		public bool TryGetParameter(string parameterName, out Expression parameter)
+		{
+			if (parameterName == null) throw new ArgumentNullException("parameterName");
+
+			// ReSharper disable once ForCanBeConvertedToForeach
+			for (var i = 0; i < this.parameters.Count; i++)
+			{
+				parameter = this.parameters[i];
+				if (string.Equals(((ParameterExpression)parameter).Name, parameterName, StringComparison.Ordinal))
+					return true;
+			}
+			parameter = null;
+			return false;
+		}
+
 
 		public static bool TryGetTypeReference(object value, out TypeReference typeReference)
 		{
@@ -47,7 +62,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			typeReference = default(TypeReference);
 
-			if (value is SyntaxTreeNode)
+			if (value is TypeReference)
+			{
+				typeReference = (TypeReference)value;
+				return true;
+			}
+			else if (value is SyntaxTreeNode)
 			{
 				var parts = new List<SyntaxTreeNode>(10);
 				var current = (SyntaxTreeNode)value;
@@ -70,7 +90,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					var typeNamePart = part.GetPropertyOrFieldName(throwOnError: true);
 					if (typeNameParts == null) typeNameParts = new List<string>();
 					var typeArgumentsCount = 0;
-					if (arguments != null && arguments.Count > 0)
+					if (arguments.Count > 0)
 					{
 						if (typeArguments == null) typeArguments = new List<TypeReference>(10);
 
@@ -110,14 +130,19 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			methodReference = default(TypeReference);
 
-			if (value is SyntaxTreeNode)
+			if (value is TypeReference)
+			{
+				methodReference = (TypeReference)value;
+				return true;
+			}
+			else if (value is SyntaxTreeNode)
 			{
 				var typeArguments = default(List<TypeReference>);
 				var methodNameTree = (SyntaxTreeNode)value;
 
 				var arguments = methodNameTree.GetArguments(throwOnError: false);
 				var methodName = methodNameTree.GetPropertyOrFieldName(throwOnError: true);
-				if (arguments != null && arguments.Count > 0)
+				if (arguments.Count > 0)
 				{
 					typeArguments = new List<TypeReference>(10);
 

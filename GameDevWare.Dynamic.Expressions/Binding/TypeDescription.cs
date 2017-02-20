@@ -8,8 +8,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal sealed class TypeDescription : IComparable<TypeDescription>, IComparable, IEquatable<TypeDescription>, IEquatable<Type>
 	{
-		public static readonly MemberDescription[] EmptyMembers = new MemberDescription[0];
-		public static readonly TypeDescription[] EmptyTypes = new TypeDescription[0];
+		private static readonly TypeCache Types;
+		public static readonly MemberDescription[] EmptyMembers;
+		public static readonly TypeDescription[] EmptyTypes;
+		public static readonly TypeDescription ObjectType;
+		public static readonly TypeDescription Int32Type;
 
 		private readonly Type type;
 		private readonly int hashCode;
@@ -41,35 +44,60 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public readonly string Name;
 		public readonly Expression DefaultExpression;
 		public readonly bool IsNullable;
+		public readonly bool CanBeNull;
 		public readonly bool IsEnum;
 		public readonly bool IsDelegate;
+		public readonly bool IsOpenGenericType;
 		public readonly TypeDescription BaseType;
 		public readonly TypeDescription UnderlyingType;
 		public readonly TypeDescription[] BaseTypes;
 		public readonly TypeDescription[] Interfaces;
 		public readonly TypeDescription[] GenericArguments;
 
-		public TypeDescription(Type type, TypeDescription baseType, TypeDescription underlyingType, TypeDescription[] interfaces, TypeDescription[] genericArguments)
+		static TypeDescription()
+		{
+			Types = new TypeCache();
+			EmptyMembers = new MemberDescription[0];
+			EmptyTypes = new TypeDescription[0];
+			ObjectType = GetTypeDescription(typeof(object));
+			Int32Type = GetTypeDescription(typeof(int));
+
+			// create type descriptors for build-in types
+			Array.ConvertAll(new[]
+			{
+				typeof(char), typeof(string), typeof(float), typeof(double), typeof(decimal),
+				typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
+				typeof(long), typeof(ulong), typeof(Enum), typeof(MulticastDelegate)
+			}, Types.GetOrCreateTypeDescription);
+		}
+		public TypeDescription(Type type, TypeCache cache)
 		{
 			if (type == null) throw new ArgumentNullException("type");
-			if (baseType == null) throw new ArgumentNullException("baseType");
-			if (interfaces == null) throw new ArgumentNullException("interfaces");
-			if (underlyingType == null) throw new ArgumentNullException("underlyingType");
-			if (genericArguments == null) throw new ArgumentNullException("genericArguments");
-			if (type == null) throw new ArgumentNullException("type");
+			if (cache == null) throw new ArgumentNullException("cache");
 
-			this.hashCode = type.GetHashCode();
 			this.type = type;
+			this.hashCode = type.GetHashCode();
 			this.Name = NameUtils.RemoveGenericSuffix(NameUtils.WriteName(type)).ToString();
-			this.BaseType = baseType;
-			this.UnderlyingType = underlyingType;
+
+			cache.Add(type, this);
+
+			var underlyingType = default(Type);
+			if (type.IsEnum)
+				underlyingType = Enum.GetUnderlyingType(type);
+			else if (type.IsValueType)
+				underlyingType = Nullable.GetUnderlyingType(type);
+
+			this.BaseType = type.BaseType != null ? cache.GetOrCreateTypeDescription(type.BaseType) : null;
+			this.UnderlyingType = underlyingType != null ? cache.GetOrCreateTypeDescription(underlyingType) : null;
 			this.BaseTypes = GetBaseTypes(this, 0);
-			this.Interfaces = interfaces;
-			this.GenericArguments = genericArguments;
+			this.Interfaces = Array.ConvertAll(type.GetInterfaces(), cache.GetOrCreateTypeDescription);
+			this.GenericArguments = type.IsGenericType ? Array.ConvertAll(type.GetGenericArguments(), cache.GetOrCreateTypeDescription) : TypeDescription.EmptyTypes;
 			this.MembersByName = GetMembersByName(ref this.Indexers);
 			this.IsNullable = Nullable.GetUnderlyingType(type) != null;
+			this.CanBeNull = this.IsNullable || type.IsValueType == false;
 			this.IsEnum = type.IsEnum;
 			this.IsDelegate = typeof(Delegate).IsAssignableFrom(type) && type != typeof(Delegate) && type != typeof(MulticastDelegate);
+			this.IsOpenGenericType = type.ContainsGenericParameters;
 			this.DefaultExpression = Expression.Constant(type.IsValueType && this.IsNullable == false ? Activator.CreateInstance(type) : null);
 
 			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
@@ -98,6 +126,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			// ReSharper restore LocalizableElement
 			this.Conversions = Combine(this.ImplicitConvertTo, this.ImplicitConvertFrom, this.ExplicitConvertTo, this.ExplicitConvertFrom);
 			this.Constructors = Array.ConvertAll(type.GetConstructors(BindingFlags.Public | BindingFlags.Instance), ctr => new MemberDescription(this, ctr));
+
+			Array.Sort(this.Conversions);
+			Array.Sort(this.Constructors);
 		}
 
 		private MemberDescription[] GetOperators(MethodInfo[] methods, MemberDescription[] methodsDescriptions, string operatorName, int? compareParameterIndex = null)
@@ -176,7 +207,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				}
 			}
 
-			var membersByName = new Dictionary<string, MemberDescription[]>(memberSetsByName.Count);
+			var membersByName = new Dictionary<string, MemberDescription[]>(memberSetsByName.Count, StringComparer.Ordinal);
 			foreach (var kv in memberSetsByName)
 			{
 				var membersArray = kv.Value.ToArray();
@@ -214,20 +245,21 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			Array.Resize(ref array, array.Length + 1);
 			array[array.Length - 1] = element;
 		}
-		private T[] Combine<T>(params T[][] arrays)
+		private static T[] Combine<T>(params T[][] arrays)
 		{
-			var length = 0;
-			for (var i = 0; i < arrays.Length; i++)
-				length += arrays[i].Length;
+			var totalLength = 0;
+			foreach (var array in arrays)
+				totalLength += array.Length;
+
 			if (arrays.Length == 0)
 				return arrays[0];
 
-			var newArray = new T[length];
+			var newArray = new T[totalLength];
 			var offset = 0;
-			for (var i = 0; i < arrays.Length; i++)
+			foreach (var array in arrays)
 			{
-				arrays[i].CopyTo(newArray, offset);
-				offset = arrays[i].Length;
+				array.CopyTo(newArray, offset);
+				offset += array.Length;
 			}
 			return newArray;
 		}
@@ -279,7 +311,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public static bool operator ==(TypeDescription type1, TypeDescription type2)
 		{
 			if (ReferenceEquals(type1, type2)) return true;
-			if (type1 == null || type2 == null) return false;
+			if (ReferenceEquals(type1, null) || ReferenceEquals(type2, null)) return false;
 
 			return type1.Equals(type2);
 		}
@@ -289,10 +321,21 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		}
 		public static bool operator ==(TypeDescription type1, Type type2)
 		{
-			if (type1 != null && ReferenceEquals(type1.type, type2)) return true;
-			if (type1 == null || type2 == null) return false;
+			if (!ReferenceEquals(type1, null) && ReferenceEquals(type1.type, type2)) return true;
+			if (ReferenceEquals(type1, null) || ReferenceEquals(type2, null)) return false;
 
 			return type1.type == type2;
+		}
+		public static bool operator !=(Type type1, TypeDescription type2)
+		{
+			return !(type2 == type1);
+		}
+		public static bool operator ==(Type type1, TypeDescription type2)
+		{
+			if (!ReferenceEquals(type2, null) && ReferenceEquals(type2.type, type1)) return true;
+			if (ReferenceEquals(type1, null) || ReferenceEquals(type2, null)) return false;
+
+			return type2.type == type1;
 		}
 		public static bool operator !=(TypeDescription type1, Type type2)
 		{
@@ -305,10 +348,31 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			return typeDescription.type;
 		}
 
+		public static TypeDescription GetTypeDescription(Type type)
+		{
+			if (type == null) throw new ArgumentNullException("type");
+
+			lock (Types)
+			{
+				var typeDescription = default(TypeDescription);
+				if (Types.TryGetValue(type, out typeDescription))
+					return typeDescription;
+			}
+
+			var localCache = new TypeCache(Types);
+			var newTypeDescription = localCache.GetOrCreateTypeDescription(type);
+
+			lock (Types)
+				Types.Merge(localCache);
+
+			TypeConversion.UpdateConversions(newTypeDescription);
+
+			return newTypeDescription;
+		}
+
 		public override string ToString()
 		{
 			return this.type.ToString();
 		}
-
 	}
 }

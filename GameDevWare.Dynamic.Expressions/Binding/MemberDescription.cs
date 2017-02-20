@@ -16,14 +16,20 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		private readonly ParameterInfo[] parameters;
 		private readonly Dictionary<string, ParameterInfo> parametersByName;
 		private readonly ParameterInfo returnParameter;
+		private readonly Dictionary<TypeTuple, MemberDescription> methodInstantiations;
+		private readonly MemberDescription genericDefinition;
 
 		public readonly string Name;
 		public readonly Type ResultType;
 		public readonly TypeDescription DeclaringType;
-		public readonly bool IsCallable;
+		public readonly bool IsMethod;
+		public readonly bool IsConstructor;
+		public readonly bool IsPropertyOrField;
 		public readonly bool IsStatic;
 		public readonly bool IsImplicitOperator;
+		public readonly Type[] GenericArguments;
 		public readonly int GenericArgumentsCount;
+		public readonly Expression ConstantValueExpression;
 
 		public MemberDescription(TypeDescription declaringType, PropertyInfo property)
 		{
@@ -35,8 +41,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.Name = property.Name;
 			this.DeclaringType = declaringType;
 			this.ResultType = property.PropertyType;
-			this.IsCallable = typeof(Delegate).IsAssignableFrom(this.ResultType);
 			this.IsStatic = (property.GetGetMethod(nonPublic: true) ?? property.GetSetMethod(nonPublic: true)).IsStatic;
+			this.IsPropertyOrField = true;
+			var constantValue = (property.Attributes & PropertyAttributes.HasDefault) != 0 ? property.GetConstantValue() : null;
+			this.ConstantValueExpression = constantValue != null ? Expression.Constant(constantValue) : null;
 
 			var getter = property.GetGetMethod(nonPublic: false);
 			if (getter == null)
@@ -45,10 +53,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.member = getter;
 			this.hashCode = getter.GetHashCode();
 			this.parameters = getter.GetParameters();
-			this.parametersByName = this.parameters.ToDictionary(p => p.Name);
+			this.parametersByName = this.parameters.ToDictionary(GetParameterName, StringComparer.Ordinal);
 			this.returnParameter = getter.ReturnParameter;
-
-			this.IsCallable = this.IsCallable || this.parameters.Length > 0;
 		}
 		public MemberDescription(TypeDescription declaringType, FieldInfo field)
 		{
@@ -60,11 +66,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.Name = field.Name;
 			this.DeclaringType = declaringType;
 			this.ResultType = field.FieldType;
+			var constantValue = (field.Attributes & (FieldAttributes.HasDefault | FieldAttributes.Literal)) != 0 ? field.GetRawConstantValue() : null;
+			this.ConstantValueExpression = constantValue != null ? Expression.Constant(constantValue) : null;
 
-			this.IsCallable = typeof(Delegate).IsAssignableFrom(this.ResultType);
 			this.IsStatic = field.IsStatic;
+			this.IsPropertyOrField = true;
 		}
-		public MemberDescription(TypeDescription declaringType, MethodInfo method)
+		public MemberDescription(TypeDescription declaringType, MethodInfo method, MemberDescription genericMethodDefinition = null)
 		{
 			if (declaringType == null) throw new ArgumentNullException("declaringType");
 			if (method == null) throw new ArgumentNullException("method");
@@ -74,12 +82,27 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.ResultType = method.ReturnType;
 			this.member = method;
 			this.parameters = method.GetParameters();
-			this.parametersByName = this.parameters.ToDictionary(p => p.Name);
+			this.parametersByName = this.parameters.ToDictionary(GetParameterName, StringComparer.Ordinal);
 			this.returnParameter = method.ReturnParameter;
 			this.hashCode = method.GetHashCode();
-			this.GenericArgumentsCount = method.IsGenericMethod ? method.GetGenericArguments().Length : 0;
+			if (method.IsGenericMethod)
+			{
+				this.GenericArguments = method.GetGenericArguments();
+				this.GenericArgumentsCount = this.GenericArguments.Length;
+				if (method.IsGenericMethodDefinition)
+				{
+					this.methodInstantiations = new Dictionary<TypeTuple, MemberDescription>();
+					this.genericDefinition = this;
+				}
+				else
+				{
+					if (genericMethodDefinition == null) throw new ArgumentNullException("genericMethodDefinition");
 
-			this.IsCallable = true;
+					this.methodInstantiations = genericMethodDefinition.methodInstantiations;
+					this.genericDefinition = genericMethodDefinition;
+				}
+			}
+			this.IsMethod = true;
 			this.IsStatic = method.IsStatic;
 			this.IsImplicitOperator = method.IsSpecialName && this.Name == "op_Implicit";
 		}
@@ -93,12 +116,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.ResultType = declaringType;
 			this.member = constructor;
 			this.parameters = constructor.GetParameters();
-			this.parametersByName = this.parameters.ToDictionary(p => p.Name);
+			this.parametersByName = this.parameters.ToDictionary(GetParameterName, StringComparer.Ordinal);
 			this.returnParameter = null;
 			this.hashCode = constructor.GetHashCode();
 			this.GenericArgumentsCount = constructor.IsGenericMethod ? constructor.GetGenericArguments().Length : 0;
 
-			this.IsCallable = true;
+			this.IsConstructor = true;
 			this.IsStatic = constructor.IsStatic;
 		}
 
@@ -117,9 +140,29 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return this.parameters.Length;
 		}
 
+		public MemberDescription MakeGenericMethod(Type[] genericArguments)
+		{
+			if (genericArguments == null) throw new ArgumentNullException("genericArguments");
+			if (this.IsMethod == false) throw new InvalidOperationException(string.Format("Can't instantiate not method '{0}'.", this.member));
+			if (this.GenericArgumentsCount <= 0) throw new InvalidOperationException(string.Format("Can't instantiate non-generic method '{0}'.", this.member));
+
+			var key = new TypeTuple(genericArguments);
+			var instantiatedMethodDescription = default(MemberDescription);
+			lock (this.methodInstantiations)
+			{
+				if (this.methodInstantiations.TryGetValue(key, out instantiatedMethodDescription))
+					return instantiatedMethodDescription;
+			}
+			var instantiatedMethod = ((MethodInfo)this.genericDefinition).MakeGenericMethod(genericArguments);
+			instantiatedMethodDescription = new MemberDescription(this.DeclaringType, instantiatedMethod, this.genericDefinition);
+			lock (this.methodInstantiations)
+				this.methodInstantiations[key] = instantiatedMethodDescription;
+			return instantiatedMethodDescription;
+		}
+
 		public bool TryMakeAccessor(Expression target, out Expression expression)
 		{
-			if (target == null) throw new ArgumentNullException("target");
+			if (!this.IsStatic && target == null) throw new ArgumentNullException("target");
 
 			var field = this.member as FieldInfo;
 			var method = this.member as MethodInfo;
@@ -132,8 +175,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			return expression != null;
 		}
-		public bool TryMakeConversion(Expression target, out Expression expression, bool checkedConversion)
+		public bool TryMakeConversion(Expression valueExpression, out Expression expression, bool checkedConversion)
 		{
+			if (valueExpression == null) throw new ArgumentNullException("valueExpression");
+
 			expression = null;
 
 			var method = this.member as MethodInfo;
@@ -141,14 +186,15 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return false;
 
 			expression = checkedConversion ?
-				Expression.ConvertChecked(target, method.ReturnType, method) :
-				Expression.Convert(target, method.ReturnType, method);
+				Expression.ConvertChecked(valueExpression, method.ReturnType, method) :
+				Expression.Convert(valueExpression, method.ReturnType, method);
 			return true;
 		}
 		public bool TryMakeCall(Expression target, ArgumentsTree argumentsTree, BindingContext bindingContext, out Expression expression, out float expressionQuality)
 		{
 			if (argumentsTree == null) throw new ArgumentNullException("argumentsTree");
 			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
+			if (!this.IsStatic && !this.IsConstructor && target == null) throw new ArgumentNullException("target");
 
 			expression = null;
 			expressionQuality = QUALITY_INCOMPATIBLE;
@@ -195,7 +241,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					parameterIndex = parameter.Position;
 				}
 
-				var expectedType = Metadata.GetTypeDescription(parameter.ParameterType);
+				var expectedType = TypeDescription.GetTypeDescription(parameter.ParameterType);
 				var argValue = default(Expression);
 				var bindingError = default(Exception);
 				if (AnyBinder.TryBind(argumentsTree[argumentName], bindingContext, expectedType, out argValue, out bindingError) == false)
@@ -218,7 +264,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				if (parameter.IsOptional == false)
 					return false; // missing required parameter
 
-				var typeDescription = Metadata.GetTypeDescription(parameter.ParameterType);
+				var typeDescription = TypeDescription.GetTypeDescription(parameter.ParameterType);
 				arguments[i] = typeDescription.DefaultExpression;
 				parametersQuality += TypeConversion.QUALITY_SAME_TYPE;
 			}
@@ -248,6 +294,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				if (char.IsDigit(@char) == false)
 					return false;
 			return true;
+		}
+		private static string GetParameterName(ParameterInfo parameter)
+		{
+			if (parameter == null) throw new ArgumentNullException("parameter");
+			var name = parameter.Name;
+			if (string.IsNullOrEmpty(name))
+				name = parameter.Member.Name + "_" + parameter.Position.ToString();
+			return name;
 		}
 
 		public override bool Equals(object obj)
@@ -288,7 +342,23 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (memberDescription == null) return null;
 			return memberDescription.member;
 		}
+		public static implicit operator MethodInfo(MemberDescription memberDescription)
+		{
+			if (memberDescription == null) return null;
+			return (MethodInfo)memberDescription.member;
+		}
 
+		public static bool operator ==(MemberDescription member1, MemberDescription member2)
+		{
+			if (ReferenceEquals(member1, member2)) return true;
+			if (ReferenceEquals(member1, null) || ReferenceEquals(member2, null)) return false;
+
+			return member1.Equals(member2);
+		}
+		public static bool operator !=(MemberDescription type1, MemberDescription type2)
+		{
+			return !(type1 == type2);
+		}
 
 		public override string ToString()
 		{

@@ -8,10 +8,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 	{
 		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
+			if (node == null) throw new ArgumentNullException("node");
+			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
+			if (expectedType == null) throw new ArgumentNullException("expectedType");
+
 			boundExpression = null;
 			bindingError = null;
 
-			var targetNode = node.GetExpression(throwOnError: false);
+			var target = default(Expression);
 			var arguments = node.GetArguments(throwOnError: false);
 			var methodName = node.GetMethodName(throwOnError: true);
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
@@ -22,35 +26,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, methodName), node);
 				return false;
 			}
-			if (targetNode == null && bindingContext.Global == null)
+
+			var type = default(Type);
+			if (TryBindTarget(node, bindingContext, out target, out type, out bindingError) == false)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, methodRef ?? methodName), node);
 				return false;
 			}
 
-			var expression = default(Expression);
-			var type = default(Type);
-			var isStatic = false;
-			if (targetNode == null)
-			{
-				expression = bindingContext.Global;
-				type = expression.Type;
-				isStatic = false;
-			}
-			else if (bindingContext.TryResolveType(targetNode, out type))
-			{
-				expression = null;
-				isStatic = true;
-			}
-			else
-			{
-				if (TryBind(targetNode, bindingContext, null, out expression, out bindingError) == false)
-					return false;
-
-				type = expression.Type;
-				isStatic = false;
-			}
-
+			var isStatic = target == null;
 			var selectedMethodQuality = MemberDescription.QUALITY_INCOMPATIBLE;
 			var selectedMethodCallExpression = default(Expression);
 			var hasGenericParameters = methodRef.TypeArguments.Count > 0;
@@ -69,11 +52,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				}
 			}
 
-			var typeDescription = Metadata.GetTypeDescription(type);
+			var typeDescription = TypeDescription.GetTypeDescription(type);
 			foreach (var memberDescription in typeDescription.GetMembers(methodRef.Name))
 			{
+				if (memberDescription.IsMethod == false) continue;
+
 				var methodDescription = memberDescription;
-				var method = ((MemberInfo)memberDescription) as MethodInfo;
+				var method = (MethodInfo)memberDescription;
 
 				if (method == null || method.IsStatic != isStatic || method.IsGenericMethod != hasGenericParameters)
 					continue;
@@ -82,11 +67,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 				if (hasGenericParameters)
 				{
-					if (!method.IsGenericMethodDefinition) method = method.GetGenericMethodDefinition();
 					try
 					{
-						method = method.MakeGenericMethod(genericArguments);
-						methodDescription = new MemberDescription(typeDescription, method);
+						methodDescription = methodDescription.MakeGenericMethod(genericArguments);
+						method = methodDescription;
 					}
 					catch (ArgumentException exception)
 					{
@@ -98,7 +82,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 				var methodQuality = 0.0f;
 				var methodCallExpression = default(Expression);
-				if (methodDescription.TryMakeCall(expression, arguments, bindingContext, out methodCallExpression, out methodQuality) == false)
+				if (methodDescription.TryMakeCall(target, arguments, bindingContext, out methodCallExpression, out methodQuality) == false)
 					continue;
 
 				if (float.IsNaN(methodQuality) || methodQuality <= selectedMethodQuality)
@@ -106,6 +90,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 				selectedMethodCallExpression = methodCallExpression;
 				selectedMethodQuality = methodQuality;
+
+				if (Math.Abs(methodQuality - MemberDescription.QUALITY_EXACT_MATCH) < float.Epsilon)
+					break; // best match
 			}
 
 			if (bindingError != null)
@@ -113,21 +100,72 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			if (selectedMethodCallExpression == null)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCALL, methodRef.Name, type), node);
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCALL, methodRef.Name, type, arguments.Count), node);
 				return false;
 			}
 
-			if (useNullPropagation && expression == null)
+			if (useNullPropagation && target == null)
 			{
 				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
 				return false;
 			}
 
 			if (useNullPropagation)
-				boundExpression = ExpressionUtils.MakeNullPropagationExpression(expression, selectedMethodCallExpression);
+				boundExpression = ExpressionUtils.MakeNullPropagationExpression(target, selectedMethodCallExpression);
 			else
 				boundExpression = selectedMethodCallExpression;
 
+			return true;
+		}
+
+		private static bool TryBindTarget(SyntaxTreeNode node, BindingContext bindingContext, out Expression target, out Type type, out Exception bindingError)
+		{
+			type = null;
+			target = null;
+			bindingError = null;
+
+			// target is passed as Expression from InvokeBinder
+			var targetObj = default(object);
+			if (node.TryGetValue(Constants.EXPRESSION_ATTRIBUTE, out targetObj))
+			{
+				if (targetObj is Expression)
+				{
+					target = (Expression)targetObj;
+					type = target.Type;
+					return true;
+				}
+				else if (targetObj is Type)
+				{
+					target = null;
+					type = (Type)targetObj;
+					return true;
+				}
+			}
+
+			var targetNode = node.GetExpression(throwOnError: false);
+			if (targetNode == null)
+			{
+				if (bindingContext.Global == null)
+				{
+					var methodName = node.GetMethodName(throwOnError: false);
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, methodName ?? "<unknown>"), node);
+					return false;
+				}
+
+				target = bindingContext.Global;
+				type = target.Type;
+			}
+			else if (bindingContext.TryResolveType(targetNode, out type))
+			{
+				target = null;
+			}
+			else
+			{
+				if (TryBind(targetNode, bindingContext, null, out target, out bindingError) == false)
+					return false;
+
+				type = target.Type;
+			}
 			return true;
 		}
 	}

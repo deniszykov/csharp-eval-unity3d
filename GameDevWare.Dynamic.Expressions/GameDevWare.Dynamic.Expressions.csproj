@@ -232,13 +232,14 @@
     </Compile>
     <Compile Include="Binding\AnyBinder.cs" />
     <Compile Include="Binding\ConditionBinder.cs" />
-    <Compile Include="Binding\ExpressionUtils.cs" />
+    <Compile Include="Binding\TypeCache.cs" />
+    <Compile Include="ExpressionUtils.cs" />
     <Compile Include="Binding\MemberDescription.cs" />
-    <Compile Include="Binding\Metadata.cs" />
     <Compile Include="Binding\NumberUtils.cs" />
     <Compile Include="Binding\TypeBinaryBinder.cs" />
     <Compile Include="Binding\TypeConversion.cs" />
     <Compile Include="Binding\TypeDescription.cs" />
+    <Compile Include="Binding\TypeTuple.cs" />
     <Compile Include="Binding\TypeTuple2.cs" />
     <Compile Include="Binding\UnaryBinder.cs" />
     <Compile Include="Binding\BindingContext.cs" />

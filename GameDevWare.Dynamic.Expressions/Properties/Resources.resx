@@ -166,7 +166,7 @@
     <value>Unable to apply null-conditional operator on type '{0}'.</value>
   </data>
   <data name="EXCEPTION_BIND_UNABLETOBINDCALL" xml:space="preserve">
-    <value>Unable to find method '{0}' on type '{1}' accepting specified arguments.</value>
+    <value>Unable to find method '{0}' on type '{1}' accepting {2} arguments.</value>
   </data>
   <data name="EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR" xml:space="preserve">
     <value>Unable to find constructor on type '{0}' accepting specified arguments.</value>
@@ -184,7 +184,7 @@
     <value>Unable to invoke non-delegate type '{0}'.</value>
   </data>
   <data name="EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE" xml:space="preserve">
-    <value>Unable to find public property or field '{0}' on '{1}'.</value>
+    <value>Unable to find public member with name '{0}' on '{1}' type.</value>
   </data>
   <data name="EXCEPTION_BIND_UNABLETORESOLVENAME" xml:space="preserve">
     <value>Unable to resolve '{0}'. There is no formal parameter with this name.</value>
@@ -287,5 +287,8 @@
   </data>
   <data name="EXCEPTION_BIND_MISSINGMETHODPARAMETER" xml:space="preserve">
     <value>Missing required method/indexer '{0}' parameter.</value>
+  </data>
+  <data name="EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH" xml:space="preserve">
+    <value>Unable to remap expression's parameters with lamda syntax. Parameters count mismatch.</value>
   </data>
 </root>

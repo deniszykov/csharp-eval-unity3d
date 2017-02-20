@@ -7,28 +7,39 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 	{
 		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
+			if (node == null) throw new ArgumentNullException("node");
+			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
+			if (expectedType == null) throw new ArgumentNullException("expectedType");
+
 			boundExpression = null;
 			bindingError = null;
-			return false;
-			/*
-			var typeName = node.GetTypeName(throwOnError: true);
-			var typeReference = default(TypeReference);
-			var type = default(Type);
-			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeReference ?? typeName), node);
 
+			var typeName = node.GetTypeName(throwOnError: true);
+			var type = default(Type);
+			if (bindingContext.TryResolveType(typeName, out type) == false)
+			{
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
+				return false;
+			}
+
+			var indexTypeDescription = TypeDescription.Int32Type;
 			var arguments = node.GetArguments(throwOnError: true);
 			var argumentExpressions = new Expression[arguments.Count];
 			for (var i = 0; i < arguments.Count; i++)
 			{
 				var argument = default(SyntaxTreeNode);
 				if (arguments.TryGetValue(i, out argument) == false)
-					throw new ExpressionParserException(Properties.Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS, node);
-				argumentExpressions[i] = Build(argument, context, typeHint: typeof(int));
+				{
+					bindingError = new ExpressionParserException(Properties.Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS, node);
+					return false;
+				}
+
+				if (AnyBinder.TryBind(argument, bindingContext, indexTypeDescription, out argumentExpressions[i], out bindingError) == false)
+					return false;
 			}
 
-			return Expression.NewArrayBounds(type, argumentExpressions);
-			*/
+			boundExpression = Expression.NewArrayBounds(type, argumentExpressions);
+			return true;
 		}
 	}
 }

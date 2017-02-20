@@ -20,7 +20,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
@@ -735,7 +734,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var baseExpression = default(Expression);
 			var continuationExpression = default(Expression);
 			// try to detect null-propagation operation
-			if (Binder.ExtractNullPropagationExpression(expression, out baseExpression, out continuationExpression))
+			if (ExpressionUtils.ExtractNullPropagationExpression(expression, out baseExpression, out continuationExpression))
 			{
 				var callExpression = continuationExpression as MethodCallExpression;
 				var memberExpression = continuationExpression as MemberExpression;

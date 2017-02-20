@@ -15,13 +15,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var arguments = node.GetArguments(throwOnError: true);
 			var targetNode = node.GetExpression(throwOnError: true);
 			var target = default(Expression);
-			if (AnyBinder.TryBind(targetNode, bindingContext, null, out target, out bindingError) == false)
+			if (AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
 				return false;
 
 			var indexExpression = default(Expression);
 			if (target.Type.IsArray)
 			{
-				var indexType = Metadata.GetTypeDescription(typeof(int));
+				var indexType = TypeDescription.Int32Type;
 				var indexingExpressions = new Expression[arguments.Count];
 				for (var i = 0; i < indexingExpressions.Length; i++)
 				{
@@ -51,7 +51,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 			else
 			{
-				var typeDescription = Metadata.GetTypeDescription(target.Type);
+				var typeDescription = TypeDescription.GetTypeDescription(target.Type);
 				var selectedIndexerQuality = MemberDescription.QUALITY_INCOMPATIBLE;
 				foreach (var indexer in typeDescription.Indexers)
 				{
