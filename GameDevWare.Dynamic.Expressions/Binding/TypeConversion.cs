@@ -80,59 +80,64 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return Conversions.TryGetValue(key, out typeConversion);
 		}
 
-		internal static void UpdateConversions(TypeDescription typeDescription)
+		internal static void UpdateConversions(IEnumerable<TypeDescription> typeDescriptions)
 		{
-			if (typeDescription == null) throw new ArgumentNullException("typeDescription");
+			if (typeDescriptions == null) throw new ArgumentNullException("typeDescriptions");
 
 			lock (Conversions)
 			{
-				foreach (var conversionMethod in typeDescription.Conversions)
+				foreach (var typeDescription in typeDescriptions)
 				{
-					var key = new TypeTuple2(conversionMethod.GetParameter(0).ParameterType, conversionMethod.GetParameter(-1).ParameterType);
+					foreach (var conversionMethod in typeDescription.Conversions)
+					{
+						var key = new TypeTuple2(conversionMethod.GetParameterType(0), conversionMethod.GetParameterType(-1));
 
-					var explicitConversionMethod = conversionMethod.IsImplicitOperator ? default(MemberDescription) : conversionMethod;
-					var implicitConversionMethod = conversionMethod.IsImplicitOperator ? conversionMethod : default(MemberDescription);
-					var conversion = default(TypeConversion);
-					var newConversion = default(TypeConversion);
-					var cost = conversionMethod.IsImplicitOperator ? TypeConversion.QUALITY_IMPLICIT_CONVERSION : TypeConversion.QUALITY_EXPLICIT_CONVERSION;
-					if (Conversions.TryGetValue(key, out conversion) == false)
-						newConversion = new TypeConversion(cost, false, implicitConversionMethod, explicitConversionMethod);
-					else
-						newConversion = conversion.Expand(implicitConversionMethod, explicitConversionMethod);
+						var explicitConversionMethod = conversionMethod.IsImplicitOperator ? default(MemberDescription) : conversionMethod;
+						var implicitConversionMethod = conversionMethod.IsImplicitOperator ? conversionMethod : default(MemberDescription);
+						var conversion = default(TypeConversion);
+						var newConversion = default(TypeConversion);
+						var cost = conversionMethod.IsImplicitOperator ? TypeConversion.QUALITY_IMPLICIT_CONVERSION : TypeConversion.QUALITY_EXPLICIT_CONVERSION;
+						if (Conversions.TryGetValue(key, out conversion) == false)
+							newConversion = new TypeConversion(cost, false, implicitConversionMethod, explicitConversionMethod);
+						else
+							newConversion = conversion.Expand(implicitConversionMethod, explicitConversionMethod);
 
-					if (newConversion != conversion)
-						Conversions[key] = newConversion;
-				}
+						if (newConversion != conversion)
+							Conversions[key] = newConversion;
+					}
 
-				foreach (var baseType in typeDescription.BaseTypes)
-				{
-					var key = new TypeTuple2(typeDescription, baseType);
-					var cost = baseType == typeDescription ? TypeConversion.QUALITY_SAME_TYPE : TypeConversion.QUALITY_INHERITANCE_HIERARCHY;
-					var conversion = default(TypeConversion);
-					if (Conversions.TryGetValue(key, out conversion))
-						conversion = new TypeConversion(cost, true, conversion.Implicit, conversion.Explicit);
-					else
-						conversion = new TypeConversion(cost, true, null, null);
-				}
+					foreach (var baseType in typeDescription.BaseTypes)
+					{
+						var key = new TypeTuple2(typeDescription, baseType);
+						var cost = baseType == typeDescription ? TypeConversion.QUALITY_SAME_TYPE : TypeConversion.QUALITY_INHERITANCE_HIERARCHY;
+						var conversion = default(TypeConversion);
+						if (Conversions.TryGetValue(key, out conversion))
+							conversion = new TypeConversion(cost, true, conversion.Implicit, conversion.Explicit);
+						else
+							conversion = new TypeConversion(cost, true, null, null);
+						Conversions[key] = conversion;
+					}
 
-				foreach (var baseType in typeDescription.Interfaces)
-				{
-					var key = new TypeTuple2(typeDescription, baseType);
-					var cost = baseType == typeDescription ? TypeConversion.QUALITY_SAME_TYPE : TypeConversion.QUALITY_INHERITANCE_HIERARCHY;
-					var conversion = default(TypeConversion);
-					if (Conversions.TryGetValue(key, out conversion))
-						conversion = new TypeConversion(cost, true, conversion.Implicit, conversion.Explicit);
-					else
-						conversion = new TypeConversion(cost, true, null, null);
-				}
+					foreach (var baseType in typeDescription.Interfaces)
+					{
+						var key = new TypeTuple2(typeDescription, baseType);
+						var cost = baseType == typeDescription ? TypeConversion.QUALITY_SAME_TYPE : TypeConversion.QUALITY_INHERITANCE_HIERARCHY;
+						var conversion = default(TypeConversion);
+						if (Conversions.TryGetValue(key, out conversion))
+							conversion = new TypeConversion(cost, true, conversion.Implicit, conversion.Explicit);
+						else
+							conversion = new TypeConversion(cost, true, null, null);
+						Conversions[key] = conversion;
+					}
 
-				if (typeDescription.IsEnum || typeDescription.IsNullable)
-				{
-					var fromEnumKey = new TypeTuple2(typeDescription, typeDescription.UnderlyingType);
-					var toEnumKey = new TypeTuple2(typeDescription.UnderlyingType, typeDescription);
+					if (typeDescription.IsEnum || typeDescription.IsNullable)
+					{
+						var fromEnumKey = new TypeTuple2(typeDescription, typeDescription.UnderlyingType);
+						var toEnumKey = new TypeTuple2(typeDescription.UnderlyingType, typeDescription);
 
-					Conversions[fromEnumKey] = new TypeConversion(TypeConversion.QUALITY_IN_PLACE_CONVERSION, true);
-					Conversions[toEnumKey] = new TypeConversion(TypeConversion.QUALITY_IN_PLACE_CONVERSION, true);
+						Conversions[fromEnumKey] = new TypeConversion(TypeConversion.QUALITY_IN_PLACE_CONVERSION, true);
+						Conversions[toEnumKey] = new TypeConversion(TypeConversion.QUALITY_IN_PLACE_CONVERSION, true);
+					}
 				}
 			}
 		}

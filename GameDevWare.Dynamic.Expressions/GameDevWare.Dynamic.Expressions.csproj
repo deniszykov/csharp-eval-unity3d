@@ -233,6 +233,7 @@
     <Compile Include="Binding\AnyBinder.cs" />
     <Compile Include="Binding\ConditionBinder.cs" />
     <Compile Include="Binding\TypeCache.cs" />
+    <Compile Include="ExpressionLookupVisitor.cs" />
     <Compile Include="ExpressionUtils.cs" />
     <Compile Include="Binding\MemberDescription.cs" />
     <Compile Include="Binding\NumberUtils.cs" />

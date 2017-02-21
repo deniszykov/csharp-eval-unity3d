@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -16,7 +17,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			boundExpression = null;
 			bindingError = null;
 
-			if (expectedType.IsOpenGenericType || !expectedType.IsDelegate)
+			if (expectedType.HasGenericParameters || !expectedType.IsDelegate)
 			{
 				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED, expectedType != null ? expectedType.ToString() : "<null>"));
 				return false;
@@ -55,18 +56,20 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				lambdaParameters[i] = Expression.Parameter(lambdaInvokeMethod.GetParameter(i).ParameterType, argumentNames[i]);
 
 			var currentParameters = bindingContext.Parameters;
-			var builderParameters = new List<ParameterExpression>(lambdaParameters.Length + currentParameters.Count);
+			var newParameters = new List<ParameterExpression>(lambdaParameters.Length + currentParameters.Count);
 			// add all lambda's parameters
-			builderParameters.AddRange(lambdaParameters);
+			newParameters.AddRange(lambdaParameters);
 			// add closure parameters
 			foreach (var parameterExpr in currentParameters)
 				if (Array.IndexOf(argumentNames, parameterExpr.Name) < 0)
-					builderParameters.Add(parameterExpr);
+					newParameters.Add(parameterExpr);
 
-			var nestedBindingContext = bindingContext.CreateNestedContext(builderParameters, lambdaInvokeMethod.ResultType);
+			var nestedBindingContext = bindingContext.CreateNestedContext(newParameters.AsReadOnly(), lambdaInvokeMethod.ResultType);
 			var body = default(Expression);
-			if (AnyBinder.TryBind(bodyNode, nestedBindingContext, TypeDescription.GetTypeDescription(lambdaInvokeMethod.ResultType), out body, out bindingError) == false)
+			if (AnyBinder.TryBindInNewScope(bodyNode, nestedBindingContext, TypeDescription.GetTypeDescription(lambdaInvokeMethod.ResultType), out body, out bindingError) == false)
 				return false;
+
+			Debug.Assert(body != null, "body != null");
 
 			boundExpression = Expression.Lambda(expectedType, body, lambdaParameters);
 			return true;

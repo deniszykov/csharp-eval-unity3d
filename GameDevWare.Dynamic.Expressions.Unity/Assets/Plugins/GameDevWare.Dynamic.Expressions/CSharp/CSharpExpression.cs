@@ -155,9 +155,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree();
-			var expressionBuilder = new Binder(new ParameterExpression[0], resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Bind(expressionTree);
-			return Expression.Lambda<Func<ResultT>>(body, expressionBuilder.Parameters);
+			var expressionBinder = new Binder(new ParameterExpression[0], resultType: typeof(ResultT), typeResolver: typeResolver);
+			return (Expression<Func<ResultT>>)expressionBinder.Bind(expressionTree);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtentions.CompileAot{TResult}"/> and executed.
@@ -179,8 +178,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME)
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Bind(expressionTree);
-			return Expression.Lambda<Func<Arg1T, ResultT>>(body, expressionBuilder.Parameters);
+			return (Expression<Func<Arg1T, ResultT>>)expressionBuilder.Bind(expressionTree);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtentions.CompileAot{TResult}"/> and executed.
@@ -200,13 +198,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree();
-			var expressionBuilder = new Binder(new[]
+			var expressionBinder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Bind(expressionTree);
-			return Expression.Lambda<Func<Arg1T, Arg2T, ResultT>>(body, expressionBuilder.Parameters);
+
+			return (Expression<Func<Arg1T, Arg2T, ResultT>>)expressionBinder.Bind(expressionTree);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtentions.CompileAot{TResult}"/> and executed.
@@ -228,14 +226,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree();
-			var expressionBuilder = new Binder(new ParameterExpression[]
+			var expressionBinder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg3T), arg3Name ?? ARG3_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Bind(expressionTree);
-			return Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(body, expressionBuilder.Parameters);
+
+			return (Expression<Func<Arg1T, Arg2T, Arg3T, ResultT>>)expressionBinder.Bind(expressionTree);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtentions.CompileAot{TResult}"/> and executed.
@@ -259,15 +257,15 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree();
-			var expressionBuilder = new Binder(new ParameterExpression[]
+			var expressionBinder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg3T), arg3Name ?? ARG3_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg4T), arg3Name ?? ARG4_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
-			var body = expressionBuilder.Bind(expressionTree);
-			return Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(body, expressionBuilder.Parameters);
+
+			return (Expression<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>)expressionBinder.Bind(expressionTree);
 		}
 	}
 }

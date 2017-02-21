@@ -21,9 +21,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var propertyOrFieldName = node.GetPropertyOrFieldName(throwOnError: true);
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
 
-			var type = default(Type);
+			var targetType = default(Type);
 			var isStatic = false;
-			if (bindingContext.TryResolveType(targetNode, out type))
+			if (bindingContext.TryResolveType(targetNode, out targetType))
 			{
 				target = null;
 				isStatic = true;
@@ -31,7 +31,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			else if (targetNode == null)
 			{
 				target = bindingContext.Global;
-				type = target != null ? target.Type : null;
+				targetType = target != null ? target.Type : null;
 				isStatic = false;
 
 				switch (propertyOrFieldName)
@@ -53,37 +53,39 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 			else if (AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError))
 			{
-				type = target.Type;
+				Debug.Assert(target != null, "target != null");
+
+				targetType = target.Type;
 				isStatic = false;
 			}
 			else
 			{
 				target = null;
-				type = null;
+				targetType = null;
 			}
 
-			if (target == null && type == null)
+			if (target == null && targetType == null)
 			{
 				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, propertyOrFieldName), node);
 				return false;
 			}
 
-			Debug.Assert(type != null, "type != null");
+			Debug.Assert(targetType != null, "type != null");
 
-			var typeDescription = TypeDescription.GetTypeDescription(type);
-			if (isStatic && type.IsEnum)
+			var targetTypeDescription = TypeDescription.GetTypeDescription(targetType);
+			if (isStatic && targetType.IsEnum)
 			{
-				var fieldMemberDescription = typeDescription.GetMembers(propertyOrFieldName).FirstOrDefault(m => m.IsStatic);
+				var fieldMemberDescription = targetTypeDescription.GetMembers(propertyOrFieldName).FirstOrDefault(m => m.IsStatic);
 				if (fieldMemberDescription == null)
 				{
-					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, type), node);
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, targetType), node);
 					return false;
 				}
 				boundExpression = fieldMemberDescription.ConstantValueExpression;
 			}
 			else
 			{
-				foreach (var member in typeDescription.GetMembers(propertyOrFieldName))
+				foreach (var member in targetTypeDescription.GetMembers(propertyOrFieldName))
 				{
 					if (member.IsStatic != isStatic || member.IsPropertyOrField == false)
 						continue;
@@ -95,18 +97,18 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			if (boundExpression == null)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, type), node);
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, targetType), node);
 				return false;
 			}
 
 			if (useNullPropagation && isStatic)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, targetType));
 				return false;
 			}
 
-			if (useNullPropagation)
-				boundExpression = ExpressionUtils.MakeNullPropagationExpression(target, boundExpression);
+			if (useNullPropagation && targetTypeDescription.CanBeNull)
+				bindingContext.RegisterNullPropagationTarger(target);
 
 			return true;
 		}

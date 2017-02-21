@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
@@ -22,10 +23,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var leftOperand = default(Expression);
 			var rightOperand = default(Expression);
 
-			if (AnyBinder.TryBind(left, bindingContext, TypeDescription.ObjectType, out leftOperand, out bindingError) == false)
+			if (AnyBinder.TryBindInNewScope(left, bindingContext, TypeDescription.ObjectType, out leftOperand, out bindingError) == false)
 				return false;
-			if (AnyBinder.TryBind(right, bindingContext, TypeDescription.ObjectType, out rightOperand, out bindingError) == false)
+			if (AnyBinder.TryBindInNewScope(right, bindingContext, TypeDescription.ObjectType, out rightOperand, out bindingError) == false)
 				return false;
+
+			Debug.Assert(leftOperand != null, "leftOperand != null");
+			Debug.Assert(rightOperand != null, "rightOperand != null");
 
 			switch (expressionType)
 			{

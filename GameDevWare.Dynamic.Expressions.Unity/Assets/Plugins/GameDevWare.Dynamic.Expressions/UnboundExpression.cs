@@ -64,7 +64,7 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					var parameters = new ReadOnlyCollection<ParameterExpression>(new ParameterExpression[0]);
 					var builder = new Binder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<ResultT>>(builder.Bind(this.SyntaxTree), parameters);
+					expression = builder.Bind(this.SyntaxTree);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
@@ -88,7 +88,7 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					var parameters = CreateParameters(new[] { typeof(Arg1T) }, new[] { arg1Name ?? CSharpExpression.ARG1_DEFAULT_NAME });
 					var builder = new Binder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<Arg1T, ResultT>>(builder.Bind(this.SyntaxTree), parameters);
+					expression = builder.Bind(this.SyntaxTree);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
@@ -121,7 +121,7 @@ namespace GameDevWare.Dynamic.Expressions
 						new[] { arg1Name ?? CSharpExpression.ARG1_DEFAULT_NAME, arg2Name ?? CSharpExpression.ARG2_DEFAULT_NAME }
 					);
 					var builder = new Binder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<Arg1T, Arg2T, ResultT>>(builder.Bind(this.SyntaxTree), parameters);
+					expression = builder.Bind(this.SyntaxTree);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
@@ -163,7 +163,7 @@ namespace GameDevWare.Dynamic.Expressions
 						}
 					);
 					var builder = new Binder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(builder.Bind(this.SyntaxTree), parameters);
+					expression = builder.Bind(this.SyntaxTree);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}
@@ -209,7 +209,7 @@ namespace GameDevWare.Dynamic.Expressions
 						}
 					);
 					var builder = new Binder(parameters, resultType: typeof(ResultT));
-					expression = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(builder.Bind(this.SyntaxTree), parameters);
+					expression = builder.Bind(this.SyntaxTree);
 					this.compiledExpressions.Add(key, expression);
 				}
 			}

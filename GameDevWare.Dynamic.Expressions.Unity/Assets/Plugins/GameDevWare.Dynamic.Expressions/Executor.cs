@@ -337,43 +337,11 @@ namespace GameDevWare.Dynamic.Expressions
 
 		private static ExecuteFunc Conditional(ConditionalExpression conditionalExpression, ConstantExpression[] constExprs, ParameterExpression[] paramExprs)
 		{
-			var baseExpression = default(Expression);
-			var continuationExpression = default(Expression);
-			// try to detect null-propagation operation
-			if (ExpressionUtils.ExtractNullPropagationExpression(conditionalExpression, out baseExpression, out continuationExpression))
-			{
-				var methodCallExpression = continuationExpression as MethodCallExpression;
-				var memberExpression = continuationExpression as MemberExpression;
-				var indexExpression = continuationExpression as BinaryExpression;
+			var trueFn = Expression(conditionalExpression.IfTrue, constExprs, paramExprs);
+			var falseFn = Expression(conditionalExpression.IfFalse, constExprs, paramExprs);
+			var testFn = Expression(conditionalExpression.Test, constExprs, paramExprs);
 
-				if (indexExpression == null && methodCallExpression == null && memberExpression == null)
-					throw new InvalidOperationException(string.Format("Unknown null-propagation pattern met: {0}?.{1}.", baseExpression.NodeType, continuationExpression.NodeType));
-
-				var slot1ParameterExpression = ConstantExpression.Parameter(baseExpression.Type, "slot1");
-				var baseFn = Expression(baseExpression, constExprs, paramExprs);
-				var continueFn = Expression(methodCallExpression != null ? ConstantExpression.Call(slot1ParameterExpression, methodCallExpression.Method, methodCallExpression.Arguments) :
-									memberExpression != null ? ConstantExpression.MakeMemberAccess(slot1ParameterExpression, memberExpression.Member) :
-									(Expression)ConstantExpression.MakeBinary(ExpressionType.ArrayIndex, slot1ParameterExpression, indexExpression.Right), constExprs, paramExprs);
-
-				return closure =>
-				{
-					var baseValue = baseFn(closure);
-					if (baseValue == null)
-						return null;
-
-					closure.Locals[LOCAL_SLOT1] = baseValue;
-					return continueFn(closure);
-				};
-
-			}
-			else
-			{
-				var trueFn = Expression(conditionalExpression.IfTrue, constExprs, paramExprs);
-				var falseFn = Expression(conditionalExpression.IfFalse, constExprs, paramExprs);
-				var testFn = Expression(conditionalExpression.Test, constExprs, paramExprs);
-
-				return closure => closure.Unbox<bool>(testFn(closure)) ? trueFn(closure) : falseFn(closure);
-			}
+			return closure => closure.Unbox<bool>(testFn(closure)) ? trueFn(closure) : falseFn(closure);
 		}
 
 		private static ExecuteFunc Constant(ConstantExpression constantExpression, ConstantExpression[] constExprs, ParameterExpression[] paramExprs)

@@ -8,6 +8,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		private readonly Dictionary<Type, TypeDescription> types;
 		private readonly TypeCache parentCache;
 
+		public Dictionary<Type, TypeDescription>.ValueCollection Values { get { return this.types.Values; } }
+
 		public TypeCache(TypeCache parentCache = null)
 		{
 			this.parentCache = parentCache;

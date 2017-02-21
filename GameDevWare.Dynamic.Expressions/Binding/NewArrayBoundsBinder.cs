@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
@@ -34,8 +35,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					return false;
 				}
 
-				if (AnyBinder.TryBind(argument, bindingContext, indexTypeDescription, out argumentExpressions[i], out bindingError) == false)
+				if (AnyBinder.TryBindInNewScope(argument, bindingContext, indexTypeDescription, out argumentExpressions[i], out bindingError) == false)
 					return false;
+
+				Debug.Assert(argumentExpressions[i] != null, "argumentExpressions[i] != null");
 			}
 
 			boundExpression = Expression.NewArrayBounds(type, argumentExpressions);

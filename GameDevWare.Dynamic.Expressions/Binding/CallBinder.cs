@@ -27,15 +27,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return false;
 			}
 
-			var type = default(Type);
-			if (TryBindTarget(node, bindingContext, out target, out type, out bindingError) == false)
+			var targetType = default(Type);
+			if (TryBindTarget(node, bindingContext, out target, out targetType, out bindingError) == false)
 			{
 				return false;
 			}
 
 			var isStatic = target == null;
 			var selectedMethodQuality = MemberDescription.QUALITY_INCOMPATIBLE;
-			var selectedMethodCallExpression = default(Expression);
 			var hasGenericParameters = methodRef.TypeArguments.Count > 0;
 			var genericArguments = default(Type[]);
 			if (hasGenericParameters)
@@ -52,8 +51,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				}
 			}
 
-			var typeDescription = TypeDescription.GetTypeDescription(type);
-			foreach (var memberDescription in typeDescription.GetMembers(methodRef.Name))
+			var targetTypeDescription = TypeDescription.GetTypeDescription(targetType);
+			foreach (var memberDescription in targetTypeDescription.GetMembers(methodRef.Name))
 			{
 				if (memberDescription.IsMethod == false) continue;
 
@@ -88,7 +87,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				if (float.IsNaN(methodQuality) || methodQuality <= selectedMethodQuality)
 					continue;
 
-				selectedMethodCallExpression = methodCallExpression;
+				boundExpression = methodCallExpression;
 				selectedMethodQuality = methodQuality;
 
 				if (Math.Abs(methodQuality - MemberDescription.QUALITY_EXACT_MATCH) < float.Epsilon)
@@ -98,22 +97,20 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (bindingError != null)
 				return false;
 
-			if (selectedMethodCallExpression == null)
+			if (boundExpression == null)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCALL, methodRef.Name, type, arguments.Count), node);
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCALL, methodRef.Name, targetType, arguments.Count), node);
 				return false;
 			}
 
 			if (useNullPropagation && target == null)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, type));
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, targetType));
 				return false;
 			}
 
-			if (useNullPropagation)
-				boundExpression = ExpressionUtils.MakeNullPropagationExpression(target, selectedMethodCallExpression);
-			else
-				boundExpression = selectedMethodCallExpression;
+			if (useNullPropagation && targetTypeDescription.CanBeNull)
+				bindingContext.RegisterNullPropagationTarger(target);
 
 			return true;
 		}

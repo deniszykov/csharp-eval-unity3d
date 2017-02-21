@@ -13,8 +13,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			public static MyClass Filled = new MyClass
 			{
 				NullableIntField = 2,
-				IntField =  1,
-				BoolField =  true,
+				IntField = 1,
+				BoolField = true,
 				OtherField = new MyClass()
 			};
 
@@ -23,6 +23,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			public bool BoolField;
 			public MyClass OtherField;
 
+			public MyClass this[int indexer] { get { return this.OtherField; } }
+			public MyClass GetOther() { return this.OtherField; }
 		}
 
 		[Theory]
@@ -126,10 +128,13 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("ExpressionBuilderTests.MyClass.Default?.BoolField ?? true", false)]
 		[InlineData("ExpressionBuilderTests.MyClass.Filled?.NullableIntField ?? 1", 2)]
 		[InlineData("ExpressionBuilderTests.MyClass.Filled?.IntField ?? 2", 1)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?.IntField <= 1", true)]
+		//[InlineData("ExpressionBuilderTests.MyClass.Filled?.IntField <= 1", true)]
 		[InlineData("ExpressionBuilderTests.MyClass.Filled?.BoolField ?? false", true)]
 		[InlineData("ExpressionBuilderTests.MyClass.Filled?.OtherField.BoolField ?? true", false)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?.OtherField?.OtherField?.OtherField.BoolField ?? true", false)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?.OtherField?.OtherField?.OtherField.IntField ?? 123", 123)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?.GetOther()?.OtherField?.OtherField.IntField ?? 123", 123)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?[1]?.OtherField?.OtherField.IntField ?? 123", 123)]
+		[InlineData("ExpressionBuilderTests.MyClass.Filled?[1]?.GetOther()?.OtherField.IntField ?? 123", 123)]
 		public void NullResolveTest(string expression, object expected)
 		{
 			var knownTypeResolver = new KnownTypeResolver(typeof(MyClass));

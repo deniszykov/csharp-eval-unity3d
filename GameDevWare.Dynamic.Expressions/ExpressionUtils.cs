@@ -1,4 +1,21 @@
-﻿using System;
+﻿/*
+	Copyright (c) 2016 Denis Zykov, GameDevWare.com
+
+	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
+	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
+	https://unity3d.com/ru/legal/as_terms
+*/
+
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using GameDevWare.Dynamic.Expressions.Binding;
 
@@ -180,7 +197,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			// 1: check if types are convertible
 			// 2: check if value is constant and could be converted
-			if (conversion.IsNatural)
+			if (conversion.IsNatural && conversion.Quality > TypeConversion.QUALITY_EXPLICIT_CONVERSION)
 			{
 				expression = Expression.Convert(expression, toType);
 				return conversion.Quality; // same type hierarchy
@@ -216,15 +233,15 @@ namespace GameDevWare.Dynamic.Expressions
 			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (expectedTypeCode)
 			{
-				case TypeCode.Byte: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)Byte.MinValue, (ulong)Byte.MaxValue); break;
-				case TypeCode.SByte: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)SByte.MinValue, (ulong)SByte.MaxValue); break;
+				case TypeCode.Byte: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, byte.MinValue, byte.MaxValue); break;
+				case TypeCode.SByte: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, sbyte.MinValue, (ulong)sbyte.MaxValue); break;
 				case TypeCode.Char:
-				case TypeCode.UInt16: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)UInt16.MinValue, UInt16.MaxValue); break;
-				case TypeCode.Int16: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)Int16.MinValue, (ulong)Int16.MaxValue); break;
-				case TypeCode.UInt32: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)UInt32.MinValue, UInt32.MaxValue); break;
-				case TypeCode.Int32: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)Int32.MinValue, (ulong)Int32.MaxValue); break;
-				case TypeCode.UInt64: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)UInt64.MinValue, UInt64.MaxValue); break;
-				case TypeCode.Int64: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)Int64.MinValue, (ulong)Int64.MaxValue); break;
+				case TypeCode.UInt16: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, ushort.MinValue, ushort.MaxValue); break;
+				case TypeCode.Int16: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, short.MinValue, (ulong)short.MaxValue); break;
+				case TypeCode.UInt32: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, uint.MinValue, uint.MaxValue); break;
+				case TypeCode.Int32: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, int.MinValue, int.MaxValue); break;
+				case TypeCode.UInt64: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, (long)ulong.MinValue, ulong.MaxValue); break;
+				case TypeCode.Int64: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, long.MinValue, long.MaxValue); break;
 				case TypeCode.Double:
 				case TypeCode.Decimal:
 				case TypeCode.Single: convertibleToExpectedType = NumberUtils.IsSignedInteger(constantTypeCode) || NumberUtils.IsUnsignedInteger(constantTypeCode); break;
@@ -241,26 +258,84 @@ namespace GameDevWare.Dynamic.Expressions
 			return TypeConversion.QUALITY_NO_CONVERSION;
 		}
 
-		public static Expression MakeNullPropagationExpression(Expression testExpression, Expression notNullExpression)
+		public static Expression MakeNullPropagationExpression(List<Expression> nullTestExpressions, Expression ifNotNullExpression)
 		{
-			if (testExpression == null) throw new ArgumentNullException("testExpression");
-			if (notNullExpression == null) throw new ArgumentNullException("notNullExpression");
+			if (nullTestExpressions == null) throw new ArgumentNullException("nullTestExpressions");
+			if (ifNotNullExpression == null) throw new ArgumentNullException("ifNotNullExpression");
 
-			var testTypeDescription = TypeDescription.GetTypeDescription(testExpression.Type);
-			var notNullTypeDescription = TypeDescription.GetTypeDescription(notNullExpression.Type);
-			if (testTypeDescription.IsNullable == false) // no need in null propagation
-				return notNullExpression;
+			var notNullTestTreeExpression = default(Expression);
+			foreach (var nullTestExpression in nullTestExpressions)
+			{
+				var testTypeDescription = TypeDescription.GetTypeDescription(nullTestExpression.Type);
+				var notEqualDefault = Expression.NotEqual(nullTestExpression, testTypeDescription.DefaultExpression);
+				if (notNullTestTreeExpression == null)
+					notNullTestTreeExpression = notEqualDefault;
+				else
+					notNullTestTreeExpression = Expression.AndAlso(notNullTestTreeExpression, notEqualDefault);
+			}
+			if (notNullTestTreeExpression == null)
+				notNullTestTreeExpression = TrueConstant;
 
-			var resultType = notNullTypeDescription.IsNullable == false ? TypeDescription.GetTypeDescription(typeof(Nullable<>).MakeGenericType(notNullExpression.Type)) : notNullTypeDescription;
-			if (resultType != notNullExpression.Type)
-				notNullExpression = Expression.Convert(notNullExpression, resultType);
+			var ifNotNullTypeDescription = TypeDescription.GetTypeDescription(ifNotNullExpression.Type);
+			var resultType = ifNotNullTypeDescription.CanBeNull == false ? TypeDescription.GetTypeDescription(typeof(Nullable<>).MakeGenericType(ifNotNullExpression.Type)) : ifNotNullTypeDescription;
+			if (resultType != ifNotNullExpression.Type)
+				ifNotNullExpression = Expression.Convert(ifNotNullExpression, resultType);
 
 			return Expression.Condition
 			(
-				test: Expression.NotEqual(testExpression, testTypeDescription.DefaultExpression),
-				ifTrue: notNullExpression,
+				test: notNullTestTreeExpression,
+				ifTrue: ifNotNullExpression,
 				ifFalse: resultType.DefaultExpression
 			);
+		}
+		public static bool ExtractNullPropagationExpression(ConditionalExpression conditionalExpression, out List<Expression> nullTestExpressions, out Expression ifNotNullExpression)
+		{
+			if (conditionalExpression == null) throw new ArgumentNullException("conditionalExpression");
+
+			nullTestExpressions = null;
+			ifNotNullExpression = null;
+
+			if (TryExtractTestTargets(conditionalExpression.Test, ref nullTestExpressions) == false)
+				return false;
+
+			if (nullTestExpressions == null || nullTestExpressions.Count == 0)
+				return false;
+
+			var ifFalseConst = conditionalExpression.IfFalse as ConstantExpression;
+			var ifTrueUnwrapped = conditionalExpression.IfTrue.NodeType == ExpressionType.Convert ? ((UnaryExpression)conditionalExpression.IfTrue).Operand : conditionalExpression.IfTrue;
+
+			// try to detect null-propagation operation
+			if (ifFalseConst == null || ifFalseConst.Value != null || ExpressionLookupVisitor.Lookup(conditionalExpression.IfTrue, nullTestExpressions) == false)
+				return false;
+
+			ifNotNullExpression = ifTrueUnwrapped;
+			return true;
+		}
+		private static bool TryExtractTestTargets(Expression testExpression, ref List<Expression> nullTestExpressions)
+		{
+			if (testExpression == null) throw new ArgumentNullException("testExpression");
+
+			if (testExpression.NodeType == ExpressionType.NotEqual)
+			{
+				var notEqual = (BinaryExpression)testExpression;
+				var rightConst = notEqual.Right as ConstantExpression;
+				var rightConstValue = rightConst != null ? rightConst.Value : null;
+				if (notEqual.Left.Type != notEqual.Right.Type || rightConst == null || rightConstValue != null)
+					return false;
+
+				if (nullTestExpressions == null) nullTestExpressions = new List<Expression>();
+				nullTestExpressions.Add(notEqual.Left);
+				return true;
+			}
+			else if (testExpression.NodeType == ExpressionType.AndAlso)
+			{
+				var andAlsoExpression = (BinaryExpression)testExpression;
+				return TryExtractTestTargets(andAlsoExpression.Left, ref nullTestExpressions) && TryExtractTestTargets(andAlsoExpression.Right, ref nullTestExpressions);
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		private static bool TryExposeConstant(Expression expression, out object constantValue, out Type constantType)
@@ -305,40 +380,5 @@ namespace GameDevWare.Dynamic.Expressions
 			return false;
 		}
 
-		internal static bool ExtractNullPropagationExpression(ConditionalExpression conditionalExpression, out Expression baseExpression, out Expression continuationExpression)
-		{
-			if (conditionalExpression == null) throw new ArgumentNullException("conditionalExpression");
-
-			var testAsNotEqual = conditionalExpression.Test as BinaryExpression;
-			var testAsNotEqualRightConst = testAsNotEqual != null ? testAsNotEqual.Right as ConstantExpression : null;
-			var ifFalseConst = conditionalExpression.IfFalse as ConstantExpression;
-			var ifTrueUnwrapped = conditionalExpression.IfTrue.NodeType == ExpressionType.Convert ? ((UnaryExpression)conditionalExpression.IfTrue).Operand : conditionalExpression.IfTrue;
-			var ifTrueCall = ifTrueUnwrapped as MethodCallExpression;
-			var ifTrueMember = ifTrueUnwrapped as MemberExpression;
-			var ifTrueIndex = ifTrueUnwrapped as BinaryExpression;
-
-			// try to detect null-propagation operation
-			if (testAsNotEqual != null && testAsNotEqualRightConst != null && testAsNotEqualRightConst.Value == null &&
-			    ifFalseConst != null && ifFalseConst.Value == null &&
-			    (
-				    (ifTrueCall != null && ReferenceEquals(ifTrueCall.Object, testAsNotEqual.Left)) ||
-				    (ifTrueMember != null && ReferenceEquals(ifTrueMember.Expression, testAsNotEqual.Left)) ||
-				    (ifTrueIndex != null && ReferenceEquals(ifTrueIndex.Left, testAsNotEqual.Left))
-			    )
-			)
-			{
-				baseExpression = testAsNotEqual.Left;
-				continuationExpression = ifTrueUnwrapped;
-
-				return true;
-			}
-			else
-			{
-				baseExpression = null;
-				continuationExpression = null;
-
-				return false;
-			}
-		}
 	}
 }

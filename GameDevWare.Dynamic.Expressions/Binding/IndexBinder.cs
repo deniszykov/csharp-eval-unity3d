@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using GameDevWare.Dynamic.Expressions.Properties;
 
@@ -18,7 +19,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
 				return false;
 
-			var indexExpression = default(Expression);
+			Debug.Assert(target != null, "target != null");
+
+			var targetTypeDescription = TypeDescription.GetTypeDescription(target.Type);
 			if (target.Type.IsArray)
 			{
 				var indexType = TypeDescription.Int32Type;
@@ -32,16 +35,18 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						return false;
 					}
 
-					if (AnyBinder.TryBind(argument, bindingContext, indexType, out indexingExpressions[i], out bindingError) == false)
+					if (AnyBinder.TryBindInNewScope(argument, bindingContext, indexType, out indexingExpressions[i], out bindingError) == false)
 						return false;
+
+					Debug.Assert(indexingExpressions[i] != null, "indexingExpressions[i] != null");
 				}
 
 				try
 				{
 					if (indexingExpressions.Length == 1)
-						indexExpression = Expression.ArrayIndex(target, indexingExpressions[0]);
+						boundExpression = Expression.ArrayIndex(target, indexingExpressions[0]);
 					else
-						indexExpression = Expression.ArrayIndex(target, indexingExpressions);
+						boundExpression = Expression.ArrayIndex(target, indexingExpressions);
 				}
 				catch (Exception exception)
 				{
@@ -51,9 +56,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 			else
 			{
-				var typeDescription = TypeDescription.GetTypeDescription(target.Type);
 				var selectedIndexerQuality = MemberDescription.QUALITY_INCOMPATIBLE;
-				foreach (var indexer in typeDescription.Indexers)
+				foreach (var indexer in targetTypeDescription.Indexers)
 				{
 					var indexerQuality = MemberDescription.QUALITY_INCOMPATIBLE;
 					var indexerCall = default(Expression);
@@ -62,20 +66,19 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					if (indexerQuality <= selectedIndexerQuality)
 						continue;
 
-					indexExpression = indexerCall;
+					boundExpression = indexerCall;
 					selectedIndexerQuality = indexerQuality;
 				}
 			}
-			if (indexExpression == null)
+			if (boundExpression == null)
 			{
 				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETOBINDINDEXER, target.Type), node);
 				return false;
 			}
 
-			if (useNullPropagation)
-				boundExpression = ExpressionUtils.MakeNullPropagationExpression(target, indexExpression);
-			else
-				boundExpression = indexExpression;
+			if (useNullPropagation && targetTypeDescription.CanBeNull)
+				bindingContext.RegisterNullPropagationTarger(target);
+
 			return true;
 		}
 	}

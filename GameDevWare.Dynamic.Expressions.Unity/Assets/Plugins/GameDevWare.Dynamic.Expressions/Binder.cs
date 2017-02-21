@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using GameDevWare.Dynamic.Expressions.Binding;
@@ -36,6 +37,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 		private readonly ReadOnlyCollection<ParameterExpression> parameters;
 		private readonly TypeDescription resultType;
+		private readonly Type lambdaType;
 		private readonly ITypeResolver typeResolver;
 
 		/// <summary>
@@ -48,22 +50,61 @@ namespace GameDevWare.Dynamic.Expressions
 		public Type ResultType { get { return this.resultType; } }
 
 		/// <summary>
-		/// Creates new binder for expressions with signature contains <paramref name="parameters"/> and <paramref name="resultType"/>. Optionally specified <paramref name="contextType"/> and <paramref name="typeResolver"/>.
+		/// Creates new binder for expressions with <paramref name="lambdaType"/> signature. Optionally specifying <paramref name="typeResolver"/> to reference additional types during binding.
 		/// </summary>
-		/// <param name="parameters">List of parameter for bound expression.</param>
-		/// <param name="resultType">Result type of bound expression.</param>
-		/// <param name="contextType">Context type of bound expression.</param>
-		/// <param name="typeResolver">Type resolver for bound expression.</param>
-		public Binder(IList<ParameterExpression> parameters, Type resultType, Type contextType = null, ITypeResolver typeResolver = null)
+		/// <param name="lambdaType">Signature of bound expression.</param>
+		/// <param name="typeResolver">Type resolver used for type resolution during binding process.
+		/// When not specified then new instance of <see cref="KnownTypeResolver"/> is created using <paramref name="lambdaType"/> parameter types and result type.</param>
+		public Binder(Type lambdaType, ITypeResolver typeResolver = null)
 		{
-			if (resultType == null) throw new ArgumentNullException("resultType");
+			if (lambdaType == null) throw new ArgumentNullException("lambdaType");
+
+			var lambdaTypeDescription = TypeDescription.GetTypeDescription(lambdaType);
+			if (lambdaTypeDescription.IsDelegate == false || lambdaTypeDescription.HasGenericParameters)
+				throw new ArgumentException(string.Format(Resources.EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED, lambdaType), "lambdaType");
+
+			var invokeMethod = lambdaTypeDescription.GetMembers(Constants.DELEGATE_INVOKE_NAME).FirstOrDefault(m => !m.IsStatic && m.IsMethod);
+			if (invokeMethod == null)
+				throw new MissingMethodException(lambdaType.ToString(), Constants.DELEGATE_INVOKE_NAME);
+
+			if (typeResolver == null) typeResolver = new KnownTypeResolver(parameters.Select(p => p.Type), DefaultTypeResolver);
+
+			var parametersArray = new ParameterExpression[invokeMethod.GetParametersCount()];
+			for (var i = 0; i < invokeMethod.GetParametersCount(); i++)
+				parametersArray[i] = Expression.Parameter(invokeMethod.GetParameterType(i), invokeMethod.GetParameterName(i));
+
+			this.lambdaType = lambdaType;
+			this.parameters = new ReadOnlyCollection<ParameterExpression>(parametersArray);
+			this.resultType = TypeDescription.GetTypeDescription(invokeMethod.ResultType);
+			this.typeResolver = typeResolver;
+
+		}
+
+		/// <summary>
+		/// Creates new binder for expressions with signature contains <paramref name="parameters"/>(up to 4) and <paramref name="resultType"/>. Optionally specifying <paramref name="typeResolver"/> to reference additional types during binding.
+		/// </summary>
+		/// <param name="parameters">List of parameter for bound expression. Maximum number of parameters is 4.</param>
+		/// <param name="resultType">Result type of bound expression.</param>
+		/// <param name="typeResolver">Type resolver used for type resolution during binding process.
+		/// When not specified then new instance of <see cref="KnownTypeResolver"/> is created using <paramref name="lambdaType"/> parameter types and result type.</param>
+		public Binder(IList<ParameterExpression> parameters, Type resultType, ITypeResolver typeResolver = null)
+		{
 			if (parameters == null) throw new ArgumentNullException("parameters");
-			if (parameters.Any(p => p.Type.IsGenericParameter)) throw new ArgumentNullException("parameters");
+			if (resultType == null) throw new ArgumentNullException("resultType");
+			if (resultType.IsGenericParameter) throw new ArgumentException("A value can't be generic parameter type.", "resultType");
+			if (parameters.Count > 4) throw new ArgumentOutOfRangeException("parameters");
+			if (parameters.Any(p => p == null || p.Type.IsGenericParameter)) throw new ArgumentException("Collection can't contain nulls or generic parameter types.", "parameters");
 			if (typeResolver == null) typeResolver = new KnownTypeResolver(parameters.Select(p => p.Type), DefaultTypeResolver);
 
 			if (parameters is ReadOnlyCollection<ParameterExpression> == false)
 				parameters = new ReadOnlyCollection<ParameterExpression>(parameters);
 
+			var funcParams = new Type[parameters.Count + 1];
+			for (var i = 0; i < parameters.Count; i++)
+				funcParams[i] = parameters[i].Type;
+			funcParams[funcParams.Length - 1] = resultType;
+
+			this.lambdaType = Expression.GetFuncType(funcParams);
 			this.parameters = (ReadOnlyCollection<ParameterExpression>)parameters;
 			this.resultType = TypeDescription.GetTypeDescription(resultType);
 			this.typeResolver = typeResolver;
@@ -74,22 +115,9 @@ namespace GameDevWare.Dynamic.Expressions
 		/// Binds specified syntax tree to concrete types and optional context.
 		/// </summary>
 		/// <param name="node">Syntax tree. Not null.</param>
-		/// <param name="context">Context expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
-		/// <returns></returns>
-		[Obsolete("User Bind() instead.")]
-		public Expression Build(SyntaxTreeNode node, Expression context = null)
-		{
-			if (node == null) throw new ArgumentNullException("node");
-
-			return Bind(node, context);
-		}
-		/// <summary>
-		/// Binds specified syntax tree to concrete types and optional context.
-		/// </summary>
-		/// <param name="node">Syntax tree. Not null.</param>
 		/// <param name="global">Context expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns></returns>
-		public Expression Bind(SyntaxTreeNode node, Expression global = null)
+		public LambdaExpression Bind(SyntaxTreeNode node, Expression global = null)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -105,20 +133,31 @@ namespace GameDevWare.Dynamic.Expressions
 				for (var i = 0; i < newParameters.Length; i++)
 					newParameters[i] = Expression.Parameter(this.parameters[i].Type, newParameterNames[i]);
 				bindingContext = new BindingContext(this.typeResolver, new ReadOnlyCollection<ParameterExpression>(newParameters), this.resultType, global);
+				node = node.GetExpression(throwOnError: true);
 			}
 			else
 			{
 				bindingContext = new BindingContext(this.typeResolver, this.parameters, this.resultType, global);
 			}
-			var expression = default(Expression);
+			var body = default(Expression);
 			var bindingError = default(Exception);
-			if (AnyBinder.TryBind(node, bindingContext, this.resultType, out expression, out bindingError) == false)
+			if (AnyBinder.TryBind(node, bindingContext, this.resultType, out body, out bindingError) == false)
 				throw bindingError;
 
-			if (expression.Type != this.resultType)
-				expression = Expression.ConvertChecked(expression, this.resultType);
+			Debug.Assert(body != null, "body != null");
 
-			return expression;
+			bindingContext.CompleteNullPropagation(ref body);
+
+			if (body.Type != this.resultType)
+				body = Expression.ConvertChecked(body, this.resultType);
+
+			return Expression.Lambda(lambdaType, body, bindingContext.Parameters);
+		}
+
+		/// <inheritdoc />
+		public override string ToString()
+		{
+			return string.Format("Binder: {0}, ({1}) -> {2}", this.lambdaType, string.Join(", ", parameters.Select(p => p.Name).ToArray()), this.resultType);
 		}
 	}
 }

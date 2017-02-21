@@ -731,16 +731,16 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		private static void RenderCondition(ConditionalExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
-			var baseExpression = default(Expression);
+			/*var nullTestExpressions = default(List<Expression>);
 			var continuationExpression = default(Expression);
 			// try to detect null-propagation operation
-			if (ExpressionUtils.ExtractNullPropagationExpression(expression, out baseExpression, out continuationExpression))
+			if (ExpressionUtils.ExtractNullPropagationExpression(expression, out nullTestExpressions, out continuationExpression))
 			{
 				var callExpression = continuationExpression as MethodCallExpression;
 				var memberExpression = continuationExpression as MemberExpression;
 				var indexExpression = continuationExpression as BinaryExpression;
 
-				Render(baseExpression, builder, false, checkedScope);
+				Render(nullTestExpressions, builder, false, checkedScope);
 				if (memberExpression != null)
 				{
 					builder.Append("?.");
@@ -768,10 +768,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				}
 				else
 				{
-					throw new InvalidOperationException(string.Format("Unknown null-propagation pattern met: {0}?.{1}.", baseExpression.NodeType, continuationExpression.NodeType));
+					throw new InvalidOperationException(string.Format("Unknown null-propagation pattern met: {0}?.{1}.", nullTestExpressions.NodeType, continuationExpression.NodeType));
 				}
 			}
-			else
+			else*/
 			{
 				var cond = expression;
 				if (!wrapped) builder.Append("(");

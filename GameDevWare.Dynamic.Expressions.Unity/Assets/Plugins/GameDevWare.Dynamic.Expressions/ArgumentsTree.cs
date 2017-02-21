@@ -17,6 +17,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions
 {
@@ -208,7 +209,12 @@ namespace GameDevWare.Dynamic.Expressions
 		/// </summary>
 		public override string ToString()
 		{
-			return this.innerDictionary.ToString();
+			var sb = new StringBuilder();
+			foreach (var kv in this.innerDictionary)
+				sb.Append(kv.Key).Append(": ").Append(kv.Value.ToString()).Append(", ");
+			if (sb.Length > 2)
+				sb.Length -= 2;
+			return sb.ToString();
 		}
 	}
 }

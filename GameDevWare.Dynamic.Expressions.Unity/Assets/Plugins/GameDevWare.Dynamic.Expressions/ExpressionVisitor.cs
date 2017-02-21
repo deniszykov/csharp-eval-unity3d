@@ -127,20 +127,20 @@ namespace GameDevWare.Dynamic.Expressions
 			throw this.UnhandledExpressionType(exp.NodeType);
 		}
 
-		protected virtual Expression VisitBinary(BinaryExpression b)
+		protected virtual Expression VisitBinary(BinaryExpression binaryExpression)
 		{
-			var left = this.Visit(b.Left);
-			var right = this.Visit(b.Right);
-			var expression3 = this.Visit(b.Conversion);
-			if (((left == b.Left) && (right == b.Right)) && (expression3 == b.Conversion))
+			var left = this.Visit(binaryExpression.Left);
+			var right = this.Visit(binaryExpression.Right);
+			var expression3 = this.Visit(binaryExpression.Conversion);
+			if (((left == binaryExpression.Left) && (right == binaryExpression.Right)) && (expression3 == binaryExpression.Conversion))
 			{
-				return b;
+				return binaryExpression;
 			}
-			if ((b.NodeType == ExpressionType.Coalesce) && (b.Conversion != null))
+			if ((binaryExpression.NodeType == ExpressionType.Coalesce) && (binaryExpression.Conversion != null))
 			{
 				return Expression.Coalesce(left, right, expression3 as LambdaExpression);
 			}
-			return Expression.MakeBinary(b.NodeType, left, right, b.IsLiftedToNull, b.Method);
+			return Expression.MakeBinary(binaryExpression.NodeType, left, right, binaryExpression.IsLiftedToNull, binaryExpression.Method);
 		}
 
 		protected virtual MemberBinding VisitBinding(MemberBinding binding)
@@ -189,14 +189,14 @@ namespace GameDevWare.Dynamic.Expressions
 			return original;
 		}
 
-		protected virtual Expression VisitConditional(ConditionalExpression c)
+		protected virtual Expression VisitConditional(ConditionalExpression conditionalExpression)
 		{
-			var test = this.Visit(c.Test);
-			var ifTrue = this.Visit(c.IfTrue);
-			var ifFalse = this.Visit(c.IfFalse);
-			if (((test == c.Test) && (ifTrue == c.IfTrue)) && (ifFalse == c.IfFalse))
+			var test = this.Visit(conditionalExpression.Test);
+			var ifTrue = this.Visit(conditionalExpression.IfTrue);
+			var ifFalse = this.Visit(conditionalExpression.IfFalse);
+			if (((test == conditionalExpression.Test) && (ifTrue == conditionalExpression.IfTrue)) && (ifFalse == conditionalExpression.IfFalse))
 			{
-				return c;
+				return conditionalExpression;
 			}
 			return Expression.Condition(test, ifTrue, ifFalse);
 		}
@@ -276,13 +276,13 @@ namespace GameDevWare.Dynamic.Expressions
 			return original;
 		}
 
-		protected virtual Expression VisitInvocation(InvocationExpression iv)
+		protected virtual Expression VisitInvocation(InvocationExpression invocationExpression)
 		{
-			IEnumerable<Expression> arguments = this.VisitExpressionList(iv.Arguments);
-			var expression = this.Visit(iv.Expression);
-			if ((arguments == iv.Arguments) && (expression == iv.Expression))
+			IEnumerable<Expression> arguments = this.VisitExpressionList(invocationExpression.Arguments);
+			var expression = this.Visit(invocationExpression.Expression);
+			if ((arguments == invocationExpression.Arguments) && (expression == invocationExpression.Expression))
 			{
-				return iv;
+				return invocationExpression;
 			}
 			return Expression.Invoke(expression, arguments);
 		}
@@ -297,25 +297,25 @@ namespace GameDevWare.Dynamic.Expressions
 			return lambda;
 		}
 
-		protected virtual Expression VisitListInit(ListInitExpression init)
+		protected virtual Expression VisitListInit(ListInitExpression listInitExpression)
 		{
-			var newExpression = this.VisitNew(init.NewExpression);
-			var initializers = this.VisitElementInitializerList(init.Initializers);
-			if ((newExpression == init.NewExpression) && (initializers == init.Initializers))
+			var newExpression = this.VisitNew(listInitExpression.NewExpression);
+			var initializers = this.VisitElementInitializerList(listInitExpression.Initializers);
+			if ((newExpression == listInitExpression.NewExpression) && (initializers == listInitExpression.Initializers))
 			{
-				return init;
+				return listInitExpression;
 			}
 			return Expression.ListInit(newExpression, initializers);
 		}
 
-		protected virtual Expression VisitMemberAccess(MemberExpression m)
+		protected virtual Expression VisitMemberAccess(MemberExpression memberExpression)
 		{
-			var expression = this.Visit(m.Expression);
-			if (expression != m.Expression)
+			var expression = this.Visit(memberExpression.Expression);
+			if (expression != memberExpression.Expression)
 			{
-				return Expression.MakeMemberAccess(expression, m.Member);
+				return Expression.MakeMemberAccess(expression, memberExpression.Member);
 			}
-			return m;
+			return memberExpression;
 		}
 
 		protected virtual MemberAssignment VisitMemberAssignment(MemberAssignment assignment)
@@ -328,13 +328,13 @@ namespace GameDevWare.Dynamic.Expressions
 			return assignment;
 		}
 
-		protected virtual Expression VisitMemberInit(MemberInitExpression init)
+		protected virtual Expression VisitMemberInit(MemberInitExpression memberInitExpression)
 		{
-			var newExpression = this.VisitNew(init.NewExpression);
-			var bindings = this.VisitBindingList(init.Bindings);
-			if ((newExpression == init.NewExpression) && (bindings == init.Bindings))
+			var newExpression = this.VisitNew(memberInitExpression.NewExpression);
+			var bindings = this.VisitBindingList(memberInitExpression.Bindings);
+			if ((newExpression == memberInitExpression.NewExpression) && (bindings == memberInitExpression.Bindings))
 			{
-				return init;
+				return memberInitExpression;
 			}
 			return Expression.MemberInit(newExpression, bindings);
 		}
@@ -359,43 +359,43 @@ namespace GameDevWare.Dynamic.Expressions
 			return binding;
 		}
 
-		protected virtual Expression VisitMethodCall(MethodCallExpression m)
+		protected virtual Expression VisitMethodCall(MethodCallExpression methodCallExpression)
 		{
-			var instance = this.Visit(m.Object);
-			IEnumerable<Expression> arguments = this.VisitExpressionList(m.Arguments);
-			if ((instance == m.Object) && (arguments == m.Arguments))
+			var instance = this.Visit(methodCallExpression.Object);
+			IEnumerable<Expression> arguments = this.VisitExpressionList(methodCallExpression.Arguments);
+			if ((instance == methodCallExpression.Object) && (arguments == methodCallExpression.Arguments))
 			{
-				return m;
+				return methodCallExpression;
 			}
-			return Expression.Call(instance, m.Method, arguments);
+			return Expression.Call(instance, methodCallExpression.Method, arguments);
 		}
 
-		protected virtual NewExpression VisitNew(NewExpression nex)
+		protected virtual NewExpression VisitNew(NewExpression newExpression)
 		{
-			IEnumerable<Expression> arguments = this.VisitExpressionList(nex.Arguments);
-			if (arguments == nex.Arguments)
+			IEnumerable<Expression> arguments = this.VisitExpressionList(newExpression.Arguments);
+			if (arguments == newExpression.Arguments)
 			{
-				return nex;
+				return newExpression;
 			}
-			if (nex.Members != null)
+			if (newExpression.Members != null)
 			{
-				return Expression.New(nex.Constructor, arguments, nex.Members);
+				return Expression.New(newExpression.Constructor, arguments, newExpression.Members);
 			}
-			return Expression.New(nex.Constructor, arguments);
+			return Expression.New(newExpression.Constructor, arguments);
 		}
 
-		protected virtual Expression VisitNewArray(NewArrayExpression na)
+		protected virtual Expression VisitNewArray(NewArrayExpression newArrayExpression)
 		{
-			IEnumerable<Expression> initializers = this.VisitExpressionList(na.Expressions);
-			if (initializers == na.Expressions)
+			IEnumerable<Expression> initializers = this.VisitExpressionList(newArrayExpression.Expressions);
+			if (initializers == newArrayExpression.Expressions)
 			{
-				return na;
+				return newArrayExpression;
 			}
-			if (na.NodeType == ExpressionType.NewArrayInit)
+			if (newArrayExpression.NodeType == ExpressionType.NewArrayInit)
 			{
-				return Expression.NewArrayInit(na.Type.GetElementType(), initializers);
+				return Expression.NewArrayInit(newArrayExpression.Type.GetElementType(), initializers);
 			}
-			return Expression.NewArrayBounds(na.Type.GetElementType(), initializers);
+			return Expression.NewArrayBounds(newArrayExpression.Type.GetElementType(), initializers);
 		}
 
 		protected virtual Expression VisitParameter(ParameterExpression parameterExpression)
@@ -403,24 +403,24 @@ namespace GameDevWare.Dynamic.Expressions
 			return parameterExpression;
 		}
 
-		protected virtual Expression VisitTypeIs(TypeBinaryExpression b)
+		protected virtual Expression VisitTypeIs(TypeBinaryExpression typeBinaryExpression)
 		{
-			var expression = this.Visit(b.Expression);
-			if (expression != b.Expression)
+			var expression = this.Visit(typeBinaryExpression.Expression);
+			if (expression != typeBinaryExpression.Expression)
 			{
-				return Expression.TypeIs(expression, b.TypeOperand);
+				return Expression.TypeIs(expression, typeBinaryExpression.TypeOperand);
 			}
-			return b;
+			return typeBinaryExpression;
 		}
 
-		protected virtual Expression VisitUnary(UnaryExpression u)
+		protected virtual Expression VisitUnary(UnaryExpression unaryExpression)
 		{
-			var operand = this.Visit(u.Operand);
-			if (operand != u.Operand)
+			var operand = this.Visit(unaryExpression.Operand);
+			if (operand != unaryExpression.Operand)
 			{
-				return Expression.MakeUnary(u.NodeType, operand, u.Type, u.Method);
+				return Expression.MakeUnary(unaryExpression.NodeType, operand, unaryExpression.Type, unaryExpression.Method);
 			}
-			return u;
+			return unaryExpression;
 		}
 	}
 }

@@ -38,7 +38,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			{
 				var constructorQuality = MemberDescription.QUALITY_INCOMPATIBLE;
 				var constructorCall = default(Expression);
-				if (constructorDescription.TryMakeCall(null, arguments, bindingContext, out constructorCall, out constructorQuality))
+				if (constructorDescription.TryMakeCall(null, arguments, bindingContext, out constructorCall, out constructorQuality) == false)
 					continue;
 
 				if (float.IsNaN(constructorQuality) || constructorQuality <= selectedConstructorQuality)

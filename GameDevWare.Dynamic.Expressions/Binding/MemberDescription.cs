@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -132,6 +133,22 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return this.returnParameter;
 			return this.parameters[parameterIndex];
 		}
+		public Type GetParameterType(int parameterIndex)
+		{
+			if (parameterIndex < -1 || parameterIndex >= this.GetParametersCount()) throw new ArgumentOutOfRangeException("parameterIndex");
+			if (parameterIndex == -1)
+				return this.returnParameter != null ? this.returnParameter.ParameterType : null;
+
+			return this.parameters[parameterIndex].ParameterType;
+		}
+		public string GetParameterName(int parameterIndex)
+		{
+			if (parameterIndex < -1 || parameterIndex >= this.GetParametersCount()) throw new ArgumentOutOfRangeException("parameterIndex");
+			if (parameterIndex == -1)
+				return this.returnParameter != null ? GetParameterName(this.returnParameter) : null;
+
+			return GetParameterName(this.parameters[parameterIndex]);
+		}
 		public int GetParametersCount()
 		{
 			if (this.parameters == null)
@@ -210,12 +227,6 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (argumentsTree.Count < requiredParametersCount)
 				return false; // not all required parameters has values
 
-			if (this.parameters.Length == 0)
-			{
-				expressionQuality = QUALITY_EXACT_MATCH;
-				return true;
-			}
-
 			// bind arguments
 			var parametersQuality = 0.0f;
 			var arguments = default(Expression[]);
@@ -244,8 +255,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				var expectedType = TypeDescription.GetTypeDescription(parameter.ParameterType);
 				var argValue = default(Expression);
 				var bindingError = default(Exception);
-				if (AnyBinder.TryBind(argumentsTree[argumentName], bindingContext, expectedType, out argValue, out bindingError) == false)
+				if (AnyBinder.TryBindInNewScope(argumentsTree[argumentName], bindingContext, expectedType, out argValue, out bindingError) == false)
 					return false;
+
+				Debug.Assert(argValue != null, "argValue != null");
+
 				var quality = ExpressionUtils.TryMorphType(ref argValue, expectedType);
 
 				if (quality <= 0)
@@ -256,20 +270,29 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				arguments[parameterIndex] = argValue;
 			}
 
-			if (arguments == null) arguments = new Expression[this.parameters.Length];
-			for (var i = 0; i < arguments.Length; i++)
+			if (this.parameters.Length > 0)
 			{
-				if (arguments[i] != null) continue;
-				var parameter = this.parameters[i];
-				if (parameter.IsOptional == false)
-					return false; // missing required parameter
+				if (arguments == null) arguments = new Expression[this.parameters.Length];
+				for (var i = 0; i < arguments.Length; i++)
+				{
+					if (arguments[i] != null) continue;
+					var parameter = this.parameters[i];
+					if (parameter.IsOptional == false)
+						return false; // missing required parameter
 
-				var typeDescription = TypeDescription.GetTypeDescription(parameter.ParameterType);
-				arguments[i] = typeDescription.DefaultExpression;
-				parametersQuality += TypeConversion.QUALITY_SAME_TYPE;
+					var typeDescription = TypeDescription.GetTypeDescription(parameter.ParameterType);
+					arguments[i] = typeDescription.DefaultExpression;
+					parametersQuality += TypeConversion.QUALITY_SAME_TYPE;
+				}
+
+				expressionQuality = parametersQuality / this.parameters.Length;
+			}
+			else
+			{
+				expressionQuality = QUALITY_EXACT_MATCH;
 			}
 
-			expressionQuality = parametersQuality / this.parameters.Length;
+
 			if (this.member is MethodInfo)
 			{
 				if (this.IsStatic)

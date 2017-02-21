@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
@@ -21,12 +22,16 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var ifTrueBranch = default(Expression);
 			var ifFalseBranch = default(Expression);
 
-			if (AnyBinder.TryBind(test, bindingContext, TypeDescription.GetTypeDescription(typeof(bool)), out testExpression, out bindingError) == false)
+			if (AnyBinder.TryBindInNewScope(test, bindingContext, TypeDescription.GetTypeDescription(typeof(bool)), out testExpression, out bindingError) == false)
 				return false;
-			if (AnyBinder.TryBind(ifTrue, bindingContext, TypeDescription.ObjectType, out ifTrueBranch, out bindingError) == false)
+			if (AnyBinder.TryBindInNewScope(ifTrue, bindingContext, TypeDescription.ObjectType, out ifTrueBranch, out bindingError) == false)
 				return false;
-			if (AnyBinder.TryBind(ifFalse, bindingContext, TypeDescription.ObjectType, out ifFalseBranch, out bindingError) == false)
+			if (AnyBinder.TryBindInNewScope(ifFalse, bindingContext, TypeDescription.ObjectType, out ifFalseBranch, out bindingError) == false)
 				return false;
+
+			Debug.Assert(testExpression != null, "testExpression != null");
+			Debug.Assert(ifTrueBranch != null, "ifTrueBranch != null");
+			Debug.Assert(ifFalseBranch != null, "ifFalseBranch != null");
 
 			boundExpression = Expression.Condition(testExpression, ifTrueBranch, ifFalseBranch);
 			return true;

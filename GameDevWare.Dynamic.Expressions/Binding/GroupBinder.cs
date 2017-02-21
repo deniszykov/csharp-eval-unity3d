@@ -16,7 +16,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			var expressionNode = node.GetExpression(throwOnError: true);
 
-			return AnyBinder.TryBind(expressionNode, bindingContext, expectedType, out boundExpression, out bindingError);
+			return AnyBinder.TryBindInNewScope(expressionNode, bindingContext, expectedType, out boundExpression, out bindingError);
 		}
 	}
 }

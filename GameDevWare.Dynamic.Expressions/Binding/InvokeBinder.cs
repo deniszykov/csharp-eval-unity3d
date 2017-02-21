@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -21,6 +22,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var target = default(Expression);
 			if (AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
 				return false;
+
+			Debug.Assert(target != null, "target != null");
 
 			var typeDescription = TypeDescription.GetTypeDescription(target.Type);
 			if (typeDescription.IsDelegate == false)
@@ -82,6 +85,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 			else if (AnyBinder.TryBind(methodTargetNode, bindingContext, TypeDescription.ObjectType, out methodTarget, out bindingError))
 			{
+				Debug.Assert(methodTarget != null, "methodTarget != null");
+
 				isStatic = false;
 				type = methodTarget.Type;
 			}
@@ -106,11 +111,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					{ Constants.EXPRESSION_ATTRIBUTE, methodTarget ?? (object)type },
 					{ Constants.ARGUMENTS_ATTRIBUTE, node.GetValueOrDefault(Constants.ARGUMENTS_ATTRIBUTE, default(object)) },
 					{ Constants.METHOD_ATTRIBUTE, methodRef },
-					{ Constants.USE_NULL_PROPAGATION_ATTRIBUTE, node.GetValueOrDefault(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, default(object)) },
+					{ Constants.USE_NULL_PROPAGATION_ATTRIBUTE, methodNameNode.GetValueOrDefault(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, default(object)) },
 
-					{ Constants.EXPRESSION_LINE_NUMBER, node.GetValueOrDefault(Constants.EXPRESSION_LINE_NUMBER, default(object)) },
-					{ Constants.EXPRESSION_COLUMN_NUMBER, node.GetValueOrDefault(Constants.EXPRESSION_COLUMN_NUMBER, default(object)) },
-					{ Constants.EXPRESSION_TOKEN_LENGTH, node.GetValueOrDefault(Constants.EXPRESSION_TOKEN_LENGTH, default(object)) },
+					{ Constants.EXPRESSION_LINE_NUMBER, methodNameNode.GetValueOrDefault(Constants.EXPRESSION_LINE_NUMBER, default(object)) },
+					{ Constants.EXPRESSION_COLUMN_NUMBER, methodNameNode.GetValueOrDefault(Constants.EXPRESSION_COLUMN_NUMBER, default(object)) },
+					{ Constants.EXPRESSION_TOKEN_LENGTH, methodNameNode.GetValueOrDefault(Constants.EXPRESSION_TOKEN_LENGTH, default(object)) },
 				});
 
 				return CallBinder.TryBind(callNode, bindingContext, expectedType, out boundExpression, out bindingError);

@@ -5,6 +5,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class AnyBinder
 	{
+		public static bool TryBindInNewScope(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		{
+			bindingContext = bindingContext.CreateNestedContext();
+			var result = TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
+			bindingContext.CompleteNullPropagation(ref boundExpression);
+			return result;
+		}
 		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
 			if (node == null) throw new ArgumentNullException("node");

@@ -9,6 +9,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 	{
 		private readonly Expression global;
 		private readonly ReadOnlyCollection<ParameterExpression> parameters;
+		private List<Expression> nullPropagationTargets;
 		private readonly Type resultType;
 		private readonly ITypeResolver typeResolver;
 
@@ -54,7 +55,6 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			parameter = null;
 			return false;
 		}
-
 
 		public static bool TryGetTypeReference(object value, out TypeReference typeReference)
 		{
@@ -172,12 +172,32 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 		}
 
-		public BindingContext CreateNestedContext(List<ParameterExpression> builderParameters, Type resultType)
+		public BindingContext CreateNestedContext()
 		{
-			if (builderParameters == null) throw new ArgumentNullException("builderParameters");
+			return new BindingContext(this.typeResolver, this.parameters, resultType, global);
+		}
+		public BindingContext CreateNestedContext(ReadOnlyCollection<ParameterExpression> newParameters, Type resultType)
+		{
+			if (newParameters == null) throw new ArgumentNullException("newParameters");
 			if (resultType == null) throw new ArgumentNullException("resultType");
 
-			return new BindingContext(this.typeResolver, parameters, resultType, global);
+			return new BindingContext(this.typeResolver, newParameters, resultType, global);
+		}
+
+		public void RegisterNullPropagationTarger(Expression target)
+		{
+			if (target == null) throw new ArgumentNullException("target");
+
+			if (this.nullPropagationTargets == null)
+				this.nullPropagationTargets = new List<Expression>();
+			this.nullPropagationTargets.Add(target);
+		}
+		public void CompleteNullPropagation(ref Expression expression)
+		{
+			if (expression == null || this.nullPropagationTargets == null || this.nullPropagationTargets.Count == 0)
+				return;
+
+			expression = ExpressionUtils.MakeNullPropagationExpression(this.nullPropagationTargets, expression);
 		}
 	}
 }

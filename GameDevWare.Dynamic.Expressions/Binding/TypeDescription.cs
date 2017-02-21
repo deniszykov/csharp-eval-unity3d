@@ -47,7 +47,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public readonly bool CanBeNull;
 		public readonly bool IsEnum;
 		public readonly bool IsDelegate;
-		public readonly bool IsOpenGenericType;
+		public readonly bool HasGenericParameters;
 		public readonly TypeDescription BaseType;
 		public readonly TypeDescription UnderlyingType;
 		public readonly TypeDescription[] BaseTypes;
@@ -68,7 +68,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				typeof(char), typeof(string), typeof(float), typeof(double), typeof(decimal),
 				typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
 				typeof(long), typeof(ulong), typeof(Enum), typeof(MulticastDelegate)
-			}, Types.GetOrCreateTypeDescription);
+			}, GetTypeDescription);
 		}
 		public TypeDescription(Type type, TypeCache cache)
 		{
@@ -97,8 +97,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.CanBeNull = this.IsNullable || type.IsValueType == false;
 			this.IsEnum = type.IsEnum;
 			this.IsDelegate = typeof(Delegate).IsAssignableFrom(type) && type != typeof(Delegate) && type != typeof(MulticastDelegate);
-			this.IsOpenGenericType = type.ContainsGenericParameters;
-			this.DefaultExpression = Expression.Constant(type.IsValueType && this.IsNullable == false ? Activator.CreateInstance(type) : null);
+			this.HasGenericParameters = type.ContainsGenericParameters;
+			this.DefaultExpression = Expression.Constant(type.IsValueType && this.IsNullable == false ? Activator.CreateInstance(type) : null, type);
 
 			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
 			var methodsDescriptions = new MemberDescription[methods.Length];
@@ -147,7 +147,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					methodsDescriptions[i] = new MemberDescription(this, method);
 
 				var methodDescription = methodsDescriptions[i];
-				if (compareParameterIndex.HasValue && methodDescription.GetParameter(compareParameterIndex.Value).ParameterType != this.type) continue;
+				if (compareParameterIndex.HasValue && methodDescription.GetParameterType(compareParameterIndex.Value) != this.type) continue;
 
 				if (operators == null) operators = new List<MemberDescription>();
 				operators.Add(new MemberDescription(this, method));
@@ -365,7 +365,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			lock (Types)
 				Types.Merge(localCache);
 
-			TypeConversion.UpdateConversions(newTypeDescription);
+			TypeConversion.UpdateConversions(localCache.Values);
 
 			return newTypeDescription;
 		}

@@ -30,8 +30,7 @@ namespace Assets
 		private static readonly Binder ExpressionBinder = new Binder
 		(
 			parameters: new[] { Expression.Parameter(typeof(InstanceT), "p") },
-			resultType: typeof(object),
-			contextType: typeof(InstanceT)
+			resultType: typeof(object)
 		);
 		private static readonly Func<object[], string> ConcatFunc = string.Concat;
 
