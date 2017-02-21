@@ -146,6 +146,78 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binder.cs">
       <Link>Binder.cs</Link>
     </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\AnyBinder.cs">
+      <Link>Binding\AnyBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\BinaryBinder.cs">
+      <Link>Binding\BinaryBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\BindingContext.cs">
+      <Link>Binding\BindingContext.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\CallBinder.cs">
+      <Link>Binding\CallBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\ConditionBinder.cs">
+      <Link>Binding\ConditionBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\ConstantBinder.cs">
+      <Link>Binding\ConstantBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\DefaultBinder.cs">
+      <Link>Binding\DefaultBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\GroupBinder.cs">
+      <Link>Binding\GroupBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\IndexBinder.cs">
+      <Link>Binding\IndexBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\InvokeBinder.cs">
+      <Link>Binding\InvokeBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\LambdaBinder.cs">
+      <Link>Binding\LambdaBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\MemberDescription.cs">
+      <Link>Binding\MemberDescription.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\NewArrayBoundsBinder.cs">
+      <Link>Binding\NewArrayBoundsBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\NewBinder.cs">
+      <Link>Binding\NewBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\NumberUtils.cs">
+      <Link>Binding\NumberUtils.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\PropertyOrFieldBinder.cs">
+      <Link>Binding\PropertyOrFieldBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeBinaryBinder.cs">
+      <Link>Binding\TypeBinaryBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeCache.cs">
+      <Link>Binding\TypeCache.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeConversion.cs">
+      <Link>Binding\TypeConversion.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeDescription.cs">
+      <Link>Binding\TypeDescription.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeOfBinder.cs">
+      <Link>Binding\TypeOfBinder.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeTuple.cs">
+      <Link>Binding\TypeTuple.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeTuple2.cs">
+      <Link>Binding\TypeTuple2.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\UnaryBinder.cs">
+      <Link>Binding\UnaryBinder.cs</Link>
+    </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Constants.cs">
       <Link>Constants.cs</Link>
     </Compile>
@@ -194,11 +266,17 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionKnownTypeAttribute.cs">
       <Link>ExpressionKnownTypeAttribute.cs</Link>
     </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionLookupVisitor.cs">
+      <Link>ExpressionLookupVisitor.cs</Link>
+    </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionParserException.cs">
       <Link>ExpressionParserException.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionSubstitutor.cs">
       <Link>ExpressionSubstitutor.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionUtils.cs">
+      <Link>ExpressionUtils.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionVisitor.cs">
       <Link>ExpressionVisitor.cs</Link>
@@ -230,32 +308,6 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\UnboundExpression.cs">
       <Link>UnboundExpression.cs</Link>
     </Compile>
-    <Compile Include="Binding\AnyBinder.cs" />
-    <Compile Include="Binding\ConditionBinder.cs" />
-    <Compile Include="Binding\TypeCache.cs" />
-    <Compile Include="ExpressionLookupVisitor.cs" />
-    <Compile Include="ExpressionUtils.cs" />
-    <Compile Include="Binding\MemberDescription.cs" />
-    <Compile Include="Binding\NumberUtils.cs" />
-    <Compile Include="Binding\TypeBinaryBinder.cs" />
-    <Compile Include="Binding\TypeConversion.cs" />
-    <Compile Include="Binding\TypeDescription.cs" />
-    <Compile Include="Binding\TypeTuple.cs" />
-    <Compile Include="Binding\TypeTuple2.cs" />
-    <Compile Include="Binding\UnaryBinder.cs" />
-    <Compile Include="Binding\BindingContext.cs" />
-    <Compile Include="Binding\BinaryBinder.cs" />
-    <Compile Include="Binding\LambdaBinder.cs" />
-    <Compile Include="Binding\NewBinder.cs" />
-    <Compile Include="Binding\NewArrayBoundsBinder.cs" />
-    <Compile Include="Binding\TypeOfBinder.cs" />
-    <Compile Include="Binding\DefaultBinder.cs" />
-    <Compile Include="Binding\InvokeBinder.cs" />
-    <Compile Include="Binding\CallBinder.cs" />
-    <Compile Include="Binding\IndexBinder.cs" />
-    <Compile Include="Binding\PropertyOrFieldBinder.cs" />
-    <Compile Include="Binding\GroupBinder.cs" />
-    <Compile Include="Binding\ConstantBinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnityResources.cs">
       <AutoGen>True</AutoGen>
