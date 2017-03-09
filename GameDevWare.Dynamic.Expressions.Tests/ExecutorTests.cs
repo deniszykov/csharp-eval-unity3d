@@ -636,7 +636,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("ConsoleColor.DarkCyan + 1", ConsoleColor.DarkCyan + 1)]
 		[InlineData("ConsoleColor.DarkCyan - 1", ConsoleColor.DarkCyan - 1)]
 		[InlineData("1 + ConsoleColor.DarkCyan", 1 + ConsoleColor.DarkCyan)]
-		[InlineData("5 - ConsoleColor.DarkCyan", 5 - ConsoleColor.DarkCyan)]
+		[InlineData("5 - ConsoleColor.DarkCyan", (ConsoleColor)2)]
 		[InlineData("ConsoleColor.DarkCyan ^ ConsoleColor.DarkBlue", ConsoleColor.DarkCyan ^ ConsoleColor.DarkBlue)]
 		[InlineData("ConsoleColor.DarkCyan & ConsoleColor.DarkBlue", ConsoleColor.DarkCyan & ConsoleColor.DarkBlue)]
 		[InlineData("ConsoleColor.DarkCyan | ConsoleColor.DarkBlue", ConsoleColor.DarkCyan | ConsoleColor.DarkBlue)]
