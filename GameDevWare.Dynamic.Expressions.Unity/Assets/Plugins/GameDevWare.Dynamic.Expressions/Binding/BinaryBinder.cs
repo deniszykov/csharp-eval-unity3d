@@ -62,7 +62,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					}
 					else
 					{
-						ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.Add);
+						ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Add);
 						boundExpression = Expression.Add(leftOperand, rightOperand);
 						break;
 					}
@@ -79,40 +79,40 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					}
 					else
 					{
-						ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.AddChecked);
+						ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.AddChecked);
 						boundExpression = Expression.AddChecked(leftOperand, rightOperand);
 						break;
 					}
 				case Constants.EXPRESSION_TYPE_SUBTRACT:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.Subtract);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Subtract);
 					boundExpression = Expression.Subtract(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_SUBTRACT_CHECKED:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.SubtractChecked);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.SubtractChecked);
 					boundExpression = Expression.SubtractChecked(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_LEFTSHIFT:
-					ExpressionUtils.PromoteOperand(ref leftOperand, ExpressionType.LeftShift);
+					ExpressionUtils.PromoteUnaryOperation(ref leftOperand, ExpressionType.LeftShift);
 					boundExpression = Expression.LeftShift(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_RIGHTSHIFT:
-					ExpressionUtils.PromoteOperand(ref leftOperand, ExpressionType.RightShift);
+					ExpressionUtils.PromoteUnaryOperation(ref leftOperand, ExpressionType.RightShift);
 					boundExpression = Expression.RightShift(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_GREATERTHAN:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.GreaterThan);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.GreaterThan);
 					boundExpression = Expression.GreaterThan(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_GREATERTHAN_OR_EQUAL:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.GreaterThanOrEqual);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.GreaterThanOrEqual);
 					boundExpression = Expression.GreaterThanOrEqual(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_LESSTHAN:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.LessThan);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.LessThan);
 					boundExpression = Expression.LessThan(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_LESSTHAN_OR_EQUAL:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.LessThanOrEqual);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.LessThanOrEqual);
 					boundExpression = Expression.LessThanOrEqual(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_POWER:
@@ -128,39 +128,39 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						boundExpression = Expression.ConvertChecked(boundExpression, leftType);
 					break;
 				case Constants.EXPRESSION_TYPE_DIVIDE:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.Divide);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Divide);
 					boundExpression = Expression.Divide(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_MULTIPLY:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.Multiply);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Multiply);
 					boundExpression = Expression.Multiply(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_MULTIPLY_CHECKED:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.MultiplyChecked);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.MultiplyChecked);
 					boundExpression = Expression.MultiplyChecked(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_MODULO:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.Modulo);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Modulo);
 					boundExpression = Expression.Modulo(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_EQUAL:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.Equal);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Equal);
 					boundExpression = Expression.Equal(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_NOTEQUAL:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.NotEqual);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.NotEqual);
 					boundExpression = Expression.NotEqual(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_AND:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.And);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.And);
 					boundExpression = Expression.And(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_OR:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.Or);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Or);
 					boundExpression = Expression.Or(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_EXCLUSIVEOR:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.ExclusiveOr);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.ExclusiveOr);
 					boundExpression = Expression.ExclusiveOr(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_ANDALSO:
@@ -170,7 +170,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					boundExpression = Expression.OrElse(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_COALESCE:
-					ExpressionUtils.PromoteBothOperands(ref leftOperand, ref rightOperand, ExpressionType.Coalesce);
+					ExpressionUtils.PromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Coalesce);
 					boundExpression = Expression.Coalesce(leftOperand, rightOperand);
 					break;
 				default:

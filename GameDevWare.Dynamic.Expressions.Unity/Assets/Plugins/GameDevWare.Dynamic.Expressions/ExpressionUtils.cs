@@ -23,215 +23,325 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	internal static class ExpressionUtils
 	{
+		public static readonly Expression NullConstant = Expression.Constant(null, typeof(object));
 		public static readonly Expression TrueConstant = Expression.Constant(true);
 		public static readonly Expression FalseConstant = Expression.Constant(false);
 		public static readonly Expression NegativeSingle = Expression.Constant(-1.0f);
 		public static readonly Expression NegativeDouble = Expression.Constant(-1.0d);
 
-		public static void PromoteBothOperands(ref Expression left, ref Expression right, ExpressionType type)
+		public static void PromoteBinaryOperation(ref Expression leftOperand, ref Expression rightOperand, ExpressionType type)
 		{
-			if (left == null) throw new ArgumentNullException("left");
-			if (right == null) throw new ArgumentNullException("right");
+			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
+			if (rightOperand == null) throw new ArgumentNullException("rightOperand");
 
-			var newLeft = left;
-			var newRight = right;
-			var leftType = Nullable.GetUnderlyingType(newLeft.Type) ?? newLeft.Type;
-			var rightType = Nullable.GetUnderlyingType(newRight.Type) ?? newRight.Type;
-			var liftToNullable = leftType != newLeft.Type || rightType != newRight.Type;
+			var leftType = TypeDescription.GetTypeDescription(leftOperand.Type);
+			var rightType = TypeDescription.GetTypeDescription(rightOperand.Type);
 
-			if (liftToNullable && leftType == newLeft.Type)
-				newLeft = ConvertToNullable(newLeft);
-			if (liftToNullable && rightType != newRight.Type)
-				newRight = ConvertToNullable(newRight);
+			var leftTypeUnwrap = leftType.IsNullable ? leftType.UnderlyingType : leftType;
+			var rightTypeUnwrap = rightType.IsNullable ? rightType.UnderlyingType : rightType;
 
-			if (leftType.IsEnum)
+			// enum + enum
+			if (leftTypeUnwrap.IsEnum || rightTypeUnwrap.IsEnum)
 			{
-				leftType = Enum.GetUnderlyingType(leftType);
-				left = newLeft = Expression.Convert(newLeft, liftToNullable ? typeof(Nullable<>).MakeGenericType(leftType) : leftType);
+				PromoteEnumBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType, type);
 			}
-			if (rightType.IsEnum)
+			// number + number
+			else if (leftTypeUnwrap.IsNumber && rightTypeUnwrap.IsNumber)
 			{
-				rightType = Enum.GetUnderlyingType(rightType);
-				right = newRight = Expression.Convert(newRight, liftToNullable ? rightType = typeof(Nullable<>).MakeGenericType(rightType) : rightType);
+				PromoteNumberBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType);
 			}
-
-			if (leftType == rightType)
+			// null + nullable
+			else if (IsNull(leftOperand) && rightType.CanBeNull)
 			{
-				var typeCode = Type.GetTypeCode(leftType);
-				if (typeCode < TypeCode.SByte || typeCode > TypeCode.UInt16)
+				leftType = rightType;
+				leftOperand = rightType.DefaultExpression;
+			}
+			// nullable + null
+			else if (IsNull(rightOperand) && leftType.CanBeNull)
+			{
+				rightType = leftType;
+				rightOperand = leftType.DefaultExpression;
+			}
+			// [not]nullable + [not]nullable
+			else if (leftType.IsNullable != rightType.IsNullable)
+			{
+				leftOperand = ConvertToNullable(leftOperand, leftType);
+				rightOperand = ConvertToNullable(rightOperand, rightType);
+			}
+		}
+		private static void PromoteNumberBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType)
+		{
+			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
+			if (leftType == null) throw new ArgumentNullException("leftType");
+			if (rightOperand == null) throw new ArgumentNullException("rightOperand");
+			if (rightType == null) throw new ArgumentNullException("rightType");
+
+			var leftTypeUnwrap = leftType.IsNullable ? leftType.UnderlyingType : leftType;
+			var rightTypeUnwrap = rightType.IsNullable ? rightType.UnderlyingType : rightType;
+			var leftTypeCode = leftTypeUnwrap.TypeCode;
+			var rightTypeCode = rightTypeUnwrap.TypeCode;
+			var promoteToNullable = leftType.IsNullable != rightType.IsNullable;
+
+			if (leftTypeUnwrap == rightTypeUnwrap)
+			{
+				if (leftTypeCode < TypeCode.SByte || leftTypeCode > TypeCode.UInt16)
+				{
+					if (promoteToNullable)
+					{
+						leftOperand = ConvertToNullable(leftOperand, leftType);
+						rightOperand = ConvertToNullable(rightOperand, rightType);
+					}
 					return;
+				}
 
 				// expand smaller integers to int32
-				left = newLeft = Expression.Convert(newLeft, liftToNullable ? typeof(int?) : typeof(int));
-				right = newRight = Expression.Convert(newRight, liftToNullable ? typeof(int?) : typeof(int));
+				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
+				rightOperand = Expression.Convert(rightOperand, promoteToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
 				return;
 			}
-
-			if (leftType == typeof(object))
-			{
-				right = newRight = Expression.Convert(newRight, typeof(object));
-				return;
-			}
-			else if (rightType == typeof(object))
-			{
-				left = newLeft = Expression.Convert(newLeft, typeof(object));
-				return;
-			}
-
-			var leftTypeCode = Type.GetTypeCode(leftType);
-			var rightTypeCode = Type.GetTypeCode(rightType);
-			if (NumberUtils.IsNumber(leftTypeCode) == false || NumberUtils.IsNumber(rightTypeCode) == false)
-				return;
 
 			if (leftTypeCode == TypeCode.Decimal || rightTypeCode == TypeCode.Decimal)
 			{
 				if (leftTypeCode == TypeCode.Double || leftTypeCode == TypeCode.Single || rightTypeCode == TypeCode.Double || rightTypeCode == TypeCode.Single)
 					return; // will throw exception
+
 				if (leftTypeCode == TypeCode.Decimal)
-					newRight = Expression.Convert(newRight, liftToNullable ? typeof(decimal?) : typeof(decimal));
+					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(decimal?) : typeof(decimal));
 				else
-					newLeft = Expression.Convert(newLeft, liftToNullable ? typeof(decimal?) : typeof(decimal));
+					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(decimal?) : typeof(decimal));
 			}
 			else if (leftTypeCode == TypeCode.Double || rightTypeCode == TypeCode.Double)
 			{
 				if (leftTypeCode == TypeCode.Double)
-					newRight = Expression.Convert(newRight, liftToNullable ? typeof(double?) : typeof(double));
+					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(double?) : typeof(double));
 				else
-					newLeft = Expression.Convert(newLeft, liftToNullable ? typeof(double?) : typeof(double));
+					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(double?) : typeof(double));
 			}
 			else if (leftTypeCode == TypeCode.Single || rightTypeCode == TypeCode.Single)
 			{
 				if (leftTypeCode == TypeCode.Single)
-					newRight = Expression.Convert(newRight, liftToNullable ? typeof(float?) : typeof(float));
+					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(float?) : typeof(float));
 				else
-					newLeft = Expression.Convert(newLeft, liftToNullable ? typeof(float?) : typeof(float));
+					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(float?) : typeof(float));
 			}
 			else if (leftTypeCode == TypeCode.UInt64)
 			{
-				if (NumberUtils.IsSignedInteger(rightTypeCode) && TryMorphType(ref newRight, typeof(ulong)) <= 0)
+				var quality = 0.0f;
+				var rightOperandTmp = rightOperand;
+				var expectedRightType = promoteToNullable ? typeof(ulong?) : typeof(ulong);
+				if (NumberUtils.IsSignedInteger(rightTypeCode) && TryMorphType(ref rightOperandTmp, expectedRightType, out quality) == false)
 					return; // will throw exception
 
-				var expectedRightType = liftToNullable ? typeof(ulong?) : typeof(ulong);
-				newRight = newRight.Type != expectedRightType ? Expression.Convert(newRight, expectedRightType) : newRight;
+				rightOperand = rightOperandTmp;
+				rightOperand = rightOperand.Type != expectedRightType ? Expression.Convert(rightOperand, expectedRightType) : rightOperand;
 			}
 			else if (rightTypeCode == TypeCode.UInt64)
 			{
-				if (NumberUtils.IsSignedInteger(leftTypeCode) && TryMorphType(ref newLeft, typeof(ulong)) <= 0)
+				var quality = 0.0f;
+				var leftOperandTmp = leftOperand;
+				var expectedLeftType = promoteToNullable ? typeof(ulong?) : typeof(ulong);
+				if (NumberUtils.IsSignedInteger(leftTypeCode) && TryMorphType(ref leftOperandTmp, expectedLeftType, out quality) == false)
 					return; // will throw exception
 
-				var expectedLeftType = liftToNullable ? typeof(ulong?) : typeof(ulong);
-				newLeft = newLeft.Type != expectedLeftType ? Expression.Convert(newLeft, expectedLeftType) : newLeft;
+				leftOperand = leftOperandTmp;
+				leftOperand = leftOperand.Type != expectedLeftType ? Expression.Convert(leftOperand, expectedLeftType) : leftOperand;
 			}
 			else if (leftTypeCode == TypeCode.Int64 || rightTypeCode == TypeCode.Int64)
 			{
 				if (leftTypeCode == TypeCode.Int64)
-					newRight = Expression.Convert(newRight, liftToNullable ? typeof(long?) : typeof(long));
+					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(long?) : typeof(long));
 				else
-					newLeft = Expression.Convert(newLeft, liftToNullable ? typeof(long?) : typeof(long));
+					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(long?) : typeof(long));
 			}
 			else if ((leftTypeCode == TypeCode.UInt32 && NumberUtils.IsSignedInteger(rightTypeCode)) ||
 				(rightTypeCode == TypeCode.UInt32 && NumberUtils.IsSignedInteger(leftTypeCode)))
 			{
-				newRight = Expression.Convert(newRight, liftToNullable ? typeof(long?) : typeof(long));
-				newLeft = Expression.Convert(newLeft, liftToNullable ? typeof(long?) : typeof(long));
+				rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(long?) : typeof(long));
+				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(long?) : typeof(long));
 			}
 			else if (leftTypeCode == TypeCode.UInt32 || rightTypeCode == TypeCode.UInt32)
 			{
 				if (leftTypeCode == TypeCode.UInt32)
-					newRight = Expression.Convert(newRight, liftToNullable ? typeof(uint?) : typeof(uint));
+					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(uint?) : typeof(uint));
 				else
-					newLeft = Expression.Convert(newLeft, liftToNullable ? typeof(uint?) : typeof(uint));
+					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(uint?) : typeof(uint));
 			}
 			else
 			{
-				newRight = Expression.Convert(newRight, liftToNullable ? typeof(int?) : typeof(int));
-				newLeft = Expression.Convert(newLeft, liftToNullable ? typeof(int?) : typeof(int));
+				rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(int?) : typeof(int));
+				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(int?) : typeof(int));
 			}
-
-			left = newLeft;
-			right = newRight;
 		}
-		public static void PromoteOperand(ref Expression operand, ExpressionType type)
+		private static void PromoteEnumBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType, ExpressionType type)
+		{
+			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
+			if (leftType == null) throw new ArgumentNullException("leftType");
+			if (rightOperand == null) throw new ArgumentNullException("rightOperand");
+			if (rightType == null) throw new ArgumentNullException("rightType");
+
+			var leftTypeUnwrap = leftType.IsNullable ? leftType.UnderlyingType : leftType;
+			var rightTypeUnwrap = rightType.IsNullable ? rightType.UnderlyingType : rightType;
+			var promoteToNullable = leftType.IsNullable != rightType.IsNullable;
+
+			// enum + number
+			if (leftTypeUnwrap.IsEnum && rightTypeUnwrap.IsNumber && (type == ExpressionType.Add || type == ExpressionType.AddChecked || type == ExpressionType.Subtract || type == ExpressionType.SubtractChecked))
+			{
+				var integerType = leftTypeUnwrap.UnderlyingType;
+				MorphType(ref rightOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
+				if (promoteToNullable)
+					leftOperand = ConvertToNullable(leftOperand, leftType);
+			}
+			// number + enum
+			else if (rightTypeUnwrap.IsEnum && leftTypeUnwrap.IsNumber && (type == ExpressionType.Add || type == ExpressionType.AddChecked || type == ExpressionType.Subtract || type == ExpressionType.SubtractChecked))
+			{
+				var integerType = leftTypeUnwrap.UnderlyingType;
+				MorphType(ref leftOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
+				if (promoteToNullable)
+					rightOperand = ConvertToNullable(rightOperand, rightType);
+			}
+			// null + nullable-enum
+			else if (IsNull(leftOperand) && rightType.CanBeNull)
+			{
+				leftType = rightType;
+				leftOperand = rightType.DefaultExpression;
+			}
+			// nullable-enum + null
+			else if (IsNull(rightOperand) && leftType.CanBeNull)
+			{
+				rightType = leftType;
+				rightOperand = leftType.DefaultExpression;
+			}
+			// [not]nullable + [not]nullable
+			else if (promoteToNullable)
+			{
+				leftOperand = ConvertToNullable(leftOperand, leftType);
+				rightOperand = ConvertToNullable(rightOperand, rightType);
+			}
+		}
+		public static void PromoteUnaryOperation(ref Expression operand, ExpressionType type)
 		{
 			if (operand == null) throw new ArgumentNullException("operand");
 
-			var newOperand = operand;
+			var operandType = TypeDescription.GetTypeDescription(operand.Type);
+			var promoteToNullable = operandType.IsNullable;
 
-			if (newOperand.Type.IsEnum)
-				newOperand = Expression.Convert(newOperand, Enum.GetUnderlyingType(newOperand.Type));
-
-			var typeCode = Type.GetTypeCode(newOperand.Type);
-			if (typeCode >= TypeCode.SByte && typeCode <= TypeCode.UInt16)
-			{
-				operand = Expression.Convert(newOperand, typeof(int));
-			}
-			else if (typeCode == TypeCode.UInt32 && type == ExpressionType.Not)
-			{
-				operand = Expression.Convert(newOperand, typeof(long));
-			}
-
+			if (operandType.TypeCode >= TypeCode.SByte && operandType.TypeCode <= TypeCode.UInt16)
+				MorphType(ref operand, promoteToNullable ? typeof(int?) : typeof(int));
+			else if (operandType.TypeCode == TypeCode.UInt32 && type == ExpressionType.Not)
+				MorphType(ref operand, promoteToNullable ? typeof(long?) : typeof(long));
 		}
 
-		public static Expression ConvertToNullable(Expression notNullableExpression)
+		public static bool IsNull(Expression expression, bool unwrapConversions = true)
 		{
-			if (notNullableExpression == null) throw new ArgumentNullException("notNullableExpression");
+			if (expression == null) throw new ArgumentNullException("expression");
 
-			if (notNullableExpression.Type.IsValueType && Nullable.GetUnderlyingType(notNullableExpression.Type) == null)
-				return Expression.Convert(notNullableExpression, typeof(Nullable<>).MakeGenericType(notNullableExpression.Type));
-			else
-				return notNullableExpression;
+			// unwrap conversions
+			var convertExpression = expression as UnaryExpression;
+			while (unwrapConversions && convertExpression != null && (convertExpression.NodeType == ExpressionType.Convert || convertExpression.NodeType == ExpressionType.ConvertChecked))
+			{
+				expression = convertExpression.Operand;
+				convertExpression = expression as UnaryExpression;
+			}
+
+			if (ReferenceEquals(expression, NullConstant))
+				return true;
+
+			var constantExpression = expression as ConstantExpression;
+			if (constantExpression == null)
+				return false;
+
+			return constantExpression.Value == null && constantExpression.Type == typeof(object);
 		}
-		public static float TryMorphType(ref Expression expression, Type toType)
+		public static void MorphType(ref Expression expression, Type toType)
+		{
+			if (expression == null) throw new ArgumentNullException("expression");
+
+			var quality = 0.0f;
+			if (TryMorphType(ref expression, toType, out quality) == false || quality <= TypeConversion.QUALITY_NO_CONVERSION)
+				throw new InvalidOperationException(string.Format("Failed to change type of expression '{0}' to '{1}'.", expression, toType));
+		}
+		public static bool TryMorphType(ref Expression expression, Type toType, out float quality)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 			if (toType == null) throw new ArgumentNullException("toType");
 
-			var actualType = expression.Type;
-
-			if (actualType == toType)
-				return TypeConversion.QUALITY_SAME_TYPE;
-
-			var conversion = default(TypeConversion);
-			if (TypeConversion.TryGetTypeConversion(actualType, toType, out conversion) == false)
-				return TypeConversion.QUALITY_NO_CONVERSION;
-
-			// 1: check if types are convertible
-			// 2: check if value is constant and could be converted
-			if (conversion.IsNatural && conversion.Quality > TypeConversion.QUALITY_EXPLICIT_CONVERSION)
+			if (expression.Type == toType)
 			{
-				expression = Expression.Convert(expression, toType);
-				return conversion.Quality; // same type hierarchy
+				quality = TypeConversion.QUALITY_SAME_TYPE;
+				return true;
 			}
+
+			var actualType = TypeDescription.GetTypeDescription(expression.Type);
+			var targetType = TypeDescription.GetTypeDescription(toType);
+
+			if (TryConvertInPlace(ref expression, targetType, out quality) || TryFindConversion(ref expression, actualType, targetType, out quality))
+			{
+				return true;
+			}
+
+			quality = TypeConversion.QUALITY_NO_CONVERSION;
+			return false;
+		}
+		private static bool TryFindConversion(ref Expression expression, TypeDescription actualType, TypeDescription targetType, out float quality)
+		{
+			if (expression == null) throw new ArgumentNullException("expression");
+			if (actualType == null) throw new ArgumentNullException("actualType");
+			if (targetType == null) throw new ArgumentNullException("targetType");
+
+			quality = TypeConversion.QUALITY_NO_CONVERSION;
+
+			var actualTypeUnwrap = actualType.IsNullable ? actualType.UnderlyingType : actualType;
+			var targetTypeUnwrap = targetType.IsNullable ? targetType.UnderlyingType : targetType;
+			var conversion = default(TypeConversion);
+
+			// converting null to nullable-or-reference
+			if (targetType.CanBeNull && IsNull(expression))
+			{
+				expression = targetType.DefaultExpression;
+				quality = TypeConversion.QUALITY_SAME_TYPE; // exact type (null)
+				return true;
+			}
+
+			// converting value to nullable value e.g. T to T?
+			if (targetTypeUnwrap == actualType)
+			{
+				expression = Expression.Convert(expression, targetType);
+				quality = TypeConversion.QUALITY_IN_PLACE_CONVERSION;
+				return true;
+			}
+
+			if (TypeConversion.TryGetTypeConversion(actualTypeUnwrap, targetTypeUnwrap, out conversion) == false || conversion.Quality <= TypeConversion.QUALITY_NO_CONVERSION)
+				return false;
 
 			// implicit convertion on expectedType
 			if (conversion.Implicit != null && conversion.Implicit.TryMakeConversion(expression, out expression, checkedConversion: true))
-				return TypeConversion.QUALITY_IMPLICIT_CONVERSION;
+			{
+				quality = TypeConversion.QUALITY_IMPLICIT_CONVERSION;
+				return true;
+			}
 
+			expression = Expression.Convert(expression, targetType);
+			quality = conversion.Quality;
+			return true;
+		}
+		private static bool TryConvertInPlace(ref Expression expression, TypeDescription targetType, out float quality)
+		{
+			if (expression == null) throw new ArgumentNullException("expression");
+			if (targetType == null) throw new ArgumentNullException("targetType");
+
+			quality = TypeConversion.QUALITY_NO_CONVERSION;
+			var targetTypeUnwrap = targetType.IsNullable ? targetType.UnderlyingType : targetType;
 			// try to convert value of constant
 			var constantValue = default(object);
 			var constantType = default(Type);
-			if (!TryExposeConstant(expression, out constantValue, out constantType))
-				return 0.0f;
+			if (TryExposeConstant(expression, out constantValue, out constantType) == false || constantValue == null)
+				return false;
 
-			if (constantValue == null)
-			{
-				if (constantType == typeof(object) && !toType.IsValueType)
-				{
-					expression = Expression.Constant(null, toType);
-					return TypeConversion.QUALITY_SAME_TYPE; // exact type (null)
-				}
-				else
-				{
-					return TypeConversion.QUALITY_NO_CONVERSION;
-				}
-			}
-
-			var expectedTypeCode = Type.GetTypeCode(toType);
 			var constantTypeCode = Type.GetTypeCode(constantType);
 			var convertibleToExpectedType = default(bool);
 			// ReSharper disable RedundantCast
 			// ReSharper disable once SwitchStatementMissingSomeCases
-			switch (expectedTypeCode)
+			switch (targetTypeUnwrap.TypeCode)
 			{
 				case TypeCode.Byte: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, byte.MinValue, byte.MaxValue); break;
 				case TypeCode.SByte: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, sbyte.MinValue, (ulong)sbyte.MaxValue); break;
@@ -249,13 +359,24 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			// ReSharper restore RedundantCast
 
-			if (convertibleToExpectedType)
-			{
-				expression = Expression.Constant(Convert.ChangeType(constantValue, expectedTypeCode, Constants.DefaultFormatProvider));
-				return TypeConversion.QUALITY_IN_PLACE_CONVERSION; // converted in-place
-			}
+			if (!convertibleToExpectedType)
+				return false;
 
-			return TypeConversion.QUALITY_NO_CONVERSION;
+			var newValue = Convert.ChangeType(constantValue, targetTypeUnwrap.TypeCode, Constants.DefaultFormatProvider);
+			expression = Expression.Constant(newValue, targetType);
+			quality = TypeConversion.QUALITY_IN_PLACE_CONVERSION; // converted in-place
+			return true;
+		}
+		private static Expression ConvertToNullable(Expression notNullableExpression, TypeDescription typeDescription)
+		{
+			if (notNullableExpression == null) throw new ArgumentNullException("notNullableExpression");
+			if (typeDescription == null) throw new ArgumentNullException("typeDescription");
+			if (notNullableExpression.Type != typeDescription) throw new ArgumentException("Wrong type description.", "typeDescription");
+
+			if (typeDescription.CanBeNull == false)
+				return Expression.Convert(notNullableExpression, typeDescription.GetNullableType());
+			else
+				return notNullableExpression;
 		}
 
 		public static Expression MakeNullPropagationExpression(List<Expression> nullTestExpressions, Expression ifNotNullExpression)

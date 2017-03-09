@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 
 namespace GameDevWare.Dynamic.Expressions.Tests
 {
-	public class ExpressionRenderingTests
+	public class RendererTests
 	{
 		public class TestClass : IEnumerable
 		{
@@ -17,8 +17,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			public int IntField = 100500 * 2;
 			public int IntProperty { get { return IntField; } set { IntField = value; } }
-			public ExpressionExecutionTests.TestClass TestClassField;
-			public ExpressionExecutionTests.TestClass TestClassProperty { get { return this.TestClassField; } set { TestClassField = value; } }
+			public ExecutorTests.TestClass TestClassField;
+			public ExecutorTests.TestClass TestClassProperty { get { return this.TestClassField; } set { TestClassField = value; } }
 			public List<int> ListField = new List<int>();
 			public List<int> ListProperty { get { return this.ListField; } set { this.ListField = value; } }
 
@@ -39,7 +39,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		private readonly ITestOutputHelper output;
-		public ExpressionRenderingTests(ITestOutputHelper output)
+		public RendererTests(ITestOutputHelper output)
 		{
 			this.output = output;
 		}
@@ -305,10 +305,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void MemberAccessExpression()
 		{
-			Expression<Func<int>> staticFieldAccess = () => ExpressionExecutionTests.TestClass.StaticIntField;
-			Expression<Func<int>> staticPropertyAccess = () => ExpressionExecutionTests.TestClass.StaticIntProperty;
-			Expression<Func<ExpressionExecutionTests.TestClass, int>> instanceFieldAccess = t => t.IntField;
-			Expression<Func<ExpressionExecutionTests.TestClass, int>> instancePropertyAccess = t => t.IntProperty;
+			Expression<Func<int>> staticFieldAccess = () => ExecutorTests.TestClass.StaticIntField;
+			Expression<Func<int>> staticPropertyAccess = () => ExecutorTests.TestClass.StaticIntProperty;
+			Expression<Func<ExecutorTests.TestClass, int>> instanceFieldAccess = t => t.IntField;
+			Expression<Func<ExecutorTests.TestClass, int>> instancePropertyAccess = t => t.IntProperty;
 
 
 			output.WriteLine("Rendered: " + staticFieldAccess.Body.Render());
@@ -325,11 +325,11 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void MemberInitTest()
 		{
-			Expression<Func<ExpressionExecutionTests.TestClass>> expression = () => new ExpressionExecutionTests.TestClass
+			Expression<Func<ExecutorTests.TestClass>> expression = () => new ExecutorTests.TestClass
 			{
 				IntField = 25,
 				IntProperty = 10,
-				TestClassField = new ExpressionExecutionTests.TestClass { { 1, 2 } },
+				TestClassField = new ExecutorTests.TestClass { { 1, 2 } },
 				ListField = { 2, 3 },
 				ListProperty = { 4, 5 }
 			};
@@ -914,21 +914,21 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Field", 0)]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Property", 0)]
-		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceMethod(10)", 10)]
-		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceGenericMethod<int>(11)", 11)]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticGenericMethod<int>(12)", 12)]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticMethod()", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Field1", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Property1", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceMethod1()", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>(1,2,3,4)", 4)]
-		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticGenericMethod1<int>(13)", 13)]
-		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticMethod1(14)", 14)]
+		[InlineData("ExecutorTests.TestGenericClass<int>.Field", 0)]
+		[InlineData("ExecutorTests.TestGenericClass<int>.Property", 0)]
+		[InlineData("new ExecutorTests.TestGenericClass<int>().InstanceMethod(10)", 10)]
+		[InlineData("new ExecutorTests.TestGenericClass<int>().InstanceGenericMethod<int>(11)", 11)]
+		[InlineData("ExecutorTests.TestGenericClass<int>.StaticGenericMethod<int>(12)", 12)]
+		[InlineData("ExecutorTests.TestGenericClass<int>.StaticMethod()", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().Field1", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().Property1", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceMethod1()", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>(1,2,3,4)", 4)]
+		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>.StaticGenericMethod1<int>(13)", 13)]
+		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>.StaticMethod1(14)", 14)]
 		public void GenericInvocationTest(string expression, int expected)
 		{
-			var typeResolutionService = new KnownTypeResolver(typeof(ExpressionExecutionTests.TestGenericClass<>), typeof(ExpressionExecutionTests.TestGenericClass<>.TestSubClass<,>));
+			var typeResolutionService = new KnownTypeResolver(typeof(ExecutorTests.TestGenericClass<>), typeof(ExecutorTests.TestGenericClass<>.TestSubClass<,>));
 			expression = CSharpExpression.Parse<int>(expression, typeResolutionService).Body.Render();
 			output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Parse<int>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();

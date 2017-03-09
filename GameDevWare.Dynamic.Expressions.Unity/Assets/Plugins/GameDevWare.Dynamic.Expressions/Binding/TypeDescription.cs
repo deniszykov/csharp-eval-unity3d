@@ -32,6 +32,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		private readonly Type type;
 		private readonly int hashCode;
+		private TypeDescription nullableType;
 
 		public readonly Dictionary<string, MemberDescription[]> MembersByName;
 		public readonly MemberDescription[] ImplicitConvertTo;
@@ -58,10 +59,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public readonly MemberDescription[] Constructors;
 
 		public readonly string Name;
+		public readonly TypeCode TypeCode;
 		public readonly Expression DefaultExpression;
 		public readonly bool IsNullable;
 		public readonly bool CanBeNull;
 		public readonly bool IsEnum;
+		public readonly bool IsNumber;
 		public readonly bool IsDelegate;
 		public readonly bool HasGenericParameters;
 		public readonly TypeDescription BaseType;
@@ -81,9 +84,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			// create type descriptors for build-in types
 			Array.ConvertAll(new[]
 			{
-				typeof(char), typeof(string), typeof(float), typeof(double), typeof(decimal),
-				typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint),
-				typeof(long), typeof(ulong), typeof(Enum), typeof(MulticastDelegate)
+				typeof(char?), typeof(string), typeof(float?), typeof(double?), typeof(decimal?),
+				typeof(byte?), typeof(sbyte?), typeof(short?), typeof(ushort?), typeof(int?), typeof(uint?),
+				typeof(long?), typeof(ulong?), typeof(Enum), typeof(MulticastDelegate)
 			}, GetTypeDescription);
 		}
 		public TypeDescription(Type type, TypeCache cache)
@@ -110,11 +113,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.GenericArguments = type.IsGenericType ? Array.ConvertAll(type.GetGenericArguments(), cache.GetOrCreateTypeDescription) : TypeDescription.EmptyTypes;
 			this.MembersByName = GetMembersByName(ref this.Indexers);
 			this.IsNullable = Nullable.GetUnderlyingType(type) != null;
+			this.IsNumber = NumberUtils.IsNumber(type);
 			this.CanBeNull = this.IsNullable || type.IsValueType == false;
 			this.IsEnum = type.IsEnum;
 			this.IsDelegate = typeof(Delegate).IsAssignableFrom(type) && type != typeof(Delegate) && type != typeof(MulticastDelegate);
 			this.HasGenericParameters = type.ContainsGenericParameters;
 			this.DefaultExpression = Expression.Constant(type.IsValueType && this.IsNullable == false ? Activator.CreateInstance(type) : null, type);
+			this.TypeCode = Type.GetTypeCode(type);
 
 			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
 			var methodsDescriptions = new MemberDescription[methods.Length];
@@ -145,6 +150,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			Array.Sort(this.Conversions);
 			Array.Sort(this.Constructors);
+
+			if (this.IsNullable && this.UnderlyingType != null)
+				this.UnderlyingType.nullableType = this;
 		}
 
 		private MemberDescription[] GetOperators(MethodInfo[] methods, MemberDescription[] methodsDescriptions, string operatorName, int? compareParameterIndex = null)
@@ -289,6 +297,18 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return members;
 			else
 				return EmptyMembers;
+		}
+
+		public TypeDescription GetNullableType()
+		{
+			if (this.IsNullable)
+				return this;
+			else if (this.type.IsValueType == false)
+				throw new InvalidOperationException();
+			else if (this.nullableType != null)
+				return this.nullableType;
+			else
+				return this.nullableType = GetTypeDescription(typeof(Nullable<>).MakeGenericType(this.type));
 		}
 
 		public override bool Equals(object obj)

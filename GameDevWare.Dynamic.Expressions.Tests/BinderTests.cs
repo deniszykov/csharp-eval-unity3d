@@ -5,7 +5,7 @@ using Xunit;
 
 namespace GameDevWare.Dynamic.Expressions.Tests
 {
-	public class ExpressionBuilderTests
+	public class BinderTests
 	{
 		public class MyClass
 		{
@@ -123,21 +123,21 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("default(Math)?.ToString()", null)]
 		[InlineData("Math.E?.ToString()", "2.71828182845905")]
 		[InlineData("default(Math[])?[0]", null)]
-		[InlineData("ExpressionBuilderTests.MyClass.Default?.NullableIntField ?? 2", 2)]
-		[InlineData("ExpressionBuilderTests.MyClass.Default?.IntField ?? 2", 0)]
-		[InlineData("ExpressionBuilderTests.MyClass.Default?.BoolField ?? true", false)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?.NullableIntField ?? 1", 2)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?.IntField ?? 2", 1)]
-		//[InlineData("ExpressionBuilderTests.MyClass.Filled?.IntField <= 1", true)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?.BoolField ?? false", true)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?.OtherField.BoolField ?? true", false)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?.OtherField?.OtherField?.OtherField.IntField ?? 123", 123)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?.GetOther()?.OtherField?.OtherField.IntField ?? 123", 123)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?[1]?.OtherField?.OtherField.IntField ?? 123", 123)]
-		[InlineData("ExpressionBuilderTests.MyClass.Filled?[1]?.GetOther()?.OtherField.IntField ?? 123", 123)]
+		[InlineData("BinderTests.MyClass.Default?.NullableIntField ?? 2", 2)]
+		[InlineData("BinderTests.MyClass.Default?.IntField ?? 2", 0)]
+		[InlineData("BinderTests.MyClass.Default?.BoolField ?? true", false)]
+		[InlineData("BinderTests.MyClass.Filled?.NullableIntField ?? 1", 2)]
+		[InlineData("BinderTests.MyClass.Filled?.IntField ?? 2", 1)]
+		[InlineData("BinderTests.MyClass.Filled?.IntField <= 1", true)]
+		[InlineData("BinderTests.MyClass.Filled?.BoolField ?? false", true)]
+		[InlineData("BinderTests.MyClass.Filled?.OtherField.BoolField ?? true", false)]
+		[InlineData("BinderTests.MyClass.Filled?.OtherField?.OtherField?.OtherField.IntField ?? 123", 123)]
+		[InlineData("BinderTests.MyClass.Filled?.GetOther()?.OtherField?.OtherField.IntField ?? 123", 123)]
+		[InlineData("BinderTests.MyClass.Filled?[1]?.OtherField?.OtherField.IntField ?? 123", 123)]
+		[InlineData("BinderTests.MyClass.Filled?[1]?.GetOther()?.OtherField.IntField ?? 123", 123)]
 		public void NullResolveTest(string expression, object expected)
 		{
-			var knownTypeResolver = new KnownTypeResolver(typeof(MyClass));
+			var knownTypeResolver = new KnownTypeResolver(typeof(MyClass), typeof(ExecutorTests.TestGenericClass<>));
 			var actual = CSharpExpression.Evaluate<object>(expression, knownTypeResolver);
 
 			if (expected == null)

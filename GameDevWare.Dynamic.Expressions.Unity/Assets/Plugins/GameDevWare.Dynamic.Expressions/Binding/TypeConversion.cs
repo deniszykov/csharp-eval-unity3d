@@ -146,7 +146,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						Conversions[key] = conversion;
 					}
 
-					if (typeDescription.IsEnum || typeDescription.IsNullable)
+					if (typeDescription.IsEnum)
 					{
 						var fromEnumKey = new TypeTuple2(typeDescription, typeDescription.UnderlyingType);
 						var toEnumKey = new TypeTuple2(typeDescription.UnderlyingType, typeDescription);

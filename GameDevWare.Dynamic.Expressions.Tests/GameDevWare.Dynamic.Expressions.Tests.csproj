@@ -65,12 +65,12 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Scripts\Example\PatternString.cs">
       <Link>PatternString.cs</Link>
     </Compile>
-    <Compile Include="ExpressionExecutionTests.cs" />
-    <Compile Include="ExpressionBuilderTests.cs" />
+    <Compile Include="ExecutorTests.cs" />
+    <Compile Include="BinderTests.cs" />
     <Compile Include="TypeResolverTests.cs" />
     <Compile Include="PatternStringTests.cs" />
     <Compile Include="ExpressionUtils.cs" />
-    <Compile Include="ExpressionRenderingTests.cs" />
+    <Compile Include="RendererTests.cs" />
     <Compile Include="ParserTests.cs" />
     <Compile Include="TokenizerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

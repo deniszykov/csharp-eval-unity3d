@@ -27,6 +27,9 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	internal static partial class Executor
 	{
+		private static readonly object TrueObject = true;
+		private static readonly object FalseObject = false;
+
 		private const int LOCAL_OPERAND1 = 0;
 		private const int LOCAL_OPERAND2 = 1;
 		private const int LOCAL_SLOT1 = 2;
@@ -864,14 +867,6 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return closure =>
 			{
-				switch (binaryExpression.NodeType)
-				{
-					case ExpressionType.AndAlso:
-						return closure.Unbox<bool>(leftFn(closure)) && closure.Unbox<bool>(rightFn(closure));
-					case ExpressionType.OrElse:
-						return closure.Unbox<bool>(leftFn(closure)) || closure.Unbox<bool>(rightFn(closure));
-				}
-
 				var left = leftFn(closure);
 				var right = rightFn(closure);
 
@@ -886,14 +881,24 @@ namespace GameDevWare.Dynamic.Expressions
 					// ReSharper disable once SwitchStatementMissingSomeCases
 					switch (binaryExpression.NodeType)
 					{
-						case ExpressionType.Equal: return closure.Box(left == right);
-						case ExpressionType.NotEqual: return closure.Box(left != right);
+						case ExpressionType.Equal: return ReferenceEquals(left, right) ? TrueObject : FalseObject;
+						case ExpressionType.NotEqual: return ReferenceEquals(left, right) ? FalseObject : TrueObject;
 						case ExpressionType.GreaterThan:
 						case ExpressionType.GreaterThanOrEqual:
 						case ExpressionType.LessThan:
-						case ExpressionType.LessThanOrEqual: return closure.Box(false);
+						case ExpressionType.LessThanOrEqual: return FalseObject;
+						// C# Specs -> 7.11.4 Nullable boolean logical operators
+						case ExpressionType.And:
+							if (Equals(left, FalseObject) || Equals(right, FalseObject))
+								return FalseObject;
+							goto default;
+						case ExpressionType.Or:
+							if (Equals(left, TrueObject) || Equals(right, TrueObject))
+								return TrueObject;
+							goto default;
 						default: return null;
 					}
+
 				}
 
 				switch (binaryExpression.NodeType)
@@ -917,8 +922,10 @@ namespace GameDevWare.Dynamic.Expressions
 						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThan);
 					case ExpressionType.GreaterThanOrEqual:
 						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opGreaterThanOrEqual);
-					case ExpressionType.LeftShift:
+					case ExpressionType.AndAlso:
+					case ExpressionType.OrElse:
 					case ExpressionType.Power:
+					case ExpressionType.LeftShift:
 					case ExpressionType.RightShift:
 						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, null);
 					case ExpressionType.LessThan:
@@ -937,7 +944,7 @@ namespace GameDevWare.Dynamic.Expressions
 						return Intrinsic.BinaryOperation(closure, left, right, binaryExpression.NodeType, opSubtraction);
 				}
 
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE, binaryExpression.Type));
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE, binaryExpression.NodeType));
 			};
 		}
 

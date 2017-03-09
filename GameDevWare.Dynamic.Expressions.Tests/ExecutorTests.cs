@@ -11,7 +11,7 @@ using Xunit;
 
 namespace GameDevWare.Dynamic.Expressions.Tests
 {
-	public class ExpressionExecutionTests
+	public class ExecutorTests
 	{
 		public class TestClass : IEnumerable
 		{
@@ -90,11 +90,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			}
 		}
 
-
-
 		// convert enum
 		[Fact]
-		public void ArrayIndexTest()
+		public void ArrayIndex()
 		{
 			Expression<Func<int[], int>> firstElementExpr = a => a[0];
 			Expression<Func<int[], int>> tenthExpr = a => a[9];
@@ -103,17 +101,21 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = array.ElementAt(0);
 			var actual = firstElementExpr.CompileAot(forceAot: true).Invoke(array);
+			var expectedAlt = firstElementExpr.CompileAot(forceAot: false).Invoke(array);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 
 			expected = array.ElementAt(9);
 			actual = tenthExpr.CompileAot(forceAot: true).Invoke(array);
+			expectedAlt = tenthExpr.CompileAot(forceAot: false).Invoke(array);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void ArrayLengthTest()
+		public void ArrayLength()
 		{
 			var arrayParameter = Expression.Parameter(typeof(int[]), "array");
 			Expression<Func<int[], int>> expression = Expression.Lambda<Func<int[], int>>(Expression.ArrayLength(arrayParameter), arrayParameter);
@@ -122,67 +124,79 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = array.Length;
 			var actual = expression.CompileAot(forceAot: true).Invoke(array);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(array);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void QuoteTest()
+		public void Quote()
 		{
 			Expression<Func<Expression<Func<int>>>> expression = () => (() => 1);
 
 			var expected = ((UnaryExpression)expression.Body).Operand;
 			var actual = expression.CompileAot(forceAot: true).Invoke();
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke();
 
 			Assert.Same(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void InvokeTest()
+		public void Invoke()
 		{
 			Expression<Func<Func<int>, int>> expression = a => a();
 
 			var expected = 10;
 			var actual = expression.CompileAot(forceAot: true).Invoke(() => 10);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(() => 10);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void NewArrayInitTest()
+		public void NewArrayInit()
 		{
 			Expression<Func<int[]>> expression = () => new int[] { 1, 2, 3, 4 };
 
 			var expected = new int[] { 1, 2, 3, 4 };
 			var actual = expression.CompileAot(forceAot: true).Invoke();
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke();
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void NewArrayBoundsTest()
+		public void NewArrayBounds()
 		{
 			Expression<Func<int[]>> expression = () => new int[10];
 
 			var expected = new int[10];
 			var actual = expression.CompileAot(forceAot: true).Invoke();
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke();
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void ListInitTest()
+		public void ListInit()
 		{
 			Expression<Func<List<int>>> expression = () => new List<int> { 1, 2, 3, 4 };
 
 			var expected = new List<int> { 1, 2, 3, 4 };
 			var actual = expression.CompileAot(forceAot: true).Invoke();
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke();
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void MemberAccessExpression()
+		public void MemberAccess()
 		{
 			Expression<Func<int>> staticFieldAccess = () => TestClass.StaticIntField;
 			Expression<Func<int>> staticPropertyAccess = () => TestClass.StaticIntProperty;
@@ -192,28 +206,36 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = TestClass.StaticIntField;
 			var actual = staticFieldAccess.CompileAot(forceAot: true).Invoke();
+			var expectedAlt = staticFieldAccess.CompileAot(forceAot: false).Invoke();
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 
 			expected = TestClass.StaticIntProperty;
 			actual = staticPropertyAccess.CompileAot(forceAot: true).Invoke();
+			expectedAlt = staticPropertyAccess.CompileAot(forceAot: false).Invoke();
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 
 			var testClass = new TestClass();
 			expected = testClass.IntField;
 			actual = instanceFieldAccess.CompileAot(forceAot: true).Invoke(testClass);
+			expectedAlt = instanceFieldAccess.CompileAot(forceAot: false).Invoke(testClass);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 
 			expected = testClass.IntProperty;
 			actual = instancePropertyAccess.CompileAot(forceAot: true).Invoke(testClass);
+			expectedAlt = instancePropertyAccess.CompileAot(forceAot: false).Invoke(testClass);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void MemberInitTest()
+		public void MemberInit()
 		{
 			Expression<Func<TestClass>> expression = () => new TestClass
 			{
@@ -233,45 +255,60 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 				ListProperty = { 4, 5 }
 			};
 			var actual = expression.CompileAot(forceAot: true).Invoke();
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke();
 
 			Assert.Equal(expected.IntField, actual.IntField);
 			Assert.Equal(expected.IntProperty, actual.IntProperty);
 			Assert.Equal(expected.TestClassField.ListField, actual.TestClassField.ListField);
 			Assert.Equal(expected.ListField, actual.ListField);
 			Assert.Equal(expected.ListProperty, actual.ListProperty);
+
+			Assert.Equal(expectedAlt.IntField, actual.IntField);
+			Assert.Equal(expectedAlt.IntProperty, actual.IntProperty);
+			Assert.Equal(expectedAlt.TestClassField.ListField, actual.TestClassField.ListField);
+			Assert.Equal(expectedAlt.ListField, actual.ListField);
+			Assert.Equal(expectedAlt.ListProperty, actual.ListProperty);
 		}
 
 		[Fact]
-		public void TypeAsTest()
+		public void TypeAs()
 		{
 			Expression<Func<object, Delegate>> expression = a => a as Delegate;
 
 			var expected = default(Delegate);
 			var actual = expression.CompileAot(forceAot: true).Invoke(10);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(10);
 
 			Assert.Same(expected, actual);
+			Assert.Same(expectedAlt, actual);
 
 			expected = (Predicate<int>)(p => true);
 			actual = expression.CompileAot(forceAot: true).Invoke(expected);
+			expectedAlt = expression.CompileAot(forceAot: false).Invoke(expected);
 
 			Assert.Same(expected, actual);
+			Assert.Same(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void TypeIsTest()
+		public void TypeIs()
 		{
 			Expression<Func<object, bool>> expression = a => a is Delegate;
 
 			var expected = false;
 			var actual = expression.CompileAot(forceAot: true).Invoke(10);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(10);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 
 			expected = true;
 			actual = expression.CompileAot(forceAot: true).Invoke((Predicate<int>)(p => true));
+			expectedAlt = expression.CompileAot(forceAot: false).Invoke((Predicate<int>)(p => true));
 
 			// ReSharper disable once ConditionIsAlwaysTrueOrFalse
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Theory]
@@ -280,7 +317,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("arg1.TestClassField?[0]", null)]
 		[InlineData("arg1.TestClassField?[0,1]", null)]
 		[InlineData("arg1?.ListField?[1]?.ToString()", "2")]
-		public void NullResolveTest(string expression, object expected)
+		public void NullPropagation(string expression, object expected)
 		{
 			var testClass = new TestClass
 			{
@@ -289,6 +326,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			};
 			var expectedType = expected?.GetType() ?? typeof(object);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { testClass.GetType(), expectedType }, forceAot: true, arguments: new object[] { testClass });
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { testClass.GetType(), expectedType }, forceAot: false, arguments: new object[] { testClass });
+
+			Assert.Equal(expectedAlt, actual);
 
 			if (expected == null)
 				Assert.Null(actual);
@@ -300,12 +340,14 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("Math.Pow(1.0, 1.0)", 1.0)]
 		[InlineData("Math.Pow(1.0, y: 1.0)", 1.0)]
 		[InlineData("Math.Pow(x: 1.0, y: 1.0)", 1.0)]
-		public void CallTest(string expression, object expected)
+		public void MethodInvocation(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Theory]
@@ -315,26 +357,30 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("true ? (false ? 3 : 4) : (true ? 5 : 6)", true ? (false ? 3 : 4) : (true ? 5 : 6))]
 		[InlineData("1 != 1 || 1 == 1 ? 1 : 2", 1 != 1 || 1 == 1 ? 1 : 2)]
 		[InlineData("1 < 2 && 3 >= 2 ? 1 : 2", 1 < 2 && 3 >= 2 ? 1 : 2)]
-		public void ConditionalTest(string expression, object expected)
+		public void ConditionalOperation(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Theory]
 		[InlineData("-(1)", -(1))]
-		[InlineData("+(-1)", +(-1))]
+		[InlineData("+((SByte)-1)", +-1)]
 		[InlineData("!true", !true)]
 		[InlineData("!false", !false)]
 		[InlineData("~1", ~1)]
-		public void UnaryTest(string expression, object expected)
+		public void UnaryOperation(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Theory]
@@ -408,7 +454,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("(UInt16)2 + (UInt16)2", (2 + 2))]
 		[InlineData("unchecked((UInt16)65535 + (UInt16)2)", unchecked((65535 + 2)))]
 		[InlineData("(UInt16)2 - (UInt16)2", (2 - 2))]
-		[InlineData("unchecked(-(UInt16)0 - (UInt16)10)", unchecked(-(UInt16)0 - (UInt16)10))]
+		[InlineData("unchecked(-(UInt16)0 - (UInt16)10)", unchecked(-(ushort)0 - (ushort)10))]
 		[InlineData("(UInt16)2 & (UInt16)2", 2 & 2)]
 		[InlineData("(UInt16)2 | (UInt16)2", 2 | 2)]
 		[InlineData("(UInt16)2 / (UInt16)2", 2 / 2)]
@@ -541,15 +587,18 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked(18446744073709551615d * 2d)", unchecked(18446744073709551615d * 2d))]
 		[InlineData("2d * 2d", (2d * 2d))]
 		[InlineData("2d ** 2d", (2d * 2d))]
-		public void BinaryTest(string expression, object expected)
+		public void NumberOperation(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Theory]
+		// binary
 		[InlineData("2m + 2m", 2L + 2L)]
 		[InlineData("unchecked(2147483647m + 2m)", unchecked(2147483647L + 2L))]
 		[InlineData("2m - 2m", (2L - 2L))]
@@ -559,26 +608,56 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked(2147483647m * 2m)", unchecked(2147483647L * 2L))]
 		[InlineData("2m * 2m", (2L * 2L))]
 		[InlineData("2 ** 2", (2L * 2L))]
-		public void DecimalTest(string expression, object expectedInt64)
-		{
-			var expressionFn = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: true);
-			var actual = expressionFn();
-			var expected = Convert.ToDecimal(expectedInt64);
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
+		// comparison
 		[InlineData("2m == 2m", 2 == 2)]
 		[InlineData("2m != 2m", 2 != 2)]
 		[InlineData("2m > 2m", 2 > 2)]
 		[InlineData("2m >= 2m", 2 >= 2)]
 		[InlineData("2m < 2m", 2 < 2)]
 		[InlineData("2m <= 2m", 2 <= 2)]
-		public void DecimalComparisonTest(string expression, bool expected)
+		public void DecimalOperation(string expression, object expected)
 		{
-			var expressionFn = CSharpExpression.Parse<bool>(expression).CompileAot(forceAot: true);
-			var actual = expressionFn();
+			var expectedType = expected?.GetType() ?? typeof(object);
+			if (expectedType != typeof(bool))
+				expectedType = typeof(decimal);
+
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
+
+			expected = expected is bool ? expected : Convert.ToDecimal(expected);
+			expectedAlt = expectedAlt is bool ? expectedAlt : Convert.ToDecimal(expected);
+
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
+		}
+
+		[Theory]
+		// binary
+		[InlineData("ConsoleColor.DarkCyan + 1", ConsoleColor.DarkCyan + 1)]
+		[InlineData("ConsoleColor.DarkCyan - 1", ConsoleColor.DarkCyan - 1)]
+		[InlineData("1 + ConsoleColor.DarkCyan", 1 + ConsoleColor.DarkCyan)]
+		[InlineData("5 - ConsoleColor.DarkCyan", 5 - ConsoleColor.DarkCyan)]
+		[InlineData("ConsoleColor.DarkCyan ^ ConsoleColor.DarkBlue", ConsoleColor.DarkCyan ^ ConsoleColor.DarkBlue)]
+		[InlineData("ConsoleColor.DarkCyan & ConsoleColor.DarkBlue", ConsoleColor.DarkCyan & ConsoleColor.DarkBlue)]
+		[InlineData("ConsoleColor.DarkCyan | ConsoleColor.DarkBlue", ConsoleColor.DarkCyan | ConsoleColor.DarkBlue)]
+		// unary
+		[InlineData("~ConsoleColor.DarkCyan", ~ConsoleColor.DarkCyan)]
+		// comparison
+		[InlineData("ConsoleColor.Black == ConsoleColor.DarkBlue", ConsoleColor.Black == ConsoleColor.DarkBlue)]
+		[InlineData("ConsoleColor.Black != ConsoleColor.DarkBlue", ConsoleColor.Black != ConsoleColor.DarkBlue)]
+		[InlineData("ConsoleColor.Black >  ConsoleColor.DarkBlue", ConsoleColor.Black > ConsoleColor.DarkBlue)]
+		[InlineData("ConsoleColor.Black >= ConsoleColor.DarkBlue", ConsoleColor.Black >= ConsoleColor.DarkBlue)]
+		[InlineData("ConsoleColor.Black <  ConsoleColor.DarkBlue", ConsoleColor.Black < ConsoleColor.DarkBlue)]
+		[InlineData("ConsoleColor.Black <= ConsoleColor.DarkBlue", ConsoleColor.Black <= ConsoleColor.DarkBlue)]
+		public void EnumOperation(string expression, object expected)
+		{
+			var expectedType = expected?.GetType() ?? typeof(object);
+			var typeResolver = new KnownTypeResolver(typeof(ConsoleColor));
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, typeResolver: typeResolver, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, typeResolver: typeResolver, forceAot: false);
+
+			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Theory]
@@ -708,12 +787,14 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Double)(UInt64)-1000)", unchecked((double)(ulong)-1000))]
 		[InlineData("unchecked((Double)(Single)-1000)", unchecked((double)(float)-1000))]
 		[InlineData("unchecked((Double)(Double)-1000)", unchecked(((double)-1000)))]
-		public void ConvertNumbers(string expression, object expected)
+		public void NumberConversion(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		// decimal
@@ -727,13 +808,14 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Decimal)(UInt64)-1000)", unchecked((double)(ulong)-1000))]
 		[InlineData("unchecked((Decimal)(Single)-1000)", unchecked((double)(float)-1000))]
 		[InlineData("unchecked((Decimal)(Double)-1000)", unchecked(((double)-1000)))]
-		public void ConvertDecimal(string expression, double expectedDouble)
+		public void DecimalConversion(string expression, double expectedDouble)
 		{
-			var expressionFn = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: true);
 			var expected = (decimal)expectedDouble;
-			var actual = expressionFn.DynamicInvoke();
+			var actual = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: true).DynamicInvoke();
+			var expectedAlt = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: false).DynamicInvoke();
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -743,13 +825,16 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = (double?)2.0;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(2);
 
 			Assert.Equal(expected, actual);
 
 			expected = null;
 			actual = expression.CompileAot(forceAot: true).Invoke(null);
+			expectedAlt = expression.CompileAot(forceAot: false).Invoke(null);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -759,8 +844,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = 2.0;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(2);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -770,8 +857,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = (double?)2.0;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(2);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -781,13 +870,16 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = (ConsoleColor?)ConsoleColor.DarkGreen;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(2);
 
 			Assert.Equal(expected, actual);
 
 			expected = null;
 			actual = expression.CompileAot(forceAot: true).Invoke(null);
+			expectedAlt = expression.CompileAot(forceAot: false).Invoke(null);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -797,8 +889,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = ConsoleColor.DarkGreen;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(2);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -808,8 +902,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = (ConsoleColor?)ConsoleColor.DarkGreen;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(2);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -819,8 +915,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = ConsoleColor.DarkGreen;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(2);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -830,8 +928,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = (int)ConsoleColor.DarkGreen;
 			var actual = expression.CompileAot(forceAot: true).Invoke(ConsoleColor.DarkGreen);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(ConsoleColor.DarkGreen);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -841,13 +941,17 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = (object)2;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(2);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 
 			expected = null;
 			actual = expression.CompileAot(forceAot: true).Invoke(null);
+			expectedAlt = expression.CompileAot(forceAot: false).Invoke(null);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -857,13 +961,17 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = (int?)2;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(2);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 
 			expected = null;
 			actual = expression.CompileAot(forceAot: true).Invoke(null);
+			expectedAlt = expression.CompileAot(forceAot: false).Invoke(null);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -873,8 +981,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = (object)ConsoleColor.DarkGray;
 			var actual = expression.CompileAot(forceAot: true).Invoke(ConsoleColor.DarkGray);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(ConsoleColor.DarkGray);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
@@ -884,11 +994,14 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var expected = (ConsoleColor)ConsoleColor.DarkGray;
 			var actual = expression.CompileAot(forceAot: true).Invoke(ConsoleColor.DarkGray);
+			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(ConsoleColor.DarkGray);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Theory]
+		// C# Specs -> 7.3.7 Lifted operators -> For the binary operators
 		[InlineData("a + b", 1, 2, 1 + 2)]
 		[InlineData("a * b", 1, 2, 1 * 2)]
 		[InlineData("a - b", 1, 2, 1 - 2)]
@@ -909,71 +1022,112 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a ^ b", 1, null, null)]
 		[InlineData("a << b", 1, null, null)]
 		[InlineData("a >> b", 1, null, null)]
-		[InlineData("+b", 1, null, null)]
-		[InlineData("-b", 1, null, null)]
-		[InlineData("~b", 1, null, null)]
-		[InlineData("~b", 1, null, null)]
-		public void NullableBinaryTest(string expression, int? arg1, int? arg2, int? expected)
+		// C# Specs -> 7.3.7 Lifted operators -> For the unary operators
+		[InlineData("+b", null, null, null)]
+		[InlineData("+b", null, 1, 1)]
+		[InlineData("-b", null, null, null)]
+		[InlineData("-b", null, 1, -1)]
+		[InlineData("~b", null, null, null)]
+		[InlineData("~b", null, 1, ~1)]
+		public void LiftedOperation(string expression, int? arg1, int? arg2, int? expected)
 		{
 			var actual = CSharpExpression.Parse<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			var expectedAlt = CSharpExpression.Parse<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
+
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Theory]
+		// C# Specs -> 7.3.7 Lifted operators -> For the relational operators
 		[InlineData("a < b", 1, 2, true)]
 		[InlineData("a < b", 1, null, false)]
 		[InlineData("a > b", 1, null, false)]
 		[InlineData("a == b", 1, null, false)]
 		[InlineData("a >= b", 1, null, false)]
 		[InlineData("a <= b", 1, null, false)]
-		[InlineData("null == b", 1, null, true)] // this is special case
-		[InlineData("null == a", 1, null, false)] // this is special case
-		[InlineData("a != b", 1, null, true)] // this is special case
-		[InlineData("a != b", null, null, false)] // this is special case
-		public void NullableEquationTest(string expression, int? arg1, int? arg2, bool expected)
+		// C# Specs -> 7.3.7 Lifted operators -> For the equality operators
+		[InlineData("null == a", null, null, true)]
+		[InlineData("null == a", 1, null, false)]
+		[InlineData("a != null", 1, null, true)]
+		[InlineData("a != null", null, null, false)]
+		[InlineData("a != b", 1, null, true)]
+		[InlineData("a != b", null, null, false)]
+		public void LiftedComparison(string expression, int? arg1, int? arg2, bool expected)
 		{
 			var actual = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			var expectedAlt = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
+
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
+		}
+
+		[Theory]
+		// C# Specs -> 7.11.4 Nullable boolean logical operators
+		[InlineData("a & b", true, true, true)]
+		[InlineData("a & b", true, false, false)]
+		[InlineData("a & b", true, null, null)]
+		[InlineData("a & b", false, true, false)]
+		[InlineData("a & b", false, false, false)]
+		[InlineData("a & b", false, null, false)]
+		[InlineData("a | b", true, true, true)]
+		[InlineData("a | b", true, false, true)]
+		[InlineData("a | b", true, null, true)]
+		[InlineData("a | b", false, true, true)]
+		[InlineData("a | b", false, false, false)]
+		[InlineData("a | b", false, null, null)]
+		public void LiftedBoolOperation(string expression, bool? arg1, bool? arg2, bool? expected)
+		{
+			var actual = CSharpExpression.Parse<bool?, bool?, bool?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			var expectedAlt = CSharpExpression.Parse<bool?, bool?, bool?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
+
+			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void LambdaBindingTest()
+		public void LambdaBinding()
 		{
 			var expected = 2;
-			var lambda = CSharpExpression.Parse<Func<int, int>>("a => a + 1").CompileAot(forceAot: true).Invoke();
-			var actual = lambda.Invoke(1);
+			var actual = CSharpExpression.Parse<Func<int, int>>("a => a + 1").CompileAot(forceAot: true).Invoke().Invoke(1);
+			var expectedAlt = CSharpExpression.Parse<Func<int, int>>("a => a + 1").CompileAot(forceAot: false).Invoke().Invoke(1);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void LambdaClosureBindingTest()
+		public void LambdaClosureBinding()
 		{
 			var expected = 3;
-			var lambda = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
-			var actual = lambda.Invoke(1);
+			var actual = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1).Invoke(1);
+			var expectedAlt = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").CompileAot(forceAot: false).Invoke(1).Invoke(1);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void LambdaBindingSubstitutionTest()
+		public void LambdaBindingSubstitution()
 		{
 			var expected = 2;
 			var actual = CSharpExpression.Parse<int, int>("a => a + 1", arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
+			var expectedAlt = CSharpExpression.Parse<int, int>("a => a + 1", arg1Name: "arg1").CompileAot(forceAot: false).Invoke(1);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Fact]
-		public void LambdaConstructorBindingTest()
+		public void LambdaConstructorBinding()
 		{
 			var expected = true;
 			var typeResolutionService = new KnownTypeResolver(typeof(Func<Type, object, bool>));
-			var lambda = CSharpExpression.Parse<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: true).Invoke();
-			var actual = lambda.Invoke(typeof(bool), null);
+			var actual = CSharpExpression.Parse<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: true).Invoke().Invoke(typeof(bool), null);
+			var expectedAlt = CSharpExpression.Parse<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: false).Invoke().Invoke(typeof(bool), null);
 
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 
 		[Theory]
@@ -981,9 +1135,12 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("1 is Func<int>", false, typeof(bool))]
 		[InlineData("new Func<int>(() => 1) as Array", null, typeof(object))]
 		[InlineData("default(int?)", null, typeof(object))]
-		public void GenericTypesInExpressionsTest(string expression, object expected, Type expectedType)
+		public void GenericTypesInExpressions(string expression, object expected, Type expectedType)
 		{
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
+
+			Assert.Equal(expectedAlt, actual);
 
 			if (expected != null)
 			{
@@ -998,23 +1155,26 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Field", 0)]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.Property", 0)]
-		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceMethod(10)", 10)]
-		[InlineData("new ExpressionExecutionTests.TestGenericClass<int>().InstanceGenericMethod<int>(11)", 11)]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticGenericMethod<int>(12)", 12)]
-		[InlineData("ExpressionExecutionTests.TestGenericClass<int>.StaticMethod()", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Field1", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().Property1", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceMethod1()", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>(1,2,3,4)", 4)]
-		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticGenericMethod1<int>(13)", 13)]
-		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExpressionExecutionTests.TestGenericClass<int>.TestSubClass<int,int>.StaticMethod1(14)", 14)]
-		public void GenericMemberInvocationTest(string expression, int expected)
+		[InlineData("ExecutorTests.TestGenericClass<int>.Field", 0)]
+		[InlineData("ExecutorTests.TestGenericClass<int>.Property", 0)]
+		[InlineData("new ExecutorTests.TestGenericClass<int>().InstanceMethod(10)", 10)]
+		[InlineData("new ExecutorTests.TestGenericClass<int>().InstanceGenericMethod<int>(11)", 11)]
+		[InlineData("ExecutorTests.TestGenericClass<int>.StaticGenericMethod<int>(12)", 12)]
+		[InlineData("ExecutorTests.TestGenericClass<int>.StaticMethod()", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().Field1", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().Property1", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceMethod1()", 0)]
+		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>(1,2,3,4)", 4)]
+		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>.StaticGenericMethod1<int>(13)", 13)]
+		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>.StaticMethod1(14)", 14)]
+		public void GenericMemberInvocation(string expression, int expected)
 		{
 			var typeResolutionService = new KnownTypeResolver(typeof(TestGenericClass<>), typeof(TestGenericClass<>.TestSubClass<,>));
 			var actual = CSharpExpression.Parse<int>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
+			var expectedAlt = CSharpExpression.Parse<int>(expression, typeResolutionService).CompileAot(forceAot: false).Invoke();
+
 			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
 		}
 	}
 }

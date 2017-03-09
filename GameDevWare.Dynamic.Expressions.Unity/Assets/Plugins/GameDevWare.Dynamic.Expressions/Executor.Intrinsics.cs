@@ -214,10 +214,10 @@ namespace GameDevWare.Dynamic.Expressions
 				if (closure == null) throw new ArgumentNullException("closure");
 
 				var type = left != null ? left.GetType() : right != null ? right.GetType() : typeof(object);
-				var dictionary = default(Dictionary<int, Delegate>);
+				var operationsForType = default(Dictionary<int, Delegate>);
 				var func = default(Delegate);
 
-				if (Operations.TryGetValue(type, out dictionary) && dictionary.TryGetValue((int)binaryOperationType, out func))
+				if (Operations.TryGetValue(type, out operationsForType) && operationsForType.TryGetValue((int)binaryOperationType, out func))
 					return ((BinaryOperation)func)(closure, left, right);
 
 				if (binaryOperationType == ExpressionType.Equal)
@@ -237,10 +237,10 @@ namespace GameDevWare.Dynamic.Expressions
 				if (closure == null) throw new ArgumentNullException("closure");
 
 				var type = operand != null ? operand.GetType() : typeof(object);
-				var dictionary = default(Dictionary<int, Delegate>);
+				var operationsForType = default(Dictionary<int, Delegate>);
 				var func = default(Delegate);
 
-				if (Operations.TryGetValue(type, out dictionary) && dictionary.TryGetValue((int)unaryOperationType, out func))
+				if (Operations.TryGetValue(type, out operationsForType) && operationsForType.TryGetValue((int)unaryOperationType, out func))
 					return ((UnaryOperation)func)(closure, operand);
 
 				if (userDefinedUnaryOperation == null)
@@ -395,6 +395,26 @@ namespace GameDevWare.Dynamic.Expressions
 			public static object NotEqual(Closure closure, object left, object right)
 			{
 				return closure.Box(!Equals(closure.Unbox<bool>(left), closure.Unbox<bool>(right)));
+			}
+			public static object Or(Closure closure, object left, object right)
+			{
+				return closure.Box((bool)(closure.Unbox<bool>(left) | closure.Unbox<bool>(right)));
+			}
+			public static object And(Closure closure, object left, object right)
+			{
+				return closure.Box((bool)(closure.Unbox<bool>(left) & closure.Unbox<bool>(right)));
+			}
+			public static object ExclusiveOr(Closure closure, object left, object right)
+			{
+				return closure.Box((bool)(closure.Unbox<bool>(left) ^ closure.Unbox<bool>(right)));
+			}
+			public static object AndAlso(Closure closure, object left, object right)
+			{
+				return closure.Box((bool)(closure.Unbox<bool>(left) && closure.Unbox<bool>(right)));
+			}
+			public static object OrElse(Closure closure, object left, object right)
+			{
+				return closure.Box((bool)(closure.Unbox<bool>(left) || closure.Unbox<bool>(right)));
 			}
 
 			public static object ToObject(Closure closure, object left, object _)

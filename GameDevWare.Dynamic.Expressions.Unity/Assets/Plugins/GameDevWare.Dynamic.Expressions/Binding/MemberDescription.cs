@@ -218,9 +218,16 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (method == null)
 				return false;
 
+			var valueType = TypeDescription.GetTypeDescription(valueExpression.Type);
+			var resultType = TypeDescription.GetTypeDescription(method.ReturnType);
+			var liftedConversion = valueType.IsNullable;
+
+			if (resultType.CanBeNull == false)
+				resultType = liftedConversion ? resultType.GetNullableType() : resultType;
+
 			expression = checkedConversion ?
-				Expression.ConvertChecked(valueExpression, method.ReturnType, method) :
-				Expression.Convert(valueExpression, method.ReturnType, method);
+				Expression.ConvertChecked(valueExpression, resultType, method) :
+				Expression.Convert(valueExpression, resultType, method);
 			return true;
 		}
 		public bool TryMakeCall(Expression target, ArgumentsTree argumentsTree, BindingContext bindingContext, out Expression expression, out float expressionQuality)
@@ -276,9 +283,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 				Debug.Assert(argValue != null, "argValue != null");
 
-				var quality = ExpressionUtils.TryMorphType(ref argValue, expectedType);
-
-				if (quality <= 0)
+				var quality = 0.0f;
+				if (ExpressionUtils.TryMorphType(ref argValue, expectedType, out quality) == false || quality <= 0)
 					return false;// failed to bind parameter
 
 				parametersQuality += quality; // casted

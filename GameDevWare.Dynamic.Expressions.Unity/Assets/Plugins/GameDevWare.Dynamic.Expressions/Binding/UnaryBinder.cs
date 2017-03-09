@@ -43,7 +43,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			switch (expressionType)
 			{
 				case Constants.EXPRESSION_TYPE_NEGATE:
-					ExpressionUtils.PromoteOperand(ref operand, ExpressionType.Negate);
+					ExpressionUtils.PromoteUnaryOperation(ref operand, ExpressionType.Negate);
 					// fixing b_u_g in mono expression compiler: Negate on float or double = exception
 					if (operand.Type == typeof(double) || operand.Type == typeof(float))
 						boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
@@ -51,7 +51,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						boundExpression = Expression.Negate(operand);
 					break;
 				case Constants.EXPRESSION_TYPE_NEGATE_CHECKED:
-					ExpressionUtils.PromoteOperand(ref operand, ExpressionType.NegateChecked);
+					ExpressionUtils.PromoteUnaryOperation(ref operand, ExpressionType.NegateChecked);
 					// fixing b_u_g in mono expression compiler: Negate on float or double = exception
 					if (operand.Type == typeof(double) || operand.Type == typeof(float))
 						boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
@@ -60,11 +60,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					break;
 				case Constants.EXPRESSION_TYPE_COMPLEMENT:
 				case Constants.EXPRESSION_TYPE_NOT:
-					ExpressionUtils.PromoteOperand(ref operand, ExpressionType.Not);
+					ExpressionUtils.PromoteUnaryOperation(ref operand, ExpressionType.Not);
 					boundExpression = Expression.Not(operand);
 					break;
 				case Constants.EXPRESSION_TYPE_UNARYPLUS:
-					ExpressionUtils.PromoteOperand(ref operand, ExpressionType.UnaryPlus);
+					ExpressionUtils.PromoteUnaryOperation(ref operand, ExpressionType.UnaryPlus);
 					boundExpression = Expression.UnaryPlus(operand);
 					break;
 				default:

@@ -8,9 +8,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 {
 	public class ExpressionUtils
 	{
-		public static object Evaluate(string expression, Type[] types, bool forceAot, params object[] arguments)
+		public static object Evaluate(string expression, Type[] types, bool forceAot, ITypeResolver typeResolver = null, params object[] arguments)
 		{
-			var expressionObj = Parse(expression, types);
+			var expressionObj = Parse(expression, types, typeResolver);
 
 			var compileMethod = typeof(ExpressionExtentions)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -21,7 +21,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			return @delegate.DynamicInvoke(arguments);
 		}
 
-		public static LambdaExpression Parse(string expression, Type[] types)
+		public static LambdaExpression Parse(string expression, Type[] types, ITypeResolver typeResolver = null)
 		{
 			var parseMethod = typeof(CSharpExpression)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -30,7 +30,12 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			var parseArguments = new object[parseMethod.GetParameters().Length];
 			foreach (var parameter in parseMethod.GetParameters())
-				parseArguments[parameter.Position] = parameter.DefaultValue;
+			{
+				if (parameter.ParameterType == typeof(ITypeResolver))
+					parseArguments[parameter.Position] = typeResolver;
+				else
+					parseArguments[parameter.Position] = parameter.DefaultValue;
+			}
 			parseArguments[0] = expression;
 
 			var expressionObj = parseMethod.Invoke(null, parseArguments);

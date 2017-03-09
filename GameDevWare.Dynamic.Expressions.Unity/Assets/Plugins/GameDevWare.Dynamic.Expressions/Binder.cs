@@ -67,8 +67,6 @@ namespace GameDevWare.Dynamic.Expressions
 			if (invokeMethod == null)
 				throw new MissingMethodException(lambdaType.ToString(), Constants.DELEGATE_INVOKE_NAME);
 
-			if (typeResolver == null) typeResolver = new KnownTypeResolver(parameters.Select(p => p.Type), DefaultTypeResolver);
-
 			var parametersArray = new ParameterExpression[invokeMethod.GetParametersCount()];
 			for (var i = 0; i < invokeMethod.GetParametersCount(); i++)
 				parametersArray[i] = Expression.Parameter(invokeMethod.GetParameterType(i), invokeMethod.GetParameterName(i));
@@ -76,7 +74,7 @@ namespace GameDevWare.Dynamic.Expressions
 			this.lambdaType = lambdaType;
 			this.parameters = new ReadOnlyCollection<ParameterExpression>(parametersArray);
 			this.resultType = TypeDescription.GetTypeDescription(invokeMethod.ResultType);
-			this.typeResolver = typeResolver;
+			this.typeResolver = typeResolver ?? new KnownTypeResolver(GetTypes(this.resultType, this.parameters), DefaultTypeResolver);
 
 		}
 
@@ -94,7 +92,6 @@ namespace GameDevWare.Dynamic.Expressions
 			if (resultType.IsGenericParameter) throw new ArgumentException("A value can't be generic parameter type.", "resultType");
 			if (parameters.Count > 4) throw new ArgumentOutOfRangeException("parameters");
 			if (parameters.Any(p => p == null || p.Type.IsGenericParameter)) throw new ArgumentException("Collection can't contain nulls or generic parameter types.", "parameters");
-			if (typeResolver == null) typeResolver = new KnownTypeResolver(parameters.Select(p => p.Type), DefaultTypeResolver);
 
 			if (parameters is ReadOnlyCollection<ParameterExpression> == false)
 				parameters = new ReadOnlyCollection<ParameterExpression>(parameters);
@@ -107,7 +104,7 @@ namespace GameDevWare.Dynamic.Expressions
 			this.lambdaType = Expression.GetFuncType(funcParams);
 			this.parameters = (ReadOnlyCollection<ParameterExpression>)parameters;
 			this.resultType = TypeDescription.GetTypeDescription(resultType);
-			this.typeResolver = typeResolver;
+			this.typeResolver = typeResolver ?? new KnownTypeResolver(GetTypes(resultType, parameters), DefaultTypeResolver);
 
 		}
 
@@ -152,6 +149,18 @@ namespace GameDevWare.Dynamic.Expressions
 				body = Expression.ConvertChecked(body, this.resultType);
 
 			return Expression.Lambda(lambdaType, body, bindingContext.Parameters);
+		}
+
+		private static Type[] GetTypes(Type resultType, IList<ParameterExpression> parameters)
+		{
+			if (resultType == null) throw new ArgumentNullException("resultType");
+			if (parameters == null) throw new ArgumentNullException("parameters");
+
+			var types = new Type[parameters.Count + 1];
+			for (var i = 0; i < parameters.Count; i++)
+				types[i] = parameters[i].Type;
+			types[types.Length - 1] = resultType;
+			return types;
 		}
 
 		/// <inheritdoc />

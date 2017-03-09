@@ -53,7 +53,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				switch (propertyOrFieldName)
 				{
 					case Constants.VALUE_NULL_STRING:
-						boundExpression = expectedType.CanBeNull ? expectedType.DefaultExpression : TypeDescription.ObjectType.DefaultExpression;
+						boundExpression = ExpressionUtils.NullConstant;
 						return true;
 					case Constants.VALUE_TRUE_STRING:
 						boundExpression = ExpressionUtils.TrueConstant;
@@ -82,7 +82,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			if (target == null && targetType == null)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, propertyOrFieldName), node);
+				if (bindingError == null)
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, propertyOrFieldName), node);
 				return false;
 			}
 
