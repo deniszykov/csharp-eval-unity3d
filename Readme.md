@@ -19,7 +19,7 @@ It should work on any other platforms.
 	* Evaluate
 	* Parse
 * AotCompilation
-	* AotRuntime
+	* RegisterFunc
 	* RegisterForFastCall
 
 ## Example
@@ -80,9 +80,11 @@ If you want to access all types in **UnityEngine** you can pass **AssemblyTypeRe
 ## AOT Execution
 You can compile and evaluate expression created by **System.Linq.Expression** and execute it in AOT environment where it is usually impossible. 
 ```csharp
-Expression<Func<Vector3>> expr = () => new Vector3(1.0f, 1.0f, 1.0f);
-Func<Vector3> compiledExpr = expr.CompileAot();
-compiledExpr(); // -> Vector3(1.0f, 1.0f, 1.0f)
+var expr = (Expression<Func<Vector3>>)(() => new Vector3(1.0f, 1.0f, 1.0f));
+var fn = expr.CompileAot();
+
+fn; // -> Func<Vector3>
+fn(); // -> Vector3(1.0f, 1.0f, 1.0f)
 ```
 
 iOS, WebGL and most consoles use AOT compilation which imposes following restrictions on the dynamic code execution:
@@ -155,7 +157,7 @@ You can send suggestions at support@gamedevware.com
 * Custom editor with auto-completion for Unity
 
 ## Changes
-# 2.0.0-alpha
+# 2.1.0-alpha
 ### Features
 * added more descriptive message to member binding error
 * added autodoc comments for public members
@@ -163,15 +165,31 @@ You can send suggestions at support@gamedevware.com
 * removed WEBGL check for later version of Unity, because unsigned types bug was fixed
 * added generic types and generic methods
 * added nullable types via '?' suffix
+```csharp
+CSharpExpression.Evaluate<int?>("default(int?)"); // -> null
+```
 * added lambda expression syntax '() => x' and 'new Func(a => x)'
 * added support for expression parameter re-mapping with lambda syntax at beggining of expression
-* added support for Func<> lambda on AOT environments
+```csharp
+CSharpExpression.Evaluate<int, int, int>("(x,y) => x + y", 2, 2); // -> 4
+```
+* added support for Func<> lambdas on AOT environments
+* added additional constructor to Binder class
+```csharp
+public Binder(Type lambdaType, ITypeResolver typeResolver = null);
+```
+* added ArgumentsTree ToString method
 
 ###Bug Fixes
 * fixed error with wrongly resolved types (only by name) in KnownTypeResolver
 * fixed bug with ACCESS_VIOLATION on iOS (Unity 5.x.x IL2CPP)
 * fixed few Unity 3.4 related errors in code
 * fixed 'new' expression parsed with error on chained calls new a().b().c()
+* fixed some cases of lifted binary/unary/conversion operations
+* fixed some AOT'ed operations on System.Boolean type
+* fixed null-propagation chains generate invalid code
+* fixed some edge cases of resolving nested generic types
+* fixed error with types without type.FullName value
 
 ###Breaking changes
 * ParserNode renamed to ParseTreeNode
@@ -187,6 +205,9 @@ You can send suggestions at support@gamedevware.com
 * fixed some cases of nullable types binding
 * fixed Enum member resolution
 * added Power(``**``) operator into C# syntax
+```csharp
+CSharpExpression.Evaluate<int>("2 ** 2"); // -> 4
+```
 * added TypeResolutionService chaining for better KnownTypes re-use
 
 # 1.0.1.10
