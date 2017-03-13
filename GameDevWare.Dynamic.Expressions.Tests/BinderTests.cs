@@ -292,6 +292,55 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Assert.Equal(expected, actual);
 		}
 
+
+		[Theory]
+		[InlineData("a + b", 1, (byte)2, 1 + 2)]
+		[InlineData("a * b", 1, (byte)2, 1 * 2)]
+		[InlineData("a - b", 1, (byte)2, 1 - 2)]
+		[InlineData("a / b", 1, (byte)2, 1 / 2)]
+		[InlineData("a % b", 1, (byte)2, 1 % 2)]
+		[InlineData("a & b", 1, (byte)2, 1 & 2)]
+		[InlineData("a | b", 1, (byte)2, 1 | 2)]
+		[InlineData("a ^ b", 1, (byte)2, 1 ^ 2)]
+		[InlineData("b << a", 2, (byte)255, 255 << 2)]
+		[InlineData("b >> a", 2, (byte)255, 255 >> 2)]
+		[InlineData("a + b", 1, null, null)]
+		[InlineData("a * b", 1, null, null)]
+		[InlineData("a - b", 1, null, null)]
+		[InlineData("a / b", 1, null, null)]
+		[InlineData("a % b", 1, null, null)]
+		[InlineData("a & b", 1, null, null)]
+		[InlineData("a | b", 1, null, null)]
+		[InlineData("a ^ b", 1, null, null)]
+		[InlineData("a << b", 1, null, null)]
+		[InlineData("a >> b", 1, null, null)]
+		[InlineData("+b", 1, null, null)]
+		[InlineData("-b", 1, null, null)]
+		[InlineData("~b", 1, null, null)]
+		[InlineData("~b", 1, null, null)]
+		public void LiftedNullablePromotedArithmeticTest(string expression, int? arg1, byte? arg2, int? expected)
+		{
+			var actual = CSharpExpression.Parse<int?, byte?, int?>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
+			Assert.Equal(expected, actual);
+		}
+
+		[Theory]
+		[InlineData("a < b", 1, (byte)2, true)]
+		[InlineData("a < b", 1, null, false)]
+		[InlineData("a > b", 1, null, false)]
+		[InlineData("a == b", 1, null, false)]
+		[InlineData("a >= b", 1, null, false)]
+		[InlineData("a <= b", 1, null, false)]
+		[InlineData("null == b", 1, null, true)] // this is special case
+		[InlineData("null == a", 1, null, false)] // this is special case
+		[InlineData("a != b", 1, null, true)] // this is special case
+		[InlineData("a != b", null, null, false)] // this is special case
+		public void LiftedNullablePromotedEquationTest(string expression, int? arg1, byte? arg2, bool expected)
+		{
+			var actual = CSharpExpression.Parse<int?, byte?, bool>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
+			Assert.Equal(expected, actual);
+		}
+
 		[Theory]
 		[InlineData("(Int32)a", 1, typeof(int))]
 		[InlineData("(System.Int32)a", 1, typeof(int))]

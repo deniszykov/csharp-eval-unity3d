@@ -49,7 +49,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			Debug.Assert(ifTrueBranch != null, "ifTrueBranch != null");
 			Debug.Assert(ifFalseBranch != null, "ifFalseBranch != null");
 
-			boundExpression = Expression.Condition(testExpression, ifTrueBranch, ifFalseBranch);
+			if (ExpressionUtils.TryPromoteBinaryOperation(ref ifTrueBranch, ref ifFalseBranch, ExpressionType.Conditional, out boundExpression) == false)
+				boundExpression = Expression.Condition(testExpression, ifTrueBranch, ifFalseBranch);
 			return true;
 		}
 	}

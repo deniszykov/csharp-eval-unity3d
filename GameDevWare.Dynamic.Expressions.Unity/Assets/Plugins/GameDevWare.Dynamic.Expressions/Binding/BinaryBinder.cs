@@ -172,7 +172,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				case Constants.EXPRESSION_TYPE_COALESCE:
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Coalesce, out boundExpression) == false)
 						boundExpression = Expression.Coalesce(leftOperand, rightOperand);
+
 					break;
+
 				default:
 					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);
 					return false;

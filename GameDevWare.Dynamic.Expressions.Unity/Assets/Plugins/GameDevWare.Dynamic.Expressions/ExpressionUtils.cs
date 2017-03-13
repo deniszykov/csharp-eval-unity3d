@@ -50,7 +50,7 @@ namespace GameDevWare.Dynamic.Expressions
 			// number + number
 			else if (leftTypeUnwrap.IsNumber && rightTypeUnwrap.IsNumber)
 			{
-				return TryPromoteNumberBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType, out operation);
+				return TryPromoteNumberBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType, type, out operation);
 			}
 			// null + nullable
 			else if (IsNull(leftOperand) && rightType.CanBeNull)
@@ -68,12 +68,13 @@ namespace GameDevWare.Dynamic.Expressions
 			else if (leftType.IsNullable != rightType.IsNullable)
 			{
 				leftOperand = ConvertToNullable(leftOperand, leftType);
-				rightOperand = ConvertToNullable(rightOperand, rightType);
+				if (type != ExpressionType.Coalesce)
+					rightOperand = ConvertToNullable(rightOperand, rightType);
 			}
 
 			return false;
 		}
-		private static bool TryPromoteNumberBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType, out Expression operation)
+		private static bool TryPromoteNumberBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType, ExpressionType type, out Expression operation)
 		{
 			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
 			if (leftType == null) throw new ArgumentNullException("leftType");
@@ -86,23 +87,23 @@ namespace GameDevWare.Dynamic.Expressions
 			var rightTypeUnwrap = rightType.IsNullable ? rightType.UnderlyingType : rightType;
 			var leftTypeCode = leftTypeUnwrap.TypeCode;
 			var rightTypeCode = rightTypeUnwrap.TypeCode;
-			var promoteToNullable = leftType.IsNullable != rightType.IsNullable;
+			var promoteLeftToNullable = leftType.IsNullable || rightType.IsNullable;
+			var promoteRightToNullable = rightType.IsNullable || (type != ExpressionType.Coalesce && promoteLeftToNullable);
 
 			if (leftTypeUnwrap == rightTypeUnwrap)
 			{
 				if (leftTypeCode < TypeCode.SByte || leftTypeCode > TypeCode.UInt16)
 				{
-					if (promoteToNullable)
-					{
+					if (promoteLeftToNullable)
 						leftOperand = ConvertToNullable(leftOperand, leftType);
+					if (promoteRightToNullable)
 						rightOperand = ConvertToNullable(rightOperand, rightType);
-					}
 					return false;
 				}
 
 				// expand smaller integers to int32
-				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
-				rightOperand = Expression.Convert(rightOperand, promoteToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
+				leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
+				rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
 				return false;
 			}
 
@@ -112,29 +113,29 @@ namespace GameDevWare.Dynamic.Expressions
 					return false; // will throw exception
 
 				if (leftTypeCode == TypeCode.Decimal)
-					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(decimal?) : typeof(decimal));
+					rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? typeof(decimal?) : typeof(decimal));
 				else
-					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(decimal?) : typeof(decimal));
+					leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(decimal?) : typeof(decimal));
 			}
 			else if (leftTypeCode == TypeCode.Double || rightTypeCode == TypeCode.Double)
 			{
 				if (leftTypeCode == TypeCode.Double)
-					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(double?) : typeof(double));
+					rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? typeof(double?) : typeof(double));
 				else
-					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(double?) : typeof(double));
+					leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(double?) : typeof(double));
 			}
 			else if (leftTypeCode == TypeCode.Single || rightTypeCode == TypeCode.Single)
 			{
 				if (leftTypeCode == TypeCode.Single)
-					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(float?) : typeof(float));
+					rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? typeof(float?) : typeof(float));
 				else
-					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(float?) : typeof(float));
+					leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(float?) : typeof(float));
 			}
 			else if (leftTypeCode == TypeCode.UInt64)
 			{
 				var quality = 0.0f;
 				var rightOperandTmp = rightOperand;
-				var expectedRightType = promoteToNullable ? typeof(ulong?) : typeof(ulong);
+				var expectedRightType = promoteRightToNullable ? typeof(ulong?) : typeof(ulong);
 				if (NumberUtils.IsSignedInteger(rightTypeCode) && TryMorphType(ref rightOperandTmp, expectedRightType, out quality) == false)
 					return false; // will throw exception
 
@@ -145,7 +146,7 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				var quality = 0.0f;
 				var leftOperandTmp = leftOperand;
-				var expectedLeftType = promoteToNullable ? typeof(ulong?) : typeof(ulong);
+				var expectedLeftType = promoteLeftToNullable ? typeof(ulong?) : typeof(ulong);
 				if (NumberUtils.IsSignedInteger(leftTypeCode) && TryMorphType(ref leftOperandTmp, expectedLeftType, out quality) == false)
 					return false; // will throw exception
 
@@ -155,27 +156,27 @@ namespace GameDevWare.Dynamic.Expressions
 			else if (leftTypeCode == TypeCode.Int64 || rightTypeCode == TypeCode.Int64)
 			{
 				if (leftTypeCode == TypeCode.Int64)
-					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(long?) : typeof(long));
+					rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? typeof(long?) : typeof(long));
 				else
-					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(long?) : typeof(long));
+					leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(long?) : typeof(long));
 			}
 			else if ((leftTypeCode == TypeCode.UInt32 && NumberUtils.IsSignedInteger(rightTypeCode)) ||
 				(rightTypeCode == TypeCode.UInt32 && NumberUtils.IsSignedInteger(leftTypeCode)))
 			{
-				rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(long?) : typeof(long));
-				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(long?) : typeof(long));
+				rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? typeof(long?) : typeof(long));
+				leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(long?) : typeof(long));
 			}
 			else if (leftTypeCode == TypeCode.UInt32 || rightTypeCode == TypeCode.UInt32)
 			{
 				if (leftTypeCode == TypeCode.UInt32)
-					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(uint?) : typeof(uint));
+					rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? typeof(uint?) : typeof(uint));
 				else
-					leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(uint?) : typeof(uint));
+					leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(uint?) : typeof(uint));
 			}
 			else
 			{
-				rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(int?) : typeof(int));
-				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(int?) : typeof(int));
+				rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? typeof(int?) : typeof(int));
+				leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(int?) : typeof(int));
 			}
 
 			return false;
@@ -253,7 +254,8 @@ namespace GameDevWare.Dynamic.Expressions
 			else if (promoteToNullable)
 			{
 				leftOperand = ConvertToNullable(leftOperand, leftType);
-				rightOperand = ConvertToNullable(rightOperand, rightType);
+				if (type != ExpressionType.Coalesce)
+					rightOperand = ConvertToNullable(rightOperand, rightType);
 			}
 
 			return false;
