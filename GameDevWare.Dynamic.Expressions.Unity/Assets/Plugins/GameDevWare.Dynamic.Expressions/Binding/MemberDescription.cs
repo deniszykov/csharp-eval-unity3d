@@ -84,7 +84,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.DeclaringType = declaringType;
 			this.ResultType = field.FieldType;
 			var constantValue = (field.Attributes & (FieldAttributes.HasDefault | FieldAttributes.Literal)) != 0 ? field.GetRawConstantValue() : null;
-			this.ConstantValueExpression = constantValue != null ? Expression.Constant(constantValue) : null;
+			if (declaringType.IsEnum && constantValue != null)
+				this.ConstantValueExpression = Expression.Constant(Enum.ToObject(declaringType, constantValue), declaringType);
+			else
+				this.ConstantValueExpression = constantValue != null ? Expression.Constant(constantValue) : null;
 
 			this.IsStatic = field.IsStatic;
 			this.IsPropertyOrField = true;

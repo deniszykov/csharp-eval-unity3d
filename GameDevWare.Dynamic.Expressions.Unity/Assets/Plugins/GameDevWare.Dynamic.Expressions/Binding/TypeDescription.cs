@@ -111,7 +111,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.BaseTypes = GetBaseTypes(this, 0);
 			this.Interfaces = Array.ConvertAll(type.GetInterfaces(), cache.GetOrCreateTypeDescription);
 			this.GenericArguments = type.IsGenericType ? Array.ConvertAll(type.GetGenericArguments(), cache.GetOrCreateTypeDescription) : TypeDescription.EmptyTypes;
-			this.MembersByName = GetMembersByName(ref this.Indexers);
+
 			this.IsNullable = Nullable.GetUnderlyingType(type) != null;
 			this.IsNumber = NumberUtils.IsNumber(type);
 			this.CanBeNull = this.IsNullable || type.IsValueType == false;
@@ -120,6 +120,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.HasGenericParameters = type.ContainsGenericParameters;
 			this.DefaultExpression = Expression.Constant(type.IsValueType && this.IsNullable == false ? Activator.CreateInstance(type) : null, type);
 			this.TypeCode = Type.GetTypeCode(type);
+
+			this.MembersByName = GetMembersByName(ref this.Indexers);
 
 			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
 			var methodsDescriptions = new MemberDescription[methods.Length];

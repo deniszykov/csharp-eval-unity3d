@@ -43,29 +43,33 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			switch (expressionType)
 			{
 				case Constants.EXPRESSION_TYPE_NEGATE:
-					ExpressionUtils.PromoteUnaryOperation(ref operand, ExpressionType.Negate);
-					// fixing b_u_g in mono expression compiler: Negate on float or double = exception
-					if (operand.Type == typeof(double) || operand.Type == typeof(float))
-						boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
-					else
-						boundExpression = Expression.Negate(operand);
+					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.Negate, out boundExpression) == false)
+					{
+						// fixing b_u_g in mono expression compiler: Negate on float or double = exception
+						if (operand.Type == typeof(double) || operand.Type == typeof(float))
+							boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
+						else
+							boundExpression = Expression.Negate(operand);
+					}
 					break;
 				case Constants.EXPRESSION_TYPE_NEGATE_CHECKED:
-					ExpressionUtils.PromoteUnaryOperation(ref operand, ExpressionType.NegateChecked);
-					// fixing b_u_g in mono expression compiler: Negate on float or double = exception
-					if (operand.Type == typeof(double) || operand.Type == typeof(float))
-						boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
-					else
-						boundExpression = Expression.NegateChecked(operand);
+					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.NegateChecked, out boundExpression) == false)
+					{
+						// fixing b_u_g in mono expression compiler: Negate on float or double = exception
+						if (operand.Type == typeof(double) || operand.Type == typeof(float))
+							boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
+						else
+							boundExpression = Expression.NegateChecked(operand);
+					}
 					break;
 				case Constants.EXPRESSION_TYPE_COMPLEMENT:
 				case Constants.EXPRESSION_TYPE_NOT:
-					ExpressionUtils.PromoteUnaryOperation(ref operand, ExpressionType.Not);
-					boundExpression = Expression.Not(operand);
+					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.Not, out boundExpression) == false)
+						boundExpression = Expression.Not(operand);
 					break;
 				case Constants.EXPRESSION_TYPE_UNARYPLUS:
-					ExpressionUtils.PromoteUnaryOperation(ref operand, ExpressionType.UnaryPlus);
-					boundExpression = Expression.UnaryPlus(operand);
+					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.UnaryPlus, out boundExpression) == false)
+						boundExpression = Expression.UnaryPlus(operand);
 					break;
 				default:
 					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);

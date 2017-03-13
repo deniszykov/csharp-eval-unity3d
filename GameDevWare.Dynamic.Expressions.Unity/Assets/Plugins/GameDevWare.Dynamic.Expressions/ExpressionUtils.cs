@@ -29,10 +29,12 @@ namespace GameDevWare.Dynamic.Expressions
 		public static readonly Expression NegativeSingle = Expression.Constant(-1.0f);
 		public static readonly Expression NegativeDouble = Expression.Constant(-1.0d);
 
-		public static void PromoteBinaryOperation(ref Expression leftOperand, ref Expression rightOperand, ExpressionType type)
+		public static bool TryPromoteBinaryOperation(ref Expression leftOperand, ref Expression rightOperand, ExpressionType type, out Expression operation)
 		{
 			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
 			if (rightOperand == null) throw new ArgumentNullException("rightOperand");
+
+			operation = null;
 
 			var leftType = TypeDescription.GetTypeDescription(leftOperand.Type);
 			var rightType = TypeDescription.GetTypeDescription(rightOperand.Type);
@@ -43,12 +45,12 @@ namespace GameDevWare.Dynamic.Expressions
 			// enum + enum
 			if (leftTypeUnwrap.IsEnum || rightTypeUnwrap.IsEnum)
 			{
-				PromoteEnumBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType, type);
+				return TryPromoteEnumBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType, type, out operation);
 			}
 			// number + number
 			else if (leftTypeUnwrap.IsNumber && rightTypeUnwrap.IsNumber)
 			{
-				PromoteNumberBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType);
+				return TryPromoteNumberBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType, out operation);
 			}
 			// null + nullable
 			else if (IsNull(leftOperand) && rightType.CanBeNull)
@@ -68,13 +70,17 @@ namespace GameDevWare.Dynamic.Expressions
 				leftOperand = ConvertToNullable(leftOperand, leftType);
 				rightOperand = ConvertToNullable(rightOperand, rightType);
 			}
+
+			return false;
 		}
-		private static void PromoteNumberBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType)
+		private static bool TryPromoteNumberBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType, out Expression operation)
 		{
 			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
 			if (leftType == null) throw new ArgumentNullException("leftType");
 			if (rightOperand == null) throw new ArgumentNullException("rightOperand");
 			if (rightType == null) throw new ArgumentNullException("rightType");
+
+			operation = null;
 
 			var leftTypeUnwrap = leftType.IsNullable ? leftType.UnderlyingType : leftType;
 			var rightTypeUnwrap = rightType.IsNullable ? rightType.UnderlyingType : rightType;
@@ -91,19 +97,19 @@ namespace GameDevWare.Dynamic.Expressions
 						leftOperand = ConvertToNullable(leftOperand, leftType);
 						rightOperand = ConvertToNullable(rightOperand, rightType);
 					}
-					return;
+					return false;
 				}
 
 				// expand smaller integers to int32
 				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
 				rightOperand = Expression.Convert(rightOperand, promoteToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
-				return;
+				return false;
 			}
 
 			if (leftTypeCode == TypeCode.Decimal || rightTypeCode == TypeCode.Decimal)
 			{
 				if (leftTypeCode == TypeCode.Double || leftTypeCode == TypeCode.Single || rightTypeCode == TypeCode.Double || rightTypeCode == TypeCode.Single)
-					return; // will throw exception
+					return false; // will throw exception
 
 				if (leftTypeCode == TypeCode.Decimal)
 					rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(decimal?) : typeof(decimal));
@@ -130,7 +136,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var rightOperandTmp = rightOperand;
 				var expectedRightType = promoteToNullable ? typeof(ulong?) : typeof(ulong);
 				if (NumberUtils.IsSignedInteger(rightTypeCode) && TryMorphType(ref rightOperandTmp, expectedRightType, out quality) == false)
-					return; // will throw exception
+					return false; // will throw exception
 
 				rightOperand = rightOperandTmp;
 				rightOperand = rightOperand.Type != expectedRightType ? Expression.Convert(rightOperand, expectedRightType) : rightOperand;
@@ -141,7 +147,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var leftOperandTmp = leftOperand;
 				var expectedLeftType = promoteToNullable ? typeof(ulong?) : typeof(ulong);
 				if (NumberUtils.IsSignedInteger(leftTypeCode) && TryMorphType(ref leftOperandTmp, expectedLeftType, out quality) == false)
-					return; // will throw exception
+					return false; // will throw exception
 
 				leftOperand = leftOperandTmp;
 				leftOperand = leftOperand.Type != expectedLeftType ? Expression.Convert(leftOperand, expectedLeftType) : leftOperand;
@@ -171,13 +177,17 @@ namespace GameDevWare.Dynamic.Expressions
 				rightOperand = Expression.Convert(rightOperand, promoteToNullable ? typeof(int?) : typeof(int));
 				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? typeof(int?) : typeof(int));
 			}
+
+			return false;
 		}
-		private static void PromoteEnumBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType, ExpressionType type)
+		private static bool TryPromoteEnumBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType, ExpressionType type, out Expression operation)
 		{
 			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
 			if (leftType == null) throw new ArgumentNullException("leftType");
 			if (rightOperand == null) throw new ArgumentNullException("rightOperand");
 			if (rightType == null) throw new ArgumentNullException("rightType");
+
+			operation = null;
 
 			var leftTypeUnwrap = leftType.IsNullable ? leftType.UnderlyingType : leftType;
 			var rightTypeUnwrap = rightType.IsNullable ? rightType.UnderlyingType : rightType;
@@ -187,17 +197,33 @@ namespace GameDevWare.Dynamic.Expressions
 			if (leftTypeUnwrap.IsEnum && rightTypeUnwrap.IsNumber && (type == ExpressionType.Add || type == ExpressionType.AddChecked || type == ExpressionType.Subtract || type == ExpressionType.SubtractChecked))
 			{
 				var integerType = leftTypeUnwrap.UnderlyingType;
-				MorphType(ref rightOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
+				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
 				if (promoteToNullable)
-					leftOperand = ConvertToNullable(leftOperand, leftType);
+					rightOperand = ConvertToNullable(rightOperand, leftType);
+
+				switch (type)
+				{
+					case ExpressionType.Add: operation = Expression.Add(leftOperand, rightOperand); break;
+					case ExpressionType.AddChecked: operation = Expression.AddChecked(leftOperand, rightOperand); break;
+					case ExpressionType.Subtract: operation = Expression.Subtract(leftOperand, rightOperand); break;
+					case ExpressionType.SubtractChecked: operation = Expression.SubtractChecked(leftOperand, rightOperand); break;
+					default: throw new InvalidOperationException("Only subtraction and addition with numbers are promoted.");
+				}
+
+				operation = Expression.Convert(operation, promoteToNullable ? leftTypeUnwrap.GetNullableType() : leftTypeUnwrap);
+				return true;
 			}
 			// number + enum
 			else if (rightTypeUnwrap.IsEnum && leftTypeUnwrap.IsNumber && (type == ExpressionType.Add || type == ExpressionType.AddChecked || type == ExpressionType.Subtract || type == ExpressionType.SubtractChecked))
 			{
-				var integerType = leftTypeUnwrap.UnderlyingType;
-				MorphType(ref leftOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
+				var integerType = rightTypeUnwrap.UnderlyingType;
+				rightOperand = Expression.ConvertChecked(rightOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
 				if (promoteToNullable)
-					rightOperand = ConvertToNullable(rightOperand, rightType);
+					leftOperand = ConvertToNullable(leftOperand, rightType);
+
+				operation = Expression.MakeBinary(type, leftOperand, rightOperand);
+				operation = Expression.Convert(operation, promoteToNullable ? rightTypeUnwrap.GetNullableType() : rightTypeUnwrap);
+				return true;
 			}
 			// null + nullable-enum
 			else if (IsNull(leftOperand) && rightType.CanBeNull)
@@ -211,24 +237,44 @@ namespace GameDevWare.Dynamic.Expressions
 				rightType = leftType;
 				rightOperand = leftType.DefaultExpression;
 			}
+			// enum OP enum
+			else if (rightTypeUnwrap == leftTypeUnwrap && (type == ExpressionType.And || type == ExpressionType.Or || type == ExpressionType.ExclusiveOr ||
+				type == ExpressionType.GreaterThan || type == ExpressionType.GreaterThanOrEqual ||
+				type == ExpressionType.LessThan || type == ExpressionType.LessThanOrEqual))
+			{
+				var integerType = rightTypeUnwrap.UnderlyingType;
+				rightOperand = Expression.ConvertChecked(rightOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
+				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
+
+				operation = Expression.MakeBinary(type, leftOperand, rightOperand);
+				return true;
+			}
 			// [not]nullable + [not]nullable
 			else if (promoteToNullable)
 			{
 				leftOperand = ConvertToNullable(leftOperand, leftType);
 				rightOperand = ConvertToNullable(rightOperand, rightType);
 			}
+
+			return false;
 		}
-		public static void PromoteUnaryOperation(ref Expression operand, ExpressionType type)
+		public static bool TryPromoteUnaryOperation(ref Expression operand, ExpressionType type, out Expression operation)
 		{
 			if (operand == null) throw new ArgumentNullException("operand");
 
+			operation = null;
 			var operandType = TypeDescription.GetTypeDescription(operand.Type);
+			var operandTypeUnwrap = operandType.IsNullable ? operandType.UnderlyingType : operandType;
 			var promoteToNullable = operandType.IsNullable;
 
-			if (operandType.TypeCode >= TypeCode.SByte && operandType.TypeCode <= TypeCode.UInt16)
+			if (operandTypeUnwrap.IsEnum)
+				MorphType(ref operand, promoteToNullable ? operandTypeUnwrap.UnderlyingType.GetNullableType() : operandTypeUnwrap.UnderlyingType);
+			else if (operandTypeUnwrap.TypeCode >= TypeCode.SByte && operandTypeUnwrap.TypeCode <= TypeCode.UInt16)
 				MorphType(ref operand, promoteToNullable ? typeof(int?) : typeof(int));
-			else if (operandType.TypeCode == TypeCode.UInt32 && type == ExpressionType.Not)
+			else if (operandTypeUnwrap.TypeCode == TypeCode.UInt32 && type == ExpressionType.Not)
 				MorphType(ref operand, promoteToNullable ? typeof(long?) : typeof(long));
+
+			return false;
 		}
 
 		public static bool IsNull(Expression expression, bool unwrapConversions = true)
@@ -255,6 +301,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public static void MorphType(ref Expression expression, Type toType)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
+			if (toType == null) throw new ArgumentNullException("toType");
 
 			var quality = 0.0f;
 			if (TryMorphType(ref expression, toType, out quality) == false || quality <= TypeConversion.QUALITY_NO_CONVERSION)
