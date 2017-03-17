@@ -157,7 +157,7 @@ You can send suggestions at support@gamedevware.com
 * Custom editor with auto-completion for Unity
 
 ## Changes
-# 2.1.0-alpha
+# 2.1.1-rc
 ### Features
 * added more descriptive message to member binding error
 * added autodoc comments for public members
@@ -190,6 +190,10 @@ public Binder(Type lambdaType, ITypeResolver typeResolver = null);
 * fixed null-propagation chains generate invalid code
 * fixed some edge cases of resolving nested generic types
 * fixed error with types without type.FullName value
+* fixed Condition operator types promotion
+* fixed Power operator types promotion and null-lifting
+* fixed enum constants threated as underlying types during binary/unary operations
+
 
 ###Breaking changes
 * ParserNode renamed to ParseTreeNode
