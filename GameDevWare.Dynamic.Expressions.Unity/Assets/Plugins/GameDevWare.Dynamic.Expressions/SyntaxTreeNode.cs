@@ -425,8 +425,15 @@ namespace GameDevWare.Dynamic.Expressions
 		public override string ToString()
 		{
 			var expression = this.GetOriginalExpression(throwOnError: false);
-			if (string.IsNullOrEmpty(expression))
-				expression = this.Render();
+			try
+			{
+				if (string.IsNullOrEmpty(expression))
+					expression = this.Render();
+			}
+			catch (Exception error)
+			{
+				expression = "/failed to render expression '" + error.Message + "'/";
+			}
 			return expression;
 		}
 	}

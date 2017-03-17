@@ -92,22 +92,15 @@ namespace GameDevWare.Dynamic.Expressions
 
 			if (leftTypeUnwrap == rightTypeUnwrap)
 			{
-				if (leftTypeCode < TypeCode.SByte || leftTypeCode > TypeCode.UInt16)
+				if (leftTypeCode > TypeCode.SByte && leftTypeCode < TypeCode.UInt16)
 				{
-					if (promoteLeftToNullable)
-						leftOperand = ConvertToNullable(leftOperand, leftType);
-					if (promoteRightToNullable)
-						rightOperand = ConvertToNullable(rightOperand, rightType);
+					// expand smaller integers to int32
+					leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
+					rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
 					return false;
 				}
-
-				// expand smaller integers to int32
-				leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
-				rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
-				return false;
 			}
-
-			if (leftTypeCode == TypeCode.Decimal || rightTypeCode == TypeCode.Decimal)
+			else if (leftTypeCode == TypeCode.Decimal || rightTypeCode == TypeCode.Decimal)
 			{
 				if (leftTypeCode == TypeCode.Double || leftTypeCode == TypeCode.Single || rightTypeCode == TypeCode.Double || rightTypeCode == TypeCode.Single)
 					return false; // will throw exception
@@ -178,6 +171,9 @@ namespace GameDevWare.Dynamic.Expressions
 				rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? typeof(int?) : typeof(int));
 				leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(int?) : typeof(int));
 			}
+
+			if (promoteLeftToNullable) leftOperand = ConvertToNullable(leftOperand, null);
+			if (promoteRightToNullable) rightOperand = ConvertToNullable(rightOperand, null);
 
 			return false;
 		}
@@ -283,20 +279,15 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
-			// unwrap conversions
-			var convertExpression = expression as UnaryExpression;
-			while (unwrapConversions && convertExpression != null && (convertExpression.NodeType == ExpressionType.Convert || convertExpression.NodeType == ExpressionType.ConvertChecked))
-			{
-				expression = convertExpression.Operand;
-				convertExpression = expression as UnaryExpression;
-			}
-
 			if (ReferenceEquals(expression, NullConstant))
 				return true;
 
-			var constantExpression = expression as ConstantExpression;
-			if (constantExpression == null)
+			var constantExpression = default(ConstantExpression);
+			if (TryExposeConstant(expression, out constantExpression) == false)
 				return false;
+
+			if (ReferenceEquals(constantExpression, NullConstant))
+				return true;
 
 			return constantExpression.Value == null && constantExpression.Type == typeof(object);
 		}
@@ -341,7 +332,6 @@ namespace GameDevWare.Dynamic.Expressions
 
 			var actualTypeUnwrap = actualType.IsNullable ? actualType.UnderlyingType : actualType;
 			var targetTypeUnwrap = targetType.IsNullable ? targetType.UnderlyingType : targetType;
-			var conversion = default(TypeConversion);
 
 			// converting null to nullable-or-reference
 			if (targetType.CanBeNull && IsNull(expression))
@@ -359,6 +349,7 @@ namespace GameDevWare.Dynamic.Expressions
 				return true;
 			}
 
+			var conversion = default(TypeConversion);
 			if (TypeConversion.TryGetTypeConversion(actualTypeUnwrap, targetTypeUnwrap, out conversion) == false || conversion.Quality <= TypeConversion.QUALITY_NO_CONVERSION)
 				return false;
 
@@ -381,12 +372,25 @@ namespace GameDevWare.Dynamic.Expressions
 			quality = TypeConversion.QUALITY_NO_CONVERSION;
 			var targetTypeUnwrap = targetType.IsNullable ? targetType.UnderlyingType : targetType;
 			// try to convert value of constant
-			var constantValue = default(object);
-			var constantType = default(Type);
-			if (TryExposeConstant(expression, out constantValue, out constantType) == false || constantValue == null)
+			var constantExpression = default(ConstantExpression);
+			if (TryExposeConstant(expression, out constantExpression) == false)
 				return false;
 
-			var constantTypeCode = Type.GetTypeCode(constantType);
+			var constantValue = constantExpression.Value;
+			var constantType = TypeDescription.GetTypeDescription(constantExpression.Type);
+			var constantTypeUnwrap = constantType.IsNullable ? constantType.UnderlyingType : constantType;
+			if (constantValue == null && constantType.DefaultExpression != constantExpression && targetType.CanBeNull)
+			{
+				quality = TypeConversion.QUALITY_SAME_TYPE;
+				expression = Expression.Constant(null, targetType);
+				return true;
+			}
+			else if (constantValue == null)
+			{
+				return false;
+			}
+
+			var constantTypeCode = constantTypeUnwrap.TypeCode;
 			var convertibleToExpectedType = default(bool);
 			// ReSharper disable RedundantCast
 			// ReSharper disable once SwitchStatementMissingSomeCases
@@ -419,8 +423,8 @@ namespace GameDevWare.Dynamic.Expressions
 		private static Expression ConvertToNullable(Expression notNullableExpression, TypeDescription typeDescription)
 		{
 			if (notNullableExpression == null) throw new ArgumentNullException("notNullableExpression");
-			if (typeDescription == null) throw new ArgumentNullException("typeDescription");
-			if (notNullableExpression.Type != typeDescription) throw new ArgumentException("Wrong type description.", "typeDescription");
+			if (typeDescription != null && notNullableExpression.Type != typeDescription) throw new ArgumentException("Wrong type description.", "typeDescription");
+			if (typeDescription == null) typeDescription = TypeDescription.GetTypeDescription(notNullableExpression.Type);
 
 			if (typeDescription.CanBeNull == false)
 				return Expression.Convert(notNullableExpression, typeDescription.GetNullableType());
@@ -508,7 +512,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
-		private static bool TryExposeConstant(Expression expression, out object constantValue, out Type constantType)
+		private static bool TryExposeConstant(Expression expression, out ConstantExpression constantExpression)
 		{
 			// unwrap conversions
 			var convertExpression = expression as UnaryExpression;
@@ -518,20 +522,9 @@ namespace GameDevWare.Dynamic.Expressions
 				convertExpression = expression as UnaryExpression;
 			}
 
-			constantValue = null;
-			constantType = null;
-			var constantExpression = expression as ConstantExpression;
-			if (constantExpression == null)
-				return false;
-
-			constantType = constantExpression.Type;
-			constantValue = constantExpression.Value;
-
-			var constantNullableUnderlyingType = constantExpression.Type.IsValueType ? Nullable.GetUnderlyingType(constantExpression.Type) : null;
-			if (constantNullableUnderlyingType != null)
-				constantType = constantNullableUnderlyingType;
-
-			return true;
+			constantExpression = null;
+			constantExpression = expression as ConstantExpression;
+			return constantExpression != null;
 		}
 		private static bool IsInRange(object value, TypeCode valueTypeCode, long minValue, ulong maxValue)
 		{

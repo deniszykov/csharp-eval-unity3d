@@ -92,12 +92,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						boundExpression = Expression.SubtractChecked(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_LEFTSHIFT:
-					if (ExpressionUtils.TryPromoteUnaryOperation(ref leftOperand, ExpressionType.LeftShift, out boundExpression) == false)
-						boundExpression = Expression.LeftShift(leftOperand, rightOperand);
+					ExpressionUtils.TryPromoteUnaryOperation(ref leftOperand, ExpressionType.LeftShift, out boundExpression);
+					ExpressionUtils.TryPromoteUnaryOperation(ref rightOperand, ExpressionType.LeftShift, out boundExpression);
+					boundExpression = Expression.LeftShift(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_RIGHTSHIFT:
-					if (ExpressionUtils.TryPromoteUnaryOperation(ref leftOperand, ExpressionType.RightShift, out boundExpression) == false)
-						boundExpression = Expression.RightShift(leftOperand, rightOperand);
+					ExpressionUtils.TryPromoteUnaryOperation(ref leftOperand, ExpressionType.RightShift, out boundExpression);
+					ExpressionUtils.TryPromoteUnaryOperation(ref rightOperand, ExpressionType.RightShift, out boundExpression);
+					boundExpression = Expression.RightShift(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_GREATERTHAN:
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.GreaterThan, out boundExpression) == false)
@@ -116,16 +118,23 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						boundExpression = Expression.LessThanOrEqual(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_POWER:
-					var leftType = leftOperand.Type;
-					if (leftOperand.Type != typeof(double))
-						leftOperand = Expression.ConvertChecked(leftOperand, typeof(double));
-					if (rightOperand.Type != typeof(double))
-						rightOperand = Expression.ConvertChecked(rightOperand, typeof(double));
+					var resultType = TypeDescription.GetTypeDescription(leftOperand.Type);
+					var resultTypeUnwrap = resultType.IsNullable ? resultType.UnderlyingType : resultType;
+					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Power, out boundExpression) == false)
+					{
+						var operandsType = TypeDescription.GetTypeDescription(leftOperand.Type);
+						var operandTypeUnwrap = operandsType.IsNullable ? operandsType.UnderlyingType : operandsType;
+						var promoteToNullable = resultType.IsNullable || operandsType.IsNullable;
+						if (operandTypeUnwrap != typeof(double) && leftOperand.Type == rightOperand.Type)
+						{
+							leftOperand = Expression.ConvertChecked(leftOperand, promoteToNullable ? typeof(double?) : typeof(double));
+							rightOperand = Expression.ConvertChecked(rightOperand, promoteToNullable ? typeof(double?) : typeof(double));
+						}
+						boundExpression = Expression.Power(leftOperand, rightOperand);
 
-					boundExpression = Expression.Power(leftOperand, rightOperand);
-
-					if (boundExpression.Type != leftType)
-						boundExpression = Expression.ConvertChecked(boundExpression, leftType);
+						if (resultType != typeof(double))
+							boundExpression = Expression.ConvertChecked(boundExpression, promoteToNullable ? resultTypeUnwrap.GetNullableType() : resultTypeUnwrap);
+					}
 					break;
 				case Constants.EXPRESSION_TYPE_DIVIDE:
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Divide, out boundExpression) == false)

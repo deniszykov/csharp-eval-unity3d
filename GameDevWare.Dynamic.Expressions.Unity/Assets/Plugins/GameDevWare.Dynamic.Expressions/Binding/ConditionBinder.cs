@@ -15,6 +15,7 @@
 */
 
 using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
@@ -50,7 +51,15 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			Debug.Assert(ifFalseBranch != null, "ifFalseBranch != null");
 
 			if (ExpressionUtils.TryPromoteBinaryOperation(ref ifTrueBranch, ref ifFalseBranch, ExpressionType.Conditional, out boundExpression) == false)
+			{
+				if (ifTrueBranch.Type != ifFalseBranch.Type)
+				{
+					float quality;
+					ExpressionUtils.TryMorphType(ref ifTrueBranch, ifFalseBranch.Type, out quality);
+				}
+
 				boundExpression = Expression.Condition(testExpression, ifTrueBranch, ifFalseBranch);
+			}
 			return true;
 		}
 	}

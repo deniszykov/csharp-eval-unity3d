@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using GameDevWare.Dynamic.Expressions.CSharp;
@@ -90,7 +91,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			}
 		}
 
-		// convert enum
 		[Fact]
 		public void ArrayIndex()
 		{
@@ -351,13 +351,170 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+		// basic tests
 		[InlineData("1 > 2 ? 1 : 2", 1 > 2 ? 1 : 2)]
 		[InlineData("true ? 1 : 2", true ? 1 : 2)]
 		[InlineData("false ? 1 : 2", false ? 1 : 2)]
+		// inner conditions
 		[InlineData("true ? (false ? 3 : 4) : (true ? 5 : 6)", true ? (false ? 3 : 4) : (true ? 5 : 6))]
+		// operators priority
 		[InlineData("1 != 1 || 1 == 1 ? 1 : 2", 1 != 1 || 1 == 1 ? 1 : 2)]
-		[InlineData("1 < 2 && 3 >= 2 ? 1 : 2", 1 < 2 && 3 >= 2 ? 1 : 2)]
+		[InlineData("1 < 2 && 3 >= 2 ? 1 ^ 3 : 4 & 2", 1 < 2 && 3 >= 2 ? 1 ^ 3 : 4 & 2)]
+		// numberic promotion
+		[InlineData("true ? 1 : 2.0", true ? 1 : 2.0)]
+		[InlineData("true ? 1.0f : 2.0", true ? 1.0f : 2.0)]
+		[InlineData("true ? 1.0 : 2.0f", true ? 1.0 : 2.0f)]
+		[InlineData("true ? (byte)1 : (byte)2", true ? 1 : 2)]
+		// common base class promotion
+		[InlineData("true ? default(MemoryStream) : default(Stream)", null)]
+		[InlineData("true ? default(Comparer<int>) : default(IComparer<int>)", null)]
 		public void ConditionalOperation(string expression, object expected)
+		{
+			var expectedType = expected?.GetType() ?? typeof(object);
+			var typeResolver = new KnownTypeResolver(new[] { typeof(MemoryStream), typeof(Stream), typeof(Comparer<int>), typeof(IComparer<int>) });
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, typeResolver: typeResolver, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, typeResolver: typeResolver, forceAot: false);
+
+			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
+		}
+
+		[Theory]
+		[InlineData("null ?? null", null)]
+		[InlineData("default(int?) ?? 1", 1)]
+		[InlineData("default(byte?) ?? (byte)1", 1)]
+		[InlineData("default(short?) ?? (byte)1", 1)]
+		[InlineData("null ?? null ?? null", null)]
+		[InlineData("default(long?) ?? default(short?) ?? (byte)1", 1L)]
+		public void CoalesceOperation(string expression, object expected)
+		{
+			var expectedType = expected?.GetType() ?? typeof(object);
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
+
+			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
+		}
+
+		[Theory]
+		[InlineData("Int32.MaxValue << 16", int.MaxValue << 16)]
+		[InlineData("Int16.MaxValue << 8", short.MaxValue << 8)]
+		[InlineData("Byte.MaxValue << 4", byte.MaxValue << 4)]
+		[InlineData("UInt32.MaxValue << 16", uint.MaxValue << 16)]
+		[InlineData("UInt16.MaxValue << 8", ushort.MaxValue << 8)]
+		[InlineData("SByte.MaxValue << 4", sbyte.MaxValue << 4)]
+		[InlineData("Int32.MaxValue >> 16", int.MaxValue >> 16)]
+		[InlineData("Int16.MaxValue >> 8", short.MaxValue >> 8)]
+		[InlineData("Byte.MaxValue >> 4", byte.MaxValue >> 4)]
+		[InlineData("UInt32.MaxValue >> 16", uint.MaxValue >> 16)]
+		[InlineData("UInt16.MaxValue >> 8", ushort.MaxValue >> 8)]
+		[InlineData("SByte.MaxValue >> 4", sbyte.MaxValue >> 4)]
+		[InlineData("default(Byte?) >> 4", null)]
+		[InlineData("default(Byte?) << 4", null)]
+		[InlineData("Int32.MaxValue << (Byte)16", int.MaxValue << 16)]
+		public void ShiftOperation(string expression, object expected)
+		{
+			var expectedType = expected?.GetType() ?? typeof(object);
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
+
+			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
+		}
+
+		[Theory]
+		// 16
+		// signed on un-signed
+		[InlineData("(Int16)2 ** (SByte)2", (short)2 * 2)]
+		[InlineData("(Int16)2 ** (Int16)2", (short)2 * 2)]
+		[InlineData("(Int16)2 ** (Int32)2", (short)2 * 2)]
+		[InlineData("(Int16)2 ** (Int64)2", (short)2 * (long)2)]
+		// un-signed on un-signed
+		[InlineData("(UInt16)2 ** (SByte)2", (ushort)2 * 2)]
+		[InlineData("(UInt16)2 ** (Int16)2", (ushort)2 * 2)]
+		[InlineData("(UInt16)2 ** (Int32)2", (ushort)2 * 2)]
+		[InlineData("(UInt16)2 ** (Int64)2", (ushort)2 * (long)2)]
+		// 32
+		// signed on signed
+		[InlineData("(Int32)2 ** (SByte)2", 2 * 2)]
+		[InlineData("(Int32)2 ** (Int16)2", 2 * 2)]
+		[InlineData("(Int32)2 ** (Int32)2", 2 * 2)]
+		[InlineData("(Int32)2 ** (Int64)2", 2 * (long)2)]
+		// signed on un-signed
+		[InlineData("(Int32)2 ** (Byte)2", 2 * 2)]
+		[InlineData("(Int32)2 ** (UInt16)2", 2 * 2)]
+		[InlineData("(Int32)2 ** (UInt32)2", 2 * (uint)2)]
+		[InlineData("(Int32)2 ** (UInt64)2", 2 * (ulong)2)]
+		// un-signed on signed
+		[InlineData("(UInt32)2 ** (SByte)2", (uint)2 * (sbyte)2)]
+		[InlineData("(UInt32)2 ** (Int16)2", (uint)2 * (short)2)]
+		[InlineData("(UInt32)2 ** (Int32)2", (uint)2 * 2)]
+		[InlineData("(UInt32)2 ** (Int64)2", 2 * (long)2)]
+		// un-signed on un-signed
+		[InlineData("(UInt32)2 ** (Byte)2", (uint)2 * 2)]
+		[InlineData("(UInt32)2 ** (UInt16)2", (uint)2 * 2)]
+		[InlineData("(UInt32)2 ** (UInt32)2", 2 * (uint)2)]
+		[InlineData("(UInt32)2 ** (UInt64)2", 2 * (ulong)2)]
+		// 64
+		// signed on signed
+		[InlineData("(Int64)2 ** (Int32)2", (ulong)2 * 2)]
+		[InlineData("(Int64)2 ** (Int64)2", (ulong)2 * 2)]
+		// signed on un-signed
+		[InlineData("(Int64)2 ** (Byte)2", (ulong)2 * 2)]
+		[InlineData("(Int64)2 ** (UInt16)2", (ulong)2 * 2)]
+		[InlineData("(Int64)2 ** (UInt32)2", (ulong)2 * 2)]
+		[InlineData("(Int64)2 ** (UInt64)2", 2 * (ulong)2)]
+		// un-signed on signed
+		[InlineData("(UInt64)2 ** (Int32)2", (ulong)2 * 2)]
+		[InlineData("(UInt64)2 ** (Int64)2", (ulong)2 * 2)]
+		// un-signed on un-signed
+		[InlineData("(UInt64)2 ** (Byte)2", (ulong)2 * 2)]
+		[InlineData("(UInt64)2 ** (UInt16)2", (ulong)2 * 2)]
+		[InlineData("(UInt64)2 ** (UInt32)2", (ulong)2 * 2)]
+		[InlineData("(UInt64)2 ** (UInt64)2", 2 * (ulong)2)]
+		// floating-point
+		// float to double
+		[InlineData("(Single)2 ** (Single)2", 2 * (float)2)]
+		[InlineData("(Double)2 ** (Single)2", (double)2 * (float)2)]
+		[InlineData("(Single)2 ** (Double)2", (float)2 * (double)2)]
+		[InlineData("(Double)2 ** (Double)2", 2 * (double)2)]
+		// signed on float
+		[InlineData("(SByte)2 ** (Single)2", 2 * (float)2)]
+		[InlineData("(Int16)2 ** (Single)2", 2 * (float)2)]
+		[InlineData("(Int32)2 ** (Single)2", 2 * (float)2)]
+		[InlineData("(Int64)2 ** (Single)2", 2 * (float)2)]
+		// un-signed on float
+		[InlineData("(Byte)2 ** (Single)2", 2 * (float)2)]
+		[InlineData("(UInt16)2 ** (Single)2", 2 * (float)2)]
+		[InlineData("(UInt32)2 ** (Single)2", 2 * (float)2)]
+		[InlineData("(UInt64)2 ** (Single)2", 2 * (float)2)]
+		// signed on double
+		[InlineData("(SByte)2 ** (Double)2", 2 * (double)2)]
+		[InlineData("(Int16)2 ** (Double)2", 2 * (double)2)]
+		[InlineData("(Int32)2 ** (Double)2", 2 * (double)2)]
+		[InlineData("(Int64)2 ** (Double)2", 2 * (double)2)]
+		// un-signed on double
+		[InlineData("(Byte)2 ** (Double)2", 2 * (double)2)]
+		[InlineData("(UInt16)2 ** (Double)2", 2 * (double)2)]
+		[InlineData("(UInt32)2 ** (Double)2", 2 * (double)2)]
+		[InlineData("(UInt64)2 ** (Double)2", 2 * (double)2)]
+		//nullable
+		// null on value
+		[InlineData("default(Int16?) ** (SByte)2", null)]
+		[InlineData("default(Int32?) ** (Int16)2", null)]
+		[InlineData("default(Int64?) ** (Int32)2", null)]
+		[InlineData("default(Single?) ** (Double)2", null)]
+		[InlineData("default(UInt16?) ** (SByte)2", null)]
+		[InlineData("default(UInt32?) ** (Byte)2", null)]
+		[InlineData("default(UInt64?) ** (Int32)2", null)]
+		// value on null
+		[InlineData("(Int16)2 ** default(SByte?)", null)]
+		[InlineData("(Int32)2 ** default(Int16?)", null)]
+		[InlineData("(Int64)2 ** default(Int32?)", null)]
+		[InlineData("(Single)2 ** default(Double?)", null)]
+		[InlineData("(UInt16)2 ** default(SByte?)", null)]
+		[InlineData("(UInt32)2 ** default(Byte?)", null)]
+		public void PowerOperation(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
@@ -369,6 +526,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 		[Theory]
 		[InlineData("-(1)", -(1))]
+		[InlineData("unchecked(-int.MaxValue)", unchecked(-int.MaxValue))]
 		[InlineData("+((SByte)-1)", +-1)]
 		[InlineData("!true", !true)]
 		[InlineData("!false", !false)]
@@ -454,7 +612,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("(UInt16)2 + (UInt16)2", (2 + 2))]
 		[InlineData("unchecked((UInt16)65535 + (UInt16)2)", unchecked((65535 + 2)))]
 		[InlineData("(UInt16)2 - (UInt16)2", (2 - 2))]
-		[InlineData("unchecked(-(UInt16)0 - (UInt16)10)", unchecked(-(ushort)0 - (ushort)10))]
+		[InlineData("unchecked(-(UInt16)0 - (UInt16)10)", unchecked((-0 - 10)))]
 		[InlineData("(UInt16)2 & (UInt16)2", 2 & 2)]
 		[InlineData("(UInt16)2 | (UInt16)2", 2 | 2)]
 		[InlineData("(UInt16)2 / (UInt16)2", 2 / 2)]
@@ -821,7 +979,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void ConvertNullableToNullable()
 		{
-			Expression<Func<int?, double?>> expression = x => (double?)x;
+			Expression<Func<int?, double?>> expression = x => x;
 
 			var expected = (double?)2.0;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
@@ -840,7 +998,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void ConvertFromNullable()
 		{
-			Expression<Func<int, double>> expression = x => (double)x;
+			Expression<Func<int, double>> expression = x => x;
 
 			var expected = 2.0;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
@@ -853,7 +1011,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void ConvertToNullable()
 		{
-			Expression<Func<int, double?>> expression = x => (double?)x;
+			Expression<Func<int, double?>> expression = x => x;
 
 			var expected = (double?)2.0;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
@@ -937,7 +1095,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void BoxNullable()
 		{
-			Expression<Func<int?, object>> expression = x => (object)x;
+			Expression<Func<int?, object>> expression = x => x;
 
 			var expected = (object)2;
 			var actual = expression.CompileAot(forceAot: true).Invoke(2);
@@ -977,7 +1135,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void BoxEnum()
 		{
-			Expression<Func<ConsoleColor, object>> expression = x => (object)x;
+			Expression<Func<ConsoleColor, object>> expression = x => x;
 
 			var expected = (object)ConsoleColor.DarkGray;
 			var actual = expression.CompileAot(forceAot: true).Invoke(ConsoleColor.DarkGray);
@@ -992,7 +1150,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<object, ConsoleColor>> expression = x => (ConsoleColor)x;
 
-			var expected = (ConsoleColor)ConsoleColor.DarkGray;
+			var expected = ConsoleColor.DarkGray;
 			var actual = expression.CompileAot(forceAot: true).Invoke(ConsoleColor.DarkGray);
 			var expectedAlt = expression.CompileAot(forceAot: false).Invoke(ConsoleColor.DarkGray);
 
