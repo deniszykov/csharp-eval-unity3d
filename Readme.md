@@ -180,7 +180,7 @@ public Binder(Type lambdaType, ITypeResolver typeResolver = null);
 ```
 * added ArgumentsTree ToString method
 
-###Bug Fixes
+### Bug Fixes
 * fixed error with wrongly resolved types (only by name) in KnownTypeResolver
 * fixed bug with ACCESS_VIOLATION on iOS (Unity 5.x.x IL2CPP)
 * fixed few Unity 3.4 related errors in code
@@ -195,7 +195,7 @@ public Binder(Type lambdaType, ITypeResolver typeResolver = null);
 * fixed enum constants threated as underlying types during binary/unary operations
 
 
-###Breaking changes
+### Breaking changes
 * ParserNode renamed to ParseTreeNode
 * ExpressionTree renamed to SyntaxTreeNode
 * ExpressionBuilder renamed to Binder
