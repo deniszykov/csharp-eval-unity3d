@@ -47,7 +47,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					var argument = default(SyntaxTreeNode);
 					if (arguments.TryGetValue(i, out argument) == false)
 					{
-						bindingError = bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_MISSINGMETHODPARAMETER, i), node);
+						bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_MISSINGMETHODPARAMETER, i), node);
 						return false;
 					}
 

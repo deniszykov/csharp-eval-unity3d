@@ -2,15 +2,15 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 
@@ -74,37 +74,37 @@ public class Benchmark : MonoBehaviour
 
 			// binding
 			var expressionBinder = new Binder(new ParameterExpression[0], typeof(double));
-			var expressionTree = expressionBinder.Build(parseTree.ToSyntaxTree(checkedScope: true));
+			var lambda = expressionBinder.Bind(parseTree.ToSyntaxTree(checkedScope: true));
 
 			sw.Reset();
 			sw.Start();
 			for (var i = 0; i < Iterations; i++)
-				expressionBinder.Build(parseTree.ToSyntaxTree(checkedScope: true));
+				expressionBinder.Bind(parseTree.ToSyntaxTree(checkedScope: true));
 			sw.Stop();
 			var binding = sw.Elapsed;
 
 
 			// compilation JIT
-			var expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBinder.Parameters);
+			var expressionLambda = (Expression<Func<double>>)lambda;
 			var fnJit = expressionLambda.Compile();
 			sw.Reset();
 			sw.Start();
 			for (var i = 0; i < Iterations; i++)
 			{
-				expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBinder.Parameters);
+				expressionLambda = (Expression<Func<double>>)lambda;
 				expressionLambda.Compile();
 			}
 			sw.Stop();
 			var compilationJit = sw.Elapsed;
 
 			// compilation AOT
-			expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBinder.Parameters);
+			expressionLambda = (Expression<Func<double>>)lambda;
 			var fnAot = expressionLambda.CompileAot(forceAot: true);
 			sw.Reset();
 			sw.Start();
 			for (var i = 0; i < Iterations; i++)
 			{
-				expressionLambda = Expression.Lambda<Func<double>>(expressionTree, expressionBinder.Parameters);
+				expressionLambda = (Expression<Func<double>>)lambda;
 				expressionLambda.CompileAot(forceAot: true);
 			}
 			sw.Stop();
@@ -152,6 +152,31 @@ public class Benchmark : MonoBehaviour
 		Intel(R) Core(TM) i5-3570 CPU @ 3.40GHz
 
 		Iterations: 100000
+		Expression: (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + Int32.Parse("10")
+
+		// version 2.*
+
+		It took 0.47ms (in AOT) to compile expressions into delegate
+		And 0.00651ms (in AOT) to evaluate this expression
+
+		Stage			 | Time(ms) | Time per Iteration(ms) | % of Total Time
+		Tokenization: 	 | 46.07    | 0.00046                | 0.1%
+		Parsing: 		 | 9306.90  | 0.09307                | 22.7%
+		Binding:         | 22599.04 | 0.22599                | 55.0%
+
+		Compilation (JIT)| 9117.12  | 0.09117                | 22.2%
+		Evaluation (JIT) | 5.51     | 0.00006                | 0.0%
+		Total (JIT)      | 41074.64 | 0.41075                | 100.0% (base time)
+
+		Compilation (AOT)| 14457.30 | 0.14457                | 35.2%
+		Evaluation (AOT) | 650.75   | 0.00651                | 1.6%
+		Total (AOT)      | 47060.06 | 0.47060                | 114.6%
+
+
+		version 1.*
+
+		It took 0.85ms (in AOT) to compile expressions into delegate
+		And 0.00923ms (in AOT) to evaluate this expression
 
 		Stage			 | Time(ms) | Time per Iteration(ms) | % of Total Time
 		Tokenization	 | 23.99	| 0.00024				 | 0.0%
@@ -165,9 +190,6 @@ public class Benchmark : MonoBehaviour
 		Compilation (AOT)| 12909.94 | 0.12910				 | 15.6%
 		Evaluation (AOT) | 923.36	| 0.00923				 | 1.1%
 		Total (AOT)		 | 85658.41 | 0.85658				 | 103.7%
-
-		It took 0.82(1.02)ms to compile expressions into delegate
-		And 0.00010(0.00923)ms to evaluate this expression
 	*/
 }
 

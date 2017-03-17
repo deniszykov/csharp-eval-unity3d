@@ -87,7 +87,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				typeof(char?), typeof(string), typeof(float?), typeof(double?), typeof(decimal?),
 				typeof(byte?), typeof(sbyte?), typeof(short?), typeof(ushort?), typeof(int?), typeof(uint?),
 				typeof(long?), typeof(ulong?), typeof(Enum), typeof(MulticastDelegate)
-			}, GetTypeDescription);
+			}, t => GetTypeDescription(t));
 		}
 		public TypeDescription(Type type, TypeCache cache)
 		{
@@ -109,8 +109,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.BaseType = type.BaseType != null ? cache.GetOrCreateTypeDescription(type.BaseType) : null;
 			this.UnderlyingType = underlyingType != null ? cache.GetOrCreateTypeDescription(underlyingType) : null;
 			this.BaseTypes = GetBaseTypes(this, 0);
-			this.Interfaces = Array.ConvertAll(type.GetInterfaces(), cache.GetOrCreateTypeDescription);
-			this.GenericArguments = type.IsGenericType ? Array.ConvertAll(type.GetGenericArguments(), cache.GetOrCreateTypeDescription) : TypeDescription.EmptyTypes;
+			this.Interfaces = Array.ConvertAll(type.GetInterfaces(), t => cache.GetOrCreateTypeDescription(t));
+			this.GenericArguments = type.IsGenericType ? Array.ConvertAll(type.GetGenericArguments(), t => cache.GetOrCreateTypeDescription(t)) : TypeDescription.EmptyTypes;
 
 			this.IsNullable = Nullable.GetUnderlyingType(type) != null;
 			this.IsNumber = NumberUtils.IsNumber(type);
