@@ -92,7 +92,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			if (leftTypeUnwrap == rightTypeUnwrap)
 			{
-				if (leftTypeCode > TypeCode.SByte && leftTypeCode < TypeCode.UInt16)
+				if (leftTypeCode >= TypeCode.SByte && leftTypeCode <= TypeCode.UInt16)
 				{
 					// expand smaller integers to int32
 					leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);

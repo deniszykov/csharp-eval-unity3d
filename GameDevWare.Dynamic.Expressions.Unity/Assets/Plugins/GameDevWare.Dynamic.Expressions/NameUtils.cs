@@ -37,6 +37,34 @@ namespace GameDevWare.Dynamic.Expressions
 				return new[] { name, name + "`1" };
 			else if (type.IsGenericType)
 				return new[] { WriteName(type).ToString(), RemoveGenericSuffix(WriteName(type)).ToString() };
+			else if (type == typeof(byte))
+				return new[] { "byte", WriteName(type).ToString() };
+			else if (type == typeof(sbyte))
+				return new[] { "sbyte", WriteName(type).ToString() };
+			else if (type == typeof(short))
+				return new[] { "short", WriteName(type).ToString() };
+			else if (type == typeof(ushort))
+				return new[] { "ushort", WriteName(type).ToString() };
+			else if (type == typeof(int))
+				return new[] { "int", WriteName(type).ToString() };
+			else if (type == typeof(uint))
+				return new[] { "uint", WriteName(type).ToString() };
+			else if (type == typeof(long))
+				return new[] { "long", WriteName(type).ToString() };
+			else if (type == typeof(ulong))
+				return new[] { "ulong", WriteName(type).ToString() };
+			else if (type == typeof(float))
+				return new[] { "float", WriteName(type).ToString() };
+			else if (type == typeof(double))
+				return new[] { "double", WriteName(type).ToString() };
+			else if (type == typeof(decimal))
+				return new[] { "decimal", WriteName(type).ToString() };
+			else if (type == typeof(char))
+				return new[] { "char", WriteName(type).ToString() };
+			else if (type == typeof(string))
+				return new[] { "string", WriteName(type).ToString() };
+			else if (type == typeof(object))
+				return new[] { "object", WriteName(type).ToString() };
 			else
 				return new[] { WriteName(type).ToString() };
 		}

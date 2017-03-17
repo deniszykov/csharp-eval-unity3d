@@ -157,7 +157,7 @@ You can send suggestions at support@gamedevware.com
 * Custom editor with auto-completion for Unity
 
 ## Changes
-# 2.1.1-rc
+# 2.1.2-rc
 ### Features
 * added more descriptive message to member binding error
 * added autodoc comments for public members

@@ -149,8 +149,21 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Theory]
 		[InlineData("typeof(Int32)", typeof(int))]
 		[InlineData("typeof(System.Int32)", typeof(int))]
-		[InlineData("typeof(short)", typeof(short))]
 		[InlineData("typeof(Math)", typeof(Math))]
+		[InlineData("typeof(object)", typeof(object))]
+		[InlineData("typeof(string)", typeof(string))]
+		[InlineData("typeof(char)", typeof(char))]
+		[InlineData("typeof(byte)", typeof(byte))]
+		[InlineData("typeof(sbyte)", typeof(sbyte))]
+		[InlineData("typeof(short)", typeof(short))]
+		[InlineData("typeof(ushort)", typeof(ushort))]
+		[InlineData("typeof(int)", typeof(int))]
+		[InlineData("typeof(uint)", typeof(uint))]
+		[InlineData("typeof(long)", typeof(long))]
+		[InlineData("typeof(ulong)", typeof(ulong))]
+		[InlineData("typeof(float)", typeof(float))]
+		[InlineData("typeof(double)", typeof(double))]
+		[InlineData("typeof(decimal)", typeof(decimal))]
 		public void TypeOfTest(string expression, Type expected)
 		{
 			var actual = CSharpExpression.Evaluate<Type>(expression);
