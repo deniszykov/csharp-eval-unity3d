@@ -369,9 +369,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 				var node = new Dictionary<string, object>
 				{
-					{ Constants.EXPRESSION_LINE_NUMBER, this.Lexeme.LineNumber },
-					{ Constants.EXPRESSION_COLUMN_NUMBER, this.Lexeme.ColumnNumber },
-					{ Constants.EXPRESSION_TOKEN_LENGTH, this.Lexeme.TokenLength },
+					{ Constants.EXPRESSION_POSITION, this.Lexeme.Position },
 					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType },
 				};
 
@@ -568,9 +566,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var node = new Dictionary<string, object>
 			{
-				{ Constants.EXPRESSION_LINE_NUMBER, this.Lexeme.LineNumber },
-				{ Constants.EXPRESSION_COLUMN_NUMBER, this.Lexeme.ColumnNumber },
-				{ Constants.EXPRESSION_TOKEN_LENGTH, this.Lexeme.TokenLength },
+				{ Constants.EXPRESSION_POSITION, this.Lexeme.Position },
 				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
 			};
 

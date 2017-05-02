@@ -49,7 +49,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <summary>
 		/// Returns token's position as string.
 		/// </summary>
-		public string Position { get { return string.Format("[{0}:{1}+{2}]", this.LineNumber, this.ColumnNumber, this.TokenLength); } }
+		public string Position { get { return string.Format("{0}:{1}+{2}", this.LineNumber.ToString(), this.ColumnNumber.ToString(), this.TokenLength.ToString()); } }
 
 		int ILineInfo.GetLineNumber()
 		{

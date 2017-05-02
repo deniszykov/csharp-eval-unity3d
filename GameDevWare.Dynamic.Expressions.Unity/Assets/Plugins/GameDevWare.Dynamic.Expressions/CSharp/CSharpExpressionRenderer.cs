@@ -725,7 +725,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				case ExpressionType.NewArrayBounds:
 					RenderNewArray((NewArrayExpression)expression, builder, checkedScope);
 					break;
-				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.Type));
+				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.NodeType));
 			}
 		}
 
@@ -1170,7 +1170,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					}
 					break;
 				default:
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.Type));
+					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.NodeType));
 			}
 			Render(expression.Operand, builder, false, checkedScope);
 
@@ -1271,7 +1271,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					builder.Append(" ** ");
 					break;
 				default:
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.Type));
+					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.NodeType));
 			}
 			Render(expression.Right, builder, false, checkedScope);
 

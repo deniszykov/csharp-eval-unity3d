@@ -65,6 +65,8 @@ namespace GameDevWare.Dynamic.Expressions
 				return new[] { "string", WriteName(type).ToString() };
 			else if (type == typeof(object))
 				return new[] { "object", WriteName(type).ToString() };
+			else if (type == typeof(void))
+				return new[] { "void", WriteName(type).ToString() };
 			else
 				return new[] { WriteName(type).ToString() };
 		}

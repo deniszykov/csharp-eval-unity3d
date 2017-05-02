@@ -129,9 +129,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					{ Constants.METHOD_ATTRIBUTE, methodRef },
 					{ Constants.USE_NULL_PROPAGATION_ATTRIBUTE, methodNameNode.GetValueOrDefault(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, default(object)) },
 
-					{ Constants.EXPRESSION_LINE_NUMBER, methodNameNode.GetValueOrDefault(Constants.EXPRESSION_LINE_NUMBER, default(object)) },
-					{ Constants.EXPRESSION_COLUMN_NUMBER, methodNameNode.GetValueOrDefault(Constants.EXPRESSION_COLUMN_NUMBER, default(object)) },
-					{ Constants.EXPRESSION_TOKEN_LENGTH, methodNameNode.GetValueOrDefault(Constants.EXPRESSION_TOKEN_LENGTH, default(object)) },
+					{ Constants.EXPRESSION_POSITION, methodNameNode.GetPosition(throwOnError: false) }
 				});
 
 				return CallBinder.TryBind(callNode, bindingContext, expectedType, out boundExpression, out bindingError);

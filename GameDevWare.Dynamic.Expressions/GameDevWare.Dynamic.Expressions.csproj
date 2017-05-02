@@ -272,6 +272,9 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionParserException.cs">
       <Link>ExpressionParserException.cs</Link>
     </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionPosition.cs">
+      <Link>ExpressionPosition.cs</Link>
+    </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionSubstitutor.cs">
       <Link>ExpressionSubstitutor.cs</Link>
     </Compile>

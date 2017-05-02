@@ -205,16 +205,11 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			var valueObj = default(object);
 			var value = default(int);
-			if (this.TryGetValue(Constants.EXPRESSION_LINE_NUMBER, out valueObj) == false)
-			{
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_LINE_NUMBER, this.GetExpressionType(throwOnError: true)), this);
-				else
-					return value;
-			}
+			if (this.TryGetValue(Constants.EXPRESSION_LINE_NUMBER_OLD, out valueObj) == false)
+				return this.GetExpressionPosition(throwOnError).LineNumber;
 
 			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_LINE_NUMBER, this.GetExpressionType(throwOnError: true)), this);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_LINE_NUMBER_OLD, this.GetExpressionType(throwOnError: true)), this);
 
 			return value;
 		}
@@ -222,16 +217,11 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			var valueObj = default(object);
 			var value = default(int);
-			if (this.TryGetValue(Constants.EXPRESSION_COLUMN_NUMBER, out valueObj) == false)
-			{
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_COLUMN_NUMBER, this.GetExpressionType(throwOnError: true)), this);
-				else
-					return value;
-			}
+			if (this.TryGetValue(Constants.EXPRESSION_COLUMN_NUMBER_OLD, out valueObj) == false)
+				return this.GetExpressionPosition(throwOnError).ColumnNumber;
 
 			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_COLUMN_NUMBER, this.GetExpressionType(throwOnError: true)), this);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_COLUMN_NUMBER_OLD, this.GetExpressionType(throwOnError: true)), this);
 
 			return value;
 		}
@@ -239,28 +229,53 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			var valueObj = default(object);
 			var value = default(int);
-			if (this.TryGetValue(Constants.EXPRESSION_TOKEN_LENGTH, out valueObj) == false)
-			{
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TOKEN_LENGTH, this.GetExpressionType(throwOnError: true)), this);
-				else
-					return value;
-			}
+			if (this.TryGetValue(Constants.EXPRESSION_TOKEN_LENGTH_OLD, out valueObj) == false)
+				return this.GetExpressionPosition(throwOnError).TokenLength;
 
 			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TOKEN_LENGTH, this.GetExpressionType(throwOnError: true)), this);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TOKEN_LENGTH_OLD, this.GetExpressionType(throwOnError: true)), this);
 
 			return value;
 		}
 		internal string GetPosition(bool throwOnError)
 		{
-			return string.Format(Constants.DefaultFormatProvider, "[{0}:{1}+{2}]", this.GetLineNumber(throwOnError).ToString(), this.GetColumnNumber(throwOnError).ToString(), this.GetTokenLength(throwOnError).ToString());
+			return this.GetExpressionPosition(throwOnError).ToString();
+		}
+		internal ExpressionPosition GetExpressionPosition(bool throwOnError)
+		{
+			var valueObj = default(object);
+			if (this.TryGetValue(Constants.EXPRESSION_POSITION, out valueObj) == false || (valueObj is string == false && valueObj is ILineInfo == false))
+			{
+				if (this.ContainsKey(Constants.EXPRESSION_LINE_NUMBER_OLD) &&
+					this.ContainsKey(Constants.EXPRESSION_COLUMN_NUMBER_OLD) &&
+					this.ContainsKey(Constants.EXPRESSION_TOKEN_LENGTH_OLD))
+				{
+					valueObj = string.Format(
+						Constants.DefaultFormatProvider, "{0}:{1}+{2}",
+						this.GetValueOrDefault(Constants.EXPRESSION_LINE_NUMBER_OLD, "0"),
+						this.GetValueOrDefault(Constants.EXPRESSION_COLUMN_NUMBER_OLD, "0"),
+						this.GetValueOrDefault(Constants.EXPRESSION_TOKEN_LENGTH_OLD, "0")
+					);
+				}
+
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_POSITION, this.GetExpressionType(throwOnError: true)), this);
+				else
+					return default(ExpressionPosition);
+			}
+
+			var lineInfo = valueObj as ILineInfo;
+			var positionString = valueObj as string;
+			if (lineInfo != null)
+				return new ExpressionPosition(lineInfo.GetLineNumber(), lineInfo.GetColumnNumber(), lineInfo.GetTokenLength());
+			else
+				return ExpressionPosition.Parse(positionString);
 		}
 		internal string GetOriginalExpression(bool throwOnError)
 		{
 			var valueObj = default(object);
 			var value = default(string);
-			if (this.TryGetValue(Constants.EXPRESSION_ORIGINAL, out valueObj) == false)
+			if (this.TryGetValue(Constants.EXPRESSION_ORIGINAL, out valueObj) == false && this.TryGetValue(Constants.EXPRESSION_ORIGINAL_OLD, out valueObj) == false)
 			{
 				if (throwOnError)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ORIGINAL, this.GetExpressionType(throwOnError: true)), this);

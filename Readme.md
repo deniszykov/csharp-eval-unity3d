@@ -179,6 +179,10 @@ CSharpExpression.Evaluate<int, int, int>("(x,y) => x + y", 2, 2); // -> 4
 public Binder(Type lambdaType, ITypeResolver typeResolver = null);
 ```
 * added ArgumentsTree ToString method
+* added build-in types aliases support during static members binding
+```csharp
+CSharpExpression.Evaluate<int>("int.MaxValue");
+```
 
 ### Bug Fixes
 * fixed error with wrongly resolved types (only by name) in KnownTypeResolver
