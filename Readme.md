@@ -23,15 +23,17 @@ It should work on any other platforms.
 	* RegisterForFastCall
 
 ## Example
-Parsing C# expression:
+Parsing C# expression into **System.Linq.Expression.Expression[T]**:
 ```csharp
-var expr = CSharpExpression.Parse<double, double, double>("Math.Max(x, y)", arg1Name: "x", arg2Name: "y") 
-// expr -> Expression<Func<double, double, double>>
+var mathExpr = "Math.Max(x, y)";
+var exprTree = CSharpExpression.Parse<double, double, double>(mathExpr, arg1Name: "x", arg2Name: "y") 
+// exprTree -> Expression<Func<double, double, double>>
 ```
 Evaluating C# expression:
 ```csharp
-var v = CSharpExpression.Evaluate<int>("2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10"); 
-// v -> 19
+var arifExpr = "2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10";
+var result = CSharpExpression.Evaluate<int>(arifExpr); 
+// result -> 19
 ```
 
 ## Parser
@@ -65,12 +67,12 @@ Enumerations are supported.
 
 **Known Types**
 
-For security reasons the parser does not provide access to static types, except:
+For security reasons the parser does not provide access to any types except:
 * argument types
 * primitive types
 * Math, Array, Func<> (up to 4 arguments) types
 
-To access other types your should pass **typeResolver** parameter in **Parse** or **Evaluate** method:
+To access other types your should pass **typeResolver** parameter in **Parse** and **Evaluate** method:
 ```csharp
 var typeResolver = new KnownTypeResolver(typeof(Mathf), typeof(Time));
 CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0f, 3.0f)", typeResolver); 
@@ -87,7 +89,7 @@ fn; // -> Func<Vector3>
 fn(); // -> Vector3(1.0f, 1.0f, 1.0f)
 ```
 
-iOS, WebGL and most consoles use AOT compilation which imposes following restrictions on the dynamic code execution:
+iOS, WebGL and most console platforms use AOT compilation which imposes following restrictions on the dynamic code execution:
 
 * only **Expression&lt;Func&lt;...&gt;&gt;** could be used with **CompileAot()** and Lambda types
 * only static methods using primitives (int, float, string, object ...) are optimized for fast calls
@@ -97,11 +99,7 @@ iOS, WebGL and most consoles use AOT compilation which imposes following restric
 * [AOT Exception Patterns and Hacks](https://github.com/neuecc/UniRx/wiki/AOT-Exception-Patterns-and-Hacks)
 * [Ahead of Time Compilation (AOT)](http://www.mono-project.com/docs/advanced/runtime/docs/aot/)
 
-### WebGL
-
-Building under WebGL bears same limitations and recommendations as building under iOS.
-
-### iOS
+### WebGL and iOS
 
 * Only [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) (up to 4 arguments) Lambdas are supported
 * Instance methods invocation performs slowly due reflection
