@@ -251,14 +251,101 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\TokenType.cs">
       <Link>CSharp\TokenType.cs</Link>
     </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Executor.cs">
-      <Link>Executor.cs</Link>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\AotCompiler.cs">
+      <Link>Execution\AotCompiler.cs</Link>
     </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Executor.Intrinsics.cs">
-      <Link>Executor.Intrinsics.cs</Link>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ArrayIndexNode.cs">
+      <Link>Execution\ArrayIndexNode.cs</Link>
     </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Executor.MethodCall.cs">
-      <Link>Executor.MethodCall.cs</Link>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ArrayLengthNode.cs">
+      <Link>Execution\ArrayLengthNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\BinaryNode.cs">
+      <Link>Execution\BinaryNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\CallNode.cs">
+      <Link>Execution\CallNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\Closure.cs">
+      <Link>Execution\Closure.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\CoalesceNode.cs">
+      <Link>Execution\CoalesceNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ConditionalNode.cs">
+      <Link>Execution\ConditionalNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ConstantNode.cs">
+      <Link>Execution\ConstantNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ConstantsCollector.cs">
+      <Link>Execution\ConstantsCollector.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ConvertNode.cs">
+      <Link>Execution\ConvertNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ExecutionNode.cs">
+      <Link>Execution\ExecutionNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\FastCall.cs">
+      <Link>Execution\FastCall.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\Intrinsic.cs">
+      <Link>Execution\Intrinsic.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\InvocationNode.cs">
+      <Link>Execution\InvocationNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\LambdaNode.cs">
+      <Link>Execution\LambdaNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ListInitNode.cs">
+      <Link>Execution\ListInitNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\LocalNode.cs">
+      <Link>Execution\LocalNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberAccessNode.cs">
+      <Link>Execution\MemberAccessNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberAssignmentsNode.cs">
+      <Link>Execution\MemberAssignmentsNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberInitNode.cs">
+      <Link>Execution\MemberInitNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberListBindingsNode.cs">
+      <Link>Execution\MemberListBindingsNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberMemberBindingsNode.cs">
+      <Link>Execution\MemberMemberBindingsNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\NewArrayBoundsNode.cs">
+      <Link>Execution\NewArrayBoundsNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\NewArrayInitNode.cs">
+      <Link>Execution\NewArrayInitNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\NewNode.cs">
+      <Link>Execution\NewNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\NullNode.cs">
+      <Link>Execution\NullNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ParameterNode.cs">
+      <Link>Execution\ParameterNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\QuoteNode.cs">
+      <Link>Execution\QuoteNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\TypeAsNode.cs">
+      <Link>Execution\TypeAsNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\TypeIsNode.cs">
+      <Link>Execution\TypeIsNode.cs</Link>
+    </Compile>
+    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\UnaryNode.cs">
+      <Link>Execution\UnaryNode.cs</Link>
     </Compile>
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionExtentions.cs">
       <Link>ExpressionExtentions.cs</Link>

@@ -15,14 +15,15 @@
 */
 
 using GameDevWare.Dynamic.Expressions;
+using GameDevWare.Dynamic.Expressions.Execution;
 
 // ReSharper disable once CheckNamespace
 namespace System.Linq.Expressions
 {
 	/// <summary>
-	/// Extention method for <see cref="Expression{DelegateT}"/> types.
+	/// Extension method for <see cref="Expression{DelegateT}"/> types.
 	/// </summary>
-	public static class ExpressionExtentions
+	public static class ExpressionExtensions
 	{
 		/// <summary>
 		/// Compiles specified expression into <see cref="Func{TResult}"/> delegate using AOT aware expression compiler.
@@ -38,7 +39,7 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TResult>();
 
 			if (AotCompilation.IsAotCompiled || forceAot)
-				return Executor.Prepare<TResult>(expression.Body);
+				return AotCompiler.Prepare<TResult>(expression.Body);
 			else
 				return expression.Compile();
 		}
@@ -57,7 +58,7 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TArg1, TResult>();
 
 			if (AotCompilation.IsAotCompiled || forceAot)
-				return Executor.Prepare<TArg1, TResult>(expression.Body, expression.Parameters);
+				return AotCompiler.Prepare<TArg1, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
 		}
@@ -77,7 +78,7 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TArg1, TArg2, TResult>();
 
 			if (AotCompilation.IsAotCompiled || forceAot)
-				return Executor.Prepare<TArg1, TArg2, TResult>(expression.Body, expression.Parameters);
+				return AotCompiler.Prepare<TArg1, TArg2, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
 		}
@@ -98,7 +99,7 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TArg1, TArg2, TArg3, TResult>();
 
 			if (AotCompilation.IsAotCompiled || forceAot)
-				return Executor.Prepare<TArg1, TArg2, TArg3, TResult>(expression.Body, expression.Parameters);
+				return AotCompiler.Prepare<TArg1, TArg2, TArg3, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
 		}
@@ -120,7 +121,7 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TArg1, TArg2, TArg3, TArg4, TResult>();
 
 			if (AotCompilation.IsAotCompiled || forceAot)
-				return Executor.Prepare<TArg1, TArg2, TArg3, TArg4, TResult>(expression.Body, expression.Parameters);
+				return AotCompiler.Prepare<TArg1, TArg2, TArg3, TArg4, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
 		}

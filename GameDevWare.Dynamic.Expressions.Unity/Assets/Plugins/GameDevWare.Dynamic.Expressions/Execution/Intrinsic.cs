@@ -1,28 +1,13 @@
-﻿/*
-	Copyright (c) 2016 Denis Zykov, GameDevWare.com
-
-	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
-	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-
-	This source code is distributed via Unity Asset Store,
-	to use it in your project you should accept Terms of Service and EULA
-	https://unity3d.com/ru/legal/as_terms
-*/
-#if !UNITY_WEBGL || UNITY_5 || UNITY_5_0_OR_NEWER
+﻿#if !UNITY_WEBGL || UNITY_5 || UNITY_5_0_OR_NEWER
 #define UNSIGNED_TYPES
 #endif
-
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
-
+// ReSharper disable RedundantOverflowCheckingContext
+// ReSharper disable UnusedParameter.Local
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Local
 // ReSharper disable RedundantCast
@@ -30,28 +15,188 @@ using System.Reflection;
 // ReSharper disable MemberCanBePrivate.Local
 // ReSharper disable UnusedMethodReturnValue.Local
 
-#pragma warning disable 0675
-
-namespace GameDevWare.Dynamic.Expressions
+namespace GameDevWare.Dynamic.Expressions.Execution
 {
-	partial class Executor
+	internal static class Intrinsic
 	{
-		private delegate object BinaryOperation(Closure closure, object left, object right);
-		private delegate object UnaryOperation(Closure closure, object operand);
+		public delegate object BinaryOperation(Closure closure, object left, object right);
+		public delegate object UnaryOperation(Closure closure, object operand);
 
-		private static UnaryOperation CreateUnaryOperationFn(MethodInfo method)
+		private static readonly Dictionary<Type, Dictionary<int, Delegate>> Operations;
+		private static readonly Dictionary<Type, Dictionary<Type, Delegate>> Conversions;
+		private static readonly ExecutionNode[] UnaryOperationArgumentNodes = { LocalNode.Operand1 };
+		private static readonly ExecutionNode[] BinaryOperationArgumentNodes = { LocalNode.Operand1, LocalNode.Operand2 };
+
+		static Intrinsic()
+		{
+			// AOT
+			if (typeof(Intrinsic).Name == string.Empty)
+			{
+				op_Boolean.Not(default(Closure), default(object));
+				op_Byte.Negate(default(Closure), default(object));
+				op_SByte.Negate(default(Closure), default(object));
+				op_Int16.Negate(default(Closure), default(object));
+				op_UInt16.Negate(default(Closure), default(object));
+				op_Int32.Negate(default(Closure), default(object));
+#if UNSIGNED_TYPES
+				op_UInt32.Negate(default(Closure), default(object));
+				op_Int64.Negate(default(Closure), default(object));
+				op_UInt64.UnaryPlus(default(Closure), default(object));
+#endif
+				op_Single.Negate(default(Closure), default(object));
+				op_Double.Negate(default(Closure), default(object));
+				op_Decimal.Negate(default(Closure), default(object));
+				op_Object.Equal(default(Closure), default(object), default(object));
+
+				InvokeBinaryOperation(default(Closure), default(object), default(object), default(ExpressionType), default(BinaryOperation));
+				InvokeUnaryOperation(default(Closure), default(object), default(ExpressionType), default(UnaryOperation));
+				InvokeConversion(default(Closure), default(object), default(Type), default(ExpressionType), default(UnaryOperation));
+			}
+
+			var expressionTypeNames = Enum.GetNames(typeof(ExpressionType));
+			Array.Sort(expressionTypeNames, StringComparer.Ordinal);
+
+			Operations = new Dictionary<Type, Dictionary<int, Delegate>>();
+			foreach (var opType in typeof(Intrinsic).GetNestedTypes(BindingFlags.NonPublic))
+			{
+				if (opType.Name.StartsWith("op_", StringComparison.Ordinal) == false) continue;
+				var type = Type.GetType("System." + opType.Name.Substring(3), false);
+				if (type == null) continue;
+
+				var delegatesByExpressionType = default(Dictionary<int, Delegate>);
+				if (Operations.TryGetValue(type, out delegatesByExpressionType) == false)
+					Operations[type] = delegatesByExpressionType = new Dictionary<int, Delegate>();
+
+				foreach (var method in opType.GetMethods(BindingFlags.Public | BindingFlags.Static))
+				{
+					if (Array.BinarySearch(expressionTypeNames, method.Name) < 0)
+						continue;
+
+					var expressionType = (ExpressionType)Enum.Parse(typeof(ExpressionType), method.Name);
+					var methodParams = method.GetParameters();
+					var fn = methodParams.Length == 3 ? (Delegate)CreateBinaryOperationFn(method) :
+						methodParams.Length == 2 ? (Delegate)CreateUnaryOperationFn(method) : null;
+
+					delegatesByExpressionType[(int)expressionType] = fn;
+				}
+			}
+
+			Conversions = new Dictionary<Type, Dictionary<Type, Delegate>>();
+			foreach (var opType in typeof(Intrinsic).GetNestedTypes(BindingFlags.NonPublic))
+			{
+				if (opType.Name.StartsWith("op_", StringComparison.Ordinal) == false) continue;
+				var type = Type.GetType("System." + opType.Name.Substring(3), false);
+				if (type == null) continue;
+
+				var convertorsByType = default(Dictionary<Type, Delegate>);
+				if (Conversions.TryGetValue(type, out convertorsByType) == false)
+					Conversions[type] = convertorsByType = new Dictionary<Type, Delegate>();
+
+				foreach (var method in opType.GetMethods(BindingFlags.Public | BindingFlags.Static))
+				{
+					if (method.Name.StartsWith("To", StringComparison.Ordinal) == false)
+						continue;
+
+					var fn = (Delegate)CreateBinaryOperationFn(method);
+					var toType = Type.GetType("System." + method.Name.Substring(2), false);
+					if (toType == null)
+						continue;
+
+					convertorsByType[toType] = fn;
+				}
+			}
+		}
+
+		public static object InvokeBinaryOperation
+		(
+			Closure closure,
+			object left,
+			object right,
+			ExpressionType binaryOperationType,
+			BinaryOperation userDefinedBinaryOperation
+		)
+		{
+			if (closure == null) throw new ArgumentNullException("closure");
+
+			var type = left != null ? closure.GetType(left) : closure.GetType(right);
+			var operationsForType = default(Dictionary<int, Delegate>);
+			var func = default(Delegate);
+
+			if (Operations.TryGetValue(type, out operationsForType) && operationsForType.TryGetValue((int)binaryOperationType, out func))
+				return ((BinaryOperation)func)(closure, left, right);
+
+			if (binaryOperationType == ExpressionType.Equal)
+				userDefinedBinaryOperation = (BinaryOperation)Operations[typeof(object)][(int)ExpressionType.Equal];
+			else if (binaryOperationType == ExpressionType.NotEqual)
+				userDefinedBinaryOperation = (BinaryOperation)Operations[typeof(object)][(int)ExpressionType.NotEqual];
+
+			if (userDefinedBinaryOperation == null)
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_NOBINARYOPONTYPE, binaryOperationType, type));
+
+			return userDefinedBinaryOperation(closure, left, right);
+		}
+
+		public static object InvokeUnaryOperation
+		(
+			Closure closure,
+			object operand,
+			ExpressionType unaryOperationType,
+			UnaryOperation userDefinedUnaryOperation
+		)
+		{
+			if (closure == null) throw new ArgumentNullException("closure");
+
+			var type = closure.GetType(operand);
+			var operationsForType = default(Dictionary<int, Delegate>);
+			var func = default(Delegate);
+
+			if (Operations.TryGetValue(type, out operationsForType) && operationsForType.TryGetValue((int)unaryOperationType, out func))
+				return ((UnaryOperation)func)(closure, operand);
+
+			if (userDefinedUnaryOperation == null)
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_NOUNARYOPONTYPE, unaryOperationType, type));
+
+			return userDefinedUnaryOperation(closure, operand);
+		}
+
+		public static object InvokeConversion
+		(
+			Closure closure,
+			object value,
+			Type toType,
+			ExpressionType convertType,
+			UnaryOperation userDefinedConvertOperation
+		)
+		{
+			if (closure == null) throw new ArgumentNullException("closure");
+			if (toType == null) throw new ArgumentNullException("toType");
+
+			var type = closure.GetType(value);
+			var dictionary = default(Dictionary<Type, Delegate>);
+			var func = default(Delegate);
+
+			if (Conversions.TryGetValue(type, out dictionary) && dictionary.TryGetValue(toType, out func))
+				return ((BinaryOperation)func)(closure, value, convertType == ExpressionType.Convert ? bool.FalseString : bool.TrueString);
+
+			if (userDefinedConvertOperation == null)
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES, type, toType));
+
+			return userDefinedConvertOperation(closure, value);
+		}
+
+		public static UnaryOperation CreateUnaryOperationFn(MethodInfo method)
 		{
 			if (method == null) throw new ArgumentNullException("method");
 
 			return (UnaryOperation)Delegate.CreateDelegate(typeof(UnaryOperation), method, true);
 		}
-		private static BinaryOperation CreateBinaryOperationFn(MethodInfo method)
+		public static BinaryOperation CreateBinaryOperationFn(MethodInfo method)
 		{
 			if (method == null) throw new ArgumentNullException("method");
 
 			return (BinaryOperation)Delegate.CreateDelegate(typeof(BinaryOperation), method, true);
 		}
-		private static UnaryOperation WrapUnaryOperation(Type type, string methodName)
+		public static UnaryOperation WrapUnaryOperation(Type type, string methodName)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 			if (methodName == null) throw new ArgumentNullException("methodName");
@@ -59,32 +204,30 @@ namespace GameDevWare.Dynamic.Expressions
 			var method = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Static);
 			return WrapUnaryOperation(method);
 		}
-		private static UnaryOperation WrapUnaryOperation(MethodInfo method)
+		public static UnaryOperation WrapUnaryOperation(MethodInfo method)
 		{
 			if (method == null) return null;
 
-			var invoker = MethodCall.TryCreate(method);
+			var invoker = FastCall.TryCreate(method);
 			if (invoker != null)
 			{
-				var argFns = new ExecuteFunc[] { closure => closure.Locals[LOCAL_OPERAND1] };
-
 				return (closure, operand) =>
 				{
-					closure.Locals[LOCAL_OPERAND1] = operand;
+					closure.Locals[ExecutionNode.LOCAL_OPERAND1] = operand;
 
-					var result = invoker(closure, argFns);
+					var result = invoker(closure, UnaryOperationArgumentNodes);
 
-					closure.Locals[LOCAL_OPERAND1] = null;
+					closure.Locals[ExecutionNode.LOCAL_OPERAND1] = null;
 
 					return result;
 				};
 			}
 			else
 			{
-				return (closure, operand) => { return method.Invoke(null, new object[] { operand }); };
+				return (closure, operand) => method.Invoke(null, new[] { operand });
 			}
 		}
-		private static BinaryOperation WrapBinaryOperation(Type type, string methodName)
+		public static BinaryOperation WrapBinaryOperation(Type type, string methodName)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 			if (methodName == null) throw new ArgumentNullException("methodName");
@@ -94,177 +237,31 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return WrapBinaryOperation(method);
 		}
-		private static BinaryOperation WrapBinaryOperation(MethodInfo method)
+		public static BinaryOperation WrapBinaryOperation(MethodInfo method)
 		{
 			if (method == null) return null;
 
 
-			var invoker = MethodCall.TryCreate(method);
+			var invoker = FastCall.TryCreate(method);
 			if (invoker != null)
 			{
-				var argFns = new ExecuteFunc[] { closure => closure.Locals[LOCAL_OPERAND1], closure => closure.Locals[LOCAL_OPERAND2] };
 
 				return (closure, left, right) =>
 				{
-					closure.Locals[LOCAL_OPERAND1] = left;
-					closure.Locals[LOCAL_OPERAND2] = right;
+					closure.Locals[ExecutionNode.LOCAL_OPERAND1] = left;
+					closure.Locals[ExecutionNode.LOCAL_OPERAND2] = right;
 
-					var result = invoker(closure, argFns);
+					var result = invoker(closure, BinaryOperationArgumentNodes);
 
-					closure.Locals[LOCAL_OPERAND1] = null;
-					closure.Locals[LOCAL_OPERAND2] = null;
+					closure.Locals[ExecutionNode.LOCAL_OPERAND1] = null;
+					closure.Locals[ExecutionNode.LOCAL_OPERAND2] = null;
 
 					return result;
 				};
 			}
 			else
 			{
-				return (closure, left, right) => { return method.Invoke(null, new object[] { left, right }); };
-			}
-		}
-
-		private static class Intrinsic
-		{
-			private static readonly Dictionary<Type, Dictionary<int, Delegate>> Operations;
-			private static readonly Dictionary<Type, Dictionary<Type, Delegate>> Convertions;
-
-			static Intrinsic()
-			{
-				// AOT
-				if (typeof(Intrinsic).Name == string.Empty)
-				{
-					op_Boolean.Not(default(Closure), default(object));
-					op_Byte.Negate(default(Closure), default(object));
-					op_SByte.Negate(default(Closure), default(object));
-					op_Int16.Negate(default(Closure), default(object));
-					op_UInt16.Negate(default(Closure), default(object));
-					op_Int32.Negate(default(Closure), default(object));
-#if !UNITY_WEBGL
-					op_UInt32.Negate(default(Closure), default(object));
-					op_Int64.Negate(default(Closure), default(object));
-					op_UInt64.UnaryPlus(default(Closure), default(object));
-#endif
-					op_Single.Negate(default(Closure), default(object));
-					op_Double.Negate(default(Closure), default(object));
-					op_Decimal.Negate(default(Closure), default(object));
-					op_Object.Equal(default(Closure), default(object), default(object));
-
-					BinaryOperation(default(Closure), default(object), default(object), default(ExpressionType), default(BinaryOperation));
-					UnaryOperation(default(Closure), default(object), default(ExpressionType), default(UnaryOperation));
-					Convert(default(Closure), default(object), default(Type), default(ExpressionType), default(UnaryOperation));
-				}
-
-				var expressionTypeNames = Enum.GetNames(typeof(ExpressionType));
-				Array.Sort(expressionTypeNames, StringComparer.Ordinal);
-
-				Operations = new Dictionary<Type, Dictionary<int, Delegate>>();
-				foreach (var opType in typeof(Executor).GetNestedTypes(BindingFlags.NonPublic))
-				{
-					if (opType.Name.StartsWith("op_", StringComparison.Ordinal) == false) continue;
-					var type = Type.GetType("System." + opType.Name.Substring(3), false);
-					if (type == null) continue;
-
-					var delegatesByExpressionType = default(Dictionary<int, Delegate>);
-					if (Operations.TryGetValue(type, out delegatesByExpressionType) == false)
-						Operations[type] = delegatesByExpressionType = new Dictionary<int, Delegate>();
-
-					foreach (var method in opType.GetMethods(BindingFlags.Public | BindingFlags.Static))
-					{
-						if (Array.BinarySearch(expressionTypeNames, method.Name) < 0)
-							continue;
-
-						var expressionType = (ExpressionType)Enum.Parse(typeof(ExpressionType), method.Name);
-						var methodParams = method.GetParameters();
-						var fn = methodParams.Length == 3 ? (Delegate)CreateBinaryOperationFn(method) :
-								methodParams.Length == 2 ? (Delegate)CreateUnaryOperationFn(method) : null;
-
-						delegatesByExpressionType[(int)expressionType] = fn;
-					}
-				}
-
-				Convertions = new Dictionary<Type, Dictionary<Type, Delegate>>();
-				foreach (var opType in typeof(Executor).GetNestedTypes(BindingFlags.NonPublic))
-				{
-					if (opType.Name.StartsWith("op_", StringComparison.Ordinal) == false) continue;
-					var type = Type.GetType("System." + opType.Name.Substring(3), false);
-					if (type == null) continue;
-
-					var convertorsByType = default(Dictionary<Type, Delegate>);
-					if (Convertions.TryGetValue(type, out convertorsByType) == false)
-						Convertions[type] = convertorsByType = new Dictionary<Type, Delegate>();
-
-					foreach (var method in opType.GetMethods(BindingFlags.Public | BindingFlags.Static))
-					{
-						if (method.Name.StartsWith("To", StringComparison.Ordinal) == false)
-							continue;
-
-						var fn = (Delegate)CreateBinaryOperationFn(method);
-						var toType = Type.GetType("System." + method.Name.Substring(2), false);
-						if (toType == null)
-							continue;
-
-						convertorsByType[toType] = fn;
-					}
-				}
-			}
-
-			public static object BinaryOperation(Closure closure, object left, object right,
-				ExpressionType binaryOperationType, BinaryOperation userDefinedBinaryOperation)
-			{
-				if (closure == null) throw new ArgumentNullException("closure");
-
-				var type = left != null ? left.GetType() : right != null ? right.GetType() : typeof(object);
-				var operationsForType = default(Dictionary<int, Delegate>);
-				var func = default(Delegate);
-
-				if (Operations.TryGetValue(type, out operationsForType) && operationsForType.TryGetValue((int)binaryOperationType, out func))
-					return ((BinaryOperation)func)(closure, left, right);
-
-				if (binaryOperationType == ExpressionType.Equal)
-					userDefinedBinaryOperation = (BinaryOperation)Operations[typeof(object)][(int)ExpressionType.Equal];
-				else if (binaryOperationType == ExpressionType.NotEqual)
-					userDefinedBinaryOperation = (BinaryOperation)Operations[typeof(object)][(int)ExpressionType.NotEqual];
-
-				if (userDefinedBinaryOperation == null)
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_NOBINARYOPONTYPE, binaryOperationType, type));
-
-				return userDefinedBinaryOperation(closure, left, right);
-			}
-
-			public static object UnaryOperation(Closure closure, object operand, ExpressionType unaryOperationType,
-				UnaryOperation userDefinedUnaryOperation)
-			{
-				if (closure == null) throw new ArgumentNullException("closure");
-
-				var type = operand != null ? operand.GetType() : typeof(object);
-				var operationsForType = default(Dictionary<int, Delegate>);
-				var func = default(Delegate);
-
-				if (Operations.TryGetValue(type, out operationsForType) && operationsForType.TryGetValue((int)unaryOperationType, out func))
-					return ((UnaryOperation)func)(closure, operand);
-
-				if (userDefinedUnaryOperation == null)
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_NOUNARYOPONTYPE, unaryOperationType, type));
-
-				return userDefinedUnaryOperation(closure, operand);
-			}
-
-			public static object Convert(Closure closure, object value, Type toType, ExpressionType convertType, UnaryOperation userDefinedConvertOperation)
-			{
-				if (closure == null) throw new ArgumentNullException("closure");
-				if (toType == null) throw new ArgumentNullException("toType");
-
-				var type = value != null ? value.GetType() : typeof(object);
-				var dictionary = default(Dictionary<Type, Delegate>);
-				var func = default(Delegate);
-
-				if (Convertions.TryGetValue(type, out dictionary) && dictionary.TryGetValue(toType, out func))
-					return ((BinaryOperation)func)(closure, value, convertType == ExpressionType.Convert ? bool.FalseString : bool.TrueString);
-
-				if (userDefinedConvertOperation == null)
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES, type, toType));
-
-				return userDefinedConvertOperation(closure, value);
+				return (closure, left, right) => method.Invoke(null, new[] { left, right });
 			}
 		}
 
@@ -285,7 +282,7 @@ namespace GameDevWare.Dynamic.Expressions
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
@@ -464,7 +461,7 @@ namespace GameDevWare.Dynamic.Expressions
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
@@ -698,7 +695,7 @@ namespace GameDevWare.Dynamic.Expressions
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
@@ -932,7 +929,7 @@ namespace GameDevWare.Dynamic.Expressions
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
@@ -1166,7 +1163,7 @@ namespace GameDevWare.Dynamic.Expressions
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
@@ -1400,7 +1397,7 @@ namespace GameDevWare.Dynamic.Expressions
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
@@ -2316,7 +2313,7 @@ namespace GameDevWare.Dynamic.Expressions
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
@@ -2520,7 +2517,7 @@ namespace GameDevWare.Dynamic.Expressions
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
@@ -2724,7 +2721,7 @@ namespace GameDevWare.Dynamic.Expressions
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if !UNITY_WEBGL
+#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));

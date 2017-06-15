@@ -17,6 +17,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using GameDevWare.Dynamic.Expressions.Execution;
 
 namespace GameDevWare.Dynamic.Expressions
 {
@@ -39,6 +40,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(Expression).Name == string.Empty)
 			{
 				// ReSharper disable AssignNullToNotNullAttribute
+				// ReSharper disable ReturnValueOfPureMethodIsNotUsed
 				Expression.TypeIs(default(Expression), default(Type));
 				Expression.MakeUnary(default(ExpressionType), default(Expression), default(Type));
 				Expression.MakeUnary(default(ExpressionType), default(Expression), default(Type), default(System.Reflection.MethodInfo));
@@ -164,6 +166,7 @@ namespace GameDevWare.Dynamic.Expressions
 				Expression.MultiplyChecked(default(Expression), default(Expression));
 				Expression.MultiplyChecked(default(Expression), default(Expression), default(System.Reflection.MethodInfo));
 				// ReSharper restore AssignNullToNotNullAttribute
+				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
 			}
 		}
 
@@ -177,7 +180,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <typeparam name="ResultT">Method's return type.</typeparam>
 		public static void RegisterForFastCall<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>()
 		{
-			Executor.RegisterForFastCall<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>();
+			FastCall.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>();
 		}
 		/// <summary>
 		/// Prepares method with specified signature for fast execution in AOT compiled environment.
@@ -188,7 +191,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <typeparam name="ResultT">Method's return type.</typeparam>
 		public static void RegisterForFastCall<InstanceT, Arg1T, Arg2T, ResultT>()
 		{
-			Executor.RegisterForFastCall<InstanceT, Arg1T, Arg2T, ResultT>();
+			FastCall.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, ResultT>();
 		}
 		/// <summary>
 		/// Prepares method with specified signature for fast execution in AOT compiled environment.
@@ -198,7 +201,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <typeparam name="ResultT">Method's return type.</typeparam>
 		public static void RegisterForFastCall<InstanceT, Arg1T, ResultT>()
 		{
-			Executor.RegisterForFastCall<InstanceT, Arg1T, ResultT>();
+			FastCall.RegisterInstanceMethod<InstanceT, Arg1T, ResultT>();
 		}
 		/// <summary>
 		/// Prepares method with specified signature for fast execution in AOT compiled environment.
@@ -207,7 +210,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <typeparam name="ResultT">Method's return type.</typeparam>
 		public static void RegisterForFastCall<InstanceT, ResultT>()
 		{
-			Executor.RegisterForFastCall<InstanceT, ResultT>();
+			FastCall.RegisterInstanceMethod<InstanceT, ResultT>();
 		}
 
 		/// <summary>
@@ -226,7 +229,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var fn = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
 				fn.Invoke(default(Arg1T), default(Arg2T), default(Arg3T), default(Arg4T));
 				fn.DynamicInvoke(default(Arg1T), default(Arg2T), default(Arg3T), default(Arg4T));
-				Executor.Prepare<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.Prepare<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
 			}
 		}
 		/// <summary>
@@ -244,7 +247,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var fn = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
 				fn.Invoke(default(Arg1T), default(Arg2T), default(Arg3T));
 				fn.DynamicInvoke(default(Arg1T), default(Arg2T), default(Arg3T));
-				Executor.Prepare<Arg1T, Arg2T, Arg3T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.Prepare<Arg1T, Arg2T, Arg3T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
 			}
 		}
 		/// <summary>
@@ -261,7 +264,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var fn = Expression.Lambda<Func<Arg1T, Arg2T, ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
 				fn.Invoke(default(Arg1T), default(Arg2T));
 				fn.DynamicInvoke(default(Arg1T), default(Arg2T));
-				Executor.Prepare<Arg1T, Arg2T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.Prepare<Arg1T, Arg2T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
 			}
 		}
 		/// <summary>
@@ -277,7 +280,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var fn = Expression.Lambda<Func<Arg1T, ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
 				fn.Invoke(default(Arg1T));
 				fn.DynamicInvoke(default(Arg1T));
-				Executor.Prepare<Arg1T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.Prepare<Arg1T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
 			}
 		}
 		/// <summary>
@@ -292,7 +295,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var fn = Expression.Lambda<Func<ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
 				fn.Invoke();
 				fn.DynamicInvoke();
-				Executor.Prepare<ResultT>(default(Expression));
+				AotCompiler.Prepare<ResultT>(default(Expression));
 			}
 		}
 	}

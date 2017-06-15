@@ -36,13 +36,13 @@
 			default(ArgumentsTree).set_Item(default(System.String),default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode));
 			default(ArgumentsTree).get_Item(default(System.Int32));
 			default(ArgumentsTree).set_Item(default(System.Int32),default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode));
-			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.Add(default(System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.SyntaxTreeNode, GameDevWare.Dynamic.Expressions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
+			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.Add(default(System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.SyntaxTreeNode, GameDevWare.Dynamic.Expressions, Version=2.1.3.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
 			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.Clear();
-			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.Contains(default(System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.SyntaxTreeNode, GameDevWare.Dynamic.Expressions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
-			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.CopyTo(default(System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.SyntaxTreeNode, GameDevWare.Dynamic.Expressions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]][]),default(System.Int32));
+			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.Contains(default(System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.SyntaxTreeNode, GameDevWare.Dynamic.Expressions, Version=2.1.3.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
+			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.CopyTo(default(System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.SyntaxTreeNode, GameDevWare.Dynamic.Expressions, Version=2.1.3.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]][]),default(System.Int32));
 			default(ArgumentsTree).get_Count();
 			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.get_IsReadOnly();
-			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.Remove(default(System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.SyntaxTreeNode, GameDevWare.Dynamic.Expressions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
+			default(ArgumentsTree).System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.Remove(default(System.Collections.Generic.KeyValuePair`2[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[GameDevWare.Dynamic.Expressions.SyntaxTreeNode, GameDevWare.Dynamic.Expressions, Version=2.1.3.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
 			default(ArgumentsTree).System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>.GetEnumerator();
 			default(ArgumentsTree).System.Collections.IEnumerable.GetEnumerator();
 			default(ArgumentsTree).Equals(default(System.Object));
@@ -68,8 +68,9 @@
 		{
 			default(Binder).get_Parameters();
 			default(Binder).get_ResultType();
-			default(Binder).Build(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(System.Linq.Expressions.Expression));
 			default(Binder).Bind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(System.Linq.Expressions.Expression));
+			Binder.GetTypes(default(System.Type),default(System.Collections.Generic.IList`1[[System.Linq.Expressions.ParameterExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]));
+			default(Binder).ToString();
 		}
 	}
 #Constants
@@ -131,6 +132,30 @@
 			default(ExpressionKnownTypeAttribute).set_Type(default(System.Type));
 		}
 	}
+#ExpressionLookupVisitor
+
+	static ExpressionLookupVisitor()
+	{
+		// AOT
+		if (typeof(ExpressionLookupVisitor).Name == string.Empty)
+		{
+			default(ExpressionLookupVisitor).VisitBinary(default(System.Linq.Expressions.BinaryExpression));
+			default(ExpressionLookupVisitor).VisitConditional(default(System.Linq.Expressions.ConditionalExpression));
+			default(ExpressionLookupVisitor).VisitConstant(default(System.Linq.Expressions.ConstantExpression));
+			default(ExpressionLookupVisitor).VisitInvocation(default(System.Linq.Expressions.InvocationExpression));
+			default(ExpressionLookupVisitor).VisitLambda(default(System.Linq.Expressions.LambdaExpression));
+			default(ExpressionLookupVisitor).VisitListInit(default(System.Linq.Expressions.ListInitExpression));
+			default(ExpressionLookupVisitor).VisitMemberAccess(default(System.Linq.Expressions.MemberExpression));
+			default(ExpressionLookupVisitor).VisitMemberInit(default(System.Linq.Expressions.MemberInitExpression));
+			default(ExpressionLookupVisitor).VisitMethodCall(default(System.Linq.Expressions.MethodCallExpression));
+			default(ExpressionLookupVisitor).VisitNew(default(System.Linq.Expressions.NewExpression));
+			default(ExpressionLookupVisitor).VisitNewArray(default(System.Linq.Expressions.NewArrayExpression));
+			default(ExpressionLookupVisitor).VisitParameter(default(System.Linq.Expressions.ParameterExpression));
+			default(ExpressionLookupVisitor).VisitTypeIs(default(System.Linq.Expressions.TypeBinaryExpression));
+			default(ExpressionLookupVisitor).VisitUnary(default(System.Linq.Expressions.UnaryExpression));
+			ExpressionLookupVisitor.Lookup(default(System.Linq.Expressions.Expression),default(System.Collections.Generic.List`1[[System.Linq.Expressions.Expression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]));
+		}
+	}
 #ExpressionParserException
 
 	static ExpressionParserException()
@@ -151,6 +176,24 @@
 			default(ExpressionParserException).ToString();
 		}
 	}
+#ExpressionPosition
+
+	static ExpressionPosition()
+	{
+		// AOT
+		if (typeof(ExpressionPosition).Name == string.Empty)
+		{
+			ExpressionPosition.Parse(default(System.String));
+			default(ExpressionPosition).Equals(default(System.Object));
+			default(ExpressionPosition).Equals(default(GameDevWare.Dynamic.Expressions.ExpressionPosition));
+			default(ExpressionPosition).Equals(default(GameDevWare.Dynamic.Expressions.ILineInfo));
+			default(ExpressionPosition).GetHashCode();
+			default(ExpressionPosition).GameDevWare.Dynamic.Expressions.ILineInfo.GetLineNumber();
+			default(ExpressionPosition).GameDevWare.Dynamic.Expressions.ILineInfo.GetColumnNumber();
+			default(ExpressionPosition).GameDevWare.Dynamic.Expressions.ILineInfo.GetTokenLength();
+			default(ExpressionPosition).ToString();
+		}
+	}
 #ExpressionSubstitutor
 
 	static ExpressionSubstitutor()
@@ -161,6 +204,30 @@
 			default(ExpressionSubstitutor).VisitParameter(default(System.Linq.Expressions.ParameterExpression));
 			default(ExpressionSubstitutor).VisitConstant(default(System.Linq.Expressions.ConstantExpression));
 			ExpressionSubstitutor.Visit(default(System.Linq.Expressions.Expression),default(System.Collections.Generic.Dictionary`2[[System.Linq.Expressions.Expression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.Linq.Expressions.Expression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]));
+		}
+	}
+#ExpressionUtils
+
+	static ExpressionUtils()
+	{
+		// AOT
+		if (typeof(ExpressionUtils).Name == string.Empty)
+		{
+			ExpressionUtils.TryPromoteBinaryOperation(default(System.Linq.Expressions.Expression&),default(System.Linq.Expressions.Expression&),default(System.Linq.Expressions.ExpressionType),default(System.Linq.Expressions.Expression&));
+			ExpressionUtils.TryPromoteNumberBinaryOperation(default(System.Linq.Expressions.Expression&),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.ExpressionType),default(System.Linq.Expressions.Expression&));
+			ExpressionUtils.TryPromoteEnumBinaryOperation(default(System.Linq.Expressions.Expression&),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.ExpressionType),default(System.Linq.Expressions.Expression&));
+			ExpressionUtils.TryPromoteUnaryOperation(default(System.Linq.Expressions.Expression&),default(System.Linq.Expressions.ExpressionType),default(System.Linq.Expressions.Expression&));
+			ExpressionUtils.IsNull(default(System.Linq.Expressions.Expression),default(System.Boolean));
+			ExpressionUtils.MorphType(default(System.Linq.Expressions.Expression&),default(System.Type));
+			ExpressionUtils.TryMorphType(default(System.Linq.Expressions.Expression&),default(System.Type),default(System.Single&));
+			ExpressionUtils.TryFindConversion(default(System.Linq.Expressions.Expression&),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Single&));
+			ExpressionUtils.TryConvertInPlace(default(System.Linq.Expressions.Expression&),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Single&));
+			ExpressionUtils.ConvertToNullable(default(System.Linq.Expressions.Expression),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
+			ExpressionUtils.MakeNullPropagationExpression(default(System.Collections.Generic.List`1[[System.Linq.Expressions.Expression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]),default(System.Linq.Expressions.Expression));
+			ExpressionUtils.ExtractNullPropagationExpression(default(System.Linq.Expressions.ConditionalExpression),default(System.Collections.Generic.List`1[[System.Linq.Expressions.Expression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]&),default(System.Linq.Expressions.Expression&));
+			ExpressionUtils.TryExtractTestTargets(default(System.Linq.Expressions.Expression),default(System.Collections.Generic.List`1[[System.Linq.Expressions.Expression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]&));
+			ExpressionUtils.TryExposeConstant(default(System.Linq.Expressions.Expression),default(System.Linq.Expressions.ConstantExpression&));
+			ExpressionUtils.IsInRange(default(System.Object),default(System.TypeCode),default(System.Int64),default(System.UInt64));
 		}
 	}
 #ExpressionVisitor
@@ -291,6 +358,7 @@
 			default(SyntaxTreeNode).GetColumnNumber(default(System.Boolean));
 			default(SyntaxTreeNode).GetTokenLength(default(System.Boolean));
 			default(SyntaxTreeNode).GetPosition(default(System.Boolean));
+			default(SyntaxTreeNode).GetExpressionPosition(default(System.Boolean));
 			default(SyntaxTreeNode).GetOriginalExpression(default(System.Boolean));
 			default(SyntaxTreeNode).GameDevWare.Dynamic.Expressions.ILineInfo.GetLineNumber();
 			default(SyntaxTreeNode).GameDevWare.Dynamic.Expressions.ILineInfo.GetColumnNumber();
@@ -362,23 +430,6 @@
 			default(UnboundExpression).ToString();
 		}
 	}
-#ExpressionUtils
-
-	static ExpressionUtils()
-	{
-		// AOT
-		if (typeof(ExpressionUtils).Name == string.Empty)
-		{
-			ExpressionUtils.PromoteBothOperands(default(System.Linq.Expressions.Expression&),default(System.Linq.Expressions.Expression&),default(System.Linq.Expressions.ExpressionType));
-			ExpressionUtils.PromoteOperand(default(System.Linq.Expressions.Expression&),default(System.Linq.Expressions.ExpressionType));
-			ExpressionUtils.ConvertToNullable(default(System.Linq.Expressions.Expression));
-			ExpressionUtils.TryMorphType(default(System.Linq.Expressions.Expression&),default(System.Type));
-			ExpressionUtils.MakeNullPropagationExpression(default(System.Linq.Expressions.Expression),default(System.Linq.Expressions.Expression));
-			ExpressionUtils.TryExposeConstant(default(System.Linq.Expressions.Expression),default(System.Object&),default(System.Type&));
-			ExpressionUtils.IsInRange(default(System.Object),default(System.TypeCode),default(System.Int64),default(System.UInt64));
-			ExpressionUtils.ExtractNullPropagationExpression(default(System.Linq.Expressions.ConditionalExpression),default(System.Linq.Expressions.Expression&),default(System.Linq.Expressions.Expression&));
-		}
-	}
 #Resources
 
 	static Resources()
@@ -389,6 +440,7 @@
 			Resources.get_SupportedLanguages();
 			Resources.get_CurrentLanguage();
 			Resources.set_CurrentLanguage(default(System.String));
+			Resources.get_All();
 			Resources.get_EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE();
 			Resources.get_EXCEPTION_BIND_UNABLETOINVOKENONDELEG();
 			Resources.get_EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES();
@@ -447,312 +499,6 @@
 			Resources.get_EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED();
 			Resources.get_EXCEPTION_TOKENIZER_INVALIDCHARLITERAL();
 			Resources.get_EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL();
-		}
-	}
-#AnyBinder
-
-	static AnyBinder()
-	{
-		// AOT
-		if (typeof(AnyBinder).Name == string.Empty)
-		{
-			AnyBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#ConditionBinder
-
-	static ConditionBinder()
-	{
-		// AOT
-		if (typeof(ConditionBinder).Name == string.Empty)
-		{
-			ConditionBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#TypeCache
-
-	static TypeCache()
-	{
-		// AOT
-		if (typeof(TypeCache).Name == string.Empty)
-		{
-			default(TypeCache).TryGetValue(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription&));
-			default(TypeCache).TryAdd(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription&));
-			default(TypeCache).Add(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-			default(TypeCache).GetOrCreateTypeDescription(default(System.Type));
-			default(TypeCache).Merge(default(GameDevWare.Dynamic.Expressions.Binding.TypeCache));
-			default(TypeCache).ToString();
-		}
-	}
-#MemberDescription
-
-	static MemberDescription()
-	{
-		// AOT
-		if (typeof(MemberDescription).Name == string.Empty)
-		{
-			default(MemberDescription).GetParameter(default(System.Int32));
-			default(MemberDescription).GetParametersCount();
-			default(MemberDescription).MakeGenericMethod(default(System.Type[]));
-			default(MemberDescription).TryMakeAccessor(default(System.Linq.Expressions.Expression),default(System.Linq.Expressions.Expression&));
-			default(MemberDescription).TryMakeConversion(default(System.Linq.Expressions.Expression),default(System.Linq.Expressions.Expression&),default(System.Boolean));
-			default(MemberDescription).TryMakeCall(default(System.Linq.Expressions.Expression),default(GameDevWare.Dynamic.Expressions.ArgumentsTree),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(System.Linq.Expressions.Expression&),default(System.Single&));
-			MemberDescription.HasDigitsOnly(default(System.String));
-			default(MemberDescription).Equals(default(System.Object));
-			default(MemberDescription).GetHashCode();
-			default(MemberDescription).Equals(default(System.Reflection.MemberInfo));
-			default(MemberDescription).Equals(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-			default(MemberDescription).CompareTo(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-			MemberDescription.op_Implicit(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-			MemberDescription.op_Implicit(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-			MemberDescription.op_Equality(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription),default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-			MemberDescription.op_Inequality(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription),default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-			default(MemberDescription).ToString();
-		}
-	}
-#NumberUtils
-
-	static NumberUtils()
-	{
-		// AOT
-		if (typeof(NumberUtils).Name == string.Empty)
-		{
-			NumberUtils.IsNumber(default(System.Type));
-			NumberUtils.IsNumber(default(System.TypeCode));
-			NumberUtils.IsSignedInteger(default(System.Type));
-			NumberUtils.IsSignedInteger(default(System.TypeCode));
-			NumberUtils.IsUnsignedInteger(default(System.Type));
-			NumberUtils.IsUnsignedInteger(default(System.TypeCode));
-		}
-	}
-#TypeBinaryBinder
-
-	static TypeBinaryBinder()
-	{
-		// AOT
-		if (typeof(TypeBinaryBinder).Name == string.Empty)
-		{
-			TypeBinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#TypeConversion
-
-	static TypeConversion()
-	{
-		// AOT
-		if (typeof(TypeConversion).Name == string.Empty)
-		{
-			default(TypeConversion).Expand(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription),default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-			TypeConversion.TryGetTypeConversion(default(System.Type),default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion&));
-			TypeConversion.UpdateConversions(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-			TypeConversion.SetNaturalConversion(default(System.Single),default(System.Type),default(System.Type[]));
-			default(TypeConversion).ToString();
-		}
-	}
-#TypeDescription
-
-	static TypeDescription()
-	{
-		// AOT
-		if (typeof(TypeDescription).Name == string.Empty)
-		{
-			default(TypeDescription).GetOperators(default(System.Reflection.MethodInfo[]),default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription[]),default(System.String),default(System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]));
-			default(TypeDescription).GetMembersByName(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription[]&));
-			TypeDescription.GetDeclaredMembers(default(System.Type));
-			TypeDescription.GetBaseTypes(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Int32));
-			default(TypeDescription).GetMembers(default(System.String));
-			default(TypeDescription).Equals(default(System.Object));
-			default(TypeDescription).GetHashCode();
-			default(TypeDescription).CompareTo(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-			default(TypeDescription).CompareTo(default(System.Object));
-			default(TypeDescription).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-			default(TypeDescription).Equals(default(System.Type));
-			TypeDescription.op_Equality(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-			TypeDescription.op_Inequality(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-			TypeDescription.op_Equality(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Type));
-			TypeDescription.op_Inequality(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-			TypeDescription.op_Equality(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-			TypeDescription.op_Inequality(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Type));
-			TypeDescription.op_Implicit(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-			TypeDescription.GetTypeDescription(default(System.Type));
-			default(TypeDescription).ToString();
-		}
-	}
-#TypeTuple
-
-	static TypeTuple()
-	{
-		// AOT
-		if (typeof(TypeTuple).Name == string.Empty)
-		{
-			default(TypeTuple).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple));
-			default(TypeTuple).GetHashCode();
-			default(TypeTuple).Equals(default(System.Object));
-			default(TypeTuple).ToString();
-		}
-	}
-#TypeTuple2
-
-	static TypeTuple2()
-	{
-		// AOT
-		if (typeof(TypeTuple2).Name == string.Empty)
-		{
-			default(TypeTuple2).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2));
-			default(TypeTuple2).GetHashCode();
-			default(TypeTuple2).Equals(default(System.Object));
-			default(TypeTuple2).ToString();
-		}
-	}
-#UnaryBinder
-
-	static UnaryBinder()
-	{
-		// AOT
-		if (typeof(UnaryBinder).Name == string.Empty)
-		{
-			UnaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#BindingContext
-
-	static BindingContext()
-	{
-		// AOT
-		if (typeof(BindingContext).Name == string.Empty)
-		{
-			default(BindingContext).get_Parameters();
-			default(BindingContext).get_ResultType();
-			default(BindingContext).get_Global();
-			default(BindingContext).TryResolveType(default(System.Object),default(System.Type&));
-			default(BindingContext).TryGetParameter(default(System.String),default(System.Linq.Expressions.Expression&));
-			BindingContext.TryGetTypeReference(default(System.Object),default(GameDevWare.Dynamic.Expressions.TypeReference&));
-			BindingContext.TryGetMethodReference(default(System.Object),default(GameDevWare.Dynamic.Expressions.TypeReference&));
-			default(BindingContext).CreateNestedContext(default(System.Collections.Generic.List`1[[System.Linq.Expressions.ParameterExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]),default(System.Type));
-		}
-	}
-#BinaryBinder
-
-	static BinaryBinder()
-	{
-		// AOT
-		if (typeof(BinaryBinder).Name == string.Empty)
-		{
-			BinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#LambdaBinder
-
-	static LambdaBinder()
-	{
-		// AOT
-		if (typeof(LambdaBinder).Name == string.Empty)
-		{
-			LambdaBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-			LambdaBinder.ExtractArgumentNames(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode));
-		}
-	}
-#NewBinder
-
-	static NewBinder()
-	{
-		// AOT
-		if (typeof(NewBinder).Name == string.Empty)
-		{
-			NewBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#NewArrayBoundsBinder
-
-	static NewArrayBoundsBinder()
-	{
-		// AOT
-		if (typeof(NewArrayBoundsBinder).Name == string.Empty)
-		{
-			NewArrayBoundsBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#TypeOfBinder
-
-	static TypeOfBinder()
-	{
-		// AOT
-		if (typeof(TypeOfBinder).Name == string.Empty)
-		{
-			TypeOfBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#DefaultBinder
-
-	static DefaultBinder()
-	{
-		// AOT
-		if (typeof(DefaultBinder).Name == string.Empty)
-		{
-			DefaultBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#InvokeBinder
-
-	static InvokeBinder()
-	{
-		// AOT
-		if (typeof(InvokeBinder).Name == string.Empty)
-		{
-			InvokeBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-			InvokeBinder.TryBindMethodCall(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#CallBinder
-
-	static CallBinder()
-	{
-		// AOT
-		if (typeof(CallBinder).Name == string.Empty)
-		{
-			CallBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-			CallBinder.TryBindTarget(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(System.Linq.Expressions.Expression&),default(System.Type&),default(System.Exception&));
-		}
-	}
-#IndexBinder
-
-	static IndexBinder()
-	{
-		// AOT
-		if (typeof(IndexBinder).Name == string.Empty)
-		{
-			IndexBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#PropertyOrFieldBinder
-
-	static PropertyOrFieldBinder()
-	{
-		// AOT
-		if (typeof(PropertyOrFieldBinder).Name == string.Empty)
-		{
-			PropertyOrFieldBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#GroupBinder
-
-	static GroupBinder()
-	{
-		// AOT
-		if (typeof(GroupBinder).Name == string.Empty)
-		{
-			GroupBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-		}
-	}
-#ConstantBinder
-
-	static ConstantBinder()
-	{
-		// AOT
-		if (typeof(ConstantBinder).Name == string.Empty)
-		{
-			ConstantBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
-			ConstantBinder.ChangeType(default(System.Object),default(System.Type));
 		}
 	}
 #CSharpExpression
@@ -825,7 +571,7 @@
 		// AOT
 		if (typeof(Parser).Name == string.Empty)
 		{
-			Parser.Parse(default(System.Collections.Generic.IEnumerable`1[[GameDevWare.Dynamic.Expressions.CSharp.Token, GameDevWare.Dynamic.Expressions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
+			Parser.Parse(default(System.Collections.Generic.IEnumerable`1[[GameDevWare.Dynamic.Expressions.CSharp.Token, GameDevWare.Dynamic.Expressions, Version=2.1.3.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
 			default(Parser).Expression(default(GameDevWare.Dynamic.Expressions.CSharp.TokenType),default(GameDevWare.Dynamic.Expressions.CSharp.TokenType[]));
 			default(Parser).GenericArguments(default(GameDevWare.Dynamic.Expressions.CSharp.Token));
 			default(Parser).NullableType(default(GameDevWare.Dynamic.Expressions.CSharp.Token));
@@ -927,6 +673,321 @@
 		// AOT
 		if (typeof(TokenType).Name == string.Empty)
 		{
+		}
+	}
+#AnyBinder
+
+	static AnyBinder()
+	{
+		// AOT
+		if (typeof(AnyBinder).Name == string.Empty)
+		{
+			AnyBinder.TryBindInNewScope(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+			AnyBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#BinaryBinder
+
+	static BinaryBinder()
+	{
+		// AOT
+		if (typeof(BinaryBinder).Name == string.Empty)
+		{
+			BinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#BindingContext
+
+	static BindingContext()
+	{
+		// AOT
+		if (typeof(BindingContext).Name == string.Empty)
+		{
+			default(BindingContext).get_Parameters();
+			default(BindingContext).get_ResultType();
+			default(BindingContext).get_Global();
+			default(BindingContext).TryResolveType(default(System.Object),default(System.Type&));
+			default(BindingContext).TryGetParameter(default(System.String),default(System.Linq.Expressions.Expression&));
+			BindingContext.TryGetTypeReference(default(System.Object),default(GameDevWare.Dynamic.Expressions.TypeReference&));
+			BindingContext.TryGetMethodReference(default(System.Object),default(GameDevWare.Dynamic.Expressions.TypeReference&));
+			default(BindingContext).CreateNestedContext();
+			default(BindingContext).CreateNestedContext(default(System.Collections.ObjectModel.ReadOnlyCollection`1[[System.Linq.Expressions.ParameterExpression, System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]),default(System.Type));
+			default(BindingContext).RegisterNullPropagationTarger(default(System.Linq.Expressions.Expression));
+			default(BindingContext).CompleteNullPropagation(default(System.Linq.Expressions.Expression&));
+		}
+	}
+#CallBinder
+
+	static CallBinder()
+	{
+		// AOT
+		if (typeof(CallBinder).Name == string.Empty)
+		{
+			CallBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+			CallBinder.TryBindTarget(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(System.Linq.Expressions.Expression&),default(System.Type&),default(System.Exception&));
+		}
+	}
+#ConditionBinder
+
+	static ConditionBinder()
+	{
+		// AOT
+		if (typeof(ConditionBinder).Name == string.Empty)
+		{
+			ConditionBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#ConstantBinder
+
+	static ConstantBinder()
+	{
+		// AOT
+		if (typeof(ConstantBinder).Name == string.Empty)
+		{
+			ConstantBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+			ConstantBinder.ChangeType(default(System.Object),default(System.Type));
+		}
+	}
+#DefaultBinder
+
+	static DefaultBinder()
+	{
+		// AOT
+		if (typeof(DefaultBinder).Name == string.Empty)
+		{
+			DefaultBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#GroupBinder
+
+	static GroupBinder()
+	{
+		// AOT
+		if (typeof(GroupBinder).Name == string.Empty)
+		{
+			GroupBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#IndexBinder
+
+	static IndexBinder()
+	{
+		// AOT
+		if (typeof(IndexBinder).Name == string.Empty)
+		{
+			IndexBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#InvokeBinder
+
+	static InvokeBinder()
+	{
+		// AOT
+		if (typeof(InvokeBinder).Name == string.Empty)
+		{
+			InvokeBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+			InvokeBinder.TryBindMethodCall(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#LambdaBinder
+
+	static LambdaBinder()
+	{
+		// AOT
+		if (typeof(LambdaBinder).Name == string.Empty)
+		{
+			LambdaBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+			LambdaBinder.ExtractArgumentNames(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode));
+		}
+	}
+#MemberDescription
+
+	static MemberDescription()
+	{
+		// AOT
+		if (typeof(MemberDescription).Name == string.Empty)
+		{
+			default(MemberDescription).GetParameter(default(System.Int32));
+			default(MemberDescription).GetParameterType(default(System.Int32));
+			default(MemberDescription).GetParameterName(default(System.Int32));
+			default(MemberDescription).GetParametersCount();
+			default(MemberDescription).MakeGenericMethod(default(System.Type[]));
+			default(MemberDescription).TryMakeAccessor(default(System.Linq.Expressions.Expression),default(System.Linq.Expressions.Expression&));
+			default(MemberDescription).TryMakeConversion(default(System.Linq.Expressions.Expression),default(System.Linq.Expressions.Expression&),default(System.Boolean));
+			default(MemberDescription).TryMakeCall(default(System.Linq.Expressions.Expression),default(GameDevWare.Dynamic.Expressions.ArgumentsTree),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(System.Linq.Expressions.Expression&),default(System.Single&));
+			MemberDescription.HasDigitsOnly(default(System.String));
+			MemberDescription.GetParameterName(default(System.Reflection.ParameterInfo));
+			default(MemberDescription).Equals(default(System.Object));
+			default(MemberDescription).GetHashCode();
+			default(MemberDescription).Equals(default(System.Reflection.MemberInfo));
+			default(MemberDescription).Equals(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
+			default(MemberDescription).CompareTo(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
+			MemberDescription.op_Implicit(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
+			MemberDescription.op_Implicit(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
+			MemberDescription.op_Equality(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription),default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
+			MemberDescription.op_Inequality(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription),default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
+			default(MemberDescription).ToString();
+		}
+	}
+#NewArrayBoundsBinder
+
+	static NewArrayBoundsBinder()
+	{
+		// AOT
+		if (typeof(NewArrayBoundsBinder).Name == string.Empty)
+		{
+			NewArrayBoundsBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#NewBinder
+
+	static NewBinder()
+	{
+		// AOT
+		if (typeof(NewBinder).Name == string.Empty)
+		{
+			NewBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#NumberUtils
+
+	static NumberUtils()
+	{
+		// AOT
+		if (typeof(NumberUtils).Name == string.Empty)
+		{
+			NumberUtils.IsNumber(default(System.Type));
+			NumberUtils.IsNumber(default(System.TypeCode));
+			NumberUtils.IsSignedInteger(default(System.Type));
+			NumberUtils.IsSignedInteger(default(System.TypeCode));
+			NumberUtils.IsUnsignedInteger(default(System.Type));
+			NumberUtils.IsUnsignedInteger(default(System.TypeCode));
+		}
+	}
+#PropertyOrFieldBinder
+
+	static PropertyOrFieldBinder()
+	{
+		// AOT
+		if (typeof(PropertyOrFieldBinder).Name == string.Empty)
+		{
+			PropertyOrFieldBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#TypeBinaryBinder
+
+	static TypeBinaryBinder()
+	{
+		// AOT
+		if (typeof(TypeBinaryBinder).Name == string.Empty)
+		{
+			TypeBinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#TypeCache
+
+	static TypeCache()
+	{
+		// AOT
+		if (typeof(TypeCache).Name == string.Empty)
+		{
+			default(TypeCache).get_Values();
+			default(TypeCache).TryGetValue(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription&));
+			default(TypeCache).TryAdd(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription&));
+			default(TypeCache).Add(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
+			default(TypeCache).GetOrCreateTypeDescription(default(System.Type));
+			default(TypeCache).Merge(default(GameDevWare.Dynamic.Expressions.Binding.TypeCache));
+			default(TypeCache).ToString();
+		}
+	}
+#TypeConversion
+
+	static TypeConversion()
+	{
+		// AOT
+		if (typeof(TypeConversion).Name == string.Empty)
+		{
+			default(TypeConversion).Expand(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription),default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
+			TypeConversion.TryGetTypeConversion(default(System.Type),default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion&));
+			TypeConversion.UpdateConversions(default(System.Collections.Generic.IEnumerable`1[[GameDevWare.Dynamic.Expressions.Binding.TypeDescription, GameDevWare.Dynamic.Expressions, Version=2.1.3.0, Culture=neutral, PublicKeyToken=beddee35dcc5e9cc]]));
+			TypeConversion.SetNaturalConversion(default(System.Single),default(System.Type),default(System.Type[]));
+			default(TypeConversion).ToString();
+		}
+	}
+#TypeDescription
+
+	static TypeDescription()
+	{
+		// AOT
+		if (typeof(TypeDescription).Name == string.Empty)
+		{
+			default(TypeDescription).GetOperators(default(System.Reflection.MethodInfo[]),default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription[]),default(System.String),default(System.Nullable`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]));
+			default(TypeDescription).GetMembersByName(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription[]&));
+			TypeDescription.GetDeclaredMembers(default(System.Type));
+			TypeDescription.GetBaseTypes(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Int32));
+			default(TypeDescription).GetMembers(default(System.String));
+			default(TypeDescription).GetNullableType();
+			default(TypeDescription).Equals(default(System.Object));
+			default(TypeDescription).GetHashCode();
+			default(TypeDescription).CompareTo(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
+			default(TypeDescription).CompareTo(default(System.Object));
+			default(TypeDescription).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
+			default(TypeDescription).Equals(default(System.Type));
+			TypeDescription.op_Equality(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
+			TypeDescription.op_Inequality(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
+			TypeDescription.op_Equality(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Type));
+			TypeDescription.op_Inequality(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
+			TypeDescription.op_Equality(default(System.Type),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
+			TypeDescription.op_Inequality(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Type));
+			TypeDescription.op_Implicit(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
+			TypeDescription.GetTypeDescription(default(System.Type));
+			default(TypeDescription).ToString();
+		}
+	}
+#TypeOfBinder
+
+	static TypeOfBinder()
+	{
+		// AOT
+		if (typeof(TypeOfBinder).Name == string.Empty)
+		{
+			TypeOfBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
+		}
+	}
+#TypeTuple
+
+	static TypeTuple()
+	{
+		// AOT
+		if (typeof(TypeTuple).Name == string.Empty)
+		{
+			default(TypeTuple).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple));
+			default(TypeTuple).GetHashCode();
+			default(TypeTuple).Equals(default(System.Object));
+			default(TypeTuple).ToString();
+		}
+	}
+#TypeTuple2
+
+	static TypeTuple2()
+	{
+		// AOT
+		if (typeof(TypeTuple2).Name == string.Empty)
+		{
+			default(TypeTuple2).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2));
+			default(TypeTuple2).GetHashCode();
+			default(TypeTuple2).Equals(default(System.Object));
+			default(TypeTuple2).ToString();
+		}
+	}
+#UnaryBinder
+
+	static UnaryBinder()
+	{
+		// AOT
+		if (typeof(UnaryBinder).Name == string.Empty)
+		{
+			UnaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode),default(GameDevWare.Dynamic.Expressions.Binding.BindingContext),default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription),default(System.Linq.Expressions.Expression&),default(System.Exception&));
 		}
 	}
 #Closure
@@ -1032,6 +1093,11 @@
 			op_Boolean.Not(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object));
 			op_Boolean.Equal(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object),default(System.Object));
 			op_Boolean.NotEqual(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object),default(System.Object));
+			op_Boolean.Or(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object),default(System.Object));
+			op_Boolean.And(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object),default(System.Object));
+			op_Boolean.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object),default(System.Object));
+			op_Boolean.AndAlso(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object),default(System.Object));
+			op_Boolean.OrElse(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object),default(System.Object));
 			op_Boolean.ToObject(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object),default(System.Object));
 			op_Boolean.ToBoolean(default(GameDevWare.Dynamic.Expressions.Executor.Closure),default(System.Object),default(System.Object));
 		}

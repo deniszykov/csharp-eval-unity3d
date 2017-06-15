@@ -291,4 +291,10 @@
   <data name="EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH" xml:space="preserve">
     <value>Unable to remap expression's parameters with lamda syntax. Parameters count mismatch.</value>
   </data>
+  <data name="EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION" xml:space="preserve">
+    <value>Unknown member type '{0}' for MemberAccess expression.</value>
+  </data>
+  <data name="EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT" xml:space="preserve">
+    <value>Expression '{0}' gives null result.</value>
+  </data>
 </root>

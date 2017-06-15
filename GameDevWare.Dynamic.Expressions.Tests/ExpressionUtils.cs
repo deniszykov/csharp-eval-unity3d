@@ -12,7 +12,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var expressionObj = Parse(expression, types, typeResolver);
 
-			var compileMethod = typeof(ExpressionExtentions)
+			var compileMethod = typeof(ExpressionExtensions)
 				.GetMethods(BindingFlags.Public | BindingFlags.Static)
 				.Single(m => m.Name == "CompileAot" && m.IsGenericMethod && m.GetGenericArguments().Length == types.Length)
 				.MakeGenericMethod(types);

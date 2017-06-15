@@ -368,6 +368,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		// common base class promotion
 		[InlineData("true ? default(MemoryStream) : default(Stream)", null)]
 		[InlineData("true ? default(Comparer<int>) : default(IComparer<int>)", null)]
+		// check if false clause executed even if condition is true
+		[InlineData("true ? string.Empty : default(object).ToString()", "")]
+		// check if true clause executed even if condition is false
+		[InlineData("false ? default(object).ToString() : string.Empty", "")]
 		public void ConditionalOperation(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
@@ -378,6 +382,23 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
 		}
+
+		[Theory]
+		// basic tests
+		[InlineData("false && default(object).ToString() == null", false)]
+		[InlineData("true || default(object).ToString() == null", true)]
+		[InlineData("string.Empty ?? default(string).ToString()", "")]
+		public void BinaryShortcutOperation(string expression, object expected)
+		{
+			var expectedType = expected?.GetType() ?? typeof(object);
+			var typeResolver = new KnownTypeResolver();
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, typeResolver: typeResolver, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, typeResolver: typeResolver, forceAot: false);
+
+			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
+		}
+
 
 		[Theory]
 		[InlineData("null ?? null", null)]

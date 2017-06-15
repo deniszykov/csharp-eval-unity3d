@@ -142,7 +142,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		}
 
 		/// <summary>
-		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtentions.CompileAot{TResult}"/> and executed.
+		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
 		/// </summary>
 		/// <typeparam name="ResultT">Result type.</typeparam>
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
@@ -159,7 +159,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return (Expression<Func<ResultT>>)expressionBinder.Bind(expressionTree);
 		}
 		/// <summary>
-		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtentions.CompileAot{TResult}"/> and executed.
+		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
 		/// </summary>
 		/// <typeparam name="Arg1T">First argument type.</typeparam>
 		/// <typeparam name="ResultT">Result type.</typeparam>
@@ -181,7 +181,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return (Expression<Func<Arg1T, ResultT>>)expressionBuilder.Bind(expressionTree);
 		}
 		/// <summary>
-		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtentions.CompileAot{TResult}"/> and executed.
+		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
 		/// </summary>
 		/// <typeparam name="Arg1T">First argument type.</typeparam>
 		/// <typeparam name="Arg2T">Second argument type.</typeparam>
@@ -207,7 +207,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return (Expression<Func<Arg1T, Arg2T, ResultT>>)expressionBinder.Bind(expressionTree);
 		}
 		/// <summary>
-		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtentions.CompileAot{TResult}"/> and executed.
+		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
 		/// </summary>
 		/// <typeparam name="Arg1T">First argument type.</typeparam>
 		/// <typeparam name="Arg2T">Second argument type.</typeparam>
@@ -236,7 +236,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return (Expression<Func<Arg1T, Arg2T, Arg3T, ResultT>>)expressionBinder.Bind(expressionTree);
 		}
 		/// <summary>
-		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtentions.CompileAot{TResult}"/> and executed.
+		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
 		/// </summary>
 		/// <typeparam name="Arg1T">First argument type.</typeparam>
 		/// <typeparam name="Arg2T">Second argument type.</typeparam>
