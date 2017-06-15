@@ -9,7 +9,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 	{
 		static AotCompiler()
 		{
-			// AOR
+			// AOT
+#pragma warning disable 1720
 			if (typeof(AotCompiler).Name == string.Empty)
 			{
 				// ReSharper disable PossibleNullReferenceException
@@ -81,6 +82,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
 				// ReSharper restore PossibleNullReferenceException
 			}
+#pragma warning restore 1720
 		}
 
 		public static Func<ResultT> Prepare<ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters = null)

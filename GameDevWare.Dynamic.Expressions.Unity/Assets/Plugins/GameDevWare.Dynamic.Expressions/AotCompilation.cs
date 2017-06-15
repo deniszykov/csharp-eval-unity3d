@@ -37,6 +37,7 @@ namespace GameDevWare.Dynamic.Expressions
 			catch (Exception) { IsAotCompiled = true; }
 
 			// AOT
+#pragma warning disable 1720
 			if (typeof(Expression).Name == string.Empty)
 			{
 				// ReSharper disable AssignNullToNotNullAttribute
@@ -168,6 +169,7 @@ namespace GameDevWare.Dynamic.Expressions
 				// ReSharper restore AssignNullToNotNullAttribute
 				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
 			}
+#pragma warning restore 1720
 		}
 
 		/// <summary>

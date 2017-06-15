@@ -30,6 +30,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		static Intrinsic()
 		{
 			// AOT
+#pragma warning disable 1720
 			if (typeof(Intrinsic).Name == string.Empty)
 			{
 				op_Boolean.Not(default(Closure), default(object));
@@ -52,6 +53,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				InvokeUnaryOperation(default(Closure), default(object), default(ExpressionType), default(UnaryOperation));
 				InvokeConversion(default(Closure), default(object), default(Type), default(ExpressionType), default(UnaryOperation));
 			}
+#pragma warning restore 1720
 
 			var expressionTypeNames = Enum.GetNames(typeof(ExpressionType));
 			Array.Sort(expressionTypeNames, StringComparer.Ordinal);
@@ -796,7 +798,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			}
 			public static object Or(Closure closure, object left, object right)
 			{
+#pragma warning disable 0675
 				return closure.Box((sbyte)(closure.Unbox<sbyte>(left) | closure.Unbox<sbyte>(right)));
+#pragma warning restore 0675
 			}
 			public static object Subtract(Closure closure, object left, object right)
 			{
