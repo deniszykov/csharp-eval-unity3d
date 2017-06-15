@@ -1,7 +1,4 @@
-﻿#if !UNITY_WEBGL || UNITY_5 || UNITY_5_0_OR_NEWER
-#define UNSIGNED_TYPES
-#endif
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -39,11 +36,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				op_Int16.Negate(default(Closure), default(object));
 				op_UInt16.Negate(default(Closure), default(object));
 				op_Int32.Negate(default(Closure), default(object));
-#if UNSIGNED_TYPES
 				op_UInt32.Negate(default(Closure), default(object));
 				op_Int64.Negate(default(Closure), default(object));
 				op_UInt64.UnaryPlus(default(Closure), default(object));
-#endif
 				op_Single.Negate(default(Closure), default(object));
 				op_Double.Negate(default(Closure), default(object));
 				op_Decimal.Negate(default(Closure), default(object));
@@ -284,11 +279,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
-#endif
 					ToSingle(default(Closure), default(object), default(object));
 					ToDouble(default(Closure), default(object), default(object));
 					ToDecimal(default(Closure), default(object), default(object));
@@ -336,7 +329,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			{
 				return closure.Box(closure.Unbox<int>(left));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				return closure.Box(closure.Unbox<uint>(left));
@@ -349,7 +341,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			{
 				return closure.Box(closure.Unbox<ulong>(left));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				return closure.Box(closure.Unbox<float>(left));
@@ -371,9 +362,14 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_Boolean).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Not(default(Closure), default(bool));
+					Not(default(Closure), default(object));
 					Equal(default(Closure), default(object), default(object));
 					NotEqual(default(Closure), default(object), default(object));
+					Or(default(Closure), default(object), default(object));
+					And(default(Closure), default(object), default(object));
+					ExclusiveOr(default(Closure), default(object), default(object));
+					AndAlso(default(Closure), default(object), default(object));
+					OrElse(default(Closure), default(object), default(object));
 					ToObject(default(Closure), default(object), default(object));
 					ToBoolean(default(Closure), default(object), default(object));
 				}
@@ -433,7 +429,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_Byte).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(Byte));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -463,11 +459,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
-#endif
 					ToSingle(default(Closure), default(object), default(object));
 					ToDouble(default(Closure), default(object), default(object));
 					ToDecimal(default(Closure), default(object), default(object));
@@ -614,7 +608,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<byte>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -636,7 +629,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<byte>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -667,7 +659,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_SByte).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(byte));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -697,11 +689,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
-#endif
 					ToSingle(default(Closure), default(object), default(object));
 					ToDouble(default(Closure), default(object), default(object));
 					ToDecimal(default(Closure), default(object), default(object));
@@ -850,7 +840,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<sbyte>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -872,7 +861,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<sbyte>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -903,7 +891,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_Int16).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(short));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -933,11 +921,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
-#endif
 					ToSingle(default(Closure), default(object), default(object));
 					ToDouble(default(Closure), default(object), default(object));
 					ToDecimal(default(Closure), default(object), default(object));
@@ -1084,7 +1070,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<short>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1106,7 +1091,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<short>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1137,7 +1121,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_UInt16).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(ushort));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -1167,11 +1151,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
-#endif
 					ToSingle(default(Closure), default(object), default(object));
 					ToDouble(default(Closure), default(object), default(object));
 					ToDecimal(default(Closure), default(object), default(object));
@@ -1318,7 +1300,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<ushort>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1340,7 +1321,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<ushort>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1371,7 +1351,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_Int32).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(int));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -1401,11 +1381,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
-#endif
 					ToSingle(default(Closure), default(object), default(object));
 					ToDouble(default(Closure), default(object), default(object));
 					ToDecimal(default(Closure), default(object), default(object));
@@ -1552,7 +1530,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<int>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1574,7 +1551,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<int>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1597,7 +1573,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<int>(left)));
 			}
 		}
-#if UNSIGNED_TYPES
 		private static class op_UInt32
 		{
 			static op_UInt32()
@@ -1606,7 +1581,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_UInt32).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(uint));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -1785,7 +1760,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<uint>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1807,7 +1781,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<uint>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -1838,7 +1811,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_Int64).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(long));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
@@ -2017,7 +1990,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<long>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2039,7 +2011,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<long>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2070,7 +2041,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_UInt64).Name == string.Empty)
 				{
 					Default(default(Closure));
-					UnaryPlus(default(Closure), default(ulong));
+					UnaryPlus(default(Closure), default(object));
 					Not(default(Closure), default(object));
 					Add(default(Closure), default(object), default(object));
 					AddChecked(default(Closure), default(object), default(object));
@@ -2239,7 +2210,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<ulong>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2261,7 +2231,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<ulong>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2284,7 +2253,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<ulong>(left)));
 			}
 		}
-#endif
 		private static class op_Single
 		{
 			static op_Single()
@@ -2293,7 +2261,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_Single).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(float));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Add(default(Closure), default(object), default(object));
@@ -2317,11 +2285,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
-#endif
 					ToSingle(default(Closure), default(object), default(object));
 					ToDouble(default(Closure), default(object), default(object));
 					ToDecimal(default(Closure), default(object), default(object));
@@ -2444,7 +2410,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<float>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2466,7 +2431,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<float>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2497,7 +2461,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_Double).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(double));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Add(default(Closure), default(object), default(object));
@@ -2521,11 +2485,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
-#endif
 					ToSingle(default(Closure), default(object), default(object));
 					ToDouble(default(Closure), default(object), default(object));
 					ToDecimal(default(Closure), default(object), default(object));
@@ -2648,7 +2610,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<double>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2670,7 +2631,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<double>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2701,7 +2661,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				if (typeof(op_Decimal).Name == string.Empty)
 				{
 					Default(default(Closure));
-					Negate(default(Closure), default(decimal));
+					Negate(default(Closure), default(object));
 					NegateChecked(default(Closure), default(object));
 					UnaryPlus(default(Closure), default(object));
 					Add(default(Closure), default(object), default(object));
@@ -2725,11 +2685,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					ToInt16(default(Closure), default(object), default(object));
 					ToUInt16(default(Closure), default(object), default(object));
 					ToInt32(default(Closure), default(object), default(object));
-#if UNSIGNED_TYPES
 					ToUInt32(default(Closure), default(object), default(object));
 					ToInt64(default(Closure), default(object), default(object));
 					ToUInt64(default(Closure), default(object), default(object));
-#endif
 					ToSingle(default(Closure), default(object), default(object));
 					ToDouble(default(Closure), default(object), default(object));
 					ToDecimal(default(Closure), default(object), default(object));
@@ -2852,7 +2810,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((int)closure.Unbox<decimal>(left)));
 			}
-#if UNSIGNED_TYPES
 			public static object ToUInt32(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
@@ -2874,7 +2831,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else
 					return unchecked(closure.Box((ulong)closure.Unbox<decimal>(left)));
 			}
-#endif
 			public static object ToSingle(Closure closure, object left, object isChecked)
 			{
 				if (ReferenceEquals(isChecked, bool.TrueString))
