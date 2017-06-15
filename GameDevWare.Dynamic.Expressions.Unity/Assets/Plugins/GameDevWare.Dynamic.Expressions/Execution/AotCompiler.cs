@@ -7,6 +7,82 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal static class AotCompiler
 	{
+		static AotCompiler()
+		{
+			// AOR
+			if (typeof(AotCompiler).Name == string.Empty)
+			{
+				// ReSharper disable PossibleNullReferenceException
+				// ReSharper disable ReturnValueOfPureMethodIsNotUsed
+				default(ArrayIndexNode).Run(default(Closure));
+				default(ArrayIndexNode).ToString();
+				default(Closure).GetType(default(object));
+				default(ArrayLengthNode).Run(default(Closure));
+				default(ArrayLengthNode).ToString();
+				default(BinaryNode).Run(default(Closure));
+				BinaryNode.Create(default(BinaryExpression), default(ConstantExpression[]), default(ParameterExpression[]));
+				default(BinaryNode).ToString();
+				default(CallNode).Run(default(Closure));
+				default(CallNode).ToString();
+				default(CoalesceNode).Run(default(Closure));
+				default(CoalesceNode).ToString();
+				default(ConditionalNode).Run(default(Closure));
+				default(ConditionalNode).ToString();
+				default(ConstantNode).Run(default(Closure));
+				default(ConstantNode).ToString();
+				default(ExecutionNode).Run(default(Closure));
+				FastCall.TryCreate(default(System.Reflection.MethodInfo));
+				Intrinsic.InvokeBinaryOperation(default(Closure), default(object), default(object), default(ExpressionType), default(Intrinsic.BinaryOperation));
+				Intrinsic.InvokeUnaryOperation(default(Closure), default(object), default(ExpressionType), default(Intrinsic.UnaryOperation));
+				Intrinsic.InvokeConversion(default(Closure), default(object), default(Type), default(ExpressionType), default(Intrinsic.UnaryOperation));
+				Intrinsic.CreateUnaryOperationFn(default(System.Reflection.MethodInfo));
+				Intrinsic.CreateBinaryOperationFn(default(System.Reflection.MethodInfo));
+				Intrinsic.WrapUnaryOperation(default(Type), default(string));
+				Intrinsic.WrapUnaryOperation(default(System.Reflection.MethodInfo));
+				Intrinsic.WrapBinaryOperation(default(Type), default(string));
+				Intrinsic.WrapBinaryOperation(default(System.Reflection.MethodInfo));
+				default(InvocationNode).Run(default(Closure));
+				default(InvocationNode).ToString();
+				default(LambdaNode).Run(default(Closure));
+				default(LambdaNode).ToString();
+				default(ListInitNode).Run(default(Closure));
+				default(ListInitNode).ToString();
+				default(LocalNode).Run(default(Closure));
+				default(LocalNode).ToString();
+				default(MemberAccessNode).Run(default(Closure));
+				default(MemberAccessNode).ToString();
+				default(MemberAssignmentsNode).Run(default(Closure));
+				default(MemberAssignmentsNode).ToString();
+				default(MemberInitNode).Run(default(Closure));
+				default(MemberInitNode).ToString();
+				default(MemberListBindingsNode).Run(default(Closure));
+				default(MemberListBindingsNode).ToString();
+				default(MemberMemberBindingsNode).Run(default(Closure));
+				default(MemberMemberBindingsNode).ToString();
+				default(NewArrayBoundsNode).Run(default(Closure));
+				default(NewArrayBoundsNode).ToString();
+				default(NewArrayInitNode).Run(default(Closure));
+				default(NewArrayInitNode).ToString();
+				default(NewNode).Run(default(Closure));
+				default(NewNode).ToString();
+				default(UnaryNode).Run(default(Closure));
+				UnaryNode.Create(default(UnaryExpression), default(ConstantExpression[]), default(ParameterExpression[]));
+				default(UnaryNode).ToString();
+				default(NullNode).Run(default(Closure));
+				default(NullNode).ToString();
+				default(ParameterNode).Run(default(Closure));
+				default(ParameterNode).ToString();
+				default(QuoteNode).Run(default(Closure));
+				default(QuoteNode).ToString();
+				default(TypeAsNode).Run(default(Closure));
+				default(TypeAsNode).ToString();
+				default(TypeIsNode).Run(default(Closure));
+				default(TypeIsNode).ToString();
+				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
+				// ReSharper restore PossibleNullReferenceException
+			}
+		}
+
 		public static Func<ResultT> Prepare<ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters = null)
 		{
 			if (body == null) throw new ArgumentNullException("body");
