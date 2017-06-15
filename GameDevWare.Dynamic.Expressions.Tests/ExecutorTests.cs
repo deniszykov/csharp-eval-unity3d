@@ -563,9 +563,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
-		[InlineData("true && true", true)]
-		[InlineData("true || false", true)]
-		[InlineData("null ?? null", null)]
 		// int8
 		[InlineData("(SByte)2 + (SByte)2", (2 + 2))]
 		[InlineData("unchecked((SByte)127 + (SByte)2)", unchecked((127 + 2)))]
@@ -775,6 +772,29 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
 		}
+
+		[Theory]
+		[InlineData("true && true", true)]
+		[InlineData("true & true", true)]
+		[InlineData("true || false", true)]
+		[InlineData("true | false", true)]
+		[InlineData("true ^ false", true ^ false)]
+		[InlineData("!true", !true)]
+		[InlineData("true == true", true == true)]
+		[InlineData("true != true", true != true)]
+		[InlineData("true == false", true == false)]
+		[InlineData("true != false", true != false)]
+		public void BooleanOperation(string expression, object expected)
+		{
+			var expectedType = expected?.GetType() ?? typeof(object);
+			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: false);
+
+			Assert.Equal(expected, actual);
+			Assert.Equal(expectedAlt, actual);
+		}
+
+
 
 		[Theory]
 		// binary
