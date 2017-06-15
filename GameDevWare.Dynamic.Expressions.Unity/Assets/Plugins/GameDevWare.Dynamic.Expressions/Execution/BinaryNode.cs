@@ -10,6 +10,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		private readonly ExecutionNode rightNode;
 		private readonly bool isNullable;
 		private readonly Intrinsic.BinaryOperation operation;
+		private readonly object shortcutLeftValue;
 
 		private BinaryNode(
 			BinaryExpression binaryExpression,
@@ -27,12 +28,19 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			this.operation = Intrinsic.WrapBinaryOperation(binaryExpression.Method) ??
 				(binaryOperationMethodName == null ? null : Intrinsic.WrapBinaryOperation(binaryExpression.Left.Type, binaryOperationMethodName));
 			this.isNullable = IsNullable(binaryExpression.Left) || IsNullable(binaryExpression.Right);
+			this.shortcutLeftValue = binaryExpression.NodeType == ExpressionType.OrElse ? Constants.TrueObject :
+				binaryExpression.NodeType == ExpressionType.AndAlso ? Constants.FalseObject : null;
 		}
 
 		/// <inheritdoc />
 		public override object Run(Closure closure)
 		{
 			var left = this.leftNode.Run(closure);
+
+			// shortcut for and-also(&&) and or-else(||)
+			if (this.shortcutLeftValue != null && Equals(this.shortcutLeftValue, closure.Unbox<object>(left)))
+				return this.shortcutLeftValue;
+
 			var right = this.rightNode.Run(closure);
 
 			if (this.isNullable && (left == null || right == null))
