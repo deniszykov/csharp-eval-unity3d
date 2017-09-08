@@ -29,12 +29,16 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		/// Is current runtime is AOT compiled.
 		/// </summary>
-		public static readonly bool IsAotCompiled;
+		public static readonly bool IsAotRuntime;
 
 		static AotCompilation()
 		{
+#if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR)
+			IsAotCompiled = true;
+#else
 			try { Expression.Lambda<Func<bool>>(Expression.Constant(true)).Compile(); }
-			catch (Exception) { IsAotCompiled = true; }
+			catch (Exception) { IsAotRuntime = true; }
+#endif
 
 			// AOT
 #pragma warning disable 1720

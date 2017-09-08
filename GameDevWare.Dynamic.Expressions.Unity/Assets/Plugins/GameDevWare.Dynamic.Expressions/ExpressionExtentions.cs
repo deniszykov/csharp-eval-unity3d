@@ -38,7 +38,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TResult>();
 
-			if (AotCompilation.IsAotCompiled || forceAot)
+			if (AotCompilation.IsAotRuntime || forceAot)
 				return AotCompiler.Prepare<TResult>(expression.Body);
 			else
 				return expression.Compile();
@@ -57,7 +57,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TArg1, TResult>();
 
-			if (AotCompilation.IsAotCompiled || forceAot)
+			if (AotCompilation.IsAotRuntime || forceAot)
 				return AotCompiler.Prepare<TArg1, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -77,7 +77,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TArg1, TArg2, TResult>();
 
-			if (AotCompilation.IsAotCompiled || forceAot)
+			if (AotCompilation.IsAotRuntime || forceAot)
 				return AotCompiler.Prepare<TArg1, TArg2, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -98,7 +98,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TArg1, TArg2, TArg3, TResult>();
 
-			if (AotCompilation.IsAotCompiled || forceAot)
+			if (AotCompilation.IsAotRuntime || forceAot)
 				return AotCompiler.Prepare<TArg1, TArg2, TArg3, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -120,7 +120,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TArg1, TArg2, TArg3, TArg4, TResult>();
 
-			if (AotCompilation.IsAotCompiled || forceAot)
+			if (AotCompilation.IsAotRuntime || forceAot)
 				return AotCompiler.Prepare<TArg1, TArg2, TArg3, TArg4, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
