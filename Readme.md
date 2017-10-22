@@ -155,6 +155,8 @@ You can send suggestions at support@gamedevware.com
 * Custom editor with auto-completion for Unity
 
 ## Changes
+# 2.1.4
+* Release version, no actual changes except readme.md
 # 2.1.2-rc
 ### Features
 * added more descriptive message to member binding error

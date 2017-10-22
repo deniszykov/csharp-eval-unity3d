@@ -1,0 +1,35 @@
+Features
+* added more descriptive message to member binding error
+* added autodoc comments for public members
+* hidden ReadOnlyDictionary from public access
+* removed WEBGL check for later version of Unity, because unsigned types bug was fixed
+* added generic types and generic methods
+* added nullable types via '?' suffix
+* added lambda expression syntax '() => x' and 'new Func(a => x)'
+* added support for expression parameter re-mapping with lambda syntax at beggining of expression
+* added support for Func<> lambdas on AOT environments
+* added additional constructor to Binder class
+* added ArgumentsTree ToString method
+* added build-in types aliases support during static members binding
+
+Bug Fixes
+* fixed error with wrongly resolved types (only by name) in KnownTypeResolver
+* fixed bug with ACCESS_VIOLATION on iOS (Unity 5.x.x IL2CPP)
+* fixed few Unity 3.4 related errors in code
+* fixed 'new' expression parsed with error on chained calls new a().b().c()
+* fixed some cases of lifted binary/unary/conversion operations
+* fixed some AOT'ed operations on System.Boolean type
+* fixed null-propagation chains generate invalid code
+* fixed some edge cases of resolving nested generic types
+* fixed error with types without type.FullName value
+* fixed Condition operator types promotion
+* fixed Power operator types promotion and null-lifting
+* fixed enum constants threated as underlying types during binary/unary operations
+
+Breaking changes
+* ParserNode renamed to ParseTreeNode
+* ExpressionTree renamed to SyntaxTreeNode
+* ExpressionBuilder renamed to Binder
+* ITypeResolutionService renamed to ITypeResolver
+* ITypeResolver.GetType removed
+* ITypeResolver now could be configured with TypeDiscoveryOptions
