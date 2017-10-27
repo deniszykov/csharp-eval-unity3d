@@ -146,7 +146,7 @@ AotCompilation.RegisterForFastCall<MyVectorMath, Vector4, float, Vector4>();
 You can send suggestions at support@gamedevware.com
 
 * Expression serialization	
-* Void expressions (System.Action delegates)
+* Void expressions (`System.Action` delegates)
 * Parser: Delegate construction from method reference
 * Parser: Type inference for generics	
 * Parser: Full C#6 syntax
@@ -159,27 +159,27 @@ You can send suggestions at support@gamedevware.com
 * Release version, no actual changes except readme.md
 # 2.1.2-rc
 ### Features
-* added more descriptive message to member binding error
+* added more descriptive message for member binding error
 * added autodoc comments for public members
-* hidden ReadOnlyDictionary from public access
-* removed WEBGL check for later version of Unity, because unsigned types bug was fixed
-* added generic types and generic methods
-* added nullable types via '?' suffix
+* hid `ReadOnlyDictionary` from public access
+* removed Unity WebGL #if for unsigned types. Unity's bug was fixed.
+* added support for generic types and generic methods
+* added nullable types and `?` suffix support
 ```csharp
 CSharpExpression.Evaluate<int?>("default(int?)"); // -> null
 ```
-* added lambda expression syntax '() => x' and 'new Func(a => x)'
-* added support for expression parameter re-mapping with lambda syntax at beggining of expression
+* added lambda expressions. Syntax is `() => x` and `new Func(a => x)`
+* added support for expression's parameter re-mapping with lambda expression syntax:
 ```csharp
 CSharpExpression.Evaluate<int, int, int>("(x,y) => x + y", 2, 2); // -> 4
 ```
-* added support for Func<> lambdas on AOT environments
+* added support for `Func<>` lambdas for AOT environments
 * added additional constructor to Binder class
 ```csharp
 public Binder(Type lambdaType, ITypeResolver typeResolver = null);
 ```
-* added ArgumentsTree ToString method
-* added build-in types aliases support during static members binding
+* added `ArgumentsTree.ToString()` method
+* added aliases for build-in types. Aliases resolved during binding phase inside `Binder.Bind()` method.
 ```csharp
 CSharpExpression.Evaluate<int>("int.MaxValue");
 ```
