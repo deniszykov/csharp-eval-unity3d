@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -276,7 +276,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								return changed;
 							}
 
-							if (NullableType(token))
+							if (this.NullableType(token))
 							{
 								changed = true;
 								continue;
@@ -368,7 +368,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					argumentAdded = false;
 				}
 
-				closingToken = tokens.Dequeue();
+				closingToken = this.tokens.Dequeue();
 				if (closingToken.Type == TokenType.Rshift) // split '>>' into 2 '>' tokens
 					this.tokens.Insert(0, new Token(TokenType.Gt, ">", closingToken.LineNumber, closingToken.ColumnNumber + 1, closingToken.TokenLength - 1));
 				else if (closingToken.Type != TokenType.Comma && closingToken.Type != TokenType.Gt)

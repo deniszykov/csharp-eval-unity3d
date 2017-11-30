@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -48,7 +48,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		/// Type's name without namespace and declared types.
 		/// </summary>
-		public string Name { get { return this.typeName[typeName.Count - 1]; } }
+		public string Name { get { return this.typeName[this.typeName.Count - 1]; } }
 		/// <summary>
 		/// Types' namespace if any.
 		/// </summary>

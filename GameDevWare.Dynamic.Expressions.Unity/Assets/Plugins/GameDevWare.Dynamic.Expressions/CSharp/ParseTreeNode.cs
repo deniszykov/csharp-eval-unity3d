@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -27,7 +27,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 	public class ParseTreeNode : ILineInfo, IEnumerable<ParseTreeNode>
 	{
 		[Flags]
-		private enum TypeNameOptions
+		internal enum TypeNameOptions
 		{
 			None = 0,
 			Aliases = 0x1 << 0,
@@ -37,7 +37,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			All = Aliases | ShortNames | Arrays
 		}
 
-		private struct ParseTreeNodes
+		internal struct ParseTreeNodes
 		{
 			public readonly int Count;
 
@@ -75,13 +75,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					if (index >= this.Count || index < 0) throw new ArgumentOutOfRangeException("index");
 
 					if (this.items != null)
-						return items[index];
+						return this.items[index];
 
 					switch (index)
 					{
-						case 0: return item0;
-						case 1: return item1;
-						case 2: return item2;
+						case 0: return this.item0;
+						case 1: return this.item1;
+						case 2: return this.item2;
 						default: throw new ArgumentOutOfRangeException("index");
 					}
 				}
@@ -230,15 +230,15 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		int ILineInfo.GetLineNumber()
 		{
-			return Lexeme.LineNumber;
+			return this.Lexeme.LineNumber;
 		}
 		int ILineInfo.GetColumnNumber()
 		{
-			return Lexeme.ColumnNumber;
+			return this.Lexeme.ColumnNumber;
 		}
 		int ILineInfo.GetTokenLength()
 		{
-			return Lexeme.TokenLength;
+			return this.Lexeme.TokenLength;
 		}
 
 		static ParseTreeNode()
@@ -359,7 +359,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// </summary>
 		/// <param name="checkedScope">Conversion and arithmetic operation overflow control. True is "throw on overflows", false is "ignore of overflows".</param>
 		/// <returns></returns>
-		public SyntaxTreeNode ToSyntaxTree(bool checkedScope = CSharpExpression.DefaultCheckedScope)
+		public SyntaxTreeNode ToSyntaxTree(bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
 		{
 			try
 			{

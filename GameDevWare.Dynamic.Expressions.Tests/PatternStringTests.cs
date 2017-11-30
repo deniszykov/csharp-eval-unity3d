@@ -1,4 +1,4 @@
-﻿using Assets;
+using Assets;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -35,7 +35,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void GenericInvocationTest(string expression, string expected)
 		{
 			var actual = PatternString.TransformPattern(expected, new TestClass { IntField = 1, StringProperty = "2", Other = new TestClass { IntField = 3, StringProperty = "4"} });
-			output.WriteLine("Transformed: " + actual);
+			this.output.WriteLine("Transformed: " + actual);
 
 			Assert.Equal(expected, actual);
 		}

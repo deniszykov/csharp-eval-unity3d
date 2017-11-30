@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -21,9 +21,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			public int[] ArrayField;
 			public int IntField = 100500 * 2;
-			public int IntProperty { get { return IntField; } set { IntField = value; } }
+			public int IntProperty { get { return this.IntField; } set { this.IntField = value; } }
 			public TestClass TestClassField;
-			public TestClass TestClassProperty { get { return this.TestClassField; } set { TestClassField = value; } }
+			public TestClass TestClassProperty { get { return this.TestClassField; } set { this.TestClassField = value; } }
 			public List<int> ListField = new List<int>();
 			public List<int> ListProperty { get { return this.ListField; } set { this.ListField = value; } }
 			public int this[int i] { get { return this.ArrayField[i]; } }
@@ -348,6 +348,19 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
+		}
+
+		[Theory]
+		[InlineData("Math.Pow(1.0, 1.0)", null)]
+		[InlineData("1 + 1", null)]
+		[InlineData("Console.WriteLine(\"test\")", typeof(Console))]
+		public void VoidExpression(string expression, Type knownType)
+		{
+			var knownTypes = new KnownTypeResolver(knownType ?? typeof(object));
+			ExpressionUtils.Execute(expression, Type.EmptyTypes, typeResolver: knownTypes, forceAot: true);
+			ExpressionUtils.Execute(expression, Type.EmptyTypes, typeResolver: knownTypes, forceAot: false);
+
+			Assert.True(true);
 		}
 
 		[Theory]
@@ -1010,8 +1023,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void DecimalConversion(string expression, double expectedDouble)
 		{
 			var expected = (decimal)expectedDouble;
-			var actual = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: true).DynamicInvoke();
-			var expectedAlt = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: false).DynamicInvoke();
+			var actual = CSharpExpression.ParseFunc<decimal>(expression).CompileAot(forceAot: true).DynamicInvoke();
+			var expectedAlt = CSharpExpression.ParseFunc<decimal>(expression).CompileAot(forceAot: false).DynamicInvoke();
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -1230,8 +1243,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("~b", null, 1, ~1)]
 		public void LiftedOperation(string expression, int? arg1, int? arg2, int? expected)
 		{
-			var actual = CSharpExpression.Parse<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
-			var expectedAlt = CSharpExpression.Parse<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
+			var actual = CSharpExpression.ParseFunc<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			var expectedAlt = CSharpExpression.ParseFunc<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -1254,8 +1267,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a != b", null, null, false)]
 		public void LiftedComparison(string expression, int? arg1, int? arg2, bool expected)
 		{
-			var actual = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
-			var expectedAlt = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
+			var actual = CSharpExpression.ParseFunc<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			var expectedAlt = CSharpExpression.ParseFunc<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -1277,8 +1290,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a | b", false, null, null)]
 		public void LiftedBoolOperation(string expression, bool? arg1, bool? arg2, bool? expected)
 		{
-			var actual = CSharpExpression.Parse<bool?, bool?, bool?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
-			var expectedAlt = CSharpExpression.Parse<bool?, bool?, bool?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
+			var actual = CSharpExpression.ParseFunc<bool?, bool?, bool?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			var expectedAlt = CSharpExpression.ParseFunc<bool?, bool?, bool?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -1288,8 +1301,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaBinding()
 		{
 			var expected = 2;
-			var actual = CSharpExpression.Parse<Func<int, int>>("a => a + 1").CompileAot(forceAot: true).Invoke().Invoke(1);
-			var expectedAlt = CSharpExpression.Parse<Func<int, int>>("a => a + 1").CompileAot(forceAot: false).Invoke().Invoke(1);
+			var actual = CSharpExpression.ParseFunc<Func<int, int>>("a => a + 1").CompileAot(forceAot: true).Invoke().Invoke(1);
+			var expectedAlt = CSharpExpression.ParseFunc<Func<int, int>>("a => a + 1").CompileAot(forceAot: false).Invoke().Invoke(1);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -1299,8 +1312,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaClosureBinding()
 		{
 			var expected = 3;
-			var actual = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1).Invoke(1);
-			var expectedAlt = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").CompileAot(forceAot: false).Invoke(1).Invoke(1);
+			var actual = CSharpExpression.ParseFunc<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1).Invoke(1);
+			var expectedAlt = CSharpExpression.ParseFunc<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").CompileAot(forceAot: false).Invoke(1).Invoke(1);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -1310,8 +1323,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaBindingSubstitution()
 		{
 			var expected = 2;
-			var actual = CSharpExpression.Parse<int, int>("a => a + 1", arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
-			var expectedAlt = CSharpExpression.Parse<int, int>("a => a + 1", arg1Name: "arg1").CompileAot(forceAot: false).Invoke(1);
+			var actual = CSharpExpression.ParseFunc<int, int>("a => a + 1", arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
+			var expectedAlt = CSharpExpression.ParseFunc<int, int>("a => a + 1", arg1Name: "arg1").CompileAot(forceAot: false).Invoke(1);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -1322,8 +1335,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var expected = true;
 			var typeResolutionService = new KnownTypeResolver(typeof(Func<Type, object, bool>));
-			var actual = CSharpExpression.Parse<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: true).Invoke().Invoke(typeof(bool), null);
-			var expectedAlt = CSharpExpression.Parse<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: false).Invoke().Invoke(typeof(bool), null);
+			var actual = CSharpExpression.ParseFunc<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: true).Invoke().Invoke(typeof(bool), null);
+			var expectedAlt = CSharpExpression.ParseFunc<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: false).Invoke().Invoke(typeof(bool), null);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -1369,8 +1382,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void GenericMemberInvocation(string expression, int expected)
 		{
 			var typeResolutionService = new KnownTypeResolver(typeof(TestGenericClass<>), typeof(TestGenericClass<>.TestSubClass<,>));
-			var actual = CSharpExpression.Parse<int>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
-			var expectedAlt = CSharpExpression.Parse<int>(expression, typeResolutionService).CompileAot(forceAot: false).Invoke();
+			var actual = CSharpExpression.ParseFunc<int>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
+			var expectedAlt = CSharpExpression.ParseFunc<int>(expression, typeResolutionService).CompileAot(forceAot: false).Invoke();
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);

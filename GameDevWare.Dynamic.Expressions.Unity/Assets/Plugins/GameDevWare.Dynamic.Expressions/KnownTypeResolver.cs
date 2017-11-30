@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -189,9 +189,9 @@ namespace GameDevWare.Dynamic.Expressions
 				matches = 1;
 			}
 
-			if (foundType == null && otherTypeResolver != null)
+			if (foundType == null && this.otherTypeResolver != null)
 			{
-				otherTypeResolver.TryGetType(typeReference, out foundType);
+				this.otherTypeResolver.TryGetType(typeReference, out foundType);
 				matches = foundType != null ? 1 : 0;
 			}
 

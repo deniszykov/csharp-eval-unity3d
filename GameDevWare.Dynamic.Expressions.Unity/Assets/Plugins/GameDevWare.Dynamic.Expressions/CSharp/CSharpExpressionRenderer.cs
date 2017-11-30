@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -35,7 +35,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="node">Syntax tree.</param>
 		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
 		/// <returns>Rendered expression.</returns>
-		public static string Render(this SyntaxTreeNode node, bool checkedScope = CSharpExpression.DefaultCheckedScope)
+		public static string Render(this SyntaxTreeNode node, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			var builder = new StringBuilder();
@@ -49,7 +49,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="expression">Syntax tree.</param>
 		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
 		/// <returns>Rendered expression.</returns>
-		public static string Render(this Expression expression, bool checkedScope = CSharpExpression.DefaultCheckedScope)
+		public static string Render(this Expression expression, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 

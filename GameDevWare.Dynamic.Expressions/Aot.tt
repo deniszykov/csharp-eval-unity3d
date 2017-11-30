@@ -35,12 +35,14 @@
 
 // ReSharper disable All
 
+#pragma warning disable 1720, 0219
+
 namespace GameDevWare.Dynamic.Expressions
 {
 	[System.CodeDom.Compiler.GeneratedCode("T4", "custom")]
 	partial class AotCompilation
 	{
-		private partial static void StaticConstructor()
+		static partial void StaticConstructor()
 		{
 			// AOT
 			if (typeof(AotCompilation).Name == string.Empty)

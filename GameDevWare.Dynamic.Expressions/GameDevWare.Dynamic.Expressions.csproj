@@ -398,6 +398,11 @@
     <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\UnboundExpression.cs">
       <Link>UnboundExpression.cs</Link>
     </Compile>
+    <Compile Include="Aot.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Aot.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnityResources.cs">
       <AutoGen>True</AutoGen>
@@ -408,7 +413,7 @@
   <ItemGroup>
     <None Include="Aot.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Aot.txt</LastGenOutput>
+      <LastGenOutput>Aot.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -420,11 +425,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>UnityResources.cs</LastGenOutput>
       <TransformOnBuild>True</TransformOnBuild>
-    </None>
-    <None Include="Aot.txt">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Aot.tt</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>

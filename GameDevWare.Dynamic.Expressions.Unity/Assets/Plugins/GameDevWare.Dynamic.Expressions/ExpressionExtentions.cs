@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -39,7 +39,7 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TResult>();
 
 			if (AotCompilation.IsAotRuntime || forceAot)
-				return AotCompiler.Prepare<TResult>(expression.Body);
+				return AotCompiler.PrepareFunc<TResult>(expression.Body);
 			else
 				return expression.Compile();
 		}
@@ -58,7 +58,7 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TArg1, TResult>();
 
 			if (AotCompilation.IsAotRuntime || forceAot)
-				return AotCompiler.Prepare<TArg1, TResult>(expression.Body, expression.Parameters);
+				return AotCompiler.PrepareFunc<TArg1, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
 		}
@@ -78,7 +78,7 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TArg1, TArg2, TResult>();
 
 			if (AotCompilation.IsAotRuntime || forceAot)
-				return AotCompiler.Prepare<TArg1, TArg2, TResult>(expression.Body, expression.Parameters);
+				return AotCompiler.PrepareFunc<TArg1, TArg2, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
 		}
@@ -99,7 +99,7 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TArg1, TArg2, TArg3, TResult>();
 
 			if (AotCompilation.IsAotRuntime || forceAot)
-				return AotCompiler.Prepare<TArg1, TArg2, TArg3, TResult>(expression.Body, expression.Parameters);
+				return AotCompiler.PrepareFunc<TArg1, TArg2, TArg3, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
 		}
@@ -121,7 +121,103 @@ namespace System.Linq.Expressions
 			AotCompilation.RegisterFunc<TArg1, TArg2, TArg3, TArg4, TResult>();
 
 			if (AotCompilation.IsAotRuntime || forceAot)
-				return AotCompiler.Prepare<TArg1, TArg2, TArg3, TArg4, TResult>(expression.Body, expression.Parameters);
+				return AotCompiler.PrepareFunc<TArg1, TArg2, TArg3, TArg4, TResult>(expression.Body, expression.Parameters);
+			else
+				return expression.Compile();
+		}
+
+		/// <summary>
+		/// Compiles specified expression into <see cref="Action"/> delegate using AOT aware expression compiler.
+		/// </summary>
+		/// <param name="expression">An expression syntax tree. Not null.</param>
+		/// <param name="forceAot">True to always use AOT compiler event if environment is JIT and supports dynamic code.</param>
+		/// <returns>A compiled expression.</returns>
+		public static Action CompileAot(this Expression<Action> expression, bool forceAot = false)
+		{
+			if (expression == null) throw new ArgumentNullException("expression");
+
+			AotCompilation.RegisterAction();
+
+			if (AotCompilation.IsAotRuntime || forceAot)
+				return AotCompiler.PrepareAction(expression.Body);
+			else
+				return expression.Compile();
+		}
+		/// <summary>
+		///  Compiles specified expression into <see cref="Action{TArg1}"/> delegate using AOT aware expression compiler.
+		/// </summary>
+		/// <typeparam name="TArg1">First argument type.</typeparam>
+		/// <param name="expression">An expression syntax tree. Not null.</param>
+		/// <param name="forceAot">True to always use AOT compiler event if environment is JIT and supports dynamic code.</param>
+		/// <returns>A compiled expression.</returns>
+		public static Action<TArg1> CompileAot<TArg1>(this Expression<Action<TArg1>> expression, bool forceAot = false)
+		{
+			if (expression == null) throw new ArgumentNullException("expression");
+
+			AotCompilation.RegisterAction<TArg1>();
+
+			if (AotCompilation.IsAotRuntime || forceAot)
+				return AotCompiler.PrepareAction<TArg1>(expression.Body, expression.Parameters);
+			else
+				return expression.Compile();
+		}
+		/// <summary>
+		///  Compiles specified expression into <see cref="Action{TArg1, TArg2}"/> delegate using AOT aware expression compiler.
+		/// </summary>
+		/// <typeparam name="TArg1">First argument type.</typeparam>
+		/// <typeparam name="TArg2">Second argument type.</typeparam>
+		/// <param name="expression">An expression syntax tree. Not null.</param>
+		/// <param name="forceAot">True to always use AOT compiler event if environment is JIT and supports dynamic code.</param>
+		/// <returns>A compiled expression.</returns>
+		public static Action<TArg1, TArg2> CompileAot<TArg1, TArg2>(this Expression<Action<TArg1, TArg2>> expression, bool forceAot = false)
+		{
+			if (expression == null) throw new ArgumentNullException("expression");
+
+			AotCompilation.RegisterAction<TArg1, TArg2>();
+
+			if (AotCompilation.IsAotRuntime || forceAot)
+				return AotCompiler.PrepareAction<TArg1, TArg2>(expression.Body, expression.Parameters);
+			else
+				return expression.Compile();
+		}
+		/// <summary>
+		///  Compiles specified expression into <see cref="Action{TArg1, TArg2, TArg3}"/> delegate using AOT aware expression compiler.
+		/// </summary>
+		/// <typeparam name="TArg1">First argument type.</typeparam>
+		/// <typeparam name="TArg2">Second argument type.</typeparam>
+		/// <typeparam name="TArg3">Third argument type.</typeparam>
+		/// <param name="expression">An expression syntax tree. Not null.</param>
+		/// <param name="forceAot">True to always use AOT compiler event if environment is JIT and supports dynamic code.</param>
+		/// <returns>A compiled expression.</returns>
+		public static Action<TArg1, TArg2, TArg3> CompileAot<TArg1, TArg2, TArg3>(this Expression<Action<TArg1, TArg2, TArg3>> expression, bool forceAot = false)
+		{
+			if (expression == null) throw new ArgumentNullException("expression");
+
+			AotCompilation.RegisterAction<TArg1, TArg2, TArg3>();
+
+			if (AotCompilation.IsAotRuntime || forceAot)
+				return AotCompiler.PrepareAction<TArg1, TArg2, TArg3>(expression.Body, expression.Parameters);
+			else
+				return expression.Compile();
+		}
+		/// <summary>
+		///  Compiles specified expression into <see cref="Action{TArg1, TArg2, TArg3, TArg4}"/> delegate using AOT aware expression compiler.
+		/// </summary>
+		/// <typeparam name="TArg1">First argument type.</typeparam>
+		/// <typeparam name="TArg2">Second argument type.</typeparam>
+		/// <typeparam name="TArg3">Third argument type.</typeparam>
+		/// <typeparam name="TArg4">Fourth argument type.</typeparam>
+		/// <param name="expression">An expression syntax tree. Not null.</param>
+		/// <param name="forceAot">True to always use AOT compiler event if environment is JIT and supports dynamic code.</param>
+		/// <returns>A compiled expression.</returns>
+		public static Action<TArg1, TArg2, TArg3, TArg4> CompileAot<TArg1, TArg2, TArg3, TArg4>(this Expression<Action<TArg1, TArg2, TArg3, TArg4>> expression, bool forceAot = false)
+		{
+			if (expression == null) throw new ArgumentNullException("expression");
+
+			AotCompilation.RegisterAction<TArg1, TArg2, TArg3, TArg4>();
+
+			if (AotCompilation.IsAotRuntime || forceAot)
+				return AotCompiler.PrepareAction<TArg1, TArg2, TArg3, TArg4>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
 		}

@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -90,7 +90,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_UNARYPLUS = "UnaryPlus";
 		public const string EXPRESSION_TYPE_CHECKEDSUFFIX = "Checked";
 		public const string DELEGATE_INVOKE_NAME = "Invoke";
-		public const string EXECUTE_PREPARE_NAME = "Prepare";
+		public const string EXECUTE_PREPARE_NAME = "PrepareFunc";
 		public const string VALUE_TRUE_STRING = "true";
 		public const string VALUE_FALSE_STRING = "false";
 		public const string VALUE_NULL_STRING = "null";

@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -64,6 +64,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public readonly bool IsNullable;
 		public readonly bool CanBeNull;
 		public readonly bool IsEnum;
+		public readonly bool IsVoid;
 		public readonly bool IsNumber;
 		public readonly bool IsDelegate;
 		public readonly bool HasGenericParameters;
@@ -109,43 +110,47 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.BaseType = type.BaseType != null ? cache.GetOrCreateTypeDescription(type.BaseType) : null;
 			this.UnderlyingType = underlyingType != null ? cache.GetOrCreateTypeDescription(underlyingType) : null;
 			this.BaseTypes = GetBaseTypes(this, 0);
-			this.Interfaces = Array.ConvertAll(type.GetInterfaces(), t => cache.GetOrCreateTypeDescription(t));
-			this.GenericArguments = type.IsGenericType ? Array.ConvertAll(type.GetGenericArguments(), t => cache.GetOrCreateTypeDescription(t)) : TypeDescription.EmptyTypes;
+			this.Interfaces = Array.ConvertAll(type.GetInterfaces(), cache.GetOrCreateTypeDescription);
+			this.GenericArguments = type.IsGenericType ? Array.ConvertAll(type.GetGenericArguments(), cache.GetOrCreateTypeDescription) : EmptyTypes;
 
 			this.IsNullable = Nullable.GetUnderlyingType(type) != null;
 			this.IsNumber = NumberUtils.IsNumber(type);
 			this.CanBeNull = this.IsNullable || type.IsValueType == false;
 			this.IsEnum = type.IsEnum;
+			this.IsVoid = type == typeof(void);
 			this.IsDelegate = typeof(Delegate).IsAssignableFrom(type) && type != typeof(Delegate) && type != typeof(MulticastDelegate);
 			this.HasGenericParameters = type.ContainsGenericParameters;
-			this.DefaultExpression = Expression.Constant(type.IsValueType && this.IsNullable == false ? Activator.CreateInstance(type) : null, type);
+			if (this.IsVoid)
+				this.DefaultExpression = Expression.Constant(null, typeof(object));
+			else
+				this.DefaultExpression = Expression.Constant(type.IsValueType && this.IsNullable == false ? Activator.CreateInstance(type) : null, type);
 			this.TypeCode = Type.GetTypeCode(type);
 
-			this.MembersByName = GetMembersByName(ref this.Indexers);
+			this.MembersByName = this.GetMembersByName(ref this.Indexers);
 
 			var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
 			var methodsDescriptions = new MemberDescription[methods.Length];
 
 			// ReSharper disable LocalizableElement
-			this.ImplicitConvertTo = GetOperators(methods, methodsDescriptions, "op_Implicit", 0);
-			this.ImplicitConvertFrom = GetOperators(methods, methodsDescriptions, "op_Implicit", -1);
-			this.ExplicitConvertTo = GetOperators(methods, methodsDescriptions, "op_Explicit", 0);
-			this.ExplicitConvertFrom = GetOperators(methods, methodsDescriptions, "op_Explicit", -1);
-			this.Addition = GetOperators(methods, methodsDescriptions, "op_Addition");
-			this.Division = GetOperators(methods, methodsDescriptions, "op_Division");
-			this.Equality = GetOperators(methods, methodsDescriptions, "op_Equality");
-			this.GreaterThan = GetOperators(methods, methodsDescriptions, "op_GreaterThan");
-			this.GreaterThanOrEqual = GetOperators(methods, methodsDescriptions, "op_GreaterThanOrEqual");
-			this.Inequality = GetOperators(methods, methodsDescriptions, "op_Inequality");
-			this.LessThan = GetOperators(methods, methodsDescriptions, "op_LessThan");
-			this.LessThanOrEqual = GetOperators(methods, methodsDescriptions, "op_LessThanOrEqual");
-			this.Modulus = GetOperators(methods, methodsDescriptions, "op_Modulus");
-			this.Multiply = GetOperators(methods, methodsDescriptions, "op_Multiply");
-			this.Subtraction = GetOperators(methods, methodsDescriptions, "op_Subtraction");
-			this.UnaryNegation = GetOperators(methods, methodsDescriptions, "op_UnaryNegation");
-			this.UnaryPlus = GetOperators(methods, methodsDescriptions, "op_UnaryPlus");
-			this.BitwiseAnd = GetOperators(methods, methodsDescriptions, "op_BitwiseAnd");
-			this.BitwiseOr = GetOperators(methods, methodsDescriptions, "op_BitwiseOr");
+			this.ImplicitConvertTo = this.GetOperators(methods, methodsDescriptions, "op_Implicit", 0);
+			this.ImplicitConvertFrom = this.GetOperators(methods, methodsDescriptions, "op_Implicit", -1);
+			this.ExplicitConvertTo = this.GetOperators(methods, methodsDescriptions, "op_Explicit", 0);
+			this.ExplicitConvertFrom = this.GetOperators(methods, methodsDescriptions, "op_Explicit", -1);
+			this.Addition = this.GetOperators(methods, methodsDescriptions, "op_Addition");
+			this.Division = this.GetOperators(methods, methodsDescriptions, "op_Division");
+			this.Equality = this.GetOperators(methods, methodsDescriptions, "op_Equality");
+			this.GreaterThan = this.GetOperators(methods, methodsDescriptions, "op_GreaterThan");
+			this.GreaterThanOrEqual = this.GetOperators(methods, methodsDescriptions, "op_GreaterThanOrEqual");
+			this.Inequality = this.GetOperators(methods, methodsDescriptions, "op_Inequality");
+			this.LessThan = this.GetOperators(methods, methodsDescriptions, "op_LessThan");
+			this.LessThanOrEqual = this.GetOperators(methods, methodsDescriptions, "op_LessThanOrEqual");
+			this.Modulus = this.GetOperators(methods, methodsDescriptions, "op_Modulus");
+			this.Multiply = this.GetOperators(methods, methodsDescriptions, "op_Multiply");
+			this.Subtraction = this.GetOperators(methods, methodsDescriptions, "op_Subtraction");
+			this.UnaryNegation = this.GetOperators(methods, methodsDescriptions, "op_UnaryNegation");
+			this.UnaryPlus = this.GetOperators(methods, methodsDescriptions, "op_UnaryPlus");
+			this.BitwiseAnd = this.GetOperators(methods, methodsDescriptions, "op_BitwiseAnd");
+			this.BitwiseOr = this.GetOperators(methods, methodsDescriptions, "op_BitwiseOr");
 			// ReSharper restore LocalizableElement
 			this.Conversions = Combine(this.ImplicitConvertTo, this.ImplicitConvertFrom, this.ExplicitConvertTo, this.ExplicitConvertFrom);
 			this.Constructors = Array.ConvertAll(type.GetConstructors(BindingFlags.Public | BindingFlags.Instance), ctr => new MemberDescription(this, ctr));

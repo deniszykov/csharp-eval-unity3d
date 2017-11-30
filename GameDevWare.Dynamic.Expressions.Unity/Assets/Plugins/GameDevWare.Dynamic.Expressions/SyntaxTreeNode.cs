@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -99,7 +99,7 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		internal SyntaxTreeNode GetExpression(bool throwOnError)
 		{
-			return GetExpression(Constants.EXPRESSION_ATTRIBUTE, throwOnError);
+			return this.GetExpression(Constants.EXPRESSION_ATTRIBUTE, throwOnError);
 		}
 		private SyntaxTreeNode GetExpression(string attributeName, bool throwOnError)
 		{
@@ -117,23 +117,23 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		internal SyntaxTreeNode GetLeftExpression(bool throwOnError)
 		{
-			return GetExpression(Constants.LEFT_ATTRIBUTE, throwOnError);
+			return this.GetExpression(Constants.LEFT_ATTRIBUTE, throwOnError);
 		}
 		internal SyntaxTreeNode GetRightExpression(bool throwOnError)
 		{
-			return GetExpression(Constants.RIGHT_ATTRIBUTE, throwOnError);
+			return this.GetExpression(Constants.RIGHT_ATTRIBUTE, throwOnError);
 		}
 		internal SyntaxTreeNode GetTestExpression(bool throwOnError)
 		{
-			return GetExpression(Constants.TEST_ATTRIBUTE, throwOnError);
+			return this.GetExpression(Constants.TEST_ATTRIBUTE, throwOnError);
 		}
 		internal SyntaxTreeNode GetIfTrueExpression(bool throwOnError)
 		{
-			return GetExpression(Constants.IFTRUE_ATTRIBUTE, throwOnError);
+			return this.GetExpression(Constants.IFTRUE_ATTRIBUTE, throwOnError);
 		}
 		internal SyntaxTreeNode GetIfFalseExpression(bool throwOnError)
 		{
-			return GetExpression(Constants.IFFALSE_ATTRIBUTE, throwOnError);
+			return this.GetExpression(Constants.IFFALSE_ATTRIBUTE, throwOnError);
 		}
 		internal ArgumentsTree GetArguments(bool throwOnError)
 		{

@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -84,7 +84,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <param name="parameters">List of parameter for bound expression. Maximum number of parameters is 4.</param>
 		/// <param name="resultType">Result type of bound expression.</param>
 		/// <param name="typeResolver">Type resolver used for type resolution during binding process.
-		/// When not specified then new instance of <see cref="KnownTypeResolver"/> is created using <paramref name="lambdaType"/> parameter types and result type.</param>
+		/// When not specified then new instance of <see cref="KnownTypeResolver"/> is created using <paramref name="parameters"/> parameter types and result type.</param>
 		public Binder(IList<ParameterExpression> parameters, Type resultType, ITypeResolver typeResolver = null)
 		{
 			if (parameters == null) throw new ArgumentNullException("parameters");
@@ -96,16 +96,25 @@ namespace GameDevWare.Dynamic.Expressions
 			if (parameters is ReadOnlyCollection<ParameterExpression> == false)
 				parameters = new ReadOnlyCollection<ParameterExpression>(parameters);
 
-			var funcParams = new Type[parameters.Count + 1];
-			for (var i = 0; i < parameters.Count; i++)
-				funcParams[i] = parameters[i].Type;
-			funcParams[funcParams.Length - 1] = resultType;
+			if (resultType == typeof(void))
+			{
+				var funcParams = new Type[parameters.Count];
+				for (var i = 0; i < parameters.Count; i++)
+					funcParams[i] = parameters[i].Type;
+				this.lambdaType = Expression.GetActionType(funcParams);
+			}
+			else
+			{
+				var funcParams = new Type[parameters.Count + 1];
+				for (var i = 0; i < parameters.Count; i++)
+					funcParams[i] = parameters[i].Type;
+				funcParams[funcParams.Length - 1] = resultType;
+				this.lambdaType = Expression.GetFuncType(funcParams);
+			}
 
-			this.lambdaType = Expression.GetFuncType(funcParams);
 			this.parameters = (ReadOnlyCollection<ParameterExpression>)parameters;
 			this.resultType = TypeDescription.GetTypeDescription(resultType);
 			this.typeResolver = typeResolver ?? new KnownTypeResolver(GetTypes(resultType, parameters), DefaultTypeResolver);
-
 		}
 
 		/// <summary>
@@ -145,10 +154,10 @@ namespace GameDevWare.Dynamic.Expressions
 
 			bindingContext.CompleteNullPropagation(ref body);
 
-			if (body.Type != this.resultType)
+			if (body.Type != this.resultType && this.resultType.IsVoid == false)
 				body = Expression.ConvertChecked(body, this.resultType);
 
-			return Expression.Lambda(lambdaType, body, bindingContext.Parameters);
+			return Expression.Lambda(this.lambdaType, body, bindingContext.Parameters);
 		}
 
 		private static Type[] GetTypes(Type resultType, IList<ParameterExpression> parameters)
@@ -166,7 +175,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			return string.Format("Binder: {0}, ({1}) -> {2}", this.lambdaType, string.Join(", ", parameters.Select(p => p.Name).ToArray()), this.resultType);
+			return string.Format("Binder: {0}, ({1}) -> {2}", this.lambdaType, string.Join(", ", this.parameters.Select(p => p.Name).ToArray()), this.resultType);
 		}
 	}
 }

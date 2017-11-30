@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -190,17 +190,17 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public BindingContext CreateNestedContext()
 		{
-			return new BindingContext(this.typeResolver, this.parameters, resultType, global);
+			return new BindingContext(this.typeResolver, this.parameters, this.resultType, this.global);
 		}
 		public BindingContext CreateNestedContext(ReadOnlyCollection<ParameterExpression> newParameters, Type resultType)
 		{
 			if (newParameters == null) throw new ArgumentNullException("newParameters");
 			if (resultType == null) throw new ArgumentNullException("resultType");
 
-			return new BindingContext(this.typeResolver, newParameters, resultType, global);
+			return new BindingContext(this.typeResolver, newParameters, resultType, this.global);
 		}
 
-		public void RegisterNullPropagationTarger(Expression target)
+		public void RegisterNullPropagationTarget(Expression target)
 		{
 			if (target == null) throw new ArgumentNullException("target");
 

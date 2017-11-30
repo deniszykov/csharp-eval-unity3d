@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
@@ -10,7 +10,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 	{
 		public static readonly MemberAssignmentsNode Empty = new MemberAssignmentsNode(new ReadOnlyCollection<MemberBinding>(new MemberBinding[0]), new ConstantExpression[0], new ParameterExpression[0]);
 
-		private struct PreparedMemberAssignment
+		internal struct PreparedMemberAssignment
 		{
 			public readonly MemberInfo Member;
 			public readonly ExecutionNode ValueNode;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -26,30 +26,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		static Intrinsic()
 		{
-			// AOT
-#pragma warning disable 1720
-			if (typeof(Intrinsic).Name == string.Empty)
-			{
-				op_Boolean.Not(default(Closure), default(object));
-				op_Byte.Negate(default(Closure), default(object));
-				op_SByte.Negate(default(Closure), default(object));
-				op_Int16.Negate(default(Closure), default(object));
-				op_UInt16.Negate(default(Closure), default(object));
-				op_Int32.Negate(default(Closure), default(object));
-				op_UInt32.Negate(default(Closure), default(object));
-				op_Int64.Negate(default(Closure), default(object));
-				op_UInt64.UnaryPlus(default(Closure), default(object));
-				op_Single.Negate(default(Closure), default(object));
-				op_Double.Negate(default(Closure), default(object));
-				op_Decimal.Negate(default(Closure), default(object));
-				op_Object.Equal(default(Closure), default(object), default(object));
-
-				InvokeBinaryOperation(default(Closure), default(object), default(object), default(ExpressionType), default(BinaryOperation));
-				InvokeUnaryOperation(default(Closure), default(object), default(ExpressionType), default(UnaryOperation));
-				InvokeConversion(default(Closure), default(object), default(Type), default(ExpressionType), default(UnaryOperation));
-			}
-#pragma warning restore 1720
-
 			var expressionTypeNames = Enum.GetNames(typeof(ExpressionType));
 			Array.Sort(expressionTypeNames, StringComparer.Ordinal);
 
@@ -262,32 +238,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			}
 		}
 
-		private static class op_Object
+		internal static class op_Object
 		{
-			static op_Object()
-			{
-				// AOT
-				if (typeof(op_Object).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Equal(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToBoolean(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(object));
@@ -354,27 +306,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				return closure.Box(closure.Unbox<decimal>(left));
 			}
 		}
-		private static class op_Boolean
+		internal static class op_Boolean
 		{
-			static op_Boolean()
-			{
-				// AOT
-				if (typeof(op_Boolean).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Not(default(Closure), default(object));
-					Equal(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Or(default(Closure), default(object), default(object));
-					And(default(Closure), default(object), default(object));
-					ExclusiveOr(default(Closure), default(object), default(object));
-					AndAlso(default(Closure), default(object), default(object));
-					OrElse(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToBoolean(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(bool));
@@ -421,53 +354,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				return closure.Box(closure.Unbox<bool>(left));
 			}
 		}
-		private static class op_Byte
+		internal static class op_Byte
 		{
-			static op_Byte()
-			{
-				// AOT
-				if (typeof(op_Byte).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Not(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					And(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					ExclusiveOr(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					LeftShift(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					RightShift(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Or(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(byte));
@@ -651,53 +539,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<byte>(left)));
 			}
 		}
-		private static class op_SByte
+		internal static class op_SByte
 		{
-			static op_SByte()
-			{
-				// AOT
-				if (typeof(op_SByte).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Not(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					And(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					ExclusiveOr(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					LeftShift(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					RightShift(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Or(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(sbyte));
@@ -883,53 +726,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<sbyte>(left)));
 			}
 		}
-		private static class op_Int16
+		internal static class op_Int16
 		{
-			static op_Int16()
-			{
-				// AOT
-				if (typeof(op_Int16).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Not(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					And(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					ExclusiveOr(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					LeftShift(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					RightShift(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Or(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(short));
@@ -1113,53 +911,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<short>(left)));
 			}
 		}
-		private static class op_UInt16
+		internal static class op_UInt16
 		{
-			static op_UInt16()
-			{
-				// AOT
-				if (typeof(op_UInt16).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Not(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					And(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					ExclusiveOr(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					LeftShift(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					RightShift(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Or(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(ushort));
@@ -1343,53 +1096,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<ushort>(left)));
 			}
 		}
-		private static class op_Int32
+		internal static class op_Int32
 		{
-			static op_Int32()
-			{
-				// AOT
-				if (typeof(op_Int32).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Not(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					And(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					ExclusiveOr(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					LeftShift(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					RightShift(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Or(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(int));
@@ -1573,53 +1281,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<int>(left)));
 			}
 		}
-		private static class op_UInt32
+		internal static class op_UInt32
 		{
-			static op_UInt32()
-			{
-				// AOT
-				if (typeof(op_UInt32).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Not(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					And(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					ExclusiveOr(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					LeftShift(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					RightShift(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Or(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(uint));
@@ -1803,53 +1466,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<uint>(left)));
 			}
 		}
-		private static class op_Int64
+		internal static class op_Int64
 		{
-			static op_Int64()
-			{
-				// AOT
-				if (typeof(op_Int64).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Not(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					And(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					ExclusiveOr(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					LeftShift(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					RightShift(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Or(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(long));
@@ -2033,51 +1651,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<long>(left)));
 			}
 		}
-		private static class op_UInt64
+		internal static class op_UInt64
 		{
-			static op_UInt64()
-			{
-				// AOT
-				if (typeof(op_UInt64).Name == string.Empty)
-				{
-					Default(default(Closure));
-					UnaryPlus(default(Closure), default(object));
-					Not(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					And(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					ExclusiveOr(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					LeftShift(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					RightShift(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Or(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(ulong));
@@ -2253,47 +1828,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<ulong>(left)));
 			}
 		}
-		private static class op_Single
+		internal static class op_Single
 		{
-			static op_Single()
-			{
-				// AOT
-				if (typeof(op_Single).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(float));
@@ -2453,47 +1989,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<float>(left)));
 			}
 		}
-		private static class op_Double
+		internal static class op_Double
 		{
-			static op_Double()
-			{
-				// AOT
-				if (typeof(op_Double).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(double));
@@ -2653,47 +2150,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return unchecked(closure.Box((decimal)closure.Unbox<double>(left)));
 			}
 		}
-		private static class op_Decimal
+		internal static class op_Decimal
 		{
-			static op_Decimal()
-			{
-				// AOT
-				if (typeof(op_Decimal).Name == string.Empty)
-				{
-					Default(default(Closure));
-					Negate(default(Closure), default(object));
-					NegateChecked(default(Closure), default(object));
-					UnaryPlus(default(Closure), default(object));
-					Add(default(Closure), default(object), default(object));
-					AddChecked(default(Closure), default(object), default(object));
-					Divide(default(Closure), default(object), default(object));
-					Equal(default(Closure), default(object), default(object));
-					GreaterThan(default(Closure), default(object), default(object));
-					GreaterThanOrEqual(default(Closure), default(object), default(object));
-					Power(default(Closure), default(object), default(object));
-					LessThan(default(Closure), default(object), default(object));
-					LessThanOrEqual(default(Closure), default(object), default(object));
-					Modulo(default(Closure), default(object), default(object));
-					Multiply(default(Closure), default(object), default(object));
-					MultiplyChecked(default(Closure), default(object), default(object));
-					NotEqual(default(Closure), default(object), default(object));
-					Subtract(default(Closure), default(object), default(object));
-					SubtractChecked(default(Closure), default(object), default(object));
-					ToObject(default(Closure), default(object), default(object));
-					ToSByte(default(Closure), default(object), default(object));
-					ToByte(default(Closure), default(object), default(object));
-					ToInt16(default(Closure), default(object), default(object));
-					ToUInt16(default(Closure), default(object), default(object));
-					ToInt32(default(Closure), default(object), default(object));
-					ToUInt32(default(Closure), default(object), default(object));
-					ToInt64(default(Closure), default(object), default(object));
-					ToUInt64(default(Closure), default(object), default(object));
-					ToSingle(default(Closure), default(object), default(object));
-					ToDouble(default(Closure), default(object), default(object));
-					ToDecimal(default(Closure), default(object), default(object));
-				}
-			}
-
 			public static object Default(Closure closure)
 			{
 				return closure.Box(default(decimal));

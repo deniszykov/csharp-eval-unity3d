@@ -112,7 +112,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						var implicitConversionMethod = conversionMethod.IsImplicitOperator ? conversionMethod : default(MemberDescription);
 						var conversion = default(TypeConversion);
 						var newConversion = default(TypeConversion);
-						var cost = conversionMethod.IsImplicitOperator ? TypeConversion.QUALITY_IMPLICIT_CONVERSION : TypeConversion.QUALITY_EXPLICIT_CONVERSION;
+						var cost = conversionMethod.IsImplicitOperator ? QUALITY_IMPLICIT_CONVERSION : QUALITY_EXPLICIT_CONVERSION;
 						if (Conversions.TryGetValue(key, out conversion) == false)
 							newConversion = new TypeConversion(cost, false, implicitConversionMethod, explicitConversionMethod);
 						else
@@ -125,7 +125,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					foreach (var baseType in typeDescription.BaseTypes)
 					{
 						var key = new TypeTuple2(typeDescription, baseType);
-						var cost = baseType == typeDescription ? TypeConversion.QUALITY_SAME_TYPE : TypeConversion.QUALITY_INHERITANCE_HIERARCHY;
+						var cost = baseType == typeDescription ? QUALITY_SAME_TYPE : QUALITY_INHERITANCE_HIERARCHY;
 						var conversion = default(TypeConversion);
 						if (Conversions.TryGetValue(key, out conversion))
 							conversion = new TypeConversion(cost, true, conversion.Implicit, conversion.Explicit);
@@ -137,7 +137,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					foreach (var baseType in typeDescription.Interfaces)
 					{
 						var key = new TypeTuple2(typeDescription, baseType);
-						var cost = baseType == typeDescription ? TypeConversion.QUALITY_SAME_TYPE : TypeConversion.QUALITY_INHERITANCE_HIERARCHY;
+						var cost = baseType == typeDescription ? QUALITY_SAME_TYPE : QUALITY_INHERITANCE_HIERARCHY;
 						var conversion = default(TypeConversion);
 						if (Conversions.TryGetValue(key, out conversion))
 							conversion = new TypeConversion(cost, true, conversion.Implicit, conversion.Explicit);
@@ -151,8 +151,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						var fromEnumKey = new TypeTuple2(typeDescription, typeDescription.UnderlyingType);
 						var toEnumKey = new TypeTuple2(typeDescription.UnderlyingType, typeDescription);
 
-						Conversions[fromEnumKey] = new TypeConversion(TypeConversion.QUALITY_IN_PLACE_CONVERSION, true);
-						Conversions[toEnumKey] = new TypeConversion(TypeConversion.QUALITY_IN_PLACE_CONVERSION, true);
+						Conversions[fromEnumKey] = new TypeConversion(QUALITY_IN_PLACE_CONVERSION, true);
+						Conversions[toEnumKey] = new TypeConversion(QUALITY_IN_PLACE_CONVERSION, true);
 					}
 				}
 			}

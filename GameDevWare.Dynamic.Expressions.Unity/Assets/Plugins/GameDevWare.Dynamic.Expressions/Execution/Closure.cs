@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace GameDevWare.Dynamic.Expressions.Execution
 {
@@ -27,7 +27,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			//else if (boxed is IStrongBox)
 			//	boxed = ((IStrongBox)boxed).Value;
 
-			if (boxed is T)
+			if (boxed is T || boxed == null)
 				return (T)boxed;
 			else
 				return (T)Convert.ChangeType(boxed, typeof(T));

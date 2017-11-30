@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -266,9 +266,9 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			public void Reset()
 			{
-				this.current = type;
+				this.current = this.type;
 				while (GetDeclaringType(this.current) != null)
-					current = GetDeclaringType(this.current);
+					this.current = GetDeclaringType(this.current);
 			}
 
 			public Type Current { get { return this.current; } }

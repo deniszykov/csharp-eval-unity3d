@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
@@ -10,7 +10,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 	{
 		public static readonly MemberListBindingsNode Empty = new MemberListBindingsNode(new ReadOnlyCollection<MemberBinding>(new MemberBinding[0]), new ConstantExpression[0], new ParameterExpression[0]);
 
-		private struct PreparedListBinding
+		internal struct PreparedListBinding
 		{
 			public readonly MemberInfo Member;
 			public readonly MethodInfo AddMethod;

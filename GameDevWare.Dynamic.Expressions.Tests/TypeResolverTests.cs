@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
@@ -82,8 +82,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var typeName = MakeTypeReference(expected, fullName: false);
 			var typeFullName = MakeTypeReference(expected, fullName: true);
-			output.WriteLine("Name: " + typeName);
-			output.WriteLine("Full Name: " + typeFullName);
+			this.output.WriteLine("Name: " + typeName);
+			this.output.WriteLine("Full Name: " + typeFullName);
 
 			var knownTypeResolver = new KnownTypeResolver(expected);
 
@@ -112,8 +112,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var typeName = MakeTypeReference(expected, fullName: false);
 			var typeFullName = MakeTypeReference(expected, fullName: true);
-			output.WriteLine("Name: " + typeName);
-			output.WriteLine("Full Name: " + typeFullName);
+			this.output.WriteLine("Name: " + typeName);
+			this.output.WriteLine("Full Name: " + typeFullName);
 
 			var knownTypeResolver = new KnownTypeResolver(expected);
 

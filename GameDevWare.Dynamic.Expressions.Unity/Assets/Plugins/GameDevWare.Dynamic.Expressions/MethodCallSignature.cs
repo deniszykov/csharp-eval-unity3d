@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -43,7 +43,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (returnType == null) throw new ArgumentNullException("returnType");
 
 			this.ReturnType = returnType;
-			this.hashCode = ComputeHashCode();
+			this.hashCode = this.ComputeHashCode();
 			this.Count = 0;
 		}
 		public MethodCallSignature(Type parameter1Type, string parameter1Name, Type returnType)
@@ -130,23 +130,23 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				case 4:
 
-					Parameter4Name = includeParameterNames ?  parameter[3].Name : "";
-					Parameter4Type = parameter[3].ParameterType;
+					this.Parameter4Name = includeParameterNames ?  parameter[3].Name : "";
+					this.Parameter4Type = parameter[3].ParameterType;
 					goto arg3;
 				case 3:
 					arg3:
-					Parameter3Name = includeParameterNames ? parameter[2].Name : "";
-					Parameter3Type = parameter[2].ParameterType;
+					this.Parameter3Name = includeParameterNames ? parameter[2].Name : "";
+					this.Parameter3Type = parameter[2].ParameterType;
 					goto arg2;
 				case 2:
 					arg2:
-					Parameter2Name = includeParameterNames ? parameter[1].Name : "";
-					Parameter2Type = parameter[1].ParameterType;
+					this.Parameter2Name = includeParameterNames ? parameter[1].Name : "";
+					this.Parameter2Type = parameter[1].ParameterType;
 					goto arg1;
 				case 1:
 					arg1:
-					Parameter1Name = includeParameterNames ? parameter[0].Name : "";
-					Parameter1Type = parameter[0].ParameterType;
+					this.Parameter1Name = includeParameterNames ? parameter[0].Name : "";
+					this.Parameter1Type = parameter[0].ParameterType;
 					goto arg0;
 				case 0:
 					arg0:
