@@ -71,15 +71,19 @@ namespace Assets
 					// build concrete tree
 					var expressionTree = Parser.Parse(tokens).ToSyntaxTree(false);
 					// build abstract tree
-					var body = ExpressionBinder.Bind(expressionTree, ExpressionBinder.Parameters[0]);
+					var lambdaExpression = ExpressionBinder.Bind(expressionTree, ExpressionBinder.Parameters[0]);
 					// add it as argument for concat
-					concatArguments.Add(body);
+					concatArguments.Add(lambdaExpression.Body);
 				}
 			}
 
 			var transformExpr = Expression.Lambda<Func<InstanceT, string>>
 			(
+#if NETSTANDARD
+				Expression.Call(ConcatFunc.GetMethodInfo(), Expression.NewArrayInit(typeof(object), concatArguments)),
+#else
 				Expression.Call(ConcatFunc.Method, Expression.NewArrayInit(typeof(object), concatArguments)),
+#endif
 				ExpressionBinder.Parameters
 			);
 

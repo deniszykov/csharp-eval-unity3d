@@ -66,7 +66,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		{
 			get
 			{
-				return new Dictionary<string, string>(60)
+				return new Dictionary<string, string>(61)
 				{
 					{ "EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE", EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE },
 					{ "EXCEPTION_BIND_UNABLETOINVOKENONDELEG", EXCEPTION_BIND_UNABLETOINVOKENONDELEG },
@@ -85,6 +85,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_PARSER_TERNARYOPREQOPERAND", EXCEPTION_PARSER_TERNARYOPREQOPERAND },
 					{ "EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS", EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS },
 					{ "EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED },
+					{ "EXCEPTION_BIND_MISSINGMETHOD", EXCEPTION_BIND_MISSINGMETHOD },
 					{ "EXCEPTION_BIND_UNABLETORESOLVENAME", EXCEPTION_BIND_UNABLETORESOLVENAME },
 					{ "EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED },
 					{ "EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS", EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS },
@@ -367,6 +368,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Invalid lambda type '{0}'. A closed delegate type is expected in lambda type declaration.";
 					default: return "EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_MISSINGMETHOD
+		/// </summary>
+		public static string EXCEPTION_BIND_MISSINGMETHOD
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Type '{0}' is missing '{1}' method.";
+					default: return "EXCEPTION_BIND_MISSINGMETHOD";
 				}
 			}
 		}

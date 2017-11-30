@@ -13,7 +13,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var expressionObj = ParseFunc(expression, types, typeResolver);
 
 			var compileMethod = typeof(ExpressionExtensions)
-				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.GetTypeInfo()
+				.GetDeclaredMethods()
+				.Where(m => m.IsPublic && m.IsStatic)
 				.Single(m => m.Name == "CompileAot" && m.ReturnType.Name.StartsWith("Func") && m.IsGenericMethod && m.GetGenericArguments().Length == types.Length)
 				.MakeGenericMethod(types);
 
@@ -26,7 +28,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var expressionObj = ParseAction(expression, types, typeResolver);
 
 			var compileMethod = typeof(ExpressionExtensions)
-				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.GetTypeInfo()
+				.GetDeclaredMethods()
+				.Where(m => m.IsPublic && m.IsStatic)
 				.Single(m => m.Name == "CompileAot" && m.ReturnType.Name.StartsWith("Action") && (types.Length > 0 ? (m.IsGenericMethod && m.GetGenericArguments().Length == types.Length) : m.IsGenericMethod == false));
 
 			if (compileMethod.IsGenericMethodDefinition)
@@ -39,7 +43,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public static LambdaExpression ParseFunc(string expression, Type[] types, ITypeResolver typeResolver = null)
 		{
 			var parseMethod = typeof(CSharpExpression)
-				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.GetTypeInfo()
+				.GetDeclaredMethods()
+				.Where(m => m.IsPublic && m.IsStatic)
 				.Single(m => m.Name == "ParseFunc" && m.IsGenericMethod && m.GetGenericArguments().Length == types.Length)
 				.MakeGenericMethod(types);
 
@@ -59,7 +65,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public static LambdaExpression ParseAction(string expression, Type[] types, ITypeResolver typeResolver = null)
 		{
 			var parseMethod = typeof(CSharpExpression)
-				.GetMethods(BindingFlags.Public | BindingFlags.Static)
+				.GetTypeInfo()
+				.GetDeclaredMethods()
+				.Where(m => m.IsPublic && m.IsStatic)
 				.Single(m => m.Name == "ParseAction" && (types.Length > 0 ? (m.IsGenericMethod && m.GetGenericArguments().Length == types.Length) : m.IsGenericMethod == false));
 
 			if(parseMethod.IsGenericMethodDefinition)

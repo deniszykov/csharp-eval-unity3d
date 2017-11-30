@@ -1010,6 +1010,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		// decimal
+		[Theory]
 		[InlineData("unchecked((Decimal)(Byte)-1000)", unchecked((double)(byte)-1000))]
 		[InlineData("unchecked((Decimal)(SByte)-1000)", unchecked((double)(sbyte)-1000))]
 		[InlineData("unchecked((Decimal)(Int16)-1000)", unchecked((double)-1000))]
@@ -1017,7 +1018,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Decimal)(Int32)-1000)", unchecked((double)-1000))]
 		[InlineData("unchecked((Decimal)(UInt32)-1000)", unchecked((double)(uint)-1000))]
 		[InlineData("unchecked((Decimal)(Int64)-1000)", unchecked((double)-1000))]
-		[InlineData("unchecked((Decimal)(UInt64)-1000)", unchecked((double)(ulong)-1000))]
+		[InlineData("unchecked((Decimal)(UInt64)10000000)", unchecked((double)(ulong)10000000))]
 		[InlineData("unchecked((Decimal)(Single)-1000)", unchecked((double)(float)-1000))]
 		[InlineData("unchecked((Decimal)(Double)-1000)", unchecked(((double)-1000)))]
 		public void DecimalConversion(string expression, double expectedDouble)

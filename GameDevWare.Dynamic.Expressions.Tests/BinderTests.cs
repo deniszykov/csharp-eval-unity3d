@@ -281,7 +281,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("+b", 1, null, null)]
 		[InlineData("-b", 1, null, null)]
 		[InlineData("~b", 1, null, null)]
-		[InlineData("~b", 1, null, null)]
 		public void LiftedNullableArithmeticTest(string expression, int? arg1, int? arg2, int? expected)
 		{
 			var actual = CSharpExpression.ParseFunc<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
@@ -329,7 +328,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a >> b", 1, null, null)]
 		[InlineData("+b", 1, null, null)]
 		[InlineData("-b", 1, null, null)]
-		[InlineData("~b", 1, null, null)]
 		[InlineData("~b", 1, null, null)]
 		public void LiftedNullablePromotedArithmeticTest(string expression, int? arg1, byte? arg2, int? expected)
 		{
@@ -408,9 +406,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaConstructorBindingTest()
 		{
 			var expected = true;
-			var typeResolutionService = new KnownTypeResolver(typeof(TypeFilter));
-			var lambda = CSharpExpression.ParseFunc<TypeFilter>("new TypeFilter((t, c) => t != null)", typeResolutionService).Compile().Invoke();
-			var actual = lambda.Invoke(typeof(bool), null);
+			var typeResolutionService = new KnownTypeResolver(typeof(Predicate<int>));
+			var lambda = CSharpExpression.ParseFunc<Predicate<int>>("new Predicate<int>(x => x > 0)", typeResolutionService).Compile().Invoke();
+			var actual = lambda.Invoke(1);
 
 			Assert.Equal(expected, actual);
 		}

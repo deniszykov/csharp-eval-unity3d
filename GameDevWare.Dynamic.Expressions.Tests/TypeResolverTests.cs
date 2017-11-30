@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -136,7 +137,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			NameUtils.RemoveGenericSuffix(typeNameBuilder, 0, typeNameBuilder.Length);
 
 			var genericArguments = new List<TypeReference>();
-			foreach (var genArgument in type.GetGenericArguments())
+			foreach (var genArgument in type.GetTypeInfo().GetGenericArguments())
 				genericArguments.Add(MakeTypeReference(genArgument, fullName));
 
 			return new TypeReference(typeNameBuilder.ToString().Split('.'), genericArguments);

@@ -1,0 +1,9 @@
+<linker>
+		<assembly fullname="GameDevWare.Dynamic.Expressions">
+				<namespace fullname="GameDevWare.Dynamic.Expressions.*" preserve="all"/>
+				<namespace fullname="GameDevWare.Dynamic.Expressions" preserve="all"/>			
+				<namespace fullname="GameDevWare.Dynamic.Expressions.Binding" preserve="all"/>			
+				<namespace fullname="GameDevWare.Dynamic.Expressions.CSharp" preserve="all"/>			
+				<namespace fullname="GameDevWare.Dynamic.Expressions.Execution" preserve="all"/>			
+		</assembly>	
+</linker>

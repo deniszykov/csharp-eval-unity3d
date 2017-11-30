@@ -55,8 +55,8 @@ namespace GameDevWare.Dynamic.Expressions
 				var property_385875973 = default(GameDevWare.Dynamic.Expressions.ArgumentsTree).Count;
 				var field_67108866 = GameDevWare.Dynamic.Expressions.ArgumentsTree.Empty;
 				default(System.Collections.IEnumerable).GetEnumerator();
-				var param_100663458_1 = default(System.Type);
-				default(GameDevWare.Dynamic.Expressions.ITypeResolver).TryGetType(default(GameDevWare.Dynamic.Expressions.TypeReference), out param_100663458_1);
+				var param_100663459_1 = default(System.Type);
+				default(GameDevWare.Dynamic.Expressions.ITypeResolver).TryGetType(default(GameDevWare.Dynamic.Expressions.TypeReference), out param_100663459_1);
 				default(GameDevWare.Dynamic.Expressions.ITypeResolver).IsKnownType(default(System.Type));
 				default(GameDevWare.Dynamic.Expressions.Binder).Bind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(System.Linq.Expressions.Expression));
 				default(GameDevWare.Dynamic.Expressions.Binder).ToString();
@@ -142,32 +142,68 @@ namespace GameDevWare.Dynamic.Expressions
 				var field_67108943 = GameDevWare.Dynamic.Expressions.Constants.VALUE_NULL_STRING;
 				var field_67108944 = GameDevWare.Dynamic.Expressions.Constants.MAX_ARGUMENTS_COUNT;
 				var property_385875977 = default(GameDevWare.Dynamic.Expressions.ExpressionKnownTypeAttribute).Type;
+#if !NETSTANDARD
 				var param_100687014_0 = default(System.UInt32);
 				default(System.Runtime.InteropServices._Attribute).GetTypeInfoCount(out param_100687014_0);
+#endif
+#if !NETSTANDARD
 				default(System.Runtime.InteropServices._Attribute).GetTypeInfo(default(System.UInt32), default(System.UInt32), default(System.IntPtr));
+#endif
+#if !NETSTANDARD
 				var param_100687016_0 = default(System.Guid);
 				default(System.Runtime.InteropServices._Attribute).GetIDsOfNames(ref param_100687016_0, default(System.IntPtr), default(System.UInt32), default(System.UInt32), default(System.IntPtr));
+#endif
+#if !NETSTANDARD
 				var param_100687017_1 = default(System.Guid);
 				default(System.Runtime.InteropServices._Attribute).Invoke(default(System.UInt32), ref param_100687017_1, default(System.UInt32), default(System.Int16), default(System.IntPtr), default(System.IntPtr), default(System.IntPtr), default(System.IntPtr));
+#endif
 				GameDevWare.Dynamic.Expressions.ExpressionLookupVisitor.Lookup(default(System.Linq.Expressions.Expression), default(System.Collections.Generic.List<System.Linq.Expressions.Expression>));
+#if !NETSTANDARD
 				default(GameDevWare.Dynamic.Expressions.ExpressionParserException).GetObjectData(default(System.Runtime.Serialization.SerializationInfo), default(System.Runtime.Serialization.StreamingContext));
+#endif
 				default(GameDevWare.Dynamic.Expressions.ExpressionParserException).ToString();
 				var property_385875978 = default(GameDevWare.Dynamic.Expressions.ExpressionParserException).LineNumber;
 				var property_385875979 = default(GameDevWare.Dynamic.Expressions.ExpressionParserException).ColumnNumber;
 				var property_385875980 = default(GameDevWare.Dynamic.Expressions.ExpressionParserException).TokenLength;
+#if !NETSTANDARD
 				default(System.Runtime.Serialization.ISerializable).GetObjectData(default(System.Runtime.Serialization.SerializationInfo), default(System.Runtime.Serialization.StreamingContext));
+#endif
+#if !NETSTANDARD
 				default(System.Runtime.InteropServices._Exception).ToString();
+#endif
+#if !NETSTANDARD
 				default(System.Runtime.InteropServices._Exception).Equals(default(System.Object));
+#endif
+#if !NETSTANDARD
 				default(System.Runtime.InteropServices._Exception).GetHashCode();
+#endif
+#if !NETSTANDARD
 				default(System.Runtime.InteropServices._Exception).GetType();
+#endif
+#if !NETSTANDARD
 				default(System.Runtime.InteropServices._Exception).GetBaseException();
+#endif
+#if !NETSTANDARD
 				default(System.Runtime.InteropServices._Exception).GetObjectData(default(System.Runtime.Serialization.SerializationInfo), default(System.Runtime.Serialization.StreamingContext));
+#endif
+#if !NETSTANDARD
 				var property_385880260 = default(System.Runtime.InteropServices._Exception).Message;
+#endif
+#if !NETSTANDARD
 				var property_385880261 = default(System.Runtime.InteropServices._Exception).StackTrace;
+#endif
+#if !NETSTANDARD
 				var property_385880262 = default(System.Runtime.InteropServices._Exception).HelpLink;
+#endif
+#if !NETSTANDARD
 				var property_385880263 = default(System.Runtime.InteropServices._Exception).Source;
+#endif
+#if !NETSTANDARD
 				var property_385880264 = default(System.Runtime.InteropServices._Exception).InnerException;
+#endif
+#if !NETSTANDARD
 				var property_385880265 = default(System.Runtime.InteropServices._Exception).TargetSite;
+#endif
 				default(GameDevWare.Dynamic.Expressions.ILineInfo).GetLineNumber();
 				default(GameDevWare.Dynamic.Expressions.ILineInfo).GetColumnNumber();
 				default(GameDevWare.Dynamic.Expressions.ILineInfo).GetTokenLength();
@@ -181,31 +217,31 @@ namespace GameDevWare.Dynamic.Expressions
 				var field_67108957 = default(GameDevWare.Dynamic.Expressions.ExpressionPosition).ColumnNumber;
 				var field_67108958 = default(GameDevWare.Dynamic.Expressions.ExpressionPosition).TokenLength;
 				GameDevWare.Dynamic.Expressions.ExpressionSubstitutor.Visit(default(System.Linq.Expressions.Expression), default(System.Collections.Generic.Dictionary<System.Linq.Expressions.Expression,System.Linq.Expressions.Expression>));
-				var param_100663413_0 = default(System.Linq.Expressions.Expression);
-				var param_100663413_1 = default(System.Linq.Expressions.Expression);
-				var param_100663413_3 = default(System.Linq.Expressions.Expression);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryPromoteBinaryOperation(ref param_100663413_0, ref param_100663413_1, default(System.Linq.Expressions.ExpressionType), out param_100663413_3);
-				var param_100663416_0 = default(System.Linq.Expressions.Expression);
-				var param_100663416_2 = default(System.Linq.Expressions.Expression);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryPromoteUnaryOperation(ref param_100663416_0, default(System.Linq.Expressions.ExpressionType), out param_100663416_2);
+				var param_100663414_0 = default(System.Linq.Expressions.Expression);
+				var param_100663414_1 = default(System.Linq.Expressions.Expression);
+				var param_100663414_3 = default(System.Linq.Expressions.Expression);
+				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryPromoteBinaryOperation(ref param_100663414_0, ref param_100663414_1, default(System.Linq.Expressions.ExpressionType), out param_100663414_3);
+				var param_100663417_0 = default(System.Linq.Expressions.Expression);
+				var param_100663417_2 = default(System.Linq.Expressions.Expression);
+				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryPromoteUnaryOperation(ref param_100663417_0, default(System.Linq.Expressions.ExpressionType), out param_100663417_2);
 				GameDevWare.Dynamic.Expressions.ExpressionUtils.IsNull(default(System.Linq.Expressions.Expression), default(System.Boolean));
-				var param_100663418_0 = default(System.Linq.Expressions.Expression);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.MorphType(ref param_100663418_0, default(System.Type));
 				var param_100663419_0 = default(System.Linq.Expressions.Expression);
-				var param_100663419_2 = default(System.Single);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryMorphType(ref param_100663419_0, default(System.Type), out param_100663419_2);
+				GameDevWare.Dynamic.Expressions.ExpressionUtils.MorphType(ref param_100663419_0, default(System.Type));
+				var param_100663420_0 = default(System.Linq.Expressions.Expression);
+				var param_100663420_2 = default(System.Single);
+				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryMorphType(ref param_100663420_0, default(System.Type), out param_100663420_2);
 				GameDevWare.Dynamic.Expressions.ExpressionUtils.MakeNullPropagationExpression(default(System.Collections.Generic.List<System.Linq.Expressions.Expression>), default(System.Linq.Expressions.Expression));
-				var param_100663424_1 = default(System.Collections.Generic.List<System.Linq.Expressions.Expression>);
-				var param_100663424_2 = default(System.Linq.Expressions.Expression);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.ExtractNullPropagationExpression(default(System.Linq.Expressions.ConditionalExpression), out param_100663424_1, out param_100663424_2);
+				var param_100663425_1 = default(System.Collections.Generic.List<System.Linq.Expressions.Expression>);
+				var param_100663425_2 = default(System.Linq.Expressions.Expression);
+				GameDevWare.Dynamic.Expressions.ExpressionUtils.ExtractNullPropagationExpression(default(System.Linq.Expressions.ConditionalExpression), out param_100663425_1, out param_100663425_2);
 				var field_67108960 = GameDevWare.Dynamic.Expressions.ExpressionUtils.NullConstant;
 				var field_67108961 = GameDevWare.Dynamic.Expressions.ExpressionUtils.TrueConstant;
 				var field_67108962 = GameDevWare.Dynamic.Expressions.ExpressionUtils.FalseConstant;
 				var field_67108963 = GameDevWare.Dynamic.Expressions.ExpressionUtils.NegativeSingle;
 				var field_67108964 = GameDevWare.Dynamic.Expressions.ExpressionUtils.NegativeDouble;
 				default(GameDevWare.Dynamic.Expressions.ExpressionVisitor).Visit(default(System.Linq.Expressions.Expression));
-				var param_100663465_1 = default(System.Type);
-				default(GameDevWare.Dynamic.Expressions.KnownTypeResolver).TryGetType(default(GameDevWare.Dynamic.Expressions.TypeReference), out param_100663465_1);
+				var param_100663466_1 = default(System.Type);
+				default(GameDevWare.Dynamic.Expressions.KnownTypeResolver).TryGetType(default(GameDevWare.Dynamic.Expressions.TypeReference), out param_100663466_1);
 				default(GameDevWare.Dynamic.Expressions.KnownTypeResolver).IsKnownType(default(System.Type));
 				default(GameDevWare.Dynamic.Expressions.KnownTypeResolver).ToString();
 				var field_67108965 = GameDevWare.Dynamic.Expressions.KnownTypeResolver.Default;
@@ -230,8 +266,8 @@ namespace GameDevWare.Dynamic.Expressions
 				GameDevWare.Dynamic.Expressions.NameUtils.RemoveGenericSuffix(default(System.Text.StringBuilder));
 				GameDevWare.Dynamic.Expressions.NameUtils.RemoveGenericSuffix(default(System.Text.StringBuilder), default(System.Int32), default(System.Int32));
 				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).ContainsKey(default(System.String));
-				var param_100663520_1 = default(System.Object);
-				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).TryGetValue(default(System.String), out param_100663520_1);
+				var param_100663521_1 = default(System.Object);
+				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).TryGetValue(default(System.String), out param_100663521_1);
 				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).Equals(default(System.Object));
 				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).GetHashCode();
 				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).ToString();
@@ -498,72 +534,72 @@ namespace GameDevWare.Dynamic.Expressions
 				var field_67109177 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Group;
 				var field_67109178 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.CheckedScope;
 				var field_67109179 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.UncheckedScope;
-				var param_100663886_3 = default(System.Linq.Expressions.Expression);
-				var param_100663886_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.AnyBinder.TryBindInNewScope(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663886_3, out param_100663886_4);
 				var param_100663887_3 = default(System.Linq.Expressions.Expression);
 				var param_100663887_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.AnyBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663887_3, out param_100663887_4);
+				GameDevWare.Dynamic.Expressions.Binding.AnyBinder.TryBindInNewScope(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663887_3, out param_100663887_4);
 				var param_100663888_3 = default(System.Linq.Expressions.Expression);
 				var param_100663888_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.BinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663888_3, out param_100663888_4);
-				var param_100663894_1 = default(System.Type);
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).TryResolveType(default(System.Object), out param_100663894_1);
-				var param_100663895_1 = default(System.Linq.Expressions.Expression);
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).TryGetParameter(default(System.String), out param_100663895_1);
-				var param_100663896_1 = default(GameDevWare.Dynamic.Expressions.TypeReference);
-				GameDevWare.Dynamic.Expressions.Binding.BindingContext.TryGetTypeReference(default(System.Object), out param_100663896_1);
+				GameDevWare.Dynamic.Expressions.Binding.AnyBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663888_3, out param_100663888_4);
+				var param_100663889_3 = default(System.Linq.Expressions.Expression);
+				var param_100663889_4 = default(System.Exception);
+				GameDevWare.Dynamic.Expressions.Binding.BinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663889_3, out param_100663889_4);
+				var param_100663895_1 = default(System.Type);
+				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).TryResolveType(default(System.Object), out param_100663895_1);
+				var param_100663896_1 = default(System.Linq.Expressions.Expression);
+				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).TryGetParameter(default(System.String), out param_100663896_1);
 				var param_100663897_1 = default(GameDevWare.Dynamic.Expressions.TypeReference);
-				GameDevWare.Dynamic.Expressions.Binding.BindingContext.TryGetMethodReference(default(System.Object), out param_100663897_1);
+				GameDevWare.Dynamic.Expressions.Binding.BindingContext.TryGetTypeReference(default(System.Object), out param_100663897_1);
+				var param_100663898_1 = default(GameDevWare.Dynamic.Expressions.TypeReference);
+				GameDevWare.Dynamic.Expressions.Binding.BindingContext.TryGetMethodReference(default(System.Object), out param_100663898_1);
 				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).CreateNestedContext();
 				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).CreateNestedContext(default(System.Collections.ObjectModel.ReadOnlyCollection<System.Linq.Expressions.ParameterExpression>), default(System.Type));
 				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).RegisterNullPropagationTarget(default(System.Linq.Expressions.Expression));
-				var param_100663901_0 = default(System.Linq.Expressions.Expression);
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).CompleteNullPropagation(ref param_100663901_0);
+				var param_100663902_0 = default(System.Linq.Expressions.Expression);
+				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).CompleteNullPropagation(ref param_100663902_0);
 				var property_385876059 = default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).Parameters;
 				var property_385876060 = default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).ResultType;
 				var property_385876061 = default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).Global;
-				var param_100663902_3 = default(System.Linq.Expressions.Expression);
-				var param_100663902_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.CallBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663902_3, out param_100663902_4);
-				var param_100663904_3 = default(System.Linq.Expressions.Expression);
-				var param_100663904_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.ConditionBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663904_3, out param_100663904_4);
+				var param_100663903_3 = default(System.Linq.Expressions.Expression);
+				var param_100663903_4 = default(System.Exception);
+				GameDevWare.Dynamic.Expressions.Binding.CallBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663903_3, out param_100663903_4);
 				var param_100663905_3 = default(System.Linq.Expressions.Expression);
 				var param_100663905_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.ConstantBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663905_3, out param_100663905_4);
+				GameDevWare.Dynamic.Expressions.Binding.ConditionBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663905_3, out param_100663905_4);
+				var param_100663906_3 = default(System.Linq.Expressions.Expression);
+				var param_100663906_4 = default(System.Exception);
+				GameDevWare.Dynamic.Expressions.Binding.ConstantBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663906_3, out param_100663906_4);
 				GameDevWare.Dynamic.Expressions.Binding.ConstantBinder.ChangeType(default(System.Object), default(System.Type));
-				var param_100663907_3 = default(System.Linq.Expressions.Expression);
-				var param_100663907_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.DefaultBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663907_3, out param_100663907_4);
 				var param_100663908_3 = default(System.Linq.Expressions.Expression);
 				var param_100663908_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.GroupBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663908_3, out param_100663908_4);
+				GameDevWare.Dynamic.Expressions.Binding.DefaultBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663908_3, out param_100663908_4);
 				var param_100663909_3 = default(System.Linq.Expressions.Expression);
 				var param_100663909_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.IndexBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663909_3, out param_100663909_4);
+				GameDevWare.Dynamic.Expressions.Binding.GroupBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663909_3, out param_100663909_4);
 				var param_100663910_3 = default(System.Linq.Expressions.Expression);
 				var param_100663910_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.InvokeBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663910_3, out param_100663910_4);
+				GameDevWare.Dynamic.Expressions.Binding.IndexBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663910_3, out param_100663910_4);
 				var param_100663911_3 = default(System.Linq.Expressions.Expression);
 				var param_100663911_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.InvokeBinder.TryBindMethodCall(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663911_3, out param_100663911_4);
+				GameDevWare.Dynamic.Expressions.Binding.InvokeBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663911_3, out param_100663911_4);
 				var param_100663912_3 = default(System.Linq.Expressions.Expression);
 				var param_100663912_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.LambdaBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663912_3, out param_100663912_4);
+				GameDevWare.Dynamic.Expressions.Binding.InvokeBinder.TryBindMethodCall(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663912_3, out param_100663912_4);
+				var param_100663913_3 = default(System.Linq.Expressions.Expression);
+				var param_100663913_4 = default(System.Exception);
+				GameDevWare.Dynamic.Expressions.Binding.LambdaBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663913_3, out param_100663913_4);
 				GameDevWare.Dynamic.Expressions.Binding.LambdaBinder.ExtractArgumentNames(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode));
 				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetParameter(default(System.Int32));
 				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetParameterType(default(System.Int32));
 				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetParameterName(default(System.Int32));
 				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetParametersCount();
 				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).MakeGenericMethod(default(System.Type[]));
-				var param_100663923_1 = default(System.Linq.Expressions.Expression);
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).TryMakeAccessor(default(System.Linq.Expressions.Expression), out param_100663923_1);
 				var param_100663924_1 = default(System.Linq.Expressions.Expression);
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).TryMakeConversion(default(System.Linq.Expressions.Expression), out param_100663924_1, default(System.Boolean));
-				var param_100663925_3 = default(System.Linq.Expressions.Expression);
-				var param_100663925_4 = default(System.Single);
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).TryMakeCall(default(System.Linq.Expressions.Expression), default(GameDevWare.Dynamic.Expressions.ArgumentsTree), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), out param_100663925_3, out param_100663925_4);
+				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).TryMakeAccessor(default(System.Linq.Expressions.Expression), out param_100663924_1);
+				var param_100663925_1 = default(System.Linq.Expressions.Expression);
+				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).TryMakeConversion(default(System.Linq.Expressions.Expression), out param_100663925_1, default(System.Boolean));
+				var param_100663926_3 = default(System.Linq.Expressions.Expression);
+				var param_100663926_4 = default(System.Single);
+				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).TryMakeCall(default(System.Linq.Expressions.Expression), default(GameDevWare.Dynamic.Expressions.ArgumentsTree), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), out param_100663926_3, out param_100663926_4);
 				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).Equals(default(System.Object));
 				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetHashCode();
 				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).Equals(default(System.Reflection.MemberInfo));
@@ -583,36 +619,36 @@ namespace GameDevWare.Dynamic.Expressions
 				var field_67109205 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).ConstantValueExpression;
 				var field_67109186 = GameDevWare.Dynamic.Expressions.Binding.MemberDescription.QUALITY_EXACT_MATCH;
 				var field_67109187 = GameDevWare.Dynamic.Expressions.Binding.MemberDescription.QUALITY_INCOMPATIBLE;
-				var param_100663938_3 = default(System.Linq.Expressions.Expression);
-				var param_100663938_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.NewArrayBoundsBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663938_3, out param_100663938_4);
 				var param_100663939_3 = default(System.Linq.Expressions.Expression);
 				var param_100663939_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.NewBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663939_3, out param_100663939_4);
+				GameDevWare.Dynamic.Expressions.Binding.NewArrayBoundsBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663939_3, out param_100663939_4);
+				var param_100663940_3 = default(System.Linq.Expressions.Expression);
+				var param_100663940_4 = default(System.Exception);
+				GameDevWare.Dynamic.Expressions.Binding.NewBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663940_3, out param_100663940_4);
 				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsNumber(default(System.Type));
 				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsNumber(default(System.TypeCode));
 				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsSignedInteger(default(System.Type));
 				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsSignedInteger(default(System.TypeCode));
 				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsUnsignedInteger(default(System.Type));
 				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsUnsignedInteger(default(System.TypeCode));
-				var param_100663947_3 = default(System.Linq.Expressions.Expression);
-				var param_100663947_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.PropertyOrFieldBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663947_3, out param_100663947_4);
 				var param_100663948_3 = default(System.Linq.Expressions.Expression);
 				var param_100663948_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.TypeBinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663948_3, out param_100663948_4);
-				var param_100663951_1 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription);
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).TryGetValue(default(System.Type), out param_100663951_1);
+				GameDevWare.Dynamic.Expressions.Binding.PropertyOrFieldBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663948_3, out param_100663948_4);
+				var param_100663949_3 = default(System.Linq.Expressions.Expression);
+				var param_100663949_4 = default(System.Exception);
+				GameDevWare.Dynamic.Expressions.Binding.TypeBinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663949_3, out param_100663949_4);
 				var param_100663952_1 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription);
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).TryAdd(default(System.Type), ref param_100663952_1);
+				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).TryGetValue(default(System.Type), out param_100663952_1);
+				var param_100663953_1 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription);
+				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).TryAdd(default(System.Type), ref param_100663953_1);
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).Add(default(System.Type), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).GetOrCreateTypeDescription(default(System.Type));
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).Merge(default(GameDevWare.Dynamic.Expressions.Binding.TypeCache));
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).ToString();
 				var property_385876062 = default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).Values;
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).Expand(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription), default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-				var param_100663960_2 = default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion);
-				GameDevWare.Dynamic.Expressions.Binding.TypeConversion.TryGetTypeConversion(default(System.Type), default(System.Type), out param_100663960_2);
+				var param_100663961_2 = default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion);
+				GameDevWare.Dynamic.Expressions.Binding.TypeConversion.TryGetTypeConversion(default(System.Type), default(System.Type), out param_100663961_2);
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).ToString();
 				var field_67109220 = default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).Quality;
 				var field_67109221 = default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).IsNatural;
@@ -665,35 +701,36 @@ namespace GameDevWare.Dynamic.Expressions
 				var field_67109258 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsNullable;
 				var field_67109259 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).CanBeNull;
 				var field_67109260 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsEnum;
-				var field_67109261 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsNumber;
-				var field_67109262 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsDelegate;
-				var field_67109263 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).HasGenericParameters;
-				var field_67109264 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).BaseType;
-				var field_67109265 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).UnderlyingType;
-				var field_67109266 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).BaseTypes;
-				var field_67109267 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Interfaces;
-				var field_67109268 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).GenericArguments;
+				var field_67109261 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsVoid;
+				var field_67109262 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsNumber;
+				var field_67109263 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsDelegate;
+				var field_67109264 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).HasGenericParameters;
+				var field_67109265 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).BaseType;
+				var field_67109266 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).UnderlyingType;
+				var field_67109267 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).BaseTypes;
+				var field_67109268 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Interfaces;
+				var field_67109269 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).GenericArguments;
 				var field_67109225 = GameDevWare.Dynamic.Expressions.Binding.TypeDescription.EmptyMembers;
 				var field_67109226 = GameDevWare.Dynamic.Expressions.Binding.TypeDescription.EmptyTypes;
 				var field_67109227 = GameDevWare.Dynamic.Expressions.Binding.TypeDescription.ObjectType;
 				var field_67109228 = GameDevWare.Dynamic.Expressions.Binding.TypeDescription.Int32Type;
-				var param_100663990_3 = default(System.Linq.Expressions.Expression);
-				var param_100663990_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.TypeOfBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663990_3, out param_100663990_4);
+				var param_100663991_3 = default(System.Linq.Expressions.Expression);
+				var param_100663991_4 = default(System.Exception);
+				GameDevWare.Dynamic.Expressions.Binding.TypeOfBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100663991_3, out param_100663991_4);
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple));
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).GetHashCode();
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).Equals(default(System.Object));
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).ToString();
-				var field_67109270 = default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).Types;
+				var field_67109271 = default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).Types;
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2));
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).GetHashCode();
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Equals(default(System.Object));
 				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).ToString();
-				var field_67109272 = default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Type1;
-				var field_67109273 = default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Type2;
-				var param_100664001_3 = default(System.Linq.Expressions.Expression);
-				var param_100664001_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.UnaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100664001_3, out param_100664001_4);
+				var field_67109273 = default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Type1;
+				var field_67109274 = default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Type2;
+				var param_100664002_3 = default(System.Linq.Expressions.Expression);
+				var param_100664002_4 = default(System.Exception);
+				GameDevWare.Dynamic.Expressions.Binding.UnaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_100664002_3, out param_100664002_4);
 				default(GameDevWare.Dynamic.Expressions.NameUtils.TypeNestingEnumerator).MoveNext();
 				default(GameDevWare.Dynamic.Expressions.NameUtils.TypeNestingEnumerator).Reset();
 				default(GameDevWare.Dynamic.Expressions.NameUtils.TypeNestingEnumerator).GetEnumerator();
@@ -706,7 +743,9 @@ namespace GameDevWare.Dynamic.Expressions
 				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.Invoker).Invoke(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(GameDevWare.Dynamic.Expressions.Execution.ExecutionNode[]));
 				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.Invoker).BeginInvoke(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(GameDevWare.Dynamic.Expressions.Execution.ExecutionNode[]), default(System.AsyncCallback), default(System.Object));
 				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.Invoker).EndInvoke(default(System.IAsyncResult));
+#if !NETSTANDARD
 				default(System.ICloneable).Clone();
+#endif
 				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.InvokeOperationCreator).Invoke(default(System.Reflection.MethodInfo), default(System.Reflection.ParameterInfo[]));
 				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.InvokeOperationCreator).BeginInvoke(default(System.Reflection.MethodInfo), default(System.Reflection.ParameterInfo[]), default(System.AsyncCallback), default(System.Object));
 				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.InvokeOperationCreator).EndInvoke(default(System.IAsyncResult));
@@ -1130,30 +1169,30 @@ namespace GameDevWare.Dynamic.Expressions
 				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
 				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
 				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				var field_67109336 = default(GameDevWare.Dynamic.Expressions.Execution.MemberAssignmentsNode.PreparedMemberAssignment).Member;
-				var field_67109337 = default(GameDevWare.Dynamic.Expressions.Execution.MemberAssignmentsNode.PreparedMemberAssignment).ValueNode;
-				var field_67109345 = default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.PreparedListBinding).Member;
-				var field_67109346 = default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.PreparedListBinding).AddMethod;
-				var field_67109347 = default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.PreparedListBinding).AddMethodArguments;
-				var field_67109352 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).Member;
-				var field_67109353 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).MemberAssignments;
-				var field_67109354 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).MemberListBindings;
-				var field_67109355 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).MemberMemberBindings;
-				var field_67109365 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.None;
-				var field_67109366 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.Aliases;
-				var field_67109367 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.ShortNames;
-				var field_67109368 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.Arrays;
-				var field_67109369 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.All;
-				var param_100664547_0 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes);
-				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Add(ref param_100664547_0, default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
+				var field_67109337 = default(GameDevWare.Dynamic.Expressions.Execution.MemberAssignmentsNode.PreparedMemberAssignment).Member;
+				var field_67109338 = default(GameDevWare.Dynamic.Expressions.Execution.MemberAssignmentsNode.PreparedMemberAssignment).ValueNode;
+				var field_67109346 = default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.PreparedListBinding).Member;
+				var field_67109347 = default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.PreparedListBinding).AddMethod;
+				var field_67109348 = default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.PreparedListBinding).AddMethodArguments;
+				var field_67109353 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).Member;
+				var field_67109354 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).MemberAssignments;
+				var field_67109355 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).MemberListBindings;
+				var field_67109356 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).MemberMemberBindings;
+				var field_67109366 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.None;
+				var field_67109367 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.Aliases;
+				var field_67109368 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.ShortNames;
+				var field_67109369 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.Arrays;
+				var field_67109370 = GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.TypeNameOptions.All;
 				var param_100664548_0 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes);
-				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Insert(ref param_100664548_0, default(System.Int32), default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
+				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Add(ref param_100664548_0, default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
 				var param_100664549_0 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes);
-				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.RemoveAt(ref param_100664549_0, default(System.Int32));
+				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Insert(ref param_100664549_0, default(System.Int32), default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
 				var param_100664550_0 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes);
-				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Remove(ref param_100664550_0, default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
+				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.RemoveAt(ref param_100664550_0, default(System.Int32));
+				var param_100664551_0 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes);
+				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Remove(ref param_100664551_0, default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
 				default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes).ToString();
-				var field_67109370 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes).Count;
+				var field_67109371 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes).Count;
 			}
 		}
 	}
