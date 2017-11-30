@@ -18,6 +18,7 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 		<AssemblyVersion>2.2.0</AssemblyVersion>
 		<FileVersion>2.2.0</FileVersion>
 		<SignAssembly>true</SignAssembly>
+		<PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
 		<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 		<PackageReleaseNotes># 2.2.0
