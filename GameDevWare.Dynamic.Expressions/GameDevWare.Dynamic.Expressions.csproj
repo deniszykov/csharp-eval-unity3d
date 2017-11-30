@@ -9,7 +9,8 @@
 		<Version>2.2.0</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions</PackageId>
 		<Product>GameDevWare.Dynamic.Expressions</Product>
-		<Description>C# expression parser and evaluator for Unity3D.</Description>
+		<Description>C# expression parsing and execution library. 
+Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 		<Company />
 		<ApplicationIcon />
 		<OutputTypeEx>library</OutputTypeEx>
@@ -19,6 +20,54 @@
 		<SignAssembly>true</SignAssembly>
 		<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
+		<PackageReleaseNotes># 2.2.0
+Features
+* added support for void expressions (Action&lt;&gt; delegates)
+* added support of '.NET Standart 1.3' and '.NET Core 2.0' platforms
+
+# 2.1.4
+Features
+* added more descriptive message to member binding error
+* added autodoc comments for public members
+* hidden ReadOnlyDictionary from public access
+* removed WEBGL check for later version of Unity, because unsigned types bug was fixed
+* added generic types and generic methods
+* added nullable types via '?' suffix
+* added lambda expression syntax '() =&gt; x' and 'new Func(a =&gt; x)'
+* added support for expression parameter re-mapping with lambda syntax at beggining of expression
+* added support for Func&lt;&gt; lambdas on AOT environments
+* added additional constructor to Binder class
+* added ArgumentsTree ToString method
+* added build-in types aliases support during static members binding
+
+Bug Fixes
+* fixed error with wrongly resolved types (only by name) in KnownTypeResolver
+* fixed bug with ACCESS_VIOLATION on iOS (Unity 5.x.x IL2CPP)
+* fixed few Unity 3.4 related errors in code
+* fixed 'new' expression parsed with error on chained calls new a().b().c()
+* fixed some cases of lifted binary/unary/conversion operations
+* fixed some AOT'ed operations on System.Boolean type
+* fixed null-propagation chains generate invalid code
+* fixed some edge cases of resolving nested generic types
+* fixed error with types without type.FullName value
+* fixed Condition operator types promotion
+* fixed Power operator types promotion and null-lifting
+* fixed enum constants threated as underlying types during binary/unary operations
+
+Breaking changes
+* ParserNode renamed to ParseTreeNode
+* ExpressionTree renamed to SyntaxTreeNode
+* ExpressionBuilder renamed to Binder
+* ITypeResolutionService renamed to ITypeResolver
+* ITypeResolver.GetType removed
+* ITypeResolver now could be configured with TypeDiscoveryOptions</PackageReleaseNotes>
+		<PackageProjectUrl>https://github.com/deniszykov/csharp-eval-unity3d</PackageProjectUrl>
+		<PackageLicenseUrl>https://raw.githubusercontent.com/deniszykov/csharp-eval-unity3d/master/License.md</PackageLicenseUrl>
+		<Copyright>(c) Denis Zykov, GameDevWare 2017</Copyright>
+		<RepositoryUrl>https://github.com/deniszykov/csharp-eval-unity3d</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>eval parser compiler expressions unity3d aot</PackageTags>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<Optimize>False</Optimize>
