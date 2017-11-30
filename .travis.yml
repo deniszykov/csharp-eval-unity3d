@@ -5,5 +5,5 @@ dist: trusty
 install:
 - dotnet restore
 script:
-- dotnet build -f netcoreapp2.0 --configuration Release
-- dotnet test ./GameDevWare.Dynamic.Expressions.Tests/GameDevWare.Dynamic.Expressions.Tests.csproj -f netcoreapp2.0 --configuration Release
+- dotnet build -f netcoreapp2.0 /publicsign
+- dotnet test ./GameDevWare.Dynamic.Expressions.Tests/GameDevWare.Dynamic.Expressions.Tests.csproj -f netcoreapp2.0 /publicsign
