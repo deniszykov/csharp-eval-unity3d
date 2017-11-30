@@ -5,7 +5,7 @@
     </PropertyGroup>
     <PropertyGroup>
         <TargetFrameworks>net45;netcoreapp2.0</TargetFrameworks>
-		<RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.3</RuntimeFrameworkVersion>
+        <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.3</RuntimeFrameworkVersion>
         <Authors>Denis Zykov</Authors>
         <Version>0.0.0</Version>
         <PackageId>GameDevWare.Dynamic.Expressions.Tests</PackageId>
@@ -29,7 +29,7 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DefineConstants>DEBUG;TRACE</DefineConstants>
     </PropertyGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
         <DefineConstants>$(DefineConstants);NETSTANDARD;</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
@@ -40,7 +40,7 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="xunit" Version="2.3.1" />
-		<DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+        <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\GameDevWare.Dynamic.Expressions\GameDevWare.Dynamic.Expressions.csproj" />
