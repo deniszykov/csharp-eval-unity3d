@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Globalization;
 using System.Linq;
@@ -141,7 +141,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
 
-			Assert.Equal(node.Type, TokenType.Cond);
+			Assert.Equal(TokenType.Cond, node.Type);
 			Assert.Equal(3, node.Count);
 			Assert.Equal(test, node[0].Type);
 			Assert.Equal(left, node[1].Type);
@@ -219,7 +219,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ParseLambda(string expression, Type lambdaType)
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
-			var lambdaSig = lambdaType.GetMethod("Invoke", BindingFlags.Public | BindingFlags.Instance);
+			var lambdaSig = lambdaType.GetTypeInfo().GetDeclaredMethod("Invoke");
 
 			Assert.Equal(TokenType.Lambda, node.Type);
 			Assert.Equal(2, node.Count);

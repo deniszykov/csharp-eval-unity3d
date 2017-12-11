@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
@@ -281,10 +281,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("+b", 1, null, null)]
 		[InlineData("-b", 1, null, null)]
 		[InlineData("~b", 1, null, null)]
-		[InlineData("~b", 1, null, null)]
 		public void LiftedNullableArithmeticTest(string expression, int? arg1, int? arg2, int? expected)
 		{
-			var actual = CSharpExpression.Parse<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
+			var actual = CSharpExpression.ParseFunc<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
 			Assert.Equal(expected, actual);
 		}
 
@@ -301,7 +300,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a != b", null, null, false)] // this is special case
 		public void LiftedNullableEquationTest(string expression, int? arg1, int? arg2, bool expected)
 		{
-			var actual = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
+			var actual = CSharpExpression.ParseFunc<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
 			Assert.Equal(expected, actual);
 		}
 
@@ -330,10 +329,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("+b", 1, null, null)]
 		[InlineData("-b", 1, null, null)]
 		[InlineData("~b", 1, null, null)]
-		[InlineData("~b", 1, null, null)]
 		public void LiftedNullablePromotedArithmeticTest(string expression, int? arg1, byte? arg2, int? expected)
 		{
-			var actual = CSharpExpression.Parse<int?, byte?, int?>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
+			var actual = CSharpExpression.ParseFunc<int?, byte?, int?>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
 			Assert.Equal(expected, actual);
 		}
 
@@ -350,7 +348,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a != b", null, null, false)] // this is special case
 		public void LiftedNullablePromotedEquationTest(string expression, int? arg1, byte? arg2, bool expected)
 		{
-			var actual = CSharpExpression.Parse<int?, byte?, bool>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
+			var actual = CSharpExpression.ParseFunc<int?, byte?, bool>(expression, arg1Name: "a", arg2Name: "b").Compile().Invoke(arg1, arg2);
 			Assert.Equal(expected, actual);
 		}
 
@@ -362,7 +360,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("(int)a", 1, typeof(int))]
 		public void LiftedNullableConversionTest(string expression, int? arg1, Type expectedType)
 		{
-			var actual = CSharpExpression.Parse<int?, object>(expression, arg1Name: "a").Compile().Invoke(arg1);
+			var actual = CSharpExpression.ParseFunc<int?, object>(expression, arg1Name: "a").Compile().Invoke(arg1);
 
 			if (expectedType != null)
 			{
@@ -379,7 +377,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaBindingTest()
 		{
 			var expected = 2;
-			var lambda = CSharpExpression.Parse<Func<int, int>>("a => a + 1").Compile().Invoke();
+			var lambda = CSharpExpression.ParseFunc<Func<int, int>>("a => a + 1").Compile().Invoke();
 			var actual = lambda.Invoke(1);
 
 			Assert.Equal(expected, actual);
@@ -389,7 +387,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaClosureBindingTest()
 		{
 			var expected = 3;
-			var lambda = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").Compile().Invoke(1);
+			var lambda = CSharpExpression.ParseFunc<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").Compile().Invoke(1);
 			var actual = lambda.Invoke(1);
 
 			Assert.Equal(expected, actual);
@@ -399,7 +397,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaBindingSubstitutionTest()
 		{
 			var expected = 2;
-			var actual = CSharpExpression.Parse<int, int>("a => a + 1", arg1Name: "arg1").Compile().Invoke(1);
+			var actual = CSharpExpression.ParseFunc<int, int>("a => a + 1", arg1Name: "arg1").Compile().Invoke(1);
 
 			Assert.Equal(expected, actual);
 		}
@@ -408,9 +406,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaConstructorBindingTest()
 		{
 			var expected = true;
-			var typeResolutionService = new KnownTypeResolver(typeof(TypeFilter));
-			var lambda = CSharpExpression.Parse<TypeFilter>("new TypeFilter((t, c) => t != null)", typeResolutionService).Compile().Invoke();
-			var actual = lambda.Invoke(typeof(bool), null);
+			var typeResolutionService = new KnownTypeResolver(typeof(Predicate<int>));
+			var lambda = CSharpExpression.ParseFunc<Predicate<int>>("new Predicate<int>(x => x > 0)", typeResolutionService).Compile().Invoke();
+			var actual = lambda.Invoke(1);
 
 			Assert.Equal(expected, actual);
 		}

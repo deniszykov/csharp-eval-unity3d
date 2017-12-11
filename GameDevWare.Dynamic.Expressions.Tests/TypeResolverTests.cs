@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -82,8 +83,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var typeName = MakeTypeReference(expected, fullName: false);
 			var typeFullName = MakeTypeReference(expected, fullName: true);
-			output.WriteLine("Name: " + typeName);
-			output.WriteLine("Full Name: " + typeFullName);
+			this.output.WriteLine("Name: " + typeName);
+			this.output.WriteLine("Full Name: " + typeFullName);
 
 			var knownTypeResolver = new KnownTypeResolver(expected);
 
@@ -112,8 +113,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var typeName = MakeTypeReference(expected, fullName: false);
 			var typeFullName = MakeTypeReference(expected, fullName: true);
-			output.WriteLine("Name: " + typeName);
-			output.WriteLine("Full Name: " + typeFullName);
+			this.output.WriteLine("Name: " + typeName);
+			this.output.WriteLine("Full Name: " + typeFullName);
 
 			var knownTypeResolver = new KnownTypeResolver(expected);
 
@@ -136,7 +137,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			NameUtils.RemoveGenericSuffix(typeNameBuilder, 0, typeNameBuilder.Length);
 
 			var genericArguments = new List<TypeReference>();
-			foreach (var genArgument in type.GetGenericArguments())
+			foreach (var genArgument in type.GetTypeInfo().GetGenericArguments())
 				genericArguments.Add(MakeTypeReference(genArgument, fullName));
 
 			return new TypeReference(typeNameBuilder.ToString().Split('.'), genericArguments);

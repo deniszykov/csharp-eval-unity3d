@@ -14,8 +14,6 @@
 *.user
 *.log
 _ReSharper*
-*.csproj
-*.sln
 *.userprefs
 *.exe
 *.dll

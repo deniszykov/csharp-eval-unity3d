@@ -1,6 +1,0 @@
-<linker>
-		<assembly fullname="Unity.Dynamic.Expressions">
-				<namespace fullname="Unity.Dynamic.Expressions.*" preserve="all"/>
-				<namespace fullname="Unity.Dynamic.Expressions" preserve="all"/>			
-		</assembly>		
-</linker>

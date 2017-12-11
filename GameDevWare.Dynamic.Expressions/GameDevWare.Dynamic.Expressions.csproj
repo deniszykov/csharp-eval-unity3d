@@ -1,440 +1,124 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <Import Project="..\packages\xunit.runner.visualstudio.2.1.0\build\net20\xunit.runner.visualstudio.props" Condition="Exists('..\packages\xunit.runner.visualstudio.2.1.0\build\net20\xunit.runner.visualstudio.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7F3A50D9-2B2D-49AF-8B53-84688AFB173B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GameDevWare.Dynamic.Expressions</RootNamespace>
-    <AssemblyName>GameDevWare.Dynamic.Expressions</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    <DocumentationFile>bin\Debug\GameDevWare.Dynamic.Expressions.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
-    <DocumentationFile>bin\Release\GameDevWare.Dynamic.Expressions.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\AotCompilation.cs">
-      <Link>AotCompilation.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ArgumentsTree.cs">
-      <Link>ArgumentsTree.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\AssemblyTypeResolver.cs">
-      <Link>AssemblyTypeResolver.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binder.cs">
-      <Link>Binder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\AnyBinder.cs">
-      <Link>Binding\AnyBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\BinaryBinder.cs">
-      <Link>Binding\BinaryBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\BindingContext.cs">
-      <Link>Binding\BindingContext.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\CallBinder.cs">
-      <Link>Binding\CallBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\ConditionBinder.cs">
-      <Link>Binding\ConditionBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\ConstantBinder.cs">
-      <Link>Binding\ConstantBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\DefaultBinder.cs">
-      <Link>Binding\DefaultBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\GroupBinder.cs">
-      <Link>Binding\GroupBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\IndexBinder.cs">
-      <Link>Binding\IndexBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\InvokeBinder.cs">
-      <Link>Binding\InvokeBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\LambdaBinder.cs">
-      <Link>Binding\LambdaBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\MemberDescription.cs">
-      <Link>Binding\MemberDescription.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\NewArrayBoundsBinder.cs">
-      <Link>Binding\NewArrayBoundsBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\NewBinder.cs">
-      <Link>Binding\NewBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\NumberUtils.cs">
-      <Link>Binding\NumberUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\PropertyOrFieldBinder.cs">
-      <Link>Binding\PropertyOrFieldBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeBinaryBinder.cs">
-      <Link>Binding\TypeBinaryBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeCache.cs">
-      <Link>Binding\TypeCache.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeConversion.cs">
-      <Link>Binding\TypeConversion.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeDescription.cs">
-      <Link>Binding\TypeDescription.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeOfBinder.cs">
-      <Link>Binding\TypeOfBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeTuple.cs">
-      <Link>Binding\TypeTuple.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\TypeTuple2.cs">
-      <Link>Binding\TypeTuple2.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Binding\UnaryBinder.cs">
-      <Link>Binding\UnaryBinder.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Constants.cs">
-      <Link>Constants.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\CSharpExpression.cs">
-      <Link>CSharp\CSharpExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\CSharpExpressionRenderer.cs">
-      <Link>CSharp\CSharpExpressionRenderer.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\ListExtentions.cs">
-      <Link>CSharp\ListExtentions.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\Parser.cs">
-      <Link>CSharp\Parser.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\ParseTreeNode.cs">
-      <Link>CSharp\ParseTreeNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\StringUtils.cs">
-      <Link>CSharp\StringUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\Token.cs">
-      <Link>CSharp\Token.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\TokenAttribute.cs">
-      <Link>CSharp\TokenAttribute.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\Tokenizer.cs">
-      <Link>CSharp\Tokenizer.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\CSharp\TokenType.cs">
-      <Link>CSharp\TokenType.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\AotCompiler.cs">
-      <Link>Execution\AotCompiler.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ArrayIndexNode.cs">
-      <Link>Execution\ArrayIndexNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ArrayLengthNode.cs">
-      <Link>Execution\ArrayLengthNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\BinaryNode.cs">
-      <Link>Execution\BinaryNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\CallNode.cs">
-      <Link>Execution\CallNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\Closure.cs">
-      <Link>Execution\Closure.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\CoalesceNode.cs">
-      <Link>Execution\CoalesceNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ConditionalNode.cs">
-      <Link>Execution\ConditionalNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ConstantNode.cs">
-      <Link>Execution\ConstantNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ConstantsCollector.cs">
-      <Link>Execution\ConstantsCollector.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ConvertNode.cs">
-      <Link>Execution\ConvertNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ExecutionNode.cs">
-      <Link>Execution\ExecutionNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\FastCall.cs">
-      <Link>Execution\FastCall.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\Intrinsic.cs">
-      <Link>Execution\Intrinsic.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\InvocationNode.cs">
-      <Link>Execution\InvocationNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\LambdaNode.cs">
-      <Link>Execution\LambdaNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ListInitNode.cs">
-      <Link>Execution\ListInitNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\LocalNode.cs">
-      <Link>Execution\LocalNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberAccessNode.cs">
-      <Link>Execution\MemberAccessNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberAssignmentsNode.cs">
-      <Link>Execution\MemberAssignmentsNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberInitNode.cs">
-      <Link>Execution\MemberInitNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberListBindingsNode.cs">
-      <Link>Execution\MemberListBindingsNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\MemberMemberBindingsNode.cs">
-      <Link>Execution\MemberMemberBindingsNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\NewArrayBoundsNode.cs">
-      <Link>Execution\NewArrayBoundsNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\NewArrayInitNode.cs">
-      <Link>Execution\NewArrayInitNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\NewNode.cs">
-      <Link>Execution\NewNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\NullNode.cs">
-      <Link>Execution\NullNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\ParameterNode.cs">
-      <Link>Execution\ParameterNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\QuoteNode.cs">
-      <Link>Execution\QuoteNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\TypeAsNode.cs">
-      <Link>Execution\TypeAsNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\TypeIsNode.cs">
-      <Link>Execution\TypeIsNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\Execution\UnaryNode.cs">
-      <Link>Execution\UnaryNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionExtentions.cs">
-      <Link>ExpressionExtentions.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionKnownTypeAttribute.cs">
-      <Link>ExpressionKnownTypeAttribute.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionLookupVisitor.cs">
-      <Link>ExpressionLookupVisitor.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionParserException.cs">
-      <Link>ExpressionParserException.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionPosition.cs">
-      <Link>ExpressionPosition.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionSubstitutor.cs">
-      <Link>ExpressionSubstitutor.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionUtils.cs">
-      <Link>ExpressionUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ExpressionVisitor.cs">
-      <Link>ExpressionVisitor.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ILineInfo.cs">
-      <Link>ILineInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\ITypeResolver.cs">
-      <Link>ITypeResolver.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\KnownTypeResolver.cs">
-      <Link>KnownTypeResolver.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\MethodCallSignature.cs">
-      <Link>MethodCallSignature.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\NameUtils.cs">
-      <Link>NameUtils.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\SyntaxTreeNode.cs">
-      <Link>SyntaxTreeNode.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\TypeDiscoveryOptions.cs">
-      <Link>TypeDiscoveryOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\TypeReference.cs">
-      <Link>TypeReference.cs</Link>
-    </Compile>
-    <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Plugins\GameDevWare.Dynamic.Expressions\UnboundExpression.cs">
-      <Link>UnboundExpression.cs</Link>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnityResources.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UnityResources.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Aot.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Aot.txt</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="sn.snk" />
-    <None Include="UnityResources.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>UnityResources.cs</LastGenOutput>
-      <TransformOnBuild>True</TransformOnBuild>
-    </None>
-    <None Include="Aot.txt">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Aot.tt</DependentUpon>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterBuild">
-    <Copy SourceFiles="$(ProjectDir)UnityResources.cs" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-  </Target>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net35;net45;netstandard1.3;netcoreapp2.0</TargetFrameworks>
+		<Authors>Denis Zykov</Authors>
+		<Version>2.2.0</Version>
+		<PackageId>GameDevWare.Dynamic.Expressions</PackageId>
+		<Product>GameDevWare.Dynamic.Expressions</Product>
+		<Description>C# expression parsing and execution library. 
+Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
+		<Company />
+		<ApplicationIcon />
+		<OutputTypeEx>library</OutputTypeEx>
+		<StartupObject />
+		<AssemblyVersion>2.2.0</AssemblyVersion>
+		<FileVersion>2.2.0</FileVersion>
+		<SignAssembly>true</SignAssembly>
+		<PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+		<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
+		<DelaySign>false</DelaySign>
+		<PackageReleaseNotes># 2.2.0
+Features
+* added support for void expressions (Action&lt;&gt; delegates)
+* added support of '.NET Standart 1.3' and '.NET Core 2.0' platforms
+
+# 2.1.4
+Features
+* added more descriptive message to member binding error
+* added autodoc comments for public members
+* hidden ReadOnlyDictionary from public access
+* removed WEBGL check for later version of Unity, because unsigned types bug was fixed
+* added generic types and generic methods
+* added nullable types via '?' suffix
+* added lambda expression syntax '() =&gt; x' and 'new Func(a =&gt; x)'
+* added support for expression parameter re-mapping with lambda syntax at beggining of expression
+* added support for Func&lt;&gt; lambdas on AOT environments
+* added additional constructor to Binder class
+* added ArgumentsTree ToString method
+* added build-in types aliases support during static members binding
+
+Bug Fixes
+* fixed error with wrongly resolved types (only by name) in KnownTypeResolver
+* fixed bug with ACCESS_VIOLATION on iOS (Unity 5.x.x IL2CPP)
+* fixed few Unity 3.4 related errors in code
+* fixed 'new' expression parsed with error on chained calls new a().b().c()
+* fixed some cases of lifted binary/unary/conversion operations
+* fixed some AOT'ed operations on System.Boolean type
+* fixed null-propagation chains generate invalid code
+* fixed some edge cases of resolving nested generic types
+* fixed error with types without type.FullName value
+* fixed Condition operator types promotion
+* fixed Power operator types promotion and null-lifting
+* fixed enum constants threated as underlying types during binary/unary operations
+
+Breaking changes
+* ParserNode renamed to ParseTreeNode
+* ExpressionTree renamed to SyntaxTreeNode
+* ExpressionBuilder renamed to Binder
+* ITypeResolutionService renamed to ITypeResolver
+* ITypeResolver.GetType removed
+* ITypeResolver now could be configured with TypeDiscoveryOptions</PackageReleaseNotes>
+		<PackageProjectUrl>https://github.com/deniszykov/csharp-eval-unity3d</PackageProjectUrl>
+		<PackageLicenseUrl>https://raw.githubusercontent.com/deniszykov/csharp-eval-unity3d/master/License.md</PackageLicenseUrl>
+		<Copyright>(c) Denis Zykov, GameDevWare 2017</Copyright>
+		<RepositoryUrl>https://github.com/deniszykov/csharp-eval-unity3d</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>eval parser compiler expressions unity3d aot</PackageTags>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<Optimize>False</Optimize>
+		<DefineConstants>RELEASE</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+		<DefineConstants>$(DefineConstants);NETSTANDARD;</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+		<DefineConstants>$(DefineConstants);NETSTANDARD;</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net35' ">
+		<DefineConstants>$(DefineConstants);NET35</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+		<DefineConstants>$(DefineConstants);NET45</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Include="Properties\Resources.resx" />
+	</ItemGroup>
+	<ItemGroup>
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Aot.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Aot.tt</DependentUpon>
+		</Compile>
+		<Compile Update="UnityResources.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>UnityResources.tt</DependentUpon>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Aot.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>Aot.cs</LastGenOutput>
+		</None>
+		<None Update="UnityResources.tt">
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>UnityResources.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+
+	<Target Name="CopyDll" AfterTargets="PostBuildEvent" Condition=" '$(TargetFramework)' == 'net35' ">
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+	</Target>
 </Project>

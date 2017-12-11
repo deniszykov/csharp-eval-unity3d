@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -16,9 +16,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			public static int StaticIntProperty { get { return StaticIntField; } set { StaticIntField = value; } }
 
 			public int IntField = 100500 * 2;
-			public int IntProperty { get { return IntField; } set { IntField = value; } }
+			public int IntProperty { get { return this.IntField; } set { this.IntField = value; } }
 			public ExecutorTests.TestClass TestClassField;
-			public ExecutorTests.TestClass TestClassProperty { get { return this.TestClassField; } set { TestClassField = value; } }
+			public ExecutorTests.TestClass TestClassProperty { get { return this.TestClassField; } set { this.TestClassField = value; } }
 			public List<int> ListField = new List<int>();
 			public List<int> ListProperty { get { return this.ListField; } set { this.ListField = value; } }
 
@@ -64,8 +64,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("null", null)]
 		public void ConstantsTest(string expression, object expected)
 		{
-			expression = CSharpExpression.Parse<object>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<object>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<object>(expression);
 
 
@@ -89,8 +89,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10", 2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10)]
 		public void IntArithmeticTests(string expression, int expected)
 		{
-			expression = CSharpExpression.Parse<int>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<int>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<int>(expression);
 
 			Assert.Equal(expected, actual);
@@ -103,8 +103,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("10 *  (1 / (double)(1 * 1)) / 1", 10.0)]
 		public void ComplexExpressionTests(string expression, double expected)
 		{
-			expression = CSharpExpression.Parse<double>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<double>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<double>(expression);
 
 			Assert.Equal(expected, actual);
@@ -128,8 +128,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("\"1\" + '\t'", "1\t")]
 		public void StringConcatenationTest(string expression, string expected)
 		{
-			expression = CSharpExpression.Parse<string>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<string>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<string>(expression);
 
 			Assert.Equal(expected, actual);
@@ -142,8 +142,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("Math.E", Math.E)]
 		public void MathTest(string expression, double expected)
 		{
-			expression = CSharpExpression.Parse<double>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<double>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<double>(expression);
 
 			Assert.Equal(expected, actual);
@@ -155,8 +155,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("default(Math[])?[0]?.ToString()", null)]
 		public void NullResolveTest(string expression, object expected)
 		{
-			expression = CSharpExpression.Parse<object>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<object>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<object>(expression);
 
 			if (expected == null)
@@ -172,8 +172,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("typeof(Math)", typeof(Math))]
 		public void TypeOfTest(string expression, Type expected)
 		{
-			expression = CSharpExpression.Parse<Type>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<Type>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<Type>(expression);
 
 			Assert.Equal(expected, actual);
@@ -185,8 +185,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("default(String)", default(string))]
 		public void DefaultTest(string expression, object expected)
 		{
-			expression = CSharpExpression.Parse<object>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<object>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<object>(expression);
 
 			Assert.Equal(expected, actual);
@@ -199,8 +199,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("1 is short", false)]
 		public void IsTest(string expression, bool expected)
 		{
-			expression = CSharpExpression.Parse<bool>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<bool>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<bool>(expression);
 
 			Assert.Equal(expected, actual);
@@ -214,8 +214,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("arg1 as string", 1, null)]
 		public void AsTest(string expression, object arg1, object expected)
 		{
-			expression = CSharpExpression.Parse<object, string>(expression, arg1Name: "arg1").Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<object, string>(expression, arg1Name: "arg1").Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<object, string>(expression, arg1, arg1Name: "arg1");
 			Assert.Equal(expected, actual);
 		}
@@ -227,8 +227,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("\"a\" + new string('b', 1) + \"c\" + (\"d\" + 'e')", "abcde")]
 		public void NewTest(string expression, string expected)
 		{
-			expression = CSharpExpression.Parse<string>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = CSharpExpression.ParseFunc<string>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = CSharpExpression.Evaluate<string>(expression);
 
 			Assert.NotNull(actual);
@@ -243,8 +243,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Expression<Func<int[], int>> firstElementExpr = a => a[0];
 			Expression<Func<int[], int>> tenthExpr = a => a[9];
 
-			output.WriteLine("Rendered: " + firstElementExpr.Body.Render());
-			output.WriteLine("Rendered: " + tenthExpr.Body.Render());
+			this.output.WriteLine("Rendered: " + firstElementExpr.Body.Render());
+			this.output.WriteLine("Rendered: " + tenthExpr.Body.Render());
 
 			Assert.NotNull(firstElementExpr.Body.Render());
 			Assert.NotNull(tenthExpr.Body.Render());
@@ -255,7 +255,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<int[], int>> expression = a => a.Length;
 
-			output.WriteLine("Rendered: " + expression.Body.Render());
+			this.output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -264,7 +264,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<Expression<Func<int>>>> expression = () => (() => 1);
 
-			output.WriteLine("Rendered: " + expression.Body.Render());
+			this.output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -273,7 +273,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<Func<int>, int>> expression = a => a();
 
-			output.WriteLine("Rendered: " + expression.Body.Render());
+			this.output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -290,7 +290,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<int[]>> expression = () => new int[10];
 
-			output.WriteLine("Rendered: " + expression.Body.Render());
+			this.output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -299,7 +299,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<List<int>>> expression = () => new List<int> { 1, 2, 3, 4 };
 
-			output.WriteLine("Rendered: " + expression.Body.Render());
+			this.output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -311,11 +311,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Expression<Func<ExecutorTests.TestClass, int>> instanceFieldAccess = t => t.IntField;
 			Expression<Func<ExecutorTests.TestClass, int>> instancePropertyAccess = t => t.IntProperty;
 
-
-			output.WriteLine("Rendered: " + staticFieldAccess.Body.Render());
-			output.WriteLine("Rendered: " + staticPropertyAccess.Body.Render());
-			output.WriteLine("Rendered: " + instanceFieldAccess.Body.Render());
-			output.WriteLine("Rendered: " + instancePropertyAccess.Body.Render());
+			this.output.WriteLine("Rendered: " + staticFieldAccess.Body.Render());
+			this.output.WriteLine("Rendered: " + staticPropertyAccess.Body.Render());
+			this.output.WriteLine("Rendered: " + instanceFieldAccess.Body.Render());
+			this.output.WriteLine("Rendered: " + instancePropertyAccess.Body.Render());
 
 			Assert.NotNull(staticFieldAccess.Body.Render());
 			Assert.NotNull(staticPropertyAccess.Body.Render());
@@ -335,7 +334,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 				ListProperty = { 4, 5 }
 			};
 
-			output.WriteLine("Rendered: " + expression.Body.Render());
+			this.output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -344,7 +343,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<object, Delegate>> expression = a => a as Delegate;
 
-			output.WriteLine("Rendered: " + expression.Body.Render());
+			this.output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -353,7 +352,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			Expression<Func<object, bool>> expression = a => a is Delegate;
 
-			output.WriteLine("Rendered: " + expression.Body.Render());
+			this.output.WriteLine("Rendered: " + expression.Body.Render());
 			Assert.NotNull(expression.Body.Render());
 		}
 
@@ -364,8 +363,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void CallTest(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
@@ -381,8 +380,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ConditionalTest(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
@@ -397,8 +396,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void UnaryTest(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
@@ -601,8 +600,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void BinaryTest(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
@@ -619,9 +618,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("2m * 2m", (2L * 2L))]
 		public void DecimalTest(string expression, object expectedInt64)
 		{
-			expression = CSharpExpression.Parse<decimal>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
-			var expressionFn = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: true);
+			expression = CSharpExpression.ParseFunc<decimal>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
+			var expressionFn = CSharpExpression.ParseFunc<decimal>(expression).CompileAot(forceAot: true);
 			var actual = expressionFn();
 			var expected = Convert.ToDecimal(expectedInt64);
 			Assert.Equal(expected, actual);
@@ -636,9 +635,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("2m <= 2m", 2 <= 2)]
 		public void DecimalComparisonTest(string expression, bool expected)
 		{
-			expression = CSharpExpression.Parse<bool>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
-			var expressionFn = CSharpExpression.Parse<bool>(expression).CompileAot(forceAot: true);
+			expression = CSharpExpression.ParseFunc<bool>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
+			var expressionFn = CSharpExpression.ParseFunc<bool>(expression).CompileAot(forceAot: true);
 			var actual = expressionFn();
 			Assert.Equal(expected, actual);
 		}
@@ -773,14 +772,15 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void ConvertNumbers(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			Assert.Equal(expected, actual);
 		}
 
 		// decimal
+		[Theory]
 		[InlineData("unchecked((Decimal)(Byte)-1000)", unchecked((double)(byte)-1000))]
 		[InlineData("unchecked((Decimal)(SByte)-1000)", unchecked((double)(sbyte)-1000))]
 		[InlineData("unchecked((Decimal)(Int16)-1000)", unchecked((double)-1000))]
@@ -788,14 +788,14 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Decimal)(Int32)-1000)", unchecked((double)-1000))]
 		[InlineData("unchecked((Decimal)(UInt32)-1000)", unchecked((double)(uint)-1000))]
 		[InlineData("unchecked((Decimal)(Int64)-1000)", unchecked((double)-1000))]
-		[InlineData("unchecked((Decimal)(UInt64)-1000)", unchecked((double)(ulong)-1000))]
+		[InlineData("unchecked((Decimal)(UInt64)1000)", unchecked((double)(ulong)1000))]
 		[InlineData("unchecked((Decimal)(Single)-1000)", unchecked((double)(float)-1000))]
 		[InlineData("unchecked((Decimal)(Double)-1000)", unchecked(((double)-1000)))]
 		public void ConvertDecimal(string expression, double expectedDouble)
 		{
-			expression = CSharpExpression.Parse<decimal>(expression).Body.Render();
-			output.WriteLine("Rendered: " + expression);
-			var expressionFn = CSharpExpression.Parse<decimal>(expression).CompileAot(forceAot: true);
+			expression = CSharpExpression.ParseFunc<decimal>(expression).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
+			var expressionFn = CSharpExpression.ParseFunc<decimal>(expression).CompileAot(forceAot: true);
 			var expected = (decimal)expectedDouble;
 			var actual = expressionFn.DynamicInvoke();
 
@@ -829,9 +829,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("~b", 1, null, null)]
 		public void NullableBinaryTest(string expression, int? arg1, int? arg2, int? expected)
 		{
-			expression = CSharpExpression.Parse<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").Body.Render();
-			output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Parse<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			expression = CSharpExpression.ParseFunc<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
+			var actual = CSharpExpression.ParseFunc<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
 			Assert.Equal(expected, actual);
 		}
 
@@ -848,19 +848,19 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a != b", null, null, false)] // this is special case
 		public void NullableEquationTest(string expression, int? arg1, int? arg2, bool expected)
 		{
-			expression = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").Body.Render();
-			output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Parse<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
+			expression = CSharpExpression.ParseFunc<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
+			var actual = CSharpExpression.ParseFunc<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
 			Assert.Equal(expected, actual);
 		}
 
 		[Fact]
 		public void LambdaTest()
 		{
-			var expression = CSharpExpression.Parse<Func<int, int>>("a => a + 1").Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			var expression = CSharpExpression.ParseFunc<Func<int, int>>("a => a + 1").Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var expected = 2;
-			var lambda = CSharpExpression.Parse<Func<int, int>>(expression).CompileAot(forceAot: true).Invoke();
+			var lambda = CSharpExpression.ParseFunc<Func<int, int>>(expression).CompileAot(forceAot: true).Invoke();
 			var actual = lambda.Invoke(1);
 
 			Assert.Equal(expected, actual);
@@ -869,10 +869,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void LambdaClosureTest()
 		{
-			var expression = CSharpExpression.Parse<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			var expression = CSharpExpression.ParseFunc<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var expected = 3;
-			var lambda = CSharpExpression.Parse<int, Func<int, int>>(expression, arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
+			var lambda = CSharpExpression.ParseFunc<int, Func<int, int>>(expression, arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
 			var actual = lambda.Invoke(1);
 
 			Assert.Equal(expected, actual);
@@ -882,10 +882,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LambdaConstructorTest()
 		{
 			var typeResolutionService = new KnownTypeResolver(typeof(Func<Type, object, bool>));
-			var expression = CSharpExpression.Parse<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			var expression = CSharpExpression.ParseFunc<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var expected = true;
-			var lambda = CSharpExpression.Parse<Func<Type, object, bool>>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
+			var lambda = CSharpExpression.ParseFunc<Func<Type, object, bool>>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
 			var actual = lambda.Invoke(typeof(bool), null);
 
 			Assert.Equal(expected, actual);
@@ -898,8 +898,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("default(int?)", null, typeof(object))]
 		public void GenericTypesInExpressionsTest(string expression, object expected, Type expectedType)
 		{
-			expression = ExpressionUtils.Parse(expression, new[] { expectedType }).Body.Render();
-			output.WriteLine("Rendered: " + expression);
+			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
 
 			if (expected != null)
@@ -930,9 +930,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void GenericInvocationTest(string expression, int expected)
 		{
 			var typeResolutionService = new KnownTypeResolver(typeof(ExecutorTests.TestGenericClass<>), typeof(ExecutorTests.TestGenericClass<>.TestSubClass<,>));
-			expression = CSharpExpression.Parse<int>(expression, typeResolutionService).Body.Render();
-			output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Parse<int>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
+			expression = CSharpExpression.ParseFunc<int>(expression, typeResolutionService).Body.Render();
+			this.output.WriteLine("Rendered: " + expression);
+			var actual = CSharpExpression.ParseFunc<int>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
 			Assert.Equal(expected, actual);
 		}
 	}

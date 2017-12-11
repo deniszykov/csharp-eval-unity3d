@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -42,7 +42,7 @@ namespace Assets
 			if (pattern == null) throw new ArgumentNullException("pattern");
 
 			this.pattern = pattern;
-			this.transform = CreateTransformFn(pattern);
+			this.transform = this.CreateTransformFn(pattern);
 		}
 
 		public string Tranform(InstanceT instance)
@@ -57,7 +57,7 @@ namespace Assets
 			if (pattern == null) throw new ArgumentNullException("pattern");
 
 			var concatArguments = new List<Expression>();
-			foreach (var part in Split(pattern))
+			foreach (var part in this.Split(pattern))
 			{
 				if (part.Key == PART_TEXT)
 				{
@@ -71,15 +71,19 @@ namespace Assets
 					// build concrete tree
 					var expressionTree = Parser.Parse(tokens).ToSyntaxTree(false);
 					// build abstract tree
-					var body = ExpressionBinder.Bind(expressionTree, ExpressionBinder.Parameters[0]);
+					var lambdaExpression = ExpressionBinder.Bind(expressionTree, ExpressionBinder.Parameters[0]);
 					// add it as argument for concat
-					concatArguments.Add(body);
+					concatArguments.Add(lambdaExpression.Body);
 				}
 			}
 
 			var transformExpr = Expression.Lambda<Func<InstanceT, string>>
 			(
+#if NETSTANDARD
+				Expression.Call(ConcatFunc.GetMethodInfo(), Expression.NewArrayInit(typeof(object), concatArguments)),
+#else
 				Expression.Call(ConcatFunc.Method, Expression.NewArrayInit(typeof(object), concatArguments)),
+#endif
 				ExpressionBinder.Parameters
 			);
 
