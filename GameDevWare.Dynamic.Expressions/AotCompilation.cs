@@ -36,7 +36,7 @@ namespace GameDevWare.Dynamic.Expressions
 			StaticConstructor();
 
 #if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR)
-			IsAotCompiled = true;
+			IsAotRuntime = true;
 #else
 			try { Expression.Lambda<Func<bool>>(Expression.Constant(true)).Compile(); }
 			catch (Exception) { IsAotRuntime = true; }
