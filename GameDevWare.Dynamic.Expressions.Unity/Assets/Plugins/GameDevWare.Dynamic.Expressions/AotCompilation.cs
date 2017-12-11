@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -34,7 +34,7 @@ namespace GameDevWare.Dynamic.Expressions
 		static AotCompilation()
 		{
 #if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR)
-			IsAotCompiled = true;
+			IsAotRuntime = true;
 #else
 			try { Expression.Lambda<Func<bool>>(Expression.Constant(true)).Compile(); }
 			catch (Exception) { IsAotRuntime = true; }
