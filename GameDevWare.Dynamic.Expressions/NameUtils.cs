@@ -96,6 +96,14 @@ namespace GameDevWare.Dynamic.Expressions
 			if (builder == null) builder = new StringBuilder();
 
 			var typeInfo = type.GetTypeInfo();
+			var arrayDepth = 0;
+			while (typeInfo.IsArray)
+			{
+				type = typeInfo.GetElementType();
+				typeInfo = type.GetTypeInfo();
+				arrayDepth++;
+			}
+
 			var genericArguments = typeInfo.IsGenericType && writeGenericArguments ? typeInfo.GetGenericArguments() : Type.EmptyTypes;
 			var genericArgumentOffset = 0;
 			foreach (var declaringType in new TypeNestingEnumerator(type))
@@ -117,6 +125,11 @@ namespace GameDevWare.Dynamic.Expressions
 				genericArgumentOffset += genericArgumentsCount;
 			}
 
+			for (var d = 0; d < arrayDepth; d++)
+			{
+				builder.Append("[]");
+			}
+
 			return builder;
 		}
 		public static StringBuilder WriteName(Type type, StringBuilder builder = null, bool writeGenericArguments = false)
@@ -126,6 +139,14 @@ namespace GameDevWare.Dynamic.Expressions
 			if (builder == null) builder = new StringBuilder();
 
 			var typeInfo = type.GetTypeInfo();
+			var arrayDepth = 0;
+			while (typeInfo.IsArray)
+			{
+				type = typeInfo.GetElementType();
+				typeInfo = type.GetTypeInfo();
+				arrayDepth++;
+			}
+
 			var genericArguments = typeInfo.IsGenericType && writeGenericArguments ? typeInfo.GetGenericArguments() : Type.EmptyTypes;
 			var genericArgumentOffset = 0;
 			foreach (var declaringType in new TypeNestingEnumerator(type))
@@ -139,6 +160,11 @@ namespace GameDevWare.Dynamic.Expressions
 					builder.Append('.');
 
 				genericArgumentOffset += genericArgumentsCount;
+			}
+
+			for (var d = 0; d < arrayDepth; d++)
+			{
+				builder.Append("[]");
 			}
 
 			return builder;
