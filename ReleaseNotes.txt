@@ -13,6 +13,7 @@ Features
 * added build-in types aliases support during static members binding
 
 Bug Fixes
+* fixed IL2CPP compilation error due _Attribute interface complilation failure
 * fixed error with wrongly resolved types (only by name) in KnownTypeResolver
 * fixed bug with ACCESS_VIOLATION on iOS (Unity 5.x.x IL2CPP)
 * fixed few Unity 3.4 related errors in code
