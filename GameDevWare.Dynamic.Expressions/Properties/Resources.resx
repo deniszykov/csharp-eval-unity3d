@@ -303,4 +303,7 @@
   <data name="EXCEPTION_BIND_INVALIDLAMBDABODYTYPE" xml:space="preserve">
     <value>Failed to build lambda expression because body has type '{1}' which is not convertible to result type '{1}.'</value>
   </data>
+  <data name="EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION" xml:space="preserve">
+    <value>Method '{0}' is not available because type '{1}' is not added as known type in '{2}'.</value>
+  </data>
 </root>

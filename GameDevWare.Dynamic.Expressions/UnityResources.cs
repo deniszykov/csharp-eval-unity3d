@@ -66,7 +66,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		{
 			get
 			{
-				return new Dictionary<string, string>(62)
+				return new Dictionary<string, string>(63)
 				{
 					{ "EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE", EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE },
 					{ "EXCEPTION_BIND_UNABLETOINVOKENONDELEG", EXCEPTION_BIND_UNABLETOINVOKENONDELEG },
@@ -87,6 +87,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED },
 					{ "EXCEPTION_BIND_MISSINGMETHOD", EXCEPTION_BIND_MISSINGMETHOD },
 					{ "EXCEPTION_BIND_UNABLETORESOLVENAME", EXCEPTION_BIND_UNABLETORESOLVENAME },
+					{ "EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION", EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION },
 					{ "EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED },
 					{ "EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS", EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS },
 					{ "EXCEPTION_PARSER_OPREQUIRESOPERAND", EXCEPTION_PARSER_OPREQUIRESOPERAND },
@@ -397,6 +398,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Unable to resolve '{0}'. There is no formal parameter with this name.";
 					default: return "EXCEPTION_BIND_UNABLETORESOLVENAME";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION
+		/// </summary>
+		public static string EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Method '{0}' is not available because type '{1}' is not added as known type in '{2}'.";
+					default: return "EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION";
 				}
 			}
 		}

@@ -71,6 +71,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			parameter = null;
 			return false;
 		}
+		public bool IsKnownType(Type type)
+		{
+			if (type == null) throw new ArgumentNullException("type");
+
+			return this.typeResolver.IsKnownType(type);
+		}
 
 		public static bool TryGetTypeReference(object value, out TypeReference typeReference)
 		{

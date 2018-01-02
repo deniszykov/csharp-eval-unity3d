@@ -18,6 +18,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions
 {
@@ -104,6 +105,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 		public static readonly CultureInfo DefaultFormatProvider = CultureInfo.InvariantCulture;
 		public static readonly ParameterExpression[] EmptyParameters = new ParameterExpression[0];
+		public static readonly MethodInfo GetTypeMethod = new Func<Type>(DefaultFormatProvider.GetType).GetMethodInfo();
 
 		private static readonly string[] IntToString = ArrayUtils.ConvertAll(Enumerable.Range(0, MAX_ARGUMENTS_COUNT).ToArray(), i => i.ToString());
 

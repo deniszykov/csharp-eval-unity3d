@@ -108,6 +108,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 				if (Math.Abs(methodQuality - MemberDescription.QUALITY_EXACT_MATCH) < float.Epsilon)
 					break; // best match
+
+				if (method == Constants.GetTypeMethod && bindingContext.IsKnownType(typeof(Type)) == false)
+				{
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION, method.Name, typeof(Type), typeof(ITypeResolver)), node);
+					return false;
+				}
 			}
 
 			if (bindingError != null)
