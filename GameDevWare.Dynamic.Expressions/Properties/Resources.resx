@@ -300,4 +300,7 @@
   <data name="EXCEPTION_BIND_MISSINGMETHOD" xml:space="preserve">
     <value>Type '{0}' is missing '{1}' method.</value>
   </data>
+  <data name="EXCEPTION_BIND_INVALIDLAMBDABODYTYPE" xml:space="preserve">
+    <value>Failed to build lambda expression because body has type '{1}' which is not convertible to result type '{1}.'</value>
+  </data>
 </root>

@@ -155,7 +155,16 @@ namespace GameDevWare.Dynamic.Expressions
 			bindingContext.CompleteNullPropagation(ref body);
 
 			if (body.Type != this.resultType && this.resultType.IsVoid == false)
-				body = Expression.ConvertChecked(body, this.resultType);
+			{
+				try
+				{
+					body = Expression.ConvertChecked(body, this.resultType);
+				}
+				catch (InvalidOperationException)
+				{
+					throw new InvalidOperationException(string.Format(Resources.EXCEPTION_BIND_INVALIDLAMBDABODYTYPE, body.Type, this.resultType));
+				}
+			}
 
 			return Expression.Lambda(this.lambdaType, body, bindingContext.Parameters);
 		}

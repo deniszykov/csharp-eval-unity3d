@@ -66,7 +66,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		{
 			get
 			{
-				return new Dictionary<string, string>(61)
+				return new Dictionary<string, string>(62)
 				{
 					{ "EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE", EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE },
 					{ "EXCEPTION_BIND_UNABLETOINVOKENONDELEG", EXCEPTION_BIND_UNABLETOINVOKENONDELEG },
@@ -103,6 +103,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES", EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES },
 					{ "EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE", EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE },
 					{ "EXCEPTION_BIND_FAILEDTOBIND", EXCEPTION_BIND_FAILEDTOBIND },
+					{ "EXCEPTION_BIND_INVALIDLAMBDABODYTYPE", EXCEPTION_BIND_INVALIDLAMBDABODYTYPE },
 					{ "EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED", EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED },
 					{ "EXCEPTION_BIND_UNABLETORESOLVETYPEMULTIPLE", EXCEPTION_BIND_UNABLETORESOLVETYPEMULTIPLE },
 					{ "EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE", EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE },
@@ -620,6 +621,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "An error occured while trying to build '{0}' expression: {1}";
 					default: return "EXCEPTION_BIND_FAILEDTOBIND";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_INVALIDLAMBDABODYTYPE
+		/// </summary>
+		public static string EXCEPTION_BIND_INVALIDLAMBDABODYTYPE
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Failed to build lambda expression because body has type '{1}' which is not convertible to result type '{1}.'";
+					default: return "EXCEPTION_BIND_INVALIDLAMBDABODYTYPE";
 				}
 			}
 		}
