@@ -27,7 +27,8 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_COLUMN_NUMBER_OLD = "$columnNum";
 		public const string EXPRESSION_TOKEN_LENGTH_OLD = "$tokenLength";
 		public const string EXPRESSION_ORIGINAL_OLD = "$originalExpression";
-		public const string EXPRESSION_ORIGINAL = "_src";
+		public const string EXPRESSION_ORIGINAL_ALT = "_src";
+		public const string EXPRESSION_ORIGINAL_C_SHARP = "_cs";
 		public const string EXPRESSION_POSITION = "_pos";
 		public const string EXPRESSION_TYPE_ATTRIBUTE = "expressionType";
 		public const string EXPRESSION_ATTRIBUTE = "expression";

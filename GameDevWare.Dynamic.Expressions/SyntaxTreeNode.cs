@@ -271,14 +271,16 @@ namespace GameDevWare.Dynamic.Expressions
 			else
 				return ExpressionPosition.Parse(positionString);
 		}
-		internal string GetOriginalExpression(bool throwOnError)
+		internal string GetCSharpExpression(bool throwOnError)
 		{
 			var valueObj = default(object);
 			var value = default(string);
-			if (this.TryGetValue(Constants.EXPRESSION_ORIGINAL, out valueObj) == false && this.TryGetValue(Constants.EXPRESSION_ORIGINAL_OLD, out valueObj) == false)
+			if (this.TryGetValue(Constants.EXPRESSION_ORIGINAL_C_SHARP, out valueObj) == false &&
+				this.TryGetValue(Constants.EXPRESSION_ORIGINAL_ALT, out valueObj) == false &&
+				this.TryGetValue(Constants.EXPRESSION_ORIGINAL_OLD, out valueObj) == false)
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ORIGINAL, this.GetExpressionType(throwOnError: true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ORIGINAL_C_SHARP, this.GetExpressionType(throwOnError: true)), this);
 				else
 					// ReSharper disable once ExpressionIsAlwaysNull
 					return value;
@@ -439,7 +441,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// </summary>
 		public override string ToString()
 		{
-			var expression = this.GetOriginalExpression(throwOnError: false);
+			var expression = this.GetCSharpExpression(throwOnError: false);
 			try
 			{
 				if (string.IsNullOrEmpty(expression))
@@ -447,7 +449,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			catch (Exception error)
 			{
-				expression = "/failed to render expression '" + error.Message + "'/";
+				expression = "/* failed to render expression '" + error.Message + "' */";
 			}
 			return expression;
 		}
