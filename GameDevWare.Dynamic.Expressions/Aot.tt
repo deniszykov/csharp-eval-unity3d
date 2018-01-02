@@ -60,20 +60,16 @@ namespace GameDevWare.Dynamic.Expressions
 		//types.Add(typeof(System.Linq.Expressions.Expression));
 		foreach (var type in types)
 		{
-			if (type.Name.StartsWith("<") || type.IsGenericType)
+			if (IsNotSupportedType(type))
 				continue;
 
 			var typeName = NameUtils.WriteFullName(type, writeGenericArguments: true).ToString();
 			foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Instance))
 			{
-				if (method.Name.StartsWith("<") ||
-					method.IsGenericMethod ||
-					method.IsSpecialName ||
-					method.Name.IndexOf(".") != -1 ||
-					method.IsPublic == false)
+				if (IsNotSupportedMethod(method))
 					continue;
 
-				var IsNetStandardNotSupported = IsNet35Type(type) ||  IsNet35Type(method.ReturnType) || method.GetParameters().Select(p => p.ParameterType).Any(IsNet35Type);
+				var IsNetStandardNotSupported = IsNet35Type(type) ||  IsNet35Type(method.ReturnType) || method.GetParameters().Select(p => p.ParameterType).Any(IsNet35Type) || IsNet35Method(method);
 				if (IsNetStandardNotSupported)
 				{
 					Write("#if !NETSTANDARD\r\n");
@@ -86,7 +82,7 @@ namespace GameDevWare.Dynamic.Expressions
 					{
 						parameterType = parameterType.GetElementType();
 						Write("				");
-						Write("var param_" + method.MetadataToken + "_" + parameter.Position + " = ");
+						Write("var param_" + GetTypeHash(method.DeclaringType) + "_" + method.MetadataToken + "_" + parameter.Position + " = ");
 
 						var parameterTypeName = NameUtils.WriteFullName(parameterType, writeGenericArguments: true).ToString();
 						Write("default(" + parameterTypeName + ");");
@@ -112,7 +108,7 @@ namespace GameDevWare.Dynamic.Expressions
 							Write("out ");
 						else
 							Write("ref ");
-						Write("param_" + method.MetadataToken + "_" + parameter.Position);
+						Write("param_" + GetTypeHash(method.DeclaringType) + "_" + method.MetadataToken + "_" + parameter.Position);
 					}
 					else
 					{
@@ -132,11 +128,12 @@ namespace GameDevWare.Dynamic.Expressions
 
 			foreach (var propertyInfo in type.GetProperties(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Instance))
 			{
-				var getMethod = propertyInfo.GetGetMethod(nonPublic: false);
-				var setMethod = propertyInfo.GetSetMethod(nonPublic: false);
-				if (propertyInfo.IsSpecialName || propertyInfo.GetIndexParameters().Length != 0)
+				if (IsNotSupportedProperty(propertyInfo))
 					continue;
 
+				var getMethod = propertyInfo.GetGetMethod(nonPublic: false);
+				var setMethod = propertyInfo.GetSetMethod(nonPublic: false);
+				
 			    var IsNetStandardNotSupported = IsNet35Type(type) ||  IsNet35Type(propertyInfo.PropertyType);
 			    if (IsNetStandardNotSupported)
 			    {
@@ -146,7 +143,7 @@ namespace GameDevWare.Dynamic.Expressions
 				if (getMethod != null)
 				{
 					Write("				");
-					Write("var property_" + propertyInfo.MetadataToken + " = ");
+					Write("var property_" + GetTypeHash(propertyInfo.DeclaringType) + "_" + propertyInfo.MetadataToken + " = ");
 					Write(getMethod.IsStatic ? typeName + "." : "default(" + typeName + ").");
 					Write(propertyInfo.Name);
 					Write(";");
@@ -172,9 +169,9 @@ namespace GameDevWare.Dynamic.Expressions
 
 			foreach (var fieldInfo in type.GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Static | BindingFlags.Instance))
 			{
-				if (fieldInfo.IsSpecialName || fieldInfo.Name.StartsWith("<"))
+				if (IsNotSupportedField(fieldInfo))
 					continue;
-
+				
 				var IsNetStandardNotSupported = IsNet35Type(type) ||  IsNet35Type(fieldInfo.FieldType);
 				if (IsNetStandardNotSupported)
 				{
@@ -182,7 +179,7 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 
 				Write("				");
-				Write("var field_" + fieldInfo.MetadataToken + " = ");
+				Write("var field_" + GetTypeHash(fieldInfo.DeclaringType) + "_" + fieldInfo.MetadataToken + " = ");
 				Write(fieldInfo.IsStatic ? typeName + "." : "default(" + typeName + ").");
 				Write(fieldInfo.Name);
 				Write(";");
@@ -217,6 +214,63 @@ namespace GameDevWare.Dynamic.Expressions
     {
         return type.Namespace == "System.Runtime.InteropServices" || type.Namespace == "System.Runtime.Serialization" || type.FullName == "System.ICloneable";
     }
+	private static bool IsNet35Method(MethodInfo method)
+	{
+		return method != null && method.DeclaringType != null && false;
+	}
+	private static bool IsNotSupportedMethod(MethodInfo method)
+	{
+		return method.Name.StartsWith("<", StringComparison.Ordinal) ||
+			method.IsGenericMethod ||
+			method.IsSpecialName ||
+			method.Name.IndexOf(".", StringComparison.Ordinal) != -1 ||
+			method.IsPublic == false ||			
+			method.GetParameters().Any(p => IsNotSupportedType(p.ParameterType));
+	}
+	private static bool IsNotSupportedType(Type type)
+	{
+		return type == null ||
+			type.Name.StartsWith("<") ||
+			(type.IsGenericType && type.GetGenericArguments().Any(t => t.IsGenericParameter)) ||
+			type == typeof(IntPtr) ||
+			type.IsPointer ||
+			type == typeof(TypedReference) ||
+			(type.Namespace == "System.Runtime.InteropServices" && type.Name.StartsWith("_", StringComparison.Ordinal)) ||
+			type.Name == "ReflectionUtils";
+	}
+	private static bool IsNotSupportedProperty(PropertyInfo propertyInfo)
+	{
+		return propertyInfo == null ||
+			propertyInfo.IsSpecialName ||
+			propertyInfo.GetIndexParameters().Length != 0 ||
+			IsNotSupportedType(propertyInfo.PropertyType);
+	}
+	private static bool IsNotSupportedField(FieldInfo fieldInfo)
+	{
+		return fieldInfo == null ||
+			fieldInfo.IsSpecialName ||
+			fieldInfo.Name.StartsWith("<") ||
+			IsNotSupportedType(fieldInfo.FieldType);
+	}
+
+	private static int GetTypeHash(Type type)
+	{
+		var hashCode = 0;
+		if (type == null)
+			return hashCode;
+		else
+			hashCode = type.MetadataToken;
+
+		if (type.IsGenericType)
+		{
+			foreach (var parameter in type.GetGenericArguments())
+			{
+				hashCode = unchecked(127 + hashCode * GetTypeHash(parameter));
+			}
+		}
+
+		return Math.Abs(hashCode);
+	}
 
 	internal static class NameUtils
 	{
@@ -289,6 +343,13 @@ namespace GameDevWare.Dynamic.Expressions
 
 			if (builder == null) builder = new StringBuilder();
 
+			var arrayDepth = 0;
+			while (type.IsArray)
+			{
+				type = type.GetElementType();
+				arrayDepth++;
+			}
+
 			var genericArguments = type.IsGenericType && writeGenericArguments ? type.GetGenericArguments() : Type.EmptyTypes;
 			var genericArgumentOffset = 0;
 			foreach (var declaringType in new TypeNestingEnumerator(type))
@@ -312,6 +373,11 @@ namespace GameDevWare.Dynamic.Expressions
 			if (writeGenericArguments)
 				RemoveGenericSuffix(builder);
 
+			for (var d = 0; d < arrayDepth; d++)
+			{
+				builder.Append("[]");
+			}
+
 			return builder;
 		}
 		public static StringBuilder WriteName(Type type, StringBuilder builder = null, bool writeGenericArguments = false)
@@ -320,6 +386,13 @@ namespace GameDevWare.Dynamic.Expressions
 
 			if (builder == null) builder = new StringBuilder();
 
+			var arrayDepth = 0;
+			while (type.IsArray)
+			{
+				type = type.GetElementType();
+				arrayDepth++;
+			}
+			
 			var genericArguments = type.IsGenericType && writeGenericArguments ? type.GetGenericArguments() : Type.EmptyTypes;
 			var genericArgumentOffset = 0;
 			foreach (var declaringType in new TypeNestingEnumerator(type))
@@ -332,6 +405,11 @@ namespace GameDevWare.Dynamic.Expressions
 					builder.Append('.');
 
 				genericArgumentOffset += genericArgumentsCount;
+			}
+
+			for (var d = 0; d < arrayDepth; d++)
+			{
+				builder.Append("[]");
 			}
 
 			return builder;
@@ -420,7 +498,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			builder.Append(type.Name);
 
-			if (genericArguments.Count > 0)
+			if (genericArguments.Array != null && genericArguments.Count > 0)
 			{
 				builder.Append("<");
 				for (var i = genericArguments.Offset; i < genericArguments.Offset + genericArguments.Count; i++)
@@ -494,5 +572,4 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 
 	}
-
-#>
+	#>
