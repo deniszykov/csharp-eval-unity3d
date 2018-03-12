@@ -78,6 +78,7 @@ var typeResolver = new KnownTypeResolver(typeof(Mathf), typeof(Time));
 CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0f, 3.0f)", typeResolver); 
 ```
 If you want to access all types in **UnityEngine** you can pass **AssemblyTypeResolver.UnityEngine** as typeResolver parameter.
+```Object.GetType()``` method and ```typeof(T)``` is not available untill **System.Type** is added as known type.
 
 ## AOT Execution
 You can compile and evaluate expression created by **System.Linq.Expression** and execute it in AOT environment where it is usually impossible. 
