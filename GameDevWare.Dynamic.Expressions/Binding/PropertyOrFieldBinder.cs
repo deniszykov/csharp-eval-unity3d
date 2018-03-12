@@ -127,6 +127,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (useNullPropagation && targetTypeDescription.CanBeNull)
 				bindingContext.RegisterNullPropagationTarget(target);
 
+			if (targetTypeDescription.IsAssignableFrom(typeof(Type)) && bindingContext.IsKnownType(typeof(Type)) == false && bindingContext.IsKnownType(targetType) == false)
+			{
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION, propertyOrFieldName, targetType, typeof(ITypeResolver)), node);
+				return false;
+			}
+
 			return true;
 		}
 	}

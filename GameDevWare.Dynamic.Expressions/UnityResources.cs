@@ -87,7 +87,6 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED },
 					{ "EXCEPTION_BIND_MISSINGMETHOD", EXCEPTION_BIND_MISSINGMETHOD },
 					{ "EXCEPTION_BIND_UNABLETORESOLVENAME", EXCEPTION_BIND_UNABLETORESOLVENAME },
-					{ "EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION", EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION },
 					{ "EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED },
 					{ "EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS", EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS },
 					{ "EXCEPTION_PARSER_OPREQUIRESOPERAND", EXCEPTION_PARSER_OPREQUIRESOPERAND },
@@ -123,6 +122,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_BIND_RENDERFAILED", EXCEPTION_BIND_RENDERFAILED },
 					{ "EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS", EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS },
 					{ "EXCEPTION_BIND_MISSINGORWRONGARGUMENT", EXCEPTION_BIND_MISSINGORWRONGARGUMENT },
+					{ "EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION", EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION },
 					{ "EXCEPTION_BIND_UNABLETOBINDCALL", EXCEPTION_BIND_UNABLETOBINDCALL },
 					{ "EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE", EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE },
 					{ "EXCEPTION_BIND_FAILEDTOBINDGENERICARGUMENTSTOTYPE", EXCEPTION_BIND_FAILEDTOBINDGENERICARGUMENTSTOTYPE },
@@ -398,20 +398,6 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Unable to resolve '{0}'. There is no formal parameter with this name.";
 					default: return "EXCEPTION_BIND_UNABLETORESOLVENAME";
-				}
-			}
-		}
-		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION
-		/// </summary>
-		public static string EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION
-		{
-			get
-			{
-				switch (currentLanguageIdx)
-				{
-					case 0: return "Method '{0}' is not available because type '{1}' is not added as known type in '{2}'.";
-					default: return "EXCEPTION_BIND_RESTRICTED_METHOD_INVOCATION";
 				}
 			}
 		}
@@ -902,6 +888,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Missing or wrong '{0}' argument.";
 					default: return "EXCEPTION_BIND_MISSINGORWRONGARGUMENT";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION
+		/// </summary>
+		public static string EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Member '{1}.{0}' is not available until  type '{1}' is added as known type in '{2}'.";
+					default: return "EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION";
 				}
 			}
 		}
