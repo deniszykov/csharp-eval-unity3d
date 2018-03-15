@@ -93,6 +93,12 @@ Breaking changes
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
 		<DefineConstants>$(DefineConstants);NET45</DefineConstants>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net35|AnyCPU'">
+	  <DocumentationFile>bin\Release\net35\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net35|AnyCPU'">
+	  <DocumentationFile>bin\Debug\net35\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>
+	</PropertyGroup>
 	<ItemGroup>
 		<None Include="Properties\Resources.resx" />
 	</ItemGroup>
@@ -107,7 +113,7 @@ Breaking changes
 		</Compile>
 		<Compile Update="UnityResources.cs">
 			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
+			<AutoGen>True</AutoGen> 
 			<DependentUpon>UnityResources.tt</DependentUpon>
 		</Compile>
 	</ItemGroup>
@@ -124,5 +130,6 @@ Breaking changes
 
 	<Target Name="CopyDll" AfterTargets="PostBuildEvent" Condition=" '$(TargetFramework)' == 'net35' ">
 		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 	</Target>
 </Project>
