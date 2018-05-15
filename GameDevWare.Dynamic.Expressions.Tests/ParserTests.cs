@@ -133,6 +133,13 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 		[Theory]
 		[InlineData("a ? b : c", TokenType.Identifier, TokenType.Identifier, TokenType.Identifier)]
+		[InlineData("a ? Math.Max(1,1) : c", TokenType.Identifier, TokenType.Call, TokenType.Identifier)]
+		[InlineData("a ? Math.Max(1,1) : Math.Max(1,1)", TokenType.Identifier, TokenType.Call, TokenType.Call)]
+		[InlineData("a ? Math.Max(1 > 0 ? 1 : 2, 1 > 0 ? 1 : 2) : Math.Max(1 > 0 ? 1 : 2, 1 > 0 ? 1 : 2)", TokenType.Identifier, TokenType.Call, TokenType.Call)]
+		[InlineData("a ? Math.Max(((1 > 0) ? (1) : (2)), (1 > 0) ? (1) : (2)) : Math.Max(((1 > 0) ? (1) : (2)), (1 > 0) ? (1) : (2))", TokenType.Identifier, TokenType.Call, TokenType.Call)]
+		[InlineData("a ? x[1] : y", TokenType.Identifier, TokenType.Call, TokenType.Identifier)]
+		[InlineData("a ? x?[1] : y", TokenType.Identifier, TokenType.Call, TokenType.Identifier)]
+		[InlineData("a ? x[z ? m : n] : y", TokenType.Identifier, TokenType.Call, TokenType.Identifier)]
 		[InlineData("a ? 1 : b + c", TokenType.Identifier, TokenType.Number, TokenType.Add)]
 		[InlineData("!a ? ~b : +c", TokenType.Not, TokenType.Compl, TokenType.Plus)]
 		[InlineData("a * b ? b / c : c % d", TokenType.Mul, TokenType.Div, TokenType.Mod)]

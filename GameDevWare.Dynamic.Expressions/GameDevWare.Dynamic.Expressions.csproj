@@ -1,27 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputType>Library</OutputType>
-	</PropertyGroup>
 	<PropertyGroup>
 		<TargetFrameworks>net35;net45;netstandard1.3;netcoreapp2.0</TargetFrameworks>
 		<Authors>Denis Zykov</Authors>
-		<Version>2.2.1</Version>
+		<Version>2.2.2</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions</PackageId>
 		<Product>GameDevWare.Dynamic.Expressions</Product>
 		<Description>C# expression parsing and execution library. 
 Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 		<Company />
 		<ApplicationIcon />
+		<OutputType>Library</OutputType>
 		<OutputTypeEx>library</OutputTypeEx>
 		<StartupObject />
-		<AssemblyVersion>2.2.1</AssemblyVersion>
-		<FileVersion>2.2.1</FileVersion>
+		<AssemblyVersion>2.2.2</AssemblyVersion>
+		<FileVersion>2.2.2</FileVersion>
 		<SignAssembly>true</SignAssembly>
 		<PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
 		<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
-		<PackageReleaseNotes># 2.2.1
+	    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>
+	
+		<PackageReleaseNotes># 2.2.2
+* fixed conditional operator (a ? b : c) parsing with method call in place of 'b'
+
+# 2.2.1
 * fixed IL2CPP compilation error due _Attribute interface complilation failure
 * added few interfaces to AOT.cs file for better AOT coverage
 
@@ -92,12 +95,6 @@ Breaking changes
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
 		<DefineConstants>$(DefineConstants);NET45</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net35|AnyCPU'">
-	  <DocumentationFile>bin\Release\net35\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net35|AnyCPU'">
-	  <DocumentationFile>bin\Debug\net35\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Include="Properties\Resources.resx" />

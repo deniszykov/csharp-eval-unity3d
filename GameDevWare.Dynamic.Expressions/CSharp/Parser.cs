@@ -416,12 +416,33 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private int FindCondClosingToken()
 		{
 			var lastTokenIdx = -1;
+			var depth = 0;
 			for (var i = 0; i < this.tokens.Count; i++)
 			{
-				if (this.tokens[i].Type == TokenType.Colon)
-					lastTokenIdx = i + 1;
-				else if (this.tokens[i].Type == TokenType.Comma)
-					break;
+				switch (this.tokens[i].Type)
+				{
+					case TokenType.Colon:
+						if (depth == 0)
+							lastTokenIdx = i + 1;
+						continue;
+					case TokenType.Lparen:
+					case TokenType.Lbracket:
+					case TokenType.NullIndex:
+						depth++;
+						continue;
+					case TokenType.Rparen:
+					case TokenType.Rbracket:
+					depth--;
+						continue;
+					case TokenType.Comma:
+						if (depth == 0)
+							break;
+						else
+							continue;
+					default:
+						continue;
+				}
+				break;
 			}
 			return lastTokenIdx;
 		}
