@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -70,6 +70,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				case Constants.EXPRESSION_TYPE_UNARY_PLUS:
 					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.UnaryPlus, out boundExpression) == false)
 						boundExpression = Expression.UnaryPlus(operand);
+					break;
+				case Constants.EXPRESSION_TYPE_ARRAY_LENGTH:
+					boundExpression = Expression.ArrayLength(operand);
 					break;
 				default:
 					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);

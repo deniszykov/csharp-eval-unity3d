@@ -163,12 +163,17 @@ namespace GameDevWare.Dynamic.Expressions
 		internal string GetPropertyOrFieldName(bool throwOnError)
 		{
 			var propertyOrFieldNameObj = default(object);
-			if (this.TryGetValue(Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out propertyOrFieldNameObj) == false || propertyOrFieldNameObj is string == false)
+			if ((this.TryGetValue(Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out propertyOrFieldNameObj) == false &&
+				this.TryGetValue(Constants.NAME_ATTRIBUTE, out propertyOrFieldNameObj) == false)|| propertyOrFieldNameObj is string == false)
 			{
 				if (throwOnError)
+				{
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+				}
 				else
+				{
 					return null;
+				}
 			}
 
 			var propertyOrFieldName = (string)propertyOrFieldNameObj;

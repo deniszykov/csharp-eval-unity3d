@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -98,9 +98,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					case Constants.EXPRESSION_TYPE_COMPLEMENT:
 					case Constants.EXPRESSION_TYPE_NOT:
 					case Constants.EXPRESSION_TYPE_UNARY_PLUS:
+					case Constants.EXPRESSION_TYPE_ARRAY_LENGTH:
 						return UnaryBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_CONDITION:
 						return ConditionBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
+					case Constants.EXPRESSION_TYPE_PARAMETER:
+						return ParameterBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
+					case Constants.EXPRESSION_TYPE_QUOTE:
+						return QuoteBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					default:
 						boundExpression = null;
 						bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);

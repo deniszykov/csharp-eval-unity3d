@@ -40,8 +40,12 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string TYPE_ATTRIBUTE = "type";
 		public const string VALUE_ATTRIBUTE = "value";
 		public const string PROPERTY_OR_FIELD_NAME_ATTRIBUTE = "propertyOrFieldName";
+		public const string NAME_ATTRIBUTE = "name";
 		public const string USE_NULL_PROPAGATION_ATTRIBUTE = "useNullPropagation";
 		public const string METHOD_ATTRIBUTE = "method";
+		public const string CONVERSION_ATTRIBUTE = "conversion";
+		public const string IS_LIFTED_ATTRIBUTE = "IsLifted";
+		public const string IS_LIFTED_TO_NULL_ATTRIBUTE = "IsLiftedToNull";
 		public const string EXPRESSION_TYPE_PROPERTY_OR_FIELD = "PropertyOrField";
 		public const string EXPRESSION_TYPE_CONSTANT = "Constant";
 		public const string EXPRESSION_TYPE_CONVERT = "Convert";
@@ -56,6 +60,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_TYPE_OF = "TypeOf";
 		public const string EXPRESSION_TYPE_DEFAULT = "Default";
 		public const string EXPRESSION_TYPE_NEW = "New";
+		public const string EXPRESSION_TYPE_ARRAY_LENGTH = "ArrayLength";
 		public const string EXPRESSION_TYPE_NEW_ARRAY_BOUNDS = "NewArrayBounds";
 		public const string EXPRESSION_TYPE_ADD = "Add";
 		public const string EXPRESSION_TYPE_ADD_CHECKED = "AddChecked";
@@ -67,6 +72,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual";
 		public const string EXPRESSION_TYPE_LESS_THAN = "LessThan";
 		public const string EXPRESSION_TYPE_LESS_THAN_OR_EQUAL = "LessThanOrEqual";
+		public const string EXPRESSION_TYPE_QUOTE = "Quote";
 		public const string EXPRESSION_TYPE_NEGATE = "Negate";
 		public const string EXPRESSION_TYPE_NEGATE_CHECKED = "NegateChecked";
 		public const string EXPRESSION_TYPE_POWER = "Power";
@@ -87,6 +93,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_OR_ELSE = "OrElse";
 		public const string EXPRESSION_TYPE_COALESCE = "Coalesce";
 		public const string EXPRESSION_TYPE_CONDITION = "Condition";
+		public const string EXPRESSION_TYPE_PARAMETER = "Parameter";
 		public const string EXPRESSION_TYPE_UNARY_PLUS = "UnaryPlus";
 		public const string EXPRESSION_TYPE_CHECKED_SUFFIX = "Checked";
 		public const string DELEGATE_INVOKE_NAME = "Invoke";
