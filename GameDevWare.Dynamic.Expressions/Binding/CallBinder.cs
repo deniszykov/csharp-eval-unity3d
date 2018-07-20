@@ -68,6 +68,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 
 			var targetTypeDescription = TypeDescription.GetTypeDescription(targetType);
+			var foundMethod = default(MethodInfo);
 			foreach (var memberDescription in targetTypeDescription.GetMembers(methodRef.Name))
 			{
 				if (memberDescription.IsMethod == false) continue;
@@ -75,8 +76,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				var methodDescription = memberDescription;
 				var method = (MethodInfo)memberDescription;
 
-				if (method == null || method.IsStatic != isStatic || method.IsGenericMethod != hasGenericParameters)
+				foundMethod = foundMethod ?? method;
+
+				if (method.IsStatic != isStatic || method.IsGenericMethod != hasGenericParameters)
 					continue;
+
 				if (hasGenericParameters && memberDescription.GenericArgumentsCount != methodRef.TypeArguments.Count)
 					continue;
 
@@ -115,7 +119,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			if (boundExpression == null)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCALL, methodRef.Name, targetType, arguments.Count), node);
+				if (foundMethod != null)
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDMETHOD, methodRef.Name, targetType, arguments.Count), node);
+				else
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCALL, methodRef.Name, targetType, arguments.Count), node);
 				return false;
 			}
 
