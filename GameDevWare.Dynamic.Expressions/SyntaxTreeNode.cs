@@ -129,11 +129,11 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		internal SyntaxTreeNode GetIfTrueExpression(bool throwOnError)
 		{
-			return this.GetExpression(Constants.IFTRUE_ATTRIBUTE, throwOnError);
+			return this.GetExpression(Constants.IF_TRUE_ATTRIBUTE, throwOnError);
 		}
 		internal SyntaxTreeNode GetIfFalseExpression(bool throwOnError)
 		{
-			return this.GetExpression(Constants.IFFALSE_ATTRIBUTE, throwOnError);
+			return this.GetExpression(Constants.IF_FALSE_ATTRIBUTE, throwOnError);
 		}
 		internal ArgumentsTree GetArguments(bool throwOnError)
 		{

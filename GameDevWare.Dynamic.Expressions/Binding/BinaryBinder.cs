@@ -17,7 +17,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
@@ -92,29 +91,29 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.SubtractChecked, out boundExpression) == false)
 						boundExpression = Expression.SubtractChecked(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_LEFTSHIFT:
+				case Constants.EXPRESSION_TYPE_LEFT_SHIFT:
 					ExpressionUtils.TryPromoteUnaryOperation(ref leftOperand, ExpressionType.LeftShift, out boundExpression);
 					ExpressionUtils.TryPromoteUnaryOperation(ref rightOperand, ExpressionType.LeftShift, out boundExpression);
 					boundExpression = Expression.LeftShift(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_RIGHTSHIFT:
+				case Constants.EXPRESSION_TYPE_RIGHT_SHIFT:
 					ExpressionUtils.TryPromoteUnaryOperation(ref leftOperand, ExpressionType.RightShift, out boundExpression);
 					ExpressionUtils.TryPromoteUnaryOperation(ref rightOperand, ExpressionType.RightShift, out boundExpression);
 					boundExpression = Expression.RightShift(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_GREATERTHAN:
+				case Constants.EXPRESSION_TYPE_GREATER_THAN:
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.GreaterThan, out boundExpression) == false)
 						boundExpression = Expression.GreaterThan(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_GREATERTHAN_OR_EQUAL:
+				case Constants.EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL:
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.GreaterThanOrEqual, out boundExpression) == false)
 						boundExpression = Expression.GreaterThanOrEqual(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_LESSTHAN:
+				case Constants.EXPRESSION_TYPE_LESS_THAN:
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.LessThan, out boundExpression) == false)
 						boundExpression = Expression.LessThan(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_LESSTHAN_OR_EQUAL:
+				case Constants.EXPRESSION_TYPE_LESS_THAN_OR_EQUAL:
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.LessThanOrEqual, out boundExpression) == false)
 						boundExpression = Expression.LessThanOrEqual(leftOperand, rightOperand);
 					break;
@@ -157,7 +156,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Equal, out boundExpression) == false)
 						boundExpression = Expression.Equal(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_NOTEQUAL:
+				case Constants.EXPRESSION_TYPE_NOT_EQUAL:
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.NotEqual, out boundExpression) == false)
 						boundExpression = Expression.NotEqual(leftOperand, rightOperand);
 					break;
@@ -169,14 +168,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.Or, out boundExpression) == false)
 						boundExpression = Expression.Or(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_EXCLUSIVEOR:
+				case Constants.EXPRESSION_TYPE_EXCLUSIVE_OR:
 					if (ExpressionUtils.TryPromoteBinaryOperation(ref leftOperand, ref rightOperand, ExpressionType.ExclusiveOr, out boundExpression) == false)
 						boundExpression = Expression.ExclusiveOr(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_ANDALSO:
+				case Constants.EXPRESSION_TYPE_AND_ALSO:
 					boundExpression = Expression.AndAlso(leftOperand, rightOperand);
 					break;
-				case Constants.EXPRESSION_TYPE_ORELSE:
+				case Constants.EXPRESSION_TYPE_OR_ELSE:
 					boundExpression = Expression.OrElse(leftOperand, rightOperand);
 					break;
 				case Constants.EXPRESSION_TYPE_COALESCE:

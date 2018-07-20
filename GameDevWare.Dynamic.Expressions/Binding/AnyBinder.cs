@@ -56,12 +56,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						return LambdaBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_INDEX:
 						return IndexBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
-					case Constants.EXPRESSION_TYPE_TYPEOF:
+					case Constants.EXPRESSION_TYPE_TYPE_OF:
 						return TypeOfBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_CONVERT:
-					case Constants.EXPRESSION_TYPE_CONVERTCHECKED:
-					case Constants.EXPRESSION_TYPE_TYPEIS:
-					case Constants.EXPRESSION_TYPE_TYPEAS:
+					case Constants.EXPRESSION_TYPE_CONVERT_CHECKED:
+					case Constants.EXPRESSION_TYPE_TYPE_IS:
+					case Constants.EXPRESSION_TYPE_TYPE_AS:
 						return TypeBinaryBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_DEFAULT:
 						return DefaultBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
@@ -73,31 +73,31 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					case Constants.EXPRESSION_TYPE_ADD_CHECKED:
 					case Constants.EXPRESSION_TYPE_SUBTRACT:
 					case Constants.EXPRESSION_TYPE_SUBTRACT_CHECKED:
-					case Constants.EXPRESSION_TYPE_LEFTSHIFT:
-					case Constants.EXPRESSION_TYPE_RIGHTSHIFT:
-					case Constants.EXPRESSION_TYPE_GREATERTHAN:
-					case Constants.EXPRESSION_TYPE_GREATERTHAN_OR_EQUAL:
-					case Constants.EXPRESSION_TYPE_LESSTHAN:
-					case Constants.EXPRESSION_TYPE_LESSTHAN_OR_EQUAL:
+					case Constants.EXPRESSION_TYPE_LEFT_SHIFT:
+					case Constants.EXPRESSION_TYPE_RIGHT_SHIFT:
+					case Constants.EXPRESSION_TYPE_GREATER_THAN:
+					case Constants.EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL:
+					case Constants.EXPRESSION_TYPE_LESS_THAN:
+					case Constants.EXPRESSION_TYPE_LESS_THAN_OR_EQUAL:
 					case Constants.EXPRESSION_TYPE_POWER:
 					case Constants.EXPRESSION_TYPE_DIVIDE:
 					case Constants.EXPRESSION_TYPE_MULTIPLY:
 					case Constants.EXPRESSION_TYPE_MULTIPLY_CHECKED:
 					case Constants.EXPRESSION_TYPE_MODULO:
 					case Constants.EXPRESSION_TYPE_EQUAL:
-					case Constants.EXPRESSION_TYPE_NOTEQUAL:
+					case Constants.EXPRESSION_TYPE_NOT_EQUAL:
 					case Constants.EXPRESSION_TYPE_AND:
 					case Constants.EXPRESSION_TYPE_OR:
-					case Constants.EXPRESSION_TYPE_EXCLUSIVEOR:
-					case Constants.EXPRESSION_TYPE_ANDALSO:
-					case Constants.EXPRESSION_TYPE_ORELSE:
+					case Constants.EXPRESSION_TYPE_EXCLUSIVE_OR:
+					case Constants.EXPRESSION_TYPE_AND_ALSO:
+					case Constants.EXPRESSION_TYPE_OR_ELSE:
 					case Constants.EXPRESSION_TYPE_COALESCE:
 						return BinaryBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_NEGATE:
 					case Constants.EXPRESSION_TYPE_NEGATE_CHECKED:
 					case Constants.EXPRESSION_TYPE_COMPLEMENT:
 					case Constants.EXPRESSION_TYPE_NOT:
-					case Constants.EXPRESSION_TYPE_UNARYPLUS:
+					case Constants.EXPRESSION_TYPE_UNARY_PLUS:
 						return UnaryBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_CONDITION:
 						return ConditionBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);

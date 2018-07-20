@@ -49,16 +49,16 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			switch (expressionType)
 			{
-				case Constants.EXPRESSION_TYPE_TYPEIS:
+				case Constants.EXPRESSION_TYPE_TYPE_IS:
 					boundExpression = Expression.TypeIs(target, type);
 					break;
-				case Constants.EXPRESSION_TYPE_TYPEAS:
+				case Constants.EXPRESSION_TYPE_TYPE_AS:
 					boundExpression = Expression.TypeAs(target, type);
 					break;
 				case Constants.EXPRESSION_TYPE_CONVERT:
 					boundExpression = Expression.Convert(target, type);
 					break;
-				case Constants.EXPRESSION_TYPE_CONVERTCHECKED:
+				case Constants.EXPRESSION_TYPE_CONVERT_CHECKED:
 					boundExpression = Expression.ConvertChecked(target, type);
 					break;
 				default:

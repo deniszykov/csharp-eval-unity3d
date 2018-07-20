@@ -147,7 +147,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			Convert.ToString(typeName, Constants.DefaultFormatProvider);
 
-			var checkedOperation = expressionType == Constants.EXPRESSION_TYPE_CONVERTCHECKED ? true :
+			var checkedOperation = expressionType == Constants.EXPRESSION_TYPE_CONVERT_CHECKED ? true :
 				expressionType == Constants.EXPRESSION_TYPE_CONVERT ? false : checkedScope;
 
 			var closeParent = false;
@@ -204,12 +204,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.TEST_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
 
 			var ifTrueObj = default(object);
-			if (node.TryGetValue(Constants.IFTRUE_ATTRIBUTE, out ifTrueObj) == false || ifTrueObj is SyntaxTreeNode == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.IFTRUE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
+			if (node.TryGetValue(Constants.IF_TRUE_ATTRIBUTE, out ifTrueObj) == false || ifTrueObj is SyntaxTreeNode == false)
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.IF_TRUE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
 
 			var ifFalseObj = default(object);
-			if (node.TryGetValue(Constants.IFFALSE_ATTRIBUTE, out ifFalseObj) == false || ifFalseObj is SyntaxTreeNode == false)
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.IFFALSE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
+			if (node.TryGetValue(Constants.IF_FALSE_ATTRIBUTE, out ifFalseObj) == false || ifFalseObj is SyntaxTreeNode == false)
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.IF_FALSE_ATTRIBUTE, node.GetTypeName(throwOnError: true)));
 
 			var test = (SyntaxTreeNode)testObj;
 			var ifTrue = (SyntaxTreeNode)ifTrueObj;

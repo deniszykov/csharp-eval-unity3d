@@ -128,7 +128,6 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					{ Constants.ARGUMENTS_ATTRIBUTE, node.GetValueOrDefault(Constants.ARGUMENTS_ATTRIBUTE, default(object)) },
 					{ Constants.METHOD_ATTRIBUTE, methodRef },
 					{ Constants.USE_NULL_PROPAGATION_ATTRIBUTE, methodNameNode.GetValueOrDefault(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, default(object)) },
-
 					{ Constants.EXPRESSION_POSITION, methodNameNode.GetPosition(throwOnError: false) }
 				});
 

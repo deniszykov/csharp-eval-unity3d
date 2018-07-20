@@ -67,7 +67,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.Not, out boundExpression) == false)
 						boundExpression = Expression.Not(operand);
 					break;
-				case Constants.EXPRESSION_TYPE_UNARYPLUS:
+				case Constants.EXPRESSION_TYPE_UNARY_PLUS:
 					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.UnaryPlus, out boundExpression) == false)
 						boundExpression = Expression.UnaryPlus(operand);
 					break;

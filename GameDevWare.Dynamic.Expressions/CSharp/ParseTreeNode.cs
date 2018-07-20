@@ -254,7 +254,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{ (int)TokenType.Group, Constants.EXPRESSION_TYPE_GROUP },
 				{ (int)TokenType.UncheckedScope, Constants.EXPRESSION_TYPE_UNCHECKED_SCOPE },
 				{ (int)TokenType.CheckedScope, Constants.EXPRESSION_TYPE_CHECKED_SCOPE },
-				{ (int)TokenType.Plus, Constants.EXPRESSION_TYPE_UNARYPLUS },
+				{ (int)TokenType.Plus, Constants.EXPRESSION_TYPE_UNARY_PLUS },
 				{ (int)TokenType.Minus, Constants.EXPRESSION_TYPE_NEGATE },
 				{ (int)TokenType.Not, Constants.EXPRESSION_TYPE_NOT },
 				{ (int)TokenType.Compl, Constants.EXPRESSION_TYPE_COMPLEMENT },
@@ -264,25 +264,25 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{ (int)TokenType.Mod, Constants.EXPRESSION_TYPE_MODULO },
 				{ (int)TokenType.Add, Constants.EXPRESSION_TYPE_ADD },
 				{ (int)TokenType.Subtract, Constants.EXPRESSION_TYPE_SUBTRACT },
-				{ (int)TokenType.Lshift, Constants.EXPRESSION_TYPE_LEFTSHIFT },
-				{ (int)TokenType.Rshift, Constants.EXPRESSION_TYPE_RIGHTSHIFT},
-				{ (int)TokenType.Gt, Constants.EXPRESSION_TYPE_GREATERTHAN },
-				{ (int)TokenType.Gte, Constants.EXPRESSION_TYPE_GREATERTHAN_OR_EQUAL },
-				{ (int)TokenType.Lt, Constants.EXPRESSION_TYPE_LESSTHAN },
-				{ (int)TokenType.Lte, Constants.EXPRESSION_TYPE_LESSTHAN_OR_EQUAL },
-				{ (int)TokenType.Is, Constants.EXPRESSION_TYPE_TYPEIS  },
-				{ (int)TokenType.As, Constants.EXPRESSION_TYPE_TYPEAS },
+				{ (int)TokenType.Lshift, Constants.EXPRESSION_TYPE_LEFT_SHIFT },
+				{ (int)TokenType.Rshift, Constants.EXPRESSION_TYPE_RIGHT_SHIFT},
+				{ (int)TokenType.Gt, Constants.EXPRESSION_TYPE_GREATER_THAN },
+				{ (int)TokenType.Gte, Constants.EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL },
+				{ (int)TokenType.Lt, Constants.EXPRESSION_TYPE_LESS_THAN },
+				{ (int)TokenType.Lte, Constants.EXPRESSION_TYPE_LESS_THAN_OR_EQUAL },
+				{ (int)TokenType.Is, Constants.EXPRESSION_TYPE_TYPE_IS  },
+				{ (int)TokenType.As, Constants.EXPRESSION_TYPE_TYPE_AS },
 				{ (int)TokenType.Eq, Constants.EXPRESSION_TYPE_EQUAL },
-				{ (int)TokenType.Neq, Constants.EXPRESSION_TYPE_NOTEQUAL },
+				{ (int)TokenType.Neq, Constants.EXPRESSION_TYPE_NOT_EQUAL },
 				{ (int)TokenType.And, Constants.EXPRESSION_TYPE_AND },
 				{ (int)TokenType.Or, Constants.EXPRESSION_TYPE_OR },
-				{ (int)TokenType.Xor, Constants.EXPRESSION_TYPE_EXCLUSIVEOR },
-				{ (int)TokenType.AndAlso, Constants.EXPRESSION_TYPE_ANDALSO },
-				{ (int)TokenType.OrElse, Constants.EXPRESSION_TYPE_ORELSE },
+				{ (int)TokenType.Xor, Constants.EXPRESSION_TYPE_EXCLUSIVE_OR },
+				{ (int)TokenType.AndAlso, Constants.EXPRESSION_TYPE_AND_ALSO },
+				{ (int)TokenType.OrElse, Constants.EXPRESSION_TYPE_OR_ELSE },
 				{ (int)TokenType.Coalesce, Constants.EXPRESSION_TYPE_COALESCE },
 				{ (int)TokenType.Cond, Constants.EXPRESSION_TYPE_CONDITION },
 				{ (int)TokenType.Call, Constants.EXPRESSION_TYPE_INVOKE },
-				{ (int)TokenType.Typeof, Constants.EXPRESSION_TYPE_TYPEOF },
+				{ (int)TokenType.Typeof, Constants.EXPRESSION_TYPE_TYPE_OF },
 				{ (int)TokenType.Default, Constants.EXPRESSION_TYPE_DEFAULT },
 				{ (int)TokenType.New, Constants.EXPRESSION_TYPE_NEW },
 				{ (int)TokenType.Lbracket, Constants.EXPRESSION_TYPE_INDEX },
@@ -427,7 +427,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						node[Constants.TYPE_ATTRIBUTE] = this.nodes[0].ToTypeName(TypeNameOptions.All);
 						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[1].ToSyntaxTree(checkedScope);
 						if (checkedScope)
-							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKEDSUFFIX;
+							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKED_SUFFIX;
 						break;
 					case TokenType.CheckedScope:
 						Ensure(this, 1);
@@ -457,7 +457,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						Ensure(this, 1);
 						node[Constants.EXPRESSION_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope);
 						if (checkedScope && this.Type == TokenType.Minus)
-							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKEDSUFFIX;
+							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKED_SUFFIX;
 						break;
 					case TokenType.Div:
 					case TokenType.Mul:
@@ -483,13 +483,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						node[Constants.LEFT_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope);
 						node[Constants.RIGHT_ATTRIBUTE] = this.nodes[1].ToSyntaxTree(checkedScope);
 						if (checkedScope && (this.Type == TokenType.Add || this.Type == TokenType.Mul || this.Type == TokenType.Subtract))
-							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKEDSUFFIX;
+							node[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKED_SUFFIX;
 						break;
 					case TokenType.Cond:
 						Ensure(this, 3);
 						node[Constants.TEST_ATTRIBUTE] = this.nodes[0].ToSyntaxTree(checkedScope);
-						node[Constants.IFTRUE_ATTRIBUTE] = this.nodes[1].ToSyntaxTree(checkedScope);
-						node[Constants.IFFALSE_ATTRIBUTE] = this.nodes[2].ToSyntaxTree(checkedScope);
+						node[Constants.IF_TRUE_ATTRIBUTE] = this.nodes[1].ToSyntaxTree(checkedScope);
+						node[Constants.IF_FALSE_ATTRIBUTE] = this.nodes[2].ToSyntaxTree(checkedScope);
 						break;
 					case TokenType.Lambda:
 						Ensure(this, 2, TokenType.Arguments);

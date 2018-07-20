@@ -14,11 +14,9 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 
-using System;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions
 {
@@ -37,8 +35,8 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string LEFT_ATTRIBUTE = "left";
 		public const string RIGHT_ATTRIBUTE = "right";
 		public const string TEST_ATTRIBUTE = "test";
-		public const string IFTRUE_ATTRIBUTE = "ifTrue";
-		public const string IFFALSE_ATTRIBUTE = "ifFalse";
+		public const string IF_TRUE_ATTRIBUTE = "ifTrue";
+		public const string IF_FALSE_ATTRIBUTE = "ifFalse";
 		public const string TYPE_ATTRIBUTE = "type";
 		public const string VALUE_ATTRIBUTE = "value";
 		public const string PROPERTY_OR_FIELD_NAME_ATTRIBUTE = "propertyOrFieldName";
@@ -47,7 +45,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_PROPERTY_OR_FIELD = "PropertyOrField";
 		public const string EXPRESSION_TYPE_CONSTANT = "Constant";
 		public const string EXPRESSION_TYPE_CONVERT = "Convert";
-		public const string EXPRESSION_TYPE_CONVERTCHECKED = "ConvertChecked";
+		public const string EXPRESSION_TYPE_CONVERT_CHECKED = "ConvertChecked";
 		public const string EXPRESSION_TYPE_CALL = "Call";
 		public const string EXPRESSION_TYPE_GROUP = "Group";
 		public const string EXPRESSION_TYPE_INVOKE = "Invoke";
@@ -55,7 +53,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_INDEX = "Index";
 		public const string EXPRESSION_TYPE_UNCHECKED_SCOPE = "UncheckedScope";
 		public const string EXPRESSION_TYPE_CHECKED_SCOPE = "CheckedScope";
-		public const string EXPRESSION_TYPE_TYPEOF = "TypeOf";
+		public const string EXPRESSION_TYPE_TYPE_OF = "TypeOf";
 		public const string EXPRESSION_TYPE_DEFAULT = "Default";
 		public const string EXPRESSION_TYPE_NEW = "New";
 		public const string EXPRESSION_TYPE_NEW_ARRAY_BOUNDS = "NewArrayBounds";
@@ -63,12 +61,12 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_ADD_CHECKED = "AddChecked";
 		public const string EXPRESSION_TYPE_SUBTRACT = "Subtract";
 		public const string EXPRESSION_TYPE_SUBTRACT_CHECKED = "SubtractChecked";
-		public const string EXPRESSION_TYPE_LEFTSHIFT = "LeftShift";
-		public const string EXPRESSION_TYPE_RIGHTSHIFT = "RightShift";
-		public const string EXPRESSION_TYPE_GREATERTHAN = "GreaterThan";
-		public const string EXPRESSION_TYPE_GREATERTHAN_OR_EQUAL = "GreaterThanOrEqual";
-		public const string EXPRESSION_TYPE_LESSTHAN = "LessThan";
-		public const string EXPRESSION_TYPE_LESSTHAN_OR_EQUAL = "LessThanOrEqual";
+		public const string EXPRESSION_TYPE_LEFT_SHIFT = "LeftShift";
+		public const string EXPRESSION_TYPE_RIGHT_SHIFT = "RightShift";
+		public const string EXPRESSION_TYPE_GREATER_THAN = "GreaterThan";
+		public const string EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual";
+		public const string EXPRESSION_TYPE_LESS_THAN = "LessThan";
+		public const string EXPRESSION_TYPE_LESS_THAN_OR_EQUAL = "LessThanOrEqual";
 		public const string EXPRESSION_TYPE_NEGATE = "Negate";
 		public const string EXPRESSION_TYPE_NEGATE_CHECKED = "NegateChecked";
 		public const string EXPRESSION_TYPE_POWER = "Power";
@@ -77,20 +75,20 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_MULTIPLY = "Multiply";
 		public const string EXPRESSION_TYPE_MULTIPLY_CHECKED = "MultiplyChecked";
 		public const string EXPRESSION_TYPE_MODULO = "Modulo";
-		public const string EXPRESSION_TYPE_TYPEIS = "TypeIs";
-		public const string EXPRESSION_TYPE_TYPEAS = "TypeAs";
+		public const string EXPRESSION_TYPE_TYPE_IS = "TypeIs";
+		public const string EXPRESSION_TYPE_TYPE_AS = "TypeAs";
 		public const string EXPRESSION_TYPE_NOT = "Not";
 		public const string EXPRESSION_TYPE_EQUAL = "Equal";
-		public const string EXPRESSION_TYPE_NOTEQUAL = "NotEqual";
+		public const string EXPRESSION_TYPE_NOT_EQUAL = "NotEqual";
 		public const string EXPRESSION_TYPE_AND = "And";
 		public const string EXPRESSION_TYPE_OR = "Or";
-		public const string EXPRESSION_TYPE_EXCLUSIVEOR = "ExclusiveOr";
-		public const string EXPRESSION_TYPE_ANDALSO = "AndAlso";
-		public const string EXPRESSION_TYPE_ORELSE = "OrElse";
+		public const string EXPRESSION_TYPE_EXCLUSIVE_OR = "ExclusiveOr";
+		public const string EXPRESSION_TYPE_AND_ALSO = "AndAlso";
+		public const string EXPRESSION_TYPE_OR_ELSE = "OrElse";
 		public const string EXPRESSION_TYPE_COALESCE = "Coalesce";
 		public const string EXPRESSION_TYPE_CONDITION = "Condition";
-		public const string EXPRESSION_TYPE_UNARYPLUS = "UnaryPlus";
-		public const string EXPRESSION_TYPE_CHECKEDSUFFIX = "Checked";
+		public const string EXPRESSION_TYPE_UNARY_PLUS = "UnaryPlus";
+		public const string EXPRESSION_TYPE_CHECKED_SUFFIX = "Checked";
 		public const string DELEGATE_INVOKE_NAME = "Invoke";
 		public const string EXECUTE_PREPARE_NAME = "PrepareFunc";
 		public const string VALUE_TRUE_STRING = "true";
