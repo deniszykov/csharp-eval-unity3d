@@ -90,6 +90,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			Debug.Assert(targetType != null, "type != null");
 
 			var targetTypeDescription = TypeDescription.GetTypeDescription(targetType);
+			var foundMember = default(MemberDescription);
 			if (isStatic && targetTypeDescription.IsEnum)
 			{
 				var fieldMemberDescription = targetTypeDescription.GetMembers(propertyOrFieldName).FirstOrDefault(m => m.IsStatic);
@@ -104,7 +105,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			{
 				foreach (var member in targetTypeDescription.GetMembers(propertyOrFieldName))
 				{
-					if (member.IsStatic != isStatic || member.IsPropertyOrField == false)
+					if (member.IsStatic != isStatic)
+						continue;
+
+					foundMember = foundMember ?? member;
+
+					if (member.IsPropertyOrField == false)
 						continue;
 
 					if (member.TryMakeAccessor(target, out boundExpression))
@@ -114,7 +120,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			if (boundExpression == null)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, targetType), node);
+				if (foundMember != null)
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDMEMBER, propertyOrFieldName, targetType), node);
+				else
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, targetType), node);
 				return false;
 			}
 
