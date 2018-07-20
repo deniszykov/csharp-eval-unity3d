@@ -1,49 +1,50 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <OutputType>Library</OutputType>
-    </PropertyGroup>
-    <PropertyGroup>
-        <TargetFrameworks>net45;netcoreapp2.0</TargetFrameworks>
-        <RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.3</RuntimeFrameworkVersion>
-        <Authors>Denis Zykov</Authors>
-        <Version>0.0.0</Version>
-        <PackageId>GameDevWare.Dynamic.Expressions.Tests</PackageId>
-        <Product>GameDevWare.Dynamic.Expressions.Tests</Product>
-        <Description>GameDevWare.Dynamic.Expressions.Tests</Description>
-        <Company />
-        <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-        <ApplicationIcon />
-        <OutputTypeEx>library</OutputTypeEx>
-        <StartupObject />
-        <AssemblyVersion>0.0.0.0</AssemblyVersion>
-        <FileVersion>0.0.0.0</FileVersion>
-        <SignAssembly>true</SignAssembly>
+	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net45;netcoreapp2.0</TargetFrameworks>
+		<RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.3</RuntimeFrameworkVersion>
+		<Authors>Denis Zykov</Authors>
+		<Version>0.0.0</Version>
+		<PackageId>GameDevWare.Dynamic.Expressions.Tests</PackageId>
+		<Product>GameDevWare.Dynamic.Expressions.Tests</Product>
+		<Description>GameDevWare.Dynamic.Expressions.Tests</Description>
+		<Company />
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<ApplicationIcon />
+		<OutputTypeEx>library</OutputTypeEx>
+		<StartupObject />
+		<AssemblyVersion>0.0.0.0</AssemblyVersion>
+		<FileVersion>0.0.0.0</FileVersion>
+		<SignAssembly>true</SignAssembly>
 		<PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-        <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
-        <DelaySign>false</DelaySign>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <Optimize>False</Optimize>
-        <DefineConstants>RELEASE</DefineConstants>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DefineConstants>DEBUG;TRACE</DefineConstants>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
-        <DefineConstants>$(DefineConstants);NETSTANDARD;</DefineConstants>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-        <DefineConstants>$(DefineConstants);NET45</DefineConstants>
-    </PropertyGroup>
-    <ItemGroup>
-        <Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Scripts\Example\PatternString.cs" Link="PatternString.cs" />
-    </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="xunit" Version="2.3.1" />
-        <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\GameDevWare.Dynamic.Expressions\GameDevWare.Dynamic.Expressions.csproj" />
-    </ItemGroup>
+		<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
+		<DelaySign>false</DelaySign>
+		<IsPackable>false</IsPackable>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<Optimize>False</Optimize>
+		<DefineConstants>RELEASE</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+		<DefineConstants>$(DefineConstants);NETSTANDARD;</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+		<DefineConstants>$(DefineConstants);NET45</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Scripts\Example\PatternString.cs" Link="PatternString.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="xunit" Version="2.3.1" />
+		<DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\GameDevWare.Dynamic.Expressions\GameDevWare.Dynamic.Expressions.csproj" />
+	</ItemGroup>
 </Project>
