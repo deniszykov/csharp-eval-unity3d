@@ -306,4 +306,10 @@
   <data name="EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION" xml:space="preserve">
     <value>Member '{1}.{0}' is not available until  type '{1}' is added as known type in '{2}'.</value>
   </data>
+  <data name="EXCEPTION_BIND_UNABLETOBINDMETHOD" xml:space="preserve">
+    <value>Unable to bind parameters to method '{0}' on type '{1}'. Parameters doesn't match method. Parameters count '{2}'.</value>
+  </data>
+  <data name="EXCEPTION_BIND_UNABLETOBINDMEMBER" xml:space="preserve">
+    <value>Unable to bind member '{0}' on type '{1}'. Static, visibility, generic parameters or call parameters doesn't not match.</value>
+  </data>
 </root>
