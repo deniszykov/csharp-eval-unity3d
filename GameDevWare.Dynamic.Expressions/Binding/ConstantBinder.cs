@@ -40,8 +40,17 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return false;
 			}
 
-			var value = ChangeType(valueObj, type);
-			boundExpression = Expression.Constant(value);
+			var typeDescription = TypeDescription.GetTypeDescription(type);
+			if (valueObj == null && (typeDescription.IsNullable || typeDescription.IsValueType == false))
+			{
+				boundExpression = Expression.Constant(null, type);
+			}
+			else
+			{
+				var value = ChangeType(valueObj, type);
+				boundExpression = Expression.Constant(value, type);
+			}
+
 			return true;
 		}
 

@@ -1,5 +1,6 @@
 using System;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
@@ -83,7 +84,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						return false; // file to bind member's value
 					}
 
-					memberBinding = Expression.Bind(member, expression);
+					if (member.IsMethod)
+						memberBinding = Expression.Bind((MethodInfo)member, expression);
+					else
+						memberBinding = Expression.Bind((MemberInfo)member, expression);
 					return true;
 				case "MemberBinding":
 					var bindings = default(MemberBinding[]);
@@ -91,7 +95,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					{
 						return false; // failed to resolve bindings
 					}
-					memberBinding = Expression.MemberBind(member, bindings);
+					if (member.IsMethod)
+						memberBinding = Expression.MemberBind((MethodInfo)member, bindings);
+					else
+						memberBinding = Expression.MemberBind((MemberInfo)member, bindings);
 					return true;
 				case "ListBinding":
 					var initializers = default(ElementInit[]);
@@ -99,7 +106,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					{
 						return false; // failed to resolve list initializers
 					}
-					memberBinding = Expression.ListBind(member, initializers);
+					if (member.IsMethod)
+						memberBinding = Expression.ListBind((MethodInfo)member, initializers);
+					else
+						memberBinding = Expression.ListBind((MemberInfo)member, initializers);
 					return true;
 			}
 

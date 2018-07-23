@@ -48,8 +48,8 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string USE_NULL_PROPAGATION_ATTRIBUTE = "useNullPropagation";
 		public const string METHOD_ATTRIBUTE = "method";
 		public const string CONVERSION_ATTRIBUTE = "conversion";
-		public const string IS_LIFTED_ATTRIBUTE = "IsLifted";
-		public const string IS_LIFTED_TO_NULL_ATTRIBUTE = "IsLiftedToNull";
+		public const string EXPRESSION_TYPE_TYPE_REFERENCE = "TypeRef";
+		public const string EXPRESSION_TYPE_MEMBER_REFERENCE = "MemberRef";
 		public const string EXPRESSION_TYPE_PROPERTY_OR_FIELD = "PropertyOrField";
 		public const string EXPRESSION_TYPE_CONSTANT = "Constant";
 		public const string EXPRESSION_TYPE_CONVERT = "Convert";

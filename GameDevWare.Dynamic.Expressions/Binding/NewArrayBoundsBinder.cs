@@ -39,8 +39,6 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return false;
 			}
 
-			var typeDescription = TypeDescription.GetTypeDescription(type);
-			var elementType = typeDescription.UnderlyingType;
 			var indexTypeDescription = TypeDescription.Int32Type;
 			var arguments = node.GetArguments(throwOnError: true);
 			var argumentExpressions = new Expression[arguments.Count];
@@ -59,7 +57,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				Debug.Assert(argumentExpressions[i] != null, "argumentExpressions[i] != null");
 			}
 
-			boundExpression = Expression.NewArrayBounds(elementType, argumentExpressions);
+			boundExpression = Expression.NewArrayBounds(type, argumentExpressions);
 			return true;
 		}
 	}

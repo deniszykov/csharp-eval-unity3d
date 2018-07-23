@@ -34,11 +34,22 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			var target = default(Expression);
 			var targetNode = node.GetExpression(throwOnError: false);
+			var memberNode = node.GetMember(throwOnError: false);
+			var member = default(MemberDescription);
+			if (memberNode != null && bindingContext.TryResolveMember(memberNode, out member))
+			{
+				if (targetNode != null && AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
+				{
+					return false;
+				}
+				boundExpression = Expression.MakeMemberAccess(target, member);
+				return true;
+			}
+
+			var isStatic = false;
+			var targetType = default(Type);
 			var propertyOrFieldName = node.GetPropertyOrFieldName(throwOnError: true);
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
-
-			var targetType = default(Type);
-			var isStatic = false;
 			if (bindingContext.TryResolveType(targetNode, out targetType))
 			{
 				target = null;
@@ -103,17 +114,17 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 			else
 			{
-				foreach (var member in targetTypeDescription.GetMembers(propertyOrFieldName))
+				foreach (var declaredMember in targetTypeDescription.GetMembers(propertyOrFieldName))
 				{
-					if (member.IsStatic != isStatic)
+					if (declaredMember.IsStatic != isStatic)
 						continue;
 
-					foundMember = foundMember ?? member;
+					foundMember = foundMember ?? declaredMember;
 
-					if (member.IsPropertyOrField == false)
+					if (declaredMember.IsPropertyOrField == false)
 						continue;
 
-					if (member.TryMakeAccessor(target, out boundExpression))
+					if (declaredMember.TryMakeAccessor(target, out boundExpression))
 						break;
 				}
 			}

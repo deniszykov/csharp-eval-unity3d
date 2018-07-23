@@ -324,4 +324,13 @@
   <data name="EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS" xml:space="preserve">
     <value>Failed to bind list initializer.</value>
   </data>
+  <data name="EXCEPTION_BIND_CALLMEMBERISNOTMETHOD" xml:space="preserve">
+    <value>Unable to bind call because member '{0}' on type '{1}' is not method.</value>
+  </data>
+  <data name="EXCEPTION_BIND_MEMBERISNOTMETHOD" xml:space="preserve">
+    <value>Referenced member '{0}' on type '{1}' is not method.</value>
+  </data>
+  <data name="EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE" xml:space="preserve">
+    <value>Invalid lambda parameter type '{0}' while '{1}' is expected.</value>
+  </data>
 </root>

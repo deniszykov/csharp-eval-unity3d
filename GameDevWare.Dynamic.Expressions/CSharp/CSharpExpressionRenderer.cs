@@ -126,10 +126,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				throw;
 			}
 #if !NETSTANDARD
-				catch (System.Threading.ThreadAbortException)
-				{
-					throw;
-				}
+			catch (System.Threading.ThreadAbortException)
+			{
+				throw;
+			}
 #endif
 			catch (Exception exception)
 			{
@@ -444,7 +444,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			if (valueObj == null)
 			{
-				builder.Append("null");
+				builder.Append("default(");
+				RenderTypeName(typeObj, builder);
+				builder.Append(")");
 				return;
 			}
 

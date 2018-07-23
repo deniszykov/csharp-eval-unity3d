@@ -47,6 +47,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public readonly Type[] GenericArguments;
 		public readonly int GenericArgumentsCount;
 		public readonly Expression ConstantValueExpression;
+		public readonly MemberDescription GetAccessor;
 
 		public MemberDescription(TypeDescription declaringType, PropertyInfo property)
 		{
@@ -67,11 +68,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (getter == null)
 				return;
 
-			this.member = getter;
-			this.hashCode = getter.GetHashCode();
-			this.parameters = getter.GetParameters();
-			this.parametersByName = this.parameters.ToDictionary(GetParameterName, StringComparer.Ordinal);
-			this.returnParameter = getter.ReturnParameter;
+			this.GetAccessor = new MemberDescription(declaringType, getter);
+
+			this.parameters = this.GetAccessor.parameters;
+			this.parametersByName = this.GetAccessor.parametersByName;
+			this.returnParameter = this.GetAccessor.returnParameter;
 		}
 		public MemberDescription(TypeDescription declaringType, FieldInfo field)
 		{
@@ -207,11 +208,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (!this.IsStatic && target == null) throw new ArgumentNullException("target");
 
 			var field = this.member as FieldInfo;
-			var method = this.member as MethodInfo;
+			var propertyInfo = this.member as PropertyInfo;
+			var accessor = this.GetAccessor;
 			if (field != null)
 				expression = Expression.Field(target, field);
-			else if (method != null && this.parameters.Length == 0)
-				expression = Expression.Property(target, method);
+			else if (accessor != null && this.parameters.Length == 0)
+				expression = Expression.Property(target, (MethodInfo)accessor.member);
+			else if (propertyInfo != null)
+				expression = Expression.Property(target, propertyInfo);
 			else
 				expression = null;
 
@@ -248,7 +252,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			expression = null;
 			expressionQuality = QUALITY_INCOMPATIBLE;
 
-			if (this.member is MethodBase == false)
+			if (this.parameters == null) // not a method, constructor, indexer
 				return false;
 
 			// check argument count
@@ -327,9 +331,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (this.member is MethodInfo)
 			{
 				if (this.IsStatic)
-					expression = Expression.Call((MethodInfo)this.member, arguments);
+					expression = Expression.Call(this, arguments);
+				else if (this.Name == Constants.DELEGATE_INVOKE_NAME && this.DeclaringType.IsDelegate)
+					expression = Expression.Invoke(target, arguments);
 				else
-					expression = Expression.Call(target, (MethodInfo)this.member, arguments);
+					expression = Expression.Call(target, this, arguments);
 				return true;
 			}
 			else if (this.member is ConstructorInfo)
@@ -337,7 +343,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				expression = Expression.New((ConstructorInfo)this.member, arguments);
 				return true;
 			}
-
+			else if (this.member is PropertyInfo)
+			{
+				if (this.IsStatic)
+					expression = Expression.Call(this, arguments);
+				else
+					expression = Expression.Call(target, this, arguments);
+				return true;
+			}
 			expressionQuality = QUALITY_INCOMPATIBLE;
 			return false;
 		}
@@ -399,6 +412,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public static implicit operator MethodInfo(MemberDescription memberDescription)
 		{
 			if (memberDescription == null) return null;
+
+			if (memberDescription.IsMethod == false)
+			{
+				if (memberDescription.GetAccessor != null)
+					return (MethodInfo)memberDescription.GetAccessor.member;
+
+				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_MEMBERISNOTMETHOD, memberDescription.Name, memberDescription.DeclaringType));
+			}
 			return (MethodInfo)memberDescription.member;
 		}
 

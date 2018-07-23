@@ -17,6 +17,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using GameDevWare.Dynamic.Expressions.CSharp;
 
 namespace GameDevWare.Dynamic.Expressions
@@ -74,7 +75,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (this.TryGetValue(Constants.EXPRESSION_TYPE_ATTRIBUTE, out expressionTypeObj) == false || expressionTypeObj is string == false)
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE, "<null>"), this);
 				else
 					return null;
 			}
@@ -86,7 +87,13 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			var typeNameObj = default(object);
 			if (this.TryGetValue(Constants.TYPE_ATTRIBUTE, out typeNameObj) == false || (typeNameObj is string == false && typeNameObj is SyntaxTreeNode == false))
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.TYPE_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(
+						string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.TYPE_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
+				else
+					return null;
+			}
 
 			return typeNameObj;
 		}
@@ -94,7 +101,13 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			var valueObj = default(object);
 			if (this.TryGetValue(Constants.VALUE_ATTRIBUTE, out valueObj) == false)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.VALUE_ATTRIBUTE, this.GetExpressionType(throwOnError: true), this));
+			{
+				if (throwOnError)
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.VALUE_ATTRIBUTE,
+						this.GetExpressionType(throwOnError: false) ?? "<null>", this));
+				else
+					return null;
+			}
 			return valueObj;
 		}
 		internal SyntaxTreeNode GetExpression(bool throwOnError)
@@ -127,7 +140,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is SyntaxTreeNode == false)
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				else
 					return ArgumentsTree.Empty;
 			}
@@ -152,7 +165,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is SyntaxTreeNode == false)
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				else
 					return null;
 			}
@@ -179,7 +192,7 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				if (throwOnError)
 				{
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				}
 				else
 				{
@@ -197,7 +210,7 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				if (throwOnError)
 				{
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				}
 				else
 				{
@@ -212,12 +225,16 @@ namespace GameDevWare.Dynamic.Expressions
 			if (this.TryGetValue(Constants.METHOD_ATTRIBUTE, out methodNameObj) == false || methodNameObj == null)
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.METHOD_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.METHOD_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				else
 					return null;
 			}
 
 			return methodNameObj;
+		}
+		internal SyntaxTreeNode GetConversion(bool throwOnError)
+		{
+			return this.GetExpression(Constants.CONVERSION_ATTRIBUTE, throwOnError);
 		}
 		internal SyntaxTreeNode GetBindings(bool throwOnError)
 		{
@@ -235,13 +252,17 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			return this.GetExpression(Constants.INITIALIZERS_ATTRIBUTE, throwOnError);
 		}
+		internal SyntaxTreeNode GetTypeArguments(bool throwOnError)
+		{
+			return this.GetExpression(Constants.ARGUMENTS_ATTRIBUTE, throwOnError);
+		}
 		internal bool GetUseNullPropagation(bool throwOnError)
 		{
 			var useNullPropagationObj = default(object);
 			if (this.TryGetValue(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, out useNullPropagationObj) == false || useNullPropagationObj == null)
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.USE_NULL_PROPAGATION_ATTRIBUTE, this.GetExpressionType(throwOnError: true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.USE_NULL_PROPAGATION_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				else
 					return false;
 			}
@@ -254,7 +275,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (this.TryGetValue(attributeName, out expressionObj) == false || expressionObj == null || expressionObj is SyntaxTreeNode == false)
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, attributeName, this.GetExpressionType(true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, attributeName, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				else
 					return null;
 			}
@@ -271,7 +292,7 @@ namespace GameDevWare.Dynamic.Expressions
 				return this.GetExpressionPosition(throwOnError).LineNumber;
 
 			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_LINE_NUMBER_OLD, this.GetExpressionType(throwOnError: true)), this);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_LINE_NUMBER_OLD, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 
 			return value;
 		}
@@ -283,7 +304,7 @@ namespace GameDevWare.Dynamic.Expressions
 				return this.GetExpressionPosition(throwOnError).ColumnNumber;
 
 			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_COLUMN_NUMBER_OLD, this.GetExpressionType(throwOnError: true)), this);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_COLUMN_NUMBER_OLD, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 
 			return value;
 		}
@@ -295,7 +316,7 @@ namespace GameDevWare.Dynamic.Expressions
 				return this.GetExpressionPosition(throwOnError).TokenLength;
 
 			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TOKEN_LENGTH_OLD, this.GetExpressionType(throwOnError: true)), this);
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TOKEN_LENGTH_OLD, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 
 			return value;
 		}
@@ -321,7 +342,7 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_POSITION, this.GetExpressionType(throwOnError: true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_POSITION, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				else
 					return default(ExpressionPosition);
 			}
@@ -342,7 +363,7 @@ namespace GameDevWare.Dynamic.Expressions
 				this.TryGetValue(Constants.EXPRESSION_ORIGINAL_OLD, out valueObj) == false)
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ORIGINAL_C_SHARP, this.GetExpressionType(throwOnError: true)), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ORIGINAL_C_SHARP, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				else
 					// ReSharper disable once ExpressionIsAlwaysNull
 					return value;
@@ -503,17 +524,24 @@ namespace GameDevWare.Dynamic.Expressions
 		/// </summary>
 		public override string ToString()
 		{
-			var expression = this.GetCSharpExpression(throwOnError: false);
 			try
 			{
+				var expression = this.GetCSharpExpression(throwOnError: false);
 				if (string.IsNullOrEmpty(expression))
 					expression = this.Render();
+				return expression;
 			}
-			catch (Exception error)
+			catch
 			{
-				expression = "/* failed to render expression '" + error.Message + "' */";
+				var sb = new StringBuilder();
+				sb.Append("{ ");
+				foreach (var kv in this)
+				{
+					sb.Append(kv.Key).Append(": ").Append("'").Append(kv.Value).Append("' ");
+				}
+				sb.Append("}");
+				return sb.ToString();
 			}
-			return expression;
 		}
 	}
 }

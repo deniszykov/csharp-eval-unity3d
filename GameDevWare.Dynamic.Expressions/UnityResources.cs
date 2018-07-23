@@ -66,10 +66,11 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		{
 			get
 			{
-				return new Dictionary<string, string>(69)
+				return new Dictionary<string, string>(72)
 				{
 					{ "EXCEPTION_BIND_UNABLETOBINDINDEXER", EXCEPTION_BIND_UNABLETOBINDINDEXER },
 					{ "EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED },
+					{ "EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE", EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE },
 					{ "EXCEPTION_BIND_MISSINGMETHOD", EXCEPTION_BIND_MISSINGMETHOD },
 					{ "EXCEPTION_BIND_UNABLETOINVOKENONDELEG", EXCEPTION_BIND_UNABLETOINVOKENONDELEG },
 					{ "EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED },
@@ -105,6 +106,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES", EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES },
 					{ "EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION", EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION },
 					{ "EXCEPTION_LIST_LISTISEMPTY", EXCEPTION_LIST_LISTISEMPTY },
+					{ "EXCEPTION_BIND_CALLMEMBERISNOTMETHOD", EXCEPTION_BIND_CALLMEMBERISNOTMETHOD },
 					{ "EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS", EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS },
 					{ "EXCEPTION_BIND_UNABLETOBINDMETHOD", EXCEPTION_BIND_UNABLETOBINDMETHOD },
 					{ "EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME", EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME },
@@ -117,6 +119,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_BIND_UNABLETOBINDMEMBER", EXCEPTION_BIND_UNABLETOBINDMEMBER },
 					{ "EXCEPTION_BIND_MISSINGMETHODPARAMETER", EXCEPTION_BIND_MISSINGMETHODPARAMETER },
 					{ "EXCEPTION_BIND_MISSINGORWRONGARGUMENT", EXCEPTION_BIND_MISSINGORWRONGARGUMENT },
+					{ "EXCEPTION_BIND_MEMBERISNOTMETHOD", EXCEPTION_BIND_MEMBERISNOTMETHOD },
 					{ "EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE", EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE },
 					{ "EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ", EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ },
 					{ "EXCEPTION_BIND_INVALIDLAMBDABODYTYPE", EXCEPTION_BIND_INVALIDLAMBDABODYTYPE },
@@ -166,6 +169,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Invalid lambda type '{0}'. A valid delegate type should be specified in lambda type declaration.";
 					default: return "EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE
+		/// </summary>
+		public static string EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Invalid lambda parameter type '{0}' while '{1}' is expected.";
+					default: return "EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE";
 				}
 			}
 		}
@@ -660,6 +677,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_CALLMEMBERISNOTMETHOD
+		/// </summary>
+		public static string EXCEPTION_BIND_CALLMEMBERISNOTMETHOD
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unable to bind call because member '{0}' on type '{1}' is not method.";
+					default: return "EXCEPTION_BIND_CALLMEMBERISNOTMETHOD";
+				}
+			}
+		}
+		/// <summary>
 		/// Localization string with key EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS
 		/// </summary>
 		public static string EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS
@@ -824,6 +855,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Missing or wrong '{0}' argument.";
 					default: return "EXCEPTION_BIND_MISSINGORWRONGARGUMENT";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_MEMBERISNOTMETHOD
+		/// </summary>
+		public static string EXCEPTION_BIND_MEMBERISNOTMETHOD
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Referenced member '{0}' on type '{1}' is not method.";
+					default: return "EXCEPTION_BIND_MEMBERISNOTMETHOD";
 				}
 			}
 		}

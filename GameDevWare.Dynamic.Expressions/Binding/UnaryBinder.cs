@@ -34,9 +34,16 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var expressionType = node.GetExpressionType(throwOnError: true);
 			var operandNode = node.GetExpression(throwOnError: true);
 			var operand = default(Expression);
+			var methodName = node.GetMethodName(throwOnError: false);
+			var methodMember = default(MemberDescription);
 
 			if (AnyBinder.TryBindInNewScope(operandNode, bindingContext, TypeDescription.ObjectType, out operand, out bindingError) == false)
 				return false;
+
+			if (methodName != null)
+			{
+				bindingContext.TryResolveMember(methodName, out methodMember);
+			}
 
 			Debug.Assert(operand != null, "operand != null");
 
@@ -49,7 +56,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						if (operand.Type == typeof(double) || operand.Type == typeof(float))
 							boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
 						else
-							boundExpression = Expression.Negate(operand);
+							boundExpression = Expression.Negate(operand, methodMember);
 					}
 					break;
 				case Constants.EXPRESSION_TYPE_NEGATE_CHECKED:
@@ -59,17 +66,17 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						if (operand.Type == typeof(double) || operand.Type == typeof(float))
 							boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
 						else
-							boundExpression = Expression.NegateChecked(operand);
+							boundExpression = Expression.NegateChecked(operand, methodMember);
 					}
 					break;
 				case Constants.EXPRESSION_TYPE_COMPLEMENT:
 				case Constants.EXPRESSION_TYPE_NOT:
 					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.Not, out boundExpression) == false)
-						boundExpression = Expression.Not(operand);
+						boundExpression = Expression.Not(operand, methodMember);
 					break;
 				case Constants.EXPRESSION_TYPE_UNARY_PLUS:
 					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.UnaryPlus, out boundExpression) == false)
-						boundExpression = Expression.UnaryPlus(operand);
+						boundExpression = Expression.UnaryPlus(operand, methodMember);
 					break;
 				case Constants.EXPRESSION_TYPE_ARRAY_LENGTH:
 					boundExpression = Expression.ArrayLength(operand);

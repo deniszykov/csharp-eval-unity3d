@@ -118,8 +118,18 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			for (var i = 0; i < argumentNames.Length; i++)
 			{
 				var argumentNameTree = default(SyntaxTreeNode);
-				if (arguments.TryGetValue(i, out argumentNameTree) == false || argumentNameTree == null || argumentNameTree.GetExpressionType(throwOnError: true) != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
+				if (arguments.TryGetValue(i, out argumentNameTree) == false || argumentNameTree == null)
+				{
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, Constants.EXPRESSION_TYPE_LAMBDA), node);
+				}
+
+				var argumentNameType = argumentNameTree.GetExpressionType(throwOnError: true);
+				if (argumentNameType != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD &&
+					argumentNameType != Constants.EXPRESSION_TYPE_PARAMETER)
+				{
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE, argumentNameType, Constants.EXPRESSION_TYPE_PARAMETER), node);
+				}
+
 				argumentNames[i] = argumentNameTree.GetPropertyOrFieldName(throwOnError: true);
 			}
 			return argumentNames;

@@ -204,21 +204,22 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				var method = member as MethodInfo;
 				var field = member as FieldInfo;
 				var property = member as PropertyInfo;
-
 				if (property != null)
 				{
-					var indexParameters = property.GetIndexParameters();
-					if (indexParameters.Length == 0)
-						memberDescription = new MemberDescription(this, property);
-					else if (indexers == null)
-						indexers = new[] { new MemberDescription(this, property) };
-					else
-						Add(ref indexers, new MemberDescription(this, property));
+					memberDescription = new MemberDescription(this, property);
+					if (memberDescription.GetParametersCount() != 0)
+					{
+						Add(ref indexers, memberDescription);
+					}
 				}
 				else if (field != null)
+				{
 					memberDescription = new MemberDescription(this, field);
+				}
 				else if (method != null && method.IsSpecialName == false)
+				{
 					memberDescription = new MemberDescription(this, method);
+				}
 
 				if (memberDescription == null)
 					continue;
@@ -281,11 +282,17 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		}
 		private static void Add<T>(ref T[] array, T element) where T : class
 		{
-			if (array == null) throw new ArgumentNullException("array");
 			if (element == null) throw new ArgumentNullException("element");
 
-			Array.Resize(ref array, array.Length + 1);
-			array[array.Length - 1] = element;
+			if (array == null)
+			{
+				array = new T[] { element };
+			}
+			else
+			{
+				Array.Resize(ref array, array.Length + 1);
+				array[array.Length - 1] = element;
+			}
 		}
 		private static T[] Combine<T>(params T[][] arrays)
 		{

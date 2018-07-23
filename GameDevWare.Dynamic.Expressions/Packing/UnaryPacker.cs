@@ -33,14 +33,6 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				{Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType},
 				{Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(expression.Operand)}
 			};
-			if (expression.IsLifted)
-			{
-				node.Add(Constants.IS_LIFTED_ATTRIBUTE, true);
-			}
-			if (expression.IsLiftedToNull)
-			{
-				node.Add(Constants.IS_LIFTED_TO_NULL_ATTRIBUTE, true);
-			}
 			if (expression.Method != null)
 			{
 				node.Add(Constants.METHOD_ATTRIBUTE, AnyPacker.Pack(expression.Method));

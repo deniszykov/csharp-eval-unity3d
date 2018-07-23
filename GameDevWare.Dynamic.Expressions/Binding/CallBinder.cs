@@ -37,8 +37,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
 
 			var methodMember = default(MemberDescription);
-			if (bindingContext.TryResolveMember(methodName, out methodMember) == false || methodMember.IsMethod == false)
+			if (bindingContext.TryResolveMember(methodName, out methodMember))
 			{
+				if (methodMember.IsMethod == false)
+				{
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_CALLMEMBERISNOTMETHOD, methodMember.Name, methodMember.DeclaringType), node);
+					return false;
+				}
+
 				var targetNode = node.GetExpression(throwOnError: true);
 
 				if (AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
@@ -208,7 +214,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 			else
 			{
-				if (TryBind(targetNode, bindingContext, null, out target, out bindingError) == false)
+				if (TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
 					return false;
 
 				type = target.Type;

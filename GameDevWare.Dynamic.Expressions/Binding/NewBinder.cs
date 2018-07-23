@@ -33,7 +33,6 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (node == null) throw new ArgumentNullException("node");
 
 			var arguments = node.GetArguments(throwOnError: false);
-			var typeName = node.GetTypeName(throwOnError: true);
 			var methodName = node.GetMethodName(throwOnError: false);
 			if (methodName != null)
 			{
@@ -41,6 +40,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 			else
 			{
+				var typeName = node.GetTypeName(throwOnError: true);
 				return TryBindToType(node, typeName, arguments, bindingContext, expectedType, out boundExpression, out bindingError);
 			}
 		}
@@ -98,7 +98,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var constructorDescription = default(MemberDescription);
 			if (bindingContext.TryResolveMember(methodName, out constructorDescription) == false || constructorDescription.IsConstructor == false)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, methodName), node);
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, methodName), node);
 				return false;
 			}
 

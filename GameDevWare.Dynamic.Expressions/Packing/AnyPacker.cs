@@ -87,18 +87,29 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
-			if (type.GetTypeInfo().IsGenericType)
+			if (type.IsArray)
 			{
-				var typeArguments = AnyPacker.Pack(type.GetTypeInfo().GetGenericArguments());
-				var methodNameTree = new Dictionary<string, object>(2) {
-					{Constants.NAME_ATTRIBUTE, NameUtils.RemoveGenericSuffix(NameUtils.WriteFullName(type))},
-					{Constants.ARGUMENTS_ATTRIBUTE, typeArguments }
+				var typeArguments = new[] { type.GetTypeInfo().GetElementType() };
+				var methodNameTree = new Dictionary<string, object>(3) {
+					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_TYPE_REFERENCE },
+					{ Constants.NAME_ATTRIBUTE, NameUtils.WriteFullName(typeof(Array)).ToString() },
+					{ Constants.ARGUMENTS_ATTRIBUTE, Pack(typeArguments) }
+				};
+				return methodNameTree;
+			}
+			else if (type.GetTypeInfo().IsGenericType)
+			{
+				var typeArguments = type.GetTypeInfo().GetGenericArguments();
+				var methodNameTree = new Dictionary<string, object>(3) {
+					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_TYPE_REFERENCE },
+					{ Constants.NAME_ATTRIBUTE, NameUtils.RemoveGenericSuffix(NameUtils.WriteFullName(type)).ToString() },
+					{ Constants.ARGUMENTS_ATTRIBUTE, Pack(typeArguments) }
 				};
 				return methodNameTree;
 			}
 			else
 			{
-				return NameUtils.WriteFullName(type);
+				return NameUtils.WriteFullName(type).ToString();
 			}
 		}
 		internal static object Pack(MemberInfo member)
@@ -112,10 +123,11 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				var methodBase = (MethodBase)member;
 				if (methodBase.IsGenericMethod)
 				{
-					var typeArguments = AnyPacker.Pack(methodBase.GetGenericArguments());
-					var methodNameTree = new Dictionary<string, object>(2) {
-						{Constants.NAME_ATTRIBUTE, memberName},
-						{Constants.ARGUMENTS_ATTRIBUTE, typeArguments }
+					var typeArguments = methodBase.GetGenericArguments();
+					var methodNameTree = new Dictionary<string, object>(3) {
+						{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_REFERENCE },
+						{ Constants.NAME_ATTRIBUTE, memberName },
+						{ Constants.ARGUMENTS_ATTRIBUTE, Pack(typeArguments) }
 					};
 					memberName = methodNameTree;
 				}
@@ -125,21 +137,23 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				foreach (var parameterInfo in parameters)
 				{
 					var key = Constants.GetIndexAsString(parameterInfo.Position);
-					var value = parameterInfo.Name;
+					var value = parameterInfo.Name ?? key;
 					arguments[key] = value;
 				}
 
-				return new Dictionary<string, object>(3) {
-					{Constants.TYPE_ATTRIBUTE, Pack(methodBase.DeclaringType)},
-					{Constants.NAME_ATTRIBUTE, memberName},
-					{Constants.ARGUMENTS_ATTRIBUTE, arguments}
+				return new Dictionary<string, object>(4) {
+					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_REFERENCE },
+					{ Constants.TYPE_ATTRIBUTE, Pack(methodBase.DeclaringType) },
+					{ Constants.NAME_ATTRIBUTE, memberName },
+					{ Constants.ARGUMENTS_ATTRIBUTE, arguments }
 				};
 			}
 			else
 			{
-				return new Dictionary<string, object>(2) {
-					{Constants.TYPE_ATTRIBUTE, Pack(member.DeclaringType)},
-					{Constants.NAME_ATTRIBUTE, memberName},
+				return new Dictionary<string, object>(3) {
+					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_REFERENCE },
+					{ Constants.TYPE_ATTRIBUTE, Pack(member.DeclaringType) },
+					{ Constants.NAME_ATTRIBUTE, memberName },
 				};
 			}
 		}
@@ -151,7 +165,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			var argumentsNode = new Dictionary<string, object>(arguments.Length);
 			for (var i = 0; i < arguments.Length; i++)
 			{
-				var name = (names != null) ? names[i] : Constants.GetIndexAsString(i);
+				var name = (names != null ? names[i] : null) ?? Constants.GetIndexAsString(i);
 				argumentsNode[name] = Pack(arguments[i]);
 			}
 			return argumentsNode;
@@ -163,8 +177,8 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			var argumentsNode = new Dictionary<string, object>(typeArguments.Length);
 			for (var i = 0; i < typeArguments.Length; i++)
 			{
-				var name = Constants.GetIndexAsString(i);
-				argumentsNode[name] = Pack(typeArguments[i]);
+				var key = Constants.GetIndexAsString(i);
+				argumentsNode[key] = Pack(typeArguments[i]);
 			}
 			return argumentsNode;
 		}
