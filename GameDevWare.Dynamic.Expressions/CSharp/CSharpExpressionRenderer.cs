@@ -73,50 +73,50 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				var expressionType = (string)expressionTypeObj;
 				switch (expressionType)
 				{
-					case "Invoke":
-					case "Index": RenderInvokeOrIndex(node, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_INVOKE:
+					case Constants.EXPRESSION_TYPE_INDEX: RenderInvokeOrIndex(node, builder, checkedScope); break;
 					case "Enclose":
-					case "UncheckedScope":
-					case "CheckedScope":
-					case "Group": RenderGroup(node, builder, checkedScope); break;
-					case "Constant": RenderConstant(node, builder); break;
-					case "PropertyOrField": RenderPropertyOrField(node, builder, checkedScope); break;
-					case "TypeOf": RenderTypeOf(node, builder); break;
-					case "Default": RenderDefault(node, builder); break;
-					case "NewArrayBounds":
-					case "New": RenderNew(node, builder, checkedScope); break;
-					case "UnaryPlus":
-					case "Negate":
-					case "NegateChecked":
-					case "Not":
-					case "Complement": RenderUnary(node, builder, wrapped, checkedScope); break;
-					case "Divide":
-					case "Multiply":
-					case "MultiplyChecked":
-					case "Modulo":
-					case "Add":
-					case "AddChecked":
-					case "Subtract":
-					case "SubtractChecked":
-					case "LeftShift":
-					case "RightShift":
-					case "GreaterThan":
-					case "GreaterThanOrEqual":
-					case "LessThan":
-					case "LessThanOrEqual":
-					case "Equal":
-					case "NotEqual":
-					case "And":
-					case "Or":
-					case "ExclusiveOr":
-					case "AndAlso":
-					case "OrElse":
-					case "Coalesce": RenderBinary(node, builder, wrapped, checkedScope); break;
-					case "Condition": RenderCondition(node, builder, wrapped, checkedScope); break;
-					case "Convert":
-					case "ConvertChecked":
-					case "TypeIs":
-					case "TypeAs": RenderTypeBinary(node, builder, wrapped, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_UNCHECKED_SCOPE:
+					case Constants.EXPRESSION_TYPE_CHECKED_SCOPE:
+					case Constants.EXPRESSION_TYPE_GROUP: RenderGroup(node, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_CONSTANT: RenderConstant(node, builder); break;
+					case Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD: RenderPropertyOrField(node, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_TYPE_OF: RenderTypeOf(node, builder); break;
+					case Constants.EXPRESSION_TYPE_DEFAULT: RenderDefault(node, builder); break;
+					case Constants.EXPRESSION_TYPE_NEW_ARRAY_BOUNDS:
+					case Constants.EXPRESSION_TYPE_NEW: RenderNew(node, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_UNARY_PLUS:
+					case Constants.EXPRESSION_TYPE_NEGATE_CHECKED:
+					case Constants.EXPRESSION_TYPE_NEGATE:
+					case Constants.EXPRESSION_TYPE_NOT:
+					case Constants.EXPRESSION_TYPE_COMPLEMENT: RenderUnary(node, builder, wrapped, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_DIVIDE:
+					case Constants.EXPRESSION_TYPE_MULTIPLY:
+					case Constants.EXPRESSION_TYPE_MULTIPLY_CHECKED:
+					case Constants.EXPRESSION_TYPE_MODULO:
+					case Constants.EXPRESSION_TYPE_ADD:
+					case Constants.EXPRESSION_TYPE_ADD_CHECKED:
+					case Constants.EXPRESSION_TYPE_SUBTRACT:
+					case Constants.EXPRESSION_TYPE_SUBTRACT_CHECKED:
+					case Constants.EXPRESSION_TYPE_LEFT_SHIFT:
+					case Constants.EXPRESSION_TYPE_RIGHT_SHIFT:
+					case Constants.EXPRESSION_TYPE_GREATER_THAN:
+					case Constants.EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL:
+					case Constants.EXPRESSION_TYPE_LESS_THAN:
+					case Constants.EXPRESSION_TYPE_LESS_THAN_OR_EQUAL:
+					case Constants.EXPRESSION_TYPE_EQUAL:
+					case Constants.EXPRESSION_TYPE_NOT_EQUAL:
+					case Constants.EXPRESSION_TYPE_AND:
+					case Constants.EXPRESSION_TYPE_OR:
+					case Constants.EXPRESSION_TYPE_EXCLUSIVE_OR:
+					case Constants.EXPRESSION_TYPE_AND_ALSO:
+					case Constants.EXPRESSION_TYPE_OR_ELSE:
+					case Constants.EXPRESSION_TYPE_COALESCE: RenderBinary(node, builder, wrapped, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_CONDITION: RenderCondition(node, builder, wrapped, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_CONVERT:
+					case Constants.EXPRESSION_TYPE_CONVERT_CHECKED:
+					case Constants.EXPRESSION_TYPE_TYPE_IS:
+					case Constants.EXPRESSION_TYPE_TYPE_AS: RenderTypeBinary(node, builder, wrapped, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_LAMBDA: RenderLambda(node, builder, wrapped, checkedScope); break;
 					default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType));
 				}
@@ -145,8 +145,6 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var typeName = node.GetTypeName(throwOnError: true);
 			var target = node.GetExpression(throwOnError: true);
 
-			Convert.ToString(typeName, Constants.DefaultFormatProvider);
-
 			var checkedOperation = expressionType == Constants.EXPRESSION_TYPE_CONVERT_CHECKED ? true :
 				expressionType == Constants.EXPRESSION_TYPE_CONVERT ? false : checkedScope;
 
@@ -171,19 +169,19 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			switch (expressionType)
 			{
-				case "ConvertChecked":
-				case "Convert":
+				case Constants.EXPRESSION_TYPE_CONVERT:
+				case Constants.EXPRESSION_TYPE_CONVERT_CHECKED:
 					builder.Append("(");
 					RenderTypeName(typeName, builder);
 					builder.Append(")");
 					Render(target, builder, false, checkedOperation);
 					break;
-				case "TypeIs":
+				case Constants.EXPRESSION_TYPE_TYPE_IS:
 					Render(target, builder, false, checkedScope);
 					builder.Append(" is ");
 					RenderTypeName(typeName, builder);
 					break;
-				case "TypeAs":
+				case Constants.EXPRESSION_TYPE_TYPE_AS:
 					Render(target, builder, false, checkedScope);
 					builder.Append(" as ");
 					RenderTypeName(typeName, builder);
@@ -266,29 +264,29 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			Render(left, builder, false, checkedOperation);
 			switch (expressionType)
 			{
-				case "Divide": builder.Append(" / "); break;
-				case "MultiplyChecked":
-				case "Multiply": builder.Append(" * "); break;
-				case "Modulo": builder.Append(" % "); break;
-				case "AddChecked":
-				case "Add": builder.Append(" + "); break;
-				case "SubtractChecked":
-				case "Subtract": builder.Append(" - "); break;
-				case "LeftShift": builder.Append(" << "); break;
-				case "RightShift": builder.Append(" >> "); break;
-				case "GreaterThan": builder.Append(" > "); break;
-				case "GreaterThanOrEqual": builder.Append(" >= "); break;
-				case "LessThan": builder.Append(" < "); break;
-				case "LessThanOrEqual": builder.Append(" <= "); break;
-				case "Equal": builder.Append(" == "); break;
-				case "NotEqual": builder.Append(" != "); break;
-				case "And": builder.Append(" & "); break;
-				case "Or": builder.Append(" | "); break;
-				case "ExclusiveOr": builder.Append(" ^ "); break;
-				case "Power": builder.Append(" ** "); break;
-				case "AndAlso": builder.Append(" && "); break;
-				case "OrElse": builder.Append(" || "); break;
-				case "Coalesce": builder.Append(" ?? "); break;
+				case Constants.EXPRESSION_TYPE_DIVIDE: builder.Append(" / "); break;
+				case Constants.EXPRESSION_TYPE_MULTIPLY:
+				case Constants.EXPRESSION_TYPE_MULTIPLY_CHECKED: builder.Append(" * "); break;
+				case Constants.EXPRESSION_TYPE_MODULO: builder.Append(" % "); break;
+				case Constants.EXPRESSION_TYPE_ADD_CHECKED:
+				case Constants.EXPRESSION_TYPE_ADD: builder.Append(" + "); break;
+				case Constants.EXPRESSION_TYPE_SUBTRACT:
+				case Constants.EXPRESSION_TYPE_SUBTRACT_CHECKED: builder.Append(" - "); break;
+				case Constants.EXPRESSION_TYPE_LEFT_SHIFT: builder.Append(" << "); break;
+				case Constants.EXPRESSION_TYPE_RIGHT_SHIFT: builder.Append(" >> "); break;
+				case Constants.EXPRESSION_TYPE_GREATER_THAN: builder.Append(" > "); break;
+				case Constants.EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL: builder.Append(" >= "); break;
+				case Constants.EXPRESSION_TYPE_LESS_THAN: builder.Append(" < "); break;
+				case Constants.EXPRESSION_TYPE_LESS_THAN_OR_EQUAL: builder.Append(" <= "); break;
+				case Constants.EXPRESSION_TYPE_EQUAL: builder.Append(" == "); break;
+				case Constants.EXPRESSION_TYPE_NOT_EQUAL: builder.Append(" != "); break;
+				case Constants.EXPRESSION_TYPE_AND: builder.Append(" & "); break;
+				case Constants.EXPRESSION_TYPE_OR: builder.Append(" | "); break;
+				case Constants.EXPRESSION_TYPE_EXCLUSIVE_OR: builder.Append(" ^ "); break;
+				case Constants.EXPRESSION_TYPE_POWER: builder.Append(" ** "); break;
+				case Constants.EXPRESSION_TYPE_AND_ALSO: builder.Append(" && "); break;
+				case Constants.EXPRESSION_TYPE_OR_ELSE: builder.Append(" || "); break;
+				case Constants.EXPRESSION_TYPE_COALESCE: builder.Append(" ?? "); break;
 				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType));
 			}
 			Render(right, builder, false, checkedOperation);
@@ -335,17 +333,17 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			switch (expressionType)
 			{
-				case "UnaryPlus":
+				case Constants.EXPRESSION_TYPE_UNARY_PLUS:
 					builder.Append("+");
 					break;
-				case "NegateChecked":
-				case "Negate":
+				case Constants.EXPRESSION_TYPE_NEGATE:
+				case Constants.EXPRESSION_TYPE_NEGATE_CHECKED:
 					builder.Append("-");
 					break;
-				case "Not":
+				case Constants.EXPRESSION_TYPE_NOT:
 					builder.Append("!");
 					break;
-				case "Complement":
+				case Constants.EXPRESSION_TYPE_COMPLEMENT:
 					builder.Append("~");
 					break;
 				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType));
@@ -366,14 +364,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			builder.Append("new ");
 			RenderTypeName(typeName, builder);
-			if (expressionType == "NewArrayBounds")
+			if (expressionType == Constants.EXPRESSION_TYPE_NEW_ARRAY_BOUNDS)
 				builder.Append("[");
 			else
 				builder.Append("(");
 
 			RenderArguments(arguments, builder, checkedScope);
 
-			if (expressionType == "NewArrayBounds")
+			if (expressionType == Constants.EXPRESSION_TYPE_NEW_ARRAY_BOUNDS)
 				builder.Append("]");
 			else
 				builder.Append(")");
@@ -550,9 +548,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
 
 			Render(target, builder, false, checkedScope);
-			builder.Append(expressionType == "Invoke" ? "(" : (useNullPropagation ? "?[" : "["));
+			builder.Append(expressionType == Constants.DELEGATE_INVOKE_NAME ? "(" : (useNullPropagation ? "?[" : "["));
 			RenderArguments(arguments, builder, checkedScope);
-			builder.Append(expressionType == "Invoke" ? ")" : "]");
+			builder.Append(expressionType == Constants.DELEGATE_INVOKE_NAME ? ")" : "]");
 		}
 		private static void RenderLambda(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
