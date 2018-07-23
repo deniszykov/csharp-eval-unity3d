@@ -34,9 +34,25 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			boundExpression = null;
 			bindingError = null;
 
+			// try get type of lambda from node
+			var lambdaTypeName = node.GetTypeName(throwOnError: false);
+			var lambdaType = default(Type);
+			if (lambdaTypeName != null)
+			{
+				if (bindingContext.TryResolveType(lambdaTypeName, out lambdaType) == false)
+				{
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, lambdaTypeName), node);
+					return false;
+				}
+				else
+				{
+					expectedType = TypeDescription.GetTypeDescription(lambdaType);
+				}
+			}
+
 			if (expectedType.HasGenericParameters || !expectedType.IsDelegate)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED, expectedType != null ? expectedType.ToString() : "<null>"));
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED, expectedType.ToString()));
 				return false;
 			}
 
@@ -60,7 +76,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			for (var i = 0; i < argumentNames.Length; i++)
 			{
 				var argumentNameTree = default(SyntaxTreeNode);
-				if (argumentsTree.TryGetValue(i, out argumentNameTree) == false || argumentNameTree == null || argumentNameTree.GetExpressionType(throwOnError: true) != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
+				if (argumentsTree.TryGetValue(i, out argumentNameTree) == false ||
+					argumentNameTree == null ||
+					(argumentNameTree.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD ||
+					 argumentNameTree.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_PARAMETER) == false)
 				{
 					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
 					return false;

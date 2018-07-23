@@ -312,4 +312,16 @@
   <data name="EXCEPTION_BIND_UNABLETOBINDMEMBER" xml:space="preserve">
     <value>Unable to bind member '{0}' on type '{1}'. Static, visibility, generic parameters or call parameters doesn't not match.</value>
   </data>
+  <data name="EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE" xml:space="preserve">
+    <value>Unable to resolve method '{0}'.</value>
+  </data>
+  <data name="EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS" xml:space="preserve">
+    <value>Failed to bind member bindings.</value>
+  </data>
+  <data name="EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION" xml:space="preserve">
+    <value>Failed to bind 'new' expression.</value>
+  </data>
+  <data name="EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS" xml:space="preserve">
+    <value>Failed to bind list initializer.</value>
+  </data>
 </root>

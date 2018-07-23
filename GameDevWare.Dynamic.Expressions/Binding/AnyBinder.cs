@@ -69,6 +69,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						return NewBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_NEW_ARRAY_BOUNDS:
 						return NewArrayBoundsBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
+					case Constants.EXPRESSION_TYPE_NEW_ARRAY_INIT:
+						return NewArrayInitBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
+					case Constants.EXPRESSION_TYPE_MEMBER_INIT:
+						return MemberInitBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
+					case Constants.EXPRESSION_TYPE_LIST_INIT:
+						return ListInitBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_ADD:
 					case Constants.EXPRESSION_TYPE_ADD_CHECKED:
 					case Constants.EXPRESSION_TYPE_SUBTRACT:

@@ -101,38 +101,47 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				return NameUtils.WriteFullName(type);
 			}
 		}
-		internal static object Pack(MethodInfo method)
+		internal static object Pack(MemberInfo member)
 		{
-			if (method.DeclaringType == null)
+			if (member.DeclaringType == null)
 				return null;
 
-			var parameters = method.GetParameters();
-			var methodName = (object)NameUtils.RemoveGenericSuffix(method.Name);
-			if (method.IsGenericMethod)
+			var memberName = (object)NameUtils.RemoveGenericSuffix(member.Name);
+			if (member is MethodBase)
 			{
-				var typeArguments = AnyPacker.Pack(method.GetGenericArguments());
-				var methodNameTree = new Dictionary<string, object>(2) {
-					{Constants.NAME_ATTRIBUTE, methodName},
-					{Constants.ARGUMENTS_ATTRIBUTE, typeArguments }
-				};
-				methodName = methodNameTree;
-			}
-			var arguments = new Dictionary<string, object>(parameters.Length);
-			foreach (var parameterInfo in parameters)
-			{
-				var key = parameterInfo.Name;
-				if (string.IsNullOrEmpty(key))
+				var methodBase = (MethodBase)member;
+				if (methodBase.IsGenericMethod)
 				{
-					key = parameterInfo.Position.ToString();
+					var typeArguments = AnyPacker.Pack(methodBase.GetGenericArguments());
+					var methodNameTree = new Dictionary<string, object>(2) {
+						{Constants.NAME_ATTRIBUTE, memberName},
+						{Constants.ARGUMENTS_ATTRIBUTE, typeArguments }
+					};
+					memberName = methodNameTree;
 				}
-				arguments[key] = parameterInfo.Position;
-			}
 
-			return new Dictionary<string, object>(3) {
-				{Constants.TYPE_ATTRIBUTE, Pack(method.DeclaringType)},
-				{Constants.NAME_ATTRIBUTE, methodName},
-				{Constants.ARGUMENTS_ATTRIBUTE, arguments}
-			};
+				var parameters = methodBase.GetParameters();
+				var arguments = new Dictionary<string, object>(parameters.Length);
+				foreach (var parameterInfo in parameters)
+				{
+					var key = Constants.GetIndexAsString(parameterInfo.Position);
+					var value = parameterInfo.Name;
+					arguments[key] = value;
+				}
+
+				return new Dictionary<string, object>(3) {
+					{Constants.TYPE_ATTRIBUTE, Pack(methodBase.DeclaringType)},
+					{Constants.NAME_ATTRIBUTE, memberName},
+					{Constants.ARGUMENTS_ATTRIBUTE, arguments}
+				};
+			}
+			else
+			{
+				return new Dictionary<string, object>(2) {
+					{Constants.TYPE_ATTRIBUTE, Pack(member.DeclaringType)},
+					{Constants.NAME_ATTRIBUTE, memberName},
+				};
+			}
 		}
 		internal static object Pack(Expression[] arguments, string[] names)
 		{
@@ -158,70 +167,6 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				argumentsNode[name] = Pack(typeArguments[i]);
 			}
 			return argumentsNode;
-		}
-	}
-
-	internal static class NewArrayPacker
-	{
-		public static Dictionary<string, object> Pack(NewArrayExpression expression)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal static class NewPacker
-	{
-		public static Dictionary<string, object> Pack(NewExpression expression)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal static class MemberInitPacker
-	{
-		public static Dictionary<string, object> Pack(MemberInitExpression expression)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal static class MemberAccessPacker
-	{
-		public static Dictionary<string, object> Pack(MemberExpression expression)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal static class ListInitPacker
-	{
-		public static Dictionary<string, object> Pack(ListInitExpression expression)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal static class LambdaPacker
-	{
-		public static Dictionary<string, object> Pack(LambdaExpression expression)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal static class InvokePacker
-	{
-		public static Dictionary<string, object> Pack(InvocationExpression expression)
-		{
-			throw new NotImplementedException();
-		}
-	}
-
-	internal static class CallPacker
-	{
-		public static Dictionary<string, object> Pack(MethodCallExpression expression)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

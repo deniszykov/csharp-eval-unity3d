@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
@@ -56,6 +57,77 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return false;
 
 			return type != null;
+		}
+		public bool TryResolveMember(object memberName, out MemberDescription member)
+		{
+			member = null;
+			if (memberName is SyntaxTreeNode == false)
+			{
+				return false;
+			}
+
+			var memberNode = (SyntaxTreeNode)memberName;
+			var typeName = memberNode.GetTypeName(throwOnError: false);
+			var type = default(Type);
+			if (typeName == null || this.TryResolveType(typeName, out type) == false)
+			{
+				return false;
+			}
+
+			var name = memberNode.GetName(throwOnError: false);
+			var nameRef = default(TypeReference);
+			if (name == null || TryGetTypeReference(name, out nameRef) == false)
+			{
+				return false;
+			}
+
+			var genericArguments = default(Type[]);
+			if (nameRef.IsGenericType)
+			{
+				genericArguments = new Type[nameRef.TypeArguments.Count];
+				for (var i = 0; i < genericArguments.Length; i++)
+				{
+					var typeArgument = nameRef.TypeArguments[i];
+					if (this.TryResolveType(typeArgument, out genericArguments[i]) == false)
+					{
+						return false;
+					}
+				}
+			}
+
+			var typeDescription = TypeDescription.GetTypeDescription(type);
+			var argumentNames = memberNode.GetArgumentNames(throwOnError: false);
+			foreach (var declaredMember in typeDescription.GetMembers(nameRef.Name))
+			{
+				if ((declaredMember.IsMethod || declaredMember.IsConstructor) && argumentNames != null)
+				{
+					var paramsCount = declaredMember.GetParametersCount();
+					if (paramsCount != argumentNames.Count)
+						continue;
+
+					for (var i = 0; i < paramsCount; i++)
+					{
+						var parameter = declaredMember.GetParameter(i);
+						var parameterIndex = Constants.GetIndexAsString(parameter.Position);
+
+						var argumentName = default(string);
+						if (argumentNames.TryGetValue(parameterIndex, out argumentName) == false || string.Equals(argumentName, parameter.Name))
+						{
+							break;
+						}
+
+						if (i == paramsCount - 1)
+						{
+							return TryMakeGenericMethod(ref member, genericArguments); ;
+						}
+					}
+				}
+				else if (nameRef.TypeArguments.Count == declaredMember.GenericArgumentsCount)
+				{
+					return TryMakeGenericMethod(ref member, genericArguments);
+				}
+			}
+			return false;
 		}
 		public bool TryGetParameter(string parameterName, out Expression parameter)
 		{
@@ -220,6 +292,19 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return;
 
 			expression = ExpressionUtils.MakeNullPropagationExpression(this.nullPropagationTargets, expression);
+		}
+		private static bool TryMakeGenericMethod(ref MemberDescription methodDescription, Type[] typeArguments)
+		{
+			try
+			{
+				if (typeArguments != null)
+					methodDescription = methodDescription.MakeGenericMethod(typeArguments);
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 	}
 }

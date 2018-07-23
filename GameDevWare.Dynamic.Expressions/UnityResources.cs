@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -66,7 +66,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		{
 			get
 			{
-				return new Dictionary<string, string>(65)
+				return new Dictionary<string, string>(69)
 				{
 					{ "EXCEPTION_BIND_UNABLETOBINDINDEXER", EXCEPTION_BIND_UNABLETOBINDINDEXER },
 					{ "EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED },
@@ -105,12 +105,14 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES", EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES },
 					{ "EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION", EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION },
 					{ "EXCEPTION_LIST_LISTISEMPTY", EXCEPTION_LIST_LISTISEMPTY },
+					{ "EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS", EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS },
 					{ "EXCEPTION_BIND_UNABLETOBINDMETHOD", EXCEPTION_BIND_UNABLETOBINDMETHOD },
 					{ "EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME", EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME },
 					{ "EXCEPTION_PARSER_COLONISEXPRECTED", EXCEPTION_PARSER_COLONISEXPRECTED },
 					{ "EXCEPTION_BIND_UNABLETOBINDCALL", EXCEPTION_BIND_UNABLETOBINDCALL },
 					{ "EXCEPTION_BIND_UNABLETOCREATEEXPRWITHPARAMS", EXCEPTION_BIND_UNABLETOCREATEEXPRWITHPARAMS },
 					{ "EXCEPTION_BIND_UNKNOWNEXPRTYPE", EXCEPTION_BIND_UNKNOWNEXPRTYPE },
+					{ "EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION", EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION },
 					{ "EXCEPTION_BIND_FAILEDTOBIND", EXCEPTION_BIND_FAILEDTOBIND },
 					{ "EXCEPTION_BIND_UNABLETOBINDMEMBER", EXCEPTION_BIND_UNABLETOBINDMEMBER },
 					{ "EXCEPTION_BIND_MISSINGMETHODPARAMETER", EXCEPTION_BIND_MISSINGMETHODPARAMETER },
@@ -118,6 +120,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE", EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE },
 					{ "EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ", EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ },
 					{ "EXCEPTION_BIND_INVALIDLAMBDABODYTYPE", EXCEPTION_BIND_INVALIDLAMBDABODYTYPE },
+					{ "EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS", EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS },
 					{ "EXCEPTION_BIND_INVALIDCHARLITERAL", EXCEPTION_BIND_INVALIDCHARLITERAL },
 					{ "EXCEPTION_PARSER_EXPRESSIONISEMPTY", EXCEPTION_PARSER_EXPRESSIONISEMPTY },
 					{ "EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH", EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH },
@@ -127,6 +130,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF", EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF },
 					{ "EXCEPTION_PARSER_UNARYOPREQOPERAND", EXCEPTION_PARSER_UNARYOPREQOPERAND },
 					{ "EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS", EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS },
+					{ "EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE", EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE },
 					{ "EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS", EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS },
 					{ "EXCEPTION_PARSER_TERNARYOPREQOPERAND", EXCEPTION_PARSER_TERNARYOPREQOPERAND },
 					{ "EXCEPTION_COMPIL_NOUNARYOPONTYPE", EXCEPTION_COMPIL_NOUNARYOPONTYPE },
@@ -656,6 +660,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS
+		/// </summary>
+		public static string EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Failed to bind member bindings.";
+					default: return "EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS";
+				}
+			}
+		}
+		/// <summary>
 		/// Localization string with key EXCEPTION_BIND_UNABLETOBINDMETHOD
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOBINDMETHOD
@@ -740,6 +758,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION
+		/// </summary>
+		public static string EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Failed to bind 'new' expression.";
+					default: return "EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION";
+				}
+			}
+		}
+		/// <summary>
 		/// Localization string with key EXCEPTION_BIND_FAILEDTOBIND
 		/// </summary>
 		public static string EXCEPTION_BIND_FAILEDTOBIND
@@ -762,7 +794,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unable to bind member '{0}' on type '{1}'. Visibility, static, generic parameters or call parameters doesn't not match.";
+					case 0: return "Unable to bind member '{0}' on type '{1}'. Static, visibility, generic parameters or call parameters doesn't not match.";
 					default: return "EXCEPTION_BIND_UNABLETOBINDMEMBER";
 				}
 			}
@@ -834,6 +866,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Failed to build lambda expression because body has type '{1}' which is not convertible to result type '{1}.'";
 					default: return "EXCEPTION_BIND_INVALIDLAMBDABODYTYPE";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS
+		/// </summary>
+		public static string EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Failed to bind list initializer.";
+					default: return "EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS";
 				}
 			}
 		}
@@ -960,6 +1006,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Count of passed arguments doesn't match parameters count.";
 					default: return "EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE
+		/// </summary>
+		public static string EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Unable to resolve method '{0}'.";
+					default: return "EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE";
 				}
 			}
 		}

@@ -32,6 +32,8 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_ATTRIBUTE = "expressionType";
 		public const string EXPRESSION_ATTRIBUTE = "expression";
 		public const string ARGUMENTS_ATTRIBUTE = "arguments";
+		public const string INITIALIZERS_ATTRIBUTE = "initializers";
+		public const string MEMBER_ATTRIBUTE = "member";
 		public const string LEFT_ATTRIBUTE = "left";
 		public const string RIGHT_ATTRIBUTE = "right";
 		public const string TEST_ATTRIBUTE = "test";
@@ -39,6 +41,8 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string IF_FALSE_ATTRIBUTE = "ifFalse";
 		public const string TYPE_ATTRIBUTE = "type";
 		public const string VALUE_ATTRIBUTE = "value";
+		public const string NEW_ATTRIBUTE = "new";
+		public const string BINDINGS_ATTRIBUTE = "bindings";
 		public const string PROPERTY_OR_FIELD_NAME_ATTRIBUTE = "propertyOrFieldName";
 		public const string NAME_ATTRIBUTE = "name";
 		public const string USE_NULL_PROPAGATION_ATTRIBUTE = "useNullPropagation";
@@ -62,6 +66,9 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_NEW = "New";
 		public const string EXPRESSION_TYPE_ARRAY_LENGTH = "ArrayLength";
 		public const string EXPRESSION_TYPE_NEW_ARRAY_BOUNDS = "NewArrayBounds";
+		public const string EXPRESSION_TYPE_NEW_ARRAY_INIT = "NewArrayInit";
+		public const string EXPRESSION_TYPE_MEMBER_INIT = "MemberInit";
+		public const string EXPRESSION_TYPE_LIST_INIT = "ListInit";
 		public const string EXPRESSION_TYPE_ADD = "Add";
 		public const string EXPRESSION_TYPE_ADD_CHECKED = "AddChecked";
 		public const string EXPRESSION_TYPE_SUBTRACT = "Subtract";

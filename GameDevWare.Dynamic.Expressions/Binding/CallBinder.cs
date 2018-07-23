@@ -36,6 +36,25 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var methodName = node.GetMethodName(throwOnError: true);
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
 
+			var methodMember = default(MemberDescription);
+			if (bindingContext.TryResolveMember(methodName, out methodMember) == false || methodMember.IsMethod == false)
+			{
+				var targetNode = node.GetExpression(throwOnError: true);
+
+				if (AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
+					return false;
+
+				float methodQuality;
+				if (methodMember.TryMakeCall(target, arguments, bindingContext, out boundExpression, out methodQuality) == false)
+				{
+					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDMETHOD, methodMember.Name, target.Type, arguments.Count), node);
+					return false;
+				}
+
+				return true;
+			}
+
+
 			var methodRef = default(TypeReference);
 			if (BindingContext.TryGetMethodReference(methodName, out methodRef) == false)
 			{
@@ -51,7 +70,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			var isStatic = target == null;
 			var selectedMethodQuality = MemberDescription.QUALITY_INCOMPATIBLE;
-			var hasGenericParameters = methodRef.TypeArguments.Count > 0;
+			var hasGenericParameters = methodRef.IsGenericType;
 			var genericArguments = default(Type[]);
 			if (hasGenericParameters)
 			{

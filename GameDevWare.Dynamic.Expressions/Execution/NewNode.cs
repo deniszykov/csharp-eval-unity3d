@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -43,26 +43,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			}
 
 			var newInstance = this.isNullableType ? null : Activator.CreateInstance(this.newExpression.Type, constructorArguments);
-			if (this.newExpression.Members == null)
-				return newInstance;
-
 			if (newInstance == null)
 				throw new NullReferenceException(string.Format(Properties.Resources.EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT, this.newExpression));
-
-			for (var j = 0; j < this.newExpression.Members.Count; j++)
-			{
-				var member = this.newExpression.Members[j];
-				var fieldInfo = member as FieldInfo;
-				var propertyInfo = member as PropertyInfo;
-				var value = initializationValues[constructorArguments.Length + j];
-
-				if (fieldInfo != null)
-					fieldInfo.SetValue(newInstance, value);
-				else if (propertyInfo != null)
-					propertyInfo.SetValue(newInstance, value, null);
-				else
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION, member));
-			}
 
 			return newInstance;
 		}

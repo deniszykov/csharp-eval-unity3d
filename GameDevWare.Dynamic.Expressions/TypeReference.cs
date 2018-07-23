@@ -32,7 +32,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// </summary>
 		public static readonly TypeReference Empty = new TypeReference();
 		/// <summary>
-		/// Empt list of type arguments.
+		/// Empty list of type arguments.
 		/// </summary>
 		public static readonly IList<TypeReference> EmptyTypeArguments = Empty.TypeArguments;
 
@@ -57,6 +57,10 @@ namespace GameDevWare.Dynamic.Expressions
 		/// Type's generic arguments.
 		/// </summary>
 		public ReadOnlyCollection<TypeReference> TypeArguments { get { return this.typeArguments; } }
+		/// <summary>
+		/// Returns true if type has type arguments.
+		/// </summary>
+		public bool IsGenericType { get { return this.typeArguments.Count > 0; } }
 
 		private TypeReference()
 		{

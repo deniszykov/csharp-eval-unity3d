@@ -109,6 +109,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				underlyingType = Enum.GetUnderlyingType(type);
 			else if (typeInfo.IsValueType)
 				underlyingType = Nullable.GetUnderlyingType(type);
+			else if (typeInfo.IsArray)
+				underlyingType = typeInfo.GetElementType();
 
 			this.BaseType = typeInfo.BaseType != null ? cache.GetOrCreateTypeDescription(typeInfo.BaseType) : null;
 			this.UnderlyingType = underlyingType != null ? cache.GetOrCreateTypeDescription(underlyingType) : null;
