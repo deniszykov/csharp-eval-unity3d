@@ -14,6 +14,7 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -117,6 +118,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 		public static readonly CultureInfo DefaultFormatProvider = CultureInfo.InvariantCulture;
 		public static readonly ParameterExpression[] EmptyParameters = new ParameterExpression[0];
+		public static readonly ReadOnlyCollection<ParameterExpression> EmptyReadonlyParameters = new ReadOnlyCollection<ParameterExpression>(EmptyParameters);
 
 		private static readonly string[] IntToString = ArrayUtils.ConvertAll(Enumerable.Range(0, MAX_ARGUMENTS_COUNT).ToArray(), i => i.ToString());
 
