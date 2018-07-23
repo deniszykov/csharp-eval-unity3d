@@ -39,7 +39,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					return false;
 			}
 
-			boundExpression = Expression.NewArrayInit(type, argumentExpressions);
+			boundExpression = Expression.NewArrayInit(elementType, argumentExpressions);
 			return true;
 		}
 	}
