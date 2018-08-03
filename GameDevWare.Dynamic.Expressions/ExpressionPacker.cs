@@ -14,7 +14,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return AnyPacker.Pack(expression);
 		}
-		public static Expression Unpack(Dictionary<string, object> packedExpression, ITypeResolver typeResolver = null, Expression global = null, Type expectedType = null)
+		public static Expression Unpack(IDictionary<string, object> packedExpression, ITypeResolver typeResolver = null, Expression global = null, Type expectedType = null)
 		{
 			if (packedExpression == null) throw new ArgumentNullException("packedExpression");
 			if(typeResolver == null) typeResolver = KnownTypeResolver.Default;
@@ -30,7 +30,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return boundExpression;
 		}
-		public static LambdaExpression UnpackLambda(Type delegateType, Dictionary<string, object> packedExpression, ITypeResolver typeResolver = null, Expression global = null)
+		public static LambdaExpression UnpackLambda(Type delegateType, IDictionary<string, object> packedExpression, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (delegateType == null) throw new ArgumentNullException("delegateType");
 			if (packedExpression == null) throw new ArgumentNullException("packedExpression");
@@ -40,7 +40,7 @@ namespace GameDevWare.Dynamic.Expressions
 			var unpackedExpression = binder.Bind(syntaxTree, global);
 			return unpackedExpression;
 		}
-		public static Expression<DelegateT> UnpackLambda<DelegateT>(Dictionary<string, object> expressionTree, ITypeResolver typeResolver = null, Expression global = null)
+		public static Expression<DelegateT> UnpackLambda<DelegateT>(IDictionary<string, object> expressionTree, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expressionTree == null) throw new ArgumentNullException("expressionTree");
 

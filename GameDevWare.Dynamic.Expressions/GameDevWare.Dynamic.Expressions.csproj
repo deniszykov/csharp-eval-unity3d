@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net35;net45;netstandard1.3;netcoreapp2.0</TargetFrameworks>
 		<Authors>Denis Zykov</Authors>
-		<Version>2.2.2</Version>
+		<Version>2.2.3-alpha</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions</PackageId>
 		<Product>GameDevWare.Dynamic.Expressions</Product>
 		<Description>C# expression parsing and execution library. 
@@ -12,16 +12,18 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 		<ApplicationIcon />
 		<OutputType>Library</OutputType>
 		<OutputTypeEx>library</OutputTypeEx>
-		<StartupObject />
-		<AssemblyVersion>2.2.2</AssemblyVersion>
-		<FileVersion>2.2.2</FileVersion>
+		<StartupObject />		
 		<SignAssembly>true</SignAssembly>
 		<PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
 		<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
-	    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>
-	
-		<PackageReleaseNotes># 2.2.2
+	    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>	
+		<PackageReleaseNotes># 2.2.3
+added ExpressionPacker type. This type allows packing/unpacking expressions into primitive structures (Dictionaries, Arrays...). These structures  could be serialized and wired by network or stored for future use.
+added better error message for some binding cases
+denying call to 'Type.InvokeMember' if 'Type' is not within 'known types'.
+
+# 2.2.2
 * fixed conditional operator (a ? b : c) parsing with method call in place of 'b'
 
 # 2.2.1

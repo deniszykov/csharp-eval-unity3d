@@ -73,6 +73,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				var expressionType = (string)expressionTypeObj;
 				switch (expressionType)
 				{
+					case Constants.EXPRESSION_TYPE_ARRAY_LENGTH: RenderArrayLength(node, builder, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_INVOKE:
 					case Constants.EXPRESSION_TYPE_INDEX: RenderInvokeOrIndex(node, builder, checkedScope); break;
 					case "Enclose":
@@ -135,6 +136,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_RENDERFAILED, expressionTypeObj, exception.Message), exception);
 			}
+		}
+		private static void RenderArrayLength(SyntaxTreeNode node, StringBuilder builder, bool checkedScope)
+		{
+			if (node == null) throw new ArgumentNullException("node");
+			if (builder == null) throw new ArgumentNullException("builder");
+
+			Render(node.GetExpression(throwOnError: true) , builder, false, checkedScope);
+			builder.Append(".Length");
 		}
 		private static void RenderTypeBinary(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
