@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
@@ -35,71 +35,130 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Fact]
-		public void TokenizeLiterals()
+		public void TokenizeLambda()
 		{
-			var expression = "\" string literal with numbers and quote \\\" \" " +
-							 "\"'%$#!@%^&*))([]\" " +
-							 "\"\\\" \" " +
-							 "\"\\\"\" " +
-							 "\"\\n\" ";
-
-			var expectedValues = new string[]
+			var expression = "(saas, issi) => saas + issi";
+			var expectedTokens = new TokenType[]
 			{
-				" string literal with numbers and quote \\\" ",
-				"'%$#!@%^&*))([]",
-				"\\",
-				"\"",
-				"\n"
+				TokenType.Lparen, TokenType.Identifier, TokenType.Comma, TokenType.Identifier, TokenType.Rparen, TokenType.Lambda, TokenType.Identifier, TokenType.Plus, TokenType.Identifier
 			};
 
-			var actialValues = Tokenizer.Tokenize(expression).Select(l => l.Value).ToArray();
+			var actualTokens = Tokenizer.Tokenize(expression).Select(l => l.Type).ToArray();
 
-			for (var i = 0; i < Math.Max(expectedValues.Length, actialValues.Length); i++)
+			for (var i = 0; i < Math.Max(expectedTokens.Length, actualTokens.Length); i++)
 			{
-				var expected = actialValues.ElementAtOrDefault(i);
-				var actual = actialValues.ElementAtOrDefault(i);
+				var expected = expectedTokens.ElementAtOrDefault(i);
+				var actual = actualTokens.ElementAtOrDefault(i);
 				Assert.True(expected == actual, string.Format("Tokens at {0} does not match: expected {1}, actual {2}.", i, expected, actual));
 			}
 		}
 
-		[Fact]
-		public void TokenizeIdentifiers()
+		[Theory]
+		[InlineData("\" string literal with numbers and quote \\\" \"", " string literal with numbers and quote \\\" ")]
+		[InlineData("\"'%$#!@%^&*))([]\"", "'%$#!@%^&*))([]")]
+		[InlineData("\"\\\"\"", "\\")]
+		[InlineData("\"\\\"\"", "\"")]
+		[InlineData("\"\\n\"", "\n")]
+		public void TokenizeLiterals(string expression, string expected)
 		{
-			var expression = "a ab ab1 ab2 ab333 _ _a __a __a3 _3 _a_ a_ a__ zazazaza";
-
-			var expectedValues = new string[]
-			{
-				"a", "ab", "ab1", "ab2", "ab333", "_", "_a", "__a", "__a3", "_3", "_a_", "a_", "a__", "zazazaza"
-			};
-
-			var actialValues = Tokenizer.Tokenize(expression).Select(l => l.Value).ToArray();
-
-			for (var i = 0; i < Math.Max(expectedValues.Length, actialValues.Length); i++)
-			{
-				var expected = actialValues.ElementAtOrDefault(i);
-				var actual = actialValues.ElementAtOrDefault(i);
-				Assert.True(expected == actual, string.Format("Tokens at {0} does not match: expected {1}, actual {2}.", i, expected, actual));
-			}
+			var actual = Tokenizer.Tokenize(expression).Single();
+			Assert.Equal(TokenType.Literal, actual.Type);
+			Assert.Equal(expression, actual.Value);
 		}
 
-		[Fact]
-		public void TokenizeNumbers()
+		[Theory]
+		[InlineData("a")]
+		[InlineData("ab")]
+		[InlineData("ab1")]
+		[InlineData("ab2")]
+		[InlineData("ab333")]
+		[InlineData("_")]
+		[InlineData("__")]
+		[InlineData("_1")]
+		[InlineData("_a")]
+		[InlineData("__a")]
+		[InlineData("__a3")]
+		[InlineData("_a_")]
+		[InlineData("a_")]
+		[InlineData("a__")]
+		[InlineData("zazazaza")]
+		[InlineData("@as")]
+		[InlineData("@is")]
+		[InlineData("saas")]
+		[InlineData("issi")]
+		public void TokenizeIdentifiers(string expression)
 		{
-			var expression = "1 2222 3.0 3.000 1f 1000f 1000.0f 1000.0d 1d 1m 1l 1ul 1L 1UL 1uL 1Ul";
+			var actual = Tokenizer.Tokenize(expression).Single();
+			Assert.Equal(TokenType.Identifier, actual.Type);
+			Assert.Equal(expression, actual.Value);
+		}
 
-			var expectedValues = new string[]
+		[Theory]
+		[InlineData("1identifier")]
+		public void TokenizeWrongIdentifiers(string expression)
+		{
+			Assert.Throws<ExpressionParserException>(() =>
 			{
-				"1", "2222", "3.0", "3.000", "1f", "1000f", "1000.0f", "1000.0d", "1d", "1m", "1l", "1ul", "1l", "1ul", "1ul", "1ul"
-			};
+				Tokenizer.Tokenize(expression).Single();
+			});
+		}
 
-			var actialValues = Tokenizer.Tokenize(expression).Select(l => l.Value).ToArray();
+		[Theory]
+		[InlineData("1", "1")]
+		[InlineData("2222", "2222")]
+		[InlineData("3.0", "3.0")]
+		[InlineData(".1", "0.1")]
+		[InlineData("1f", "1f")]
+		[InlineData("1F", "1f")]
+		[InlineData("1d", "1d")]
+		[InlineData("1D", "1d")]
+		[InlineData("1m", "1m")]
+		[InlineData("1M", "1m")]
+		[InlineData("1l", "1l")]
+		[InlineData("1L", "1l")]
+		[InlineData("1ul", "1ul")]
+		[InlineData("1UL", "1ul")]
+		[InlineData("1Ul", "1ul")]
+		[InlineData("3.000", "3.000")]
+		[InlineData("1000f", "1000f")]
+		[InlineData("1000.0d", "1000.0d")]
+		public void TokenizeNumbers(string expression, string expected)
+		{
+			var actual = Tokenizer.Tokenize(expression).Single();
+			Assert.Equal(TokenType.Number, actual.Type);
+			Assert.Equal(expected, actual.Value);
+		}
 
-			for (var i = 0; i < Math.Max(expectedValues.Length, actialValues.Length); i++)
+		[Theory]
+		[InlineData("1x")]
+		[InlineData("1.0y")]
+		[InlineData(".1y")]
+		[InlineData("1z")]
+		[InlineData("1.0.0")]
+		public void TokenizeWrongNumbers(string expression)
+		{
+			Assert.Throws<ExpressionParserException>(() =>
 			{
-				var expected = actialValues.ElementAtOrDefault(i);
-				var actual = actialValues.ElementAtOrDefault(i);
-				Assert.True(expected == actual, string.Format("Tokens at {0} does not match: expected {1}, actual {2}.", i, expected, actual));
-			}
+				Tokenizer.Tokenize(expression).Single();
+			});
+		}
+
+		[Theory]
+		[InlineData("1.x")]
+		[InlineData("a.y")]
+		[InlineData("1+0")]
+		[InlineData("1-0")]
+		[InlineData("a-0")]
+		[InlineData("a+0")]
+		[InlineData("0:0")]
+		[InlineData("0?0")]
+		[InlineData("0!0")]
+		[InlineData("0,0")]
+		public void TokenizeBinaryExpressions(string expression)
+		{
+
+			var actualTokenCount = Tokenizer.Tokenize(expression).Count();
+			Assert.Equal(3, actualTokenCount);
 		}
 	}
 }
