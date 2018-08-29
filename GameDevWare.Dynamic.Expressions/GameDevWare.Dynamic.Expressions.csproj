@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net35;net45;netstandard1.3;netcoreapp2.0</TargetFrameworks>
 		<Authors>Denis Zykov</Authors>
-		<Version>2.2.3-alpha</Version>
+		<Version>2.2.4-alpha</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions</PackageId>
 		<Product>GameDevWare.Dynamic.Expressions</Product>
 		<Description>C# expression parsing and execution library. 
@@ -18,7 +18,20 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 		<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 	    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>	
-		<PackageReleaseNotes># 2.2.3
+		<PackageReleaseNotes># 2.2.4
+added protection against wrong expressions like 'a b' which later bound as 'b'
+fixed some tokenization errors:
+- 'issa'scanned as 'is'[Operator] and 'sa'[Identifier], now as 'issa'
+- '.09' scanned as '.'[Operator] and '09'[Number], now as '0.09'
+- '0.1x' scanned as '0.1'[Number] and 'x'[Identifier], now cause error
+added method call support for numbers (example 1.ToString())
+added short number notation (examples '.9' for '0.9')
+added '@' prefix for identifiers (example '@is') https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/verbatim
+done small Tokenizer optimization (reduced string allocation during scanning)
+
+
+
+# 2.2.3
 added ExpressionPacker type. This type allows packing/unpacking expressions into primitive structures (Dictionaries, Arrays...). These structures  could be serialized and wired by network or stored for future use.
 added better error message for some binding cases
 denying call to 'Type.InvokeMember' if 'Type' is not within 'known types'.

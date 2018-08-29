@@ -1651,6 +1651,11 @@
             Localization string with key EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ
             </summary>
         </member>
+        <member name="P:GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_MISSING_OPERATOR">
+            <summary>
+            Localization string with key EXCEPTION_PARSER_MISSING_OPERATOR
+            </summary>
+        </member>
         <member name="P:GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDABODYTYPE">
             <summary>
             Localization string with key EXCEPTION_BIND_INVALIDLAMBDABODYTYPE
