@@ -9,8 +9,6 @@ added short number notation (examples '.9' for '0.9')
 added '@' prefix for identifiers (example '@is') https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/verbatim
 done small Tokenizer optimization (reduced string allocation during scanning)
 
-
-
 # 2.2.3
 added ExpressionPacker type. This type allows packing/unpacking expressions into primitive structures (Dictionaries, Arrays...). These structures  could be serialized and wired by network or stored for future use.
 added better error message for some binding cases
