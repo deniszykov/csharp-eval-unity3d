@@ -40,7 +40,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var expression = "(saas, issi) => saas + issi";
 			var expectedTokens = new TokenType[]
 			{
-				TokenType.Lparen, TokenType.Identifier, TokenType.Comma, TokenType.Identifier, TokenType.Rparen, TokenType.Lambda, TokenType.Identifier, TokenType.Plus, TokenType.Identifier
+				TokenType.Lparen, TokenType.Identifier, TokenType.Comma, TokenType.Identifier, TokenType.Rparen, TokenType.Lambda, TokenType.Identifier, TokenType.Add, TokenType.Identifier
 			};
 
 			var actualTokens = Tokenizer.Tokenize(expression).Select(l => l.Type).ToArray();
@@ -90,11 +90,15 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var actual = Tokenizer.Tokenize(expression).Single();
 			Assert.Equal(TokenType.Identifier, actual.Type);
-			Assert.Equal(expression, actual.Value);
+			Assert.Equal(expression.TrimStart('@'), actual.Value);
 		}
 
 		[Theory]
 		[InlineData("1identifier")]
+		[InlineData("id;entifier")]
+		[InlineData("id#entifier")]
+		[InlineData("id@entifier")]
+		[InlineData("@1identifier")]
 		public void TokenizeWrongIdentifiers(string expression)
 		{
 			Assert.Throws<ExpressionParserException>(() =>
@@ -134,7 +138,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("1.0y")]
 		[InlineData(".1y")]
 		[InlineData("1z")]
-		[InlineData("1.0.0")]
 		public void TokenizeWrongNumbers(string expression)
 		{
 			Assert.Throws<ExpressionParserException>(() =>
