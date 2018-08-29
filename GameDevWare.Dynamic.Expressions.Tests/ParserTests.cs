@@ -25,14 +25,43 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("9.15e09", 9.15e09)]
 		[InlineData("9.15e-09", 9.15e-09)]
 		[InlineData("9e-09", 9e-09)]
-		//[InlineData(".01", .01)]
-		//[InlineData(".9e-09", .9e-09)]
+		[InlineData(".01", .01)]
+		[InlineData(".9e-09", .9e-09)]
 		public void ParseNumbersTest(string expression, object expected)
 		{
 			var node = Parser.Parse(Tokenizer.Tokenize(expression));
 
 			var valueStr = node.Value.TrimEnd('d', 'f', 'u', 'l', 'm');
 			Assert.Equal(TokenType.Number, node.Type);
+			Assert.Equal(expected, Convert.ChangeType(valueStr, expected.GetType(), CultureInfo.InvariantCulture));
+		}
+
+		[Theory]
+		[InlineData("1.ToString()", 1)]
+		[InlineData("0.0001f.ToString()", 0.0001f)]
+		[InlineData("01d.ToString()", 01d)]
+		[InlineData("0.1d.ToString()", 0.1d)]
+		[InlineData("1u.ToString()", 1u)]
+		[InlineData("1ul.ToString()", 1ul)]
+		[InlineData("1L.ToString()", 1L)]
+		[InlineData("9.15E+09.ToString()", 9.15E+09)]
+		[InlineData("9.15E09.ToString()", 9.15E09)]
+		[InlineData("9.15E-09.ToString()", 9.15E-09)]
+		[InlineData("9.15e+09.ToString()", 9.15e+09)]
+		[InlineData("9.15e09.ToString()", 9.15e09)]
+		[InlineData("9.15e-09.ToString()", 9.15e-09)]
+		[InlineData("9e-09.ToString()", 9e-09)]
+		[InlineData(".01.ToString()", .01)]
+		[InlineData(".9e-09.ToString()", .9e-09)]
+		public void ParseNumberInvocationTest(string expression, object expected)
+		{
+			var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+			Assert.Equal(TokenType.Call, node.Type);
+
+			var target = node[0][0];
+			var valueStr = target.Value.TrimEnd('d', 'f', 'u', 'l', 'm');
+			Assert.Equal(TokenType.Number, target.Type);
 			Assert.Equal(expected, Convert.ChangeType(valueStr, expected.GetType(), CultureInfo.InvariantCulture));
 		}
 

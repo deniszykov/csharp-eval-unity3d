@@ -280,11 +280,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						break;
 				}
 			}
-			var result = expression.Substring(startAt, offset - startAt).ToLowerInvariant();
+
+			var length = offset - startAt;
+			var result = expression.Substring(startAt, length).ToLowerInvariant();
 			if (fractionStartAt == startAt)
 				result = "0" + result;
 
-			return new Token(TokenType.Number, result, line, col, result.Length);
+			return new Token(TokenType.Number, result, line, col, length);
 		}
 		private static bool IsTerminationCharacter(char value)
 		{
