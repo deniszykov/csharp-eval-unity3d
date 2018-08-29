@@ -130,6 +130,29 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+		[InlineData("a b")]
+		[InlineData("a b c")]
+		[InlineData("a.ToString() b")]
+		[InlineData("1 a")]
+		[InlineData("a 1")]
+		[InlineData("1 1")]
+		[InlineData("\"\" 1")]
+		[InlineData("\"\" \"\"")]
+		[InlineData("a + b c")]
+		[InlineData("a b + c")]
+		[InlineData("a + b  c + d")]
+		[InlineData("(a + b) c")]
+		[InlineData("(a + b) c + d")]
+		[InlineData("a[b] c")]
+		[InlineData("a[b] c[d]")]
+		public void ParseWrongExpression(string expression)
+		{
+			Assert.Throws<ExpressionParserException>(() =>
+				Parser.Parse(Tokenizer.Tokenize(expression))
+			);
+		}
+
+		[Theory]
 		[InlineData("a.b + c", TokenType.Add)]
 		[InlineData("+a.b", TokenType.Plus)]
 		[InlineData("a.b / c", TokenType.Div)]

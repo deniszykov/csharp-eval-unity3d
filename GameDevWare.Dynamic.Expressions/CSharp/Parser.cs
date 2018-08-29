@@ -107,6 +107,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (parser.stack.Count == 0)
 				throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_EXPRESSIONISEMPTY, default(ILineInfo));
 
+			if(parser.stack.Count > 1)
+				throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_MISSING_OPERATOR, parser.stack.First());
+
 			return parser.stack.Pop();
 		}
 

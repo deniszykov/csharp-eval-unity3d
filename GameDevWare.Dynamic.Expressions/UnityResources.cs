@@ -66,7 +66,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		{
 			get
 			{
-				return new Dictionary<string, string>(72)
+				return new Dictionary<string, string>(73)
 				{
 					{ "EXCEPTION_BIND_UNABLETOBINDINDEXER", EXCEPTION_BIND_UNABLETOBINDINDEXER },
 					{ "EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED },
@@ -122,6 +122,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_BIND_MEMBERISNOTMETHOD", EXCEPTION_BIND_MEMBERISNOTMETHOD },
 					{ "EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE", EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE },
 					{ "EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ", EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ },
+					{ "EXCEPTION_PARSER_MISSING_OPERATOR", EXCEPTION_PARSER_MISSING_OPERATOR },
 					{ "EXCEPTION_BIND_INVALIDLAMBDABODYTYPE", EXCEPTION_BIND_INVALIDLAMBDABODYTYPE },
 					{ "EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS", EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS },
 					{ "EXCEPTION_BIND_INVALIDCHARLITERAL", EXCEPTION_BIND_INVALIDCHARLITERAL },
@@ -897,6 +898,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Unknown escape sequence '{0}'.";
 					default: return "EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_PARSER_MISSING_OPERATOR
+		/// </summary>
+		public static string EXCEPTION_PARSER_MISSING_OPERATOR
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Missing operator between two or more expressions.";
+					default: return "EXCEPTION_PARSER_MISSING_OPERATOR";
 				}
 			}
 		}

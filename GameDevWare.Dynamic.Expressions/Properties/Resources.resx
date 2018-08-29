@@ -333,4 +333,7 @@
   <data name="EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE" xml:space="preserve">
     <value>Invalid lambda parameter type '{0}' while '{1}' is expected.</value>
   </data>
+  <data name="EXCEPTION_PARSER_MISSING_OPERATOR" xml:space="preserve">
+    <value>Missing operator between two or more expressions.</value>
+  </data>
 </root>
