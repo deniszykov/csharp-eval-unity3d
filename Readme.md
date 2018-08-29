@@ -157,8 +157,37 @@ You can send suggestions at support@gamedevware.com
 * Custom editor with auto-completion for Unity
 
 ## Changes
+# 2.2.4
+* added protection against wrong expressions like 'a b' which later bound as 'b'
+* fixed some tokenization errors:
+* * 'issa'scanned as 'is'[Operator] and 'sa'[Identifier], now as 'issa'
+* * '.09' scanned as '.'[Operator] and '09'[Number], now as '0.09'
+* * '0.1x' scanned as '0.1'[Number] and 'x'[Identifier], now cause error
+* added method call support for numbers (example 1.ToString())
+* added short number notation (examples '.9' for '0.9')
+* added '@' prefix for identifiers (example '@is') https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/verbatim
+* done small Tokenizer optimization (reduced string allocation during scanning)
+
+# 2.2.3
+* added ExpressionPacker type. This type allows packing/unpacking expressions into primitive structures (Dictionaries, Arrays...). These structures  could be serialized and wired by network or stored for future use.
+* added better error message for some binding cases
+* denying call to 'Type.InvokeMember' if 'Type' is not within 'known types'.
+
+# 2.2.2
+* fixed conditional operator (a ? b : c) parsing with method call in place of 'b'
+
+# 2.2.1
+* fixed IL2CPP compilation error due _Attribute interface complilation failure
+* added few interfaces to AOT.cs file for better AOT coverage
+
+# 2.2.0
+Features
+* added support for void expressions (Action<> delegates)
+* added support of '.NET Standart 1.3' and '.NET Core 2.0' platforms
+
 # 2.1.4
 * Release version, no actual changes except readme.md
+
 # 2.1.2-rc
 ### Features
 * added more descriptive message for member binding error
@@ -186,7 +215,7 @@ public Binder(Type lambdaType, ITypeResolver typeResolver = null);
 CSharpExpression.Evaluate<int>("int.MaxValue");
 ```
 
-### Bug Fixes
+### Bugs
 * fixed error with wrongly resolved types (only by name) in KnownTypeResolver
 * fixed bug with ACCESS_VIOLATION on iOS (Unity 5.x.x IL2CPP)
 * fixed few Unity 3.4 related errors in code
@@ -201,7 +230,7 @@ CSharpExpression.Evaluate<int>("int.MaxValue");
 * fixed enum constants threated as underlying types during binary/unary operations
 
 
-### Breaking changes
+### Breaking changes in 2.0
 * ParserNode renamed to ParseTreeNode
 * ExpressionTree renamed to SyntaxTreeNode
 * ExpressionBuilder renamed to Binder
