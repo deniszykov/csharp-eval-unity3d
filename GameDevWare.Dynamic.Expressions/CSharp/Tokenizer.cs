@@ -28,6 +28,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 	{
 		private static readonly Dictionary<string, TokenType> TokensBySymbols;
 		private static readonly string[] Symbols;
+		private static readonly bool[] IsLiteralSymbol;
 		private static readonly short[] TerminationCharacter;
 
 		static Tokenizer()
@@ -39,6 +40,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			).ToDictionary(kv => kv.Key, kv => kv.Value);
 
 			Symbols = TokensBySymbols.Keys.ToArray();
+			IsLiteralSymbol = ArrayUtils.ConvertAll(Symbols, s => s.All(char.IsLetter));
 			TerminationCharacter = Symbols
 				.Select(s => s[0])
 				.Where(c => char.IsLetter(c) == false)
@@ -70,10 +72,16 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					col = 0;
 				}
 
-				foreach (var token in Symbols)
+				for (var t = 0; t < Symbols.Length; t++)
 				{
-					if (!Match(expression, i, token) ||
-						(current.IsValid && token.Length < current.TokenLength))
+					var token = Symbols[t];
+					if (IsMatching(expression, i, token, IsLiteralSymbol[t]) == false ||
+						current.IsValid && token.Length < current.TokenLength)
+					{
+						continue;
+					}
+
+					if (token == "." && i + 1 < expression.Length && char.IsDigit(expression[i + 1])) // skip: short number notation
 					{
 						continue;
 					}
@@ -87,7 +95,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						current = LookForNumber(expression, i, line, col);
 					else if (charValue == '"' || charValue == '\'') // string literal
 						current = LookForLiteral(expression, charValue, i, line, col);
-					else if (char.IsLetter(charValue) || charValue == '_') // identifier
+					else if (char.IsLetter(charValue) || charValue == '_' || charValue == '@') // identifier
 						current = LookForIdentifier(expression, i, line, col);
 					else if (char.IsWhiteSpace(charValue))
 						continue;
@@ -103,7 +111,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 		}
 
-		private static bool Match(string expression, int offset, string tokenToMatch)
+		private static bool IsMatching(string expression, int offset, string tokenToMatch, bool isLiteralToken)
 		{
 			if (tokenToMatch.Length + offset > expression.Length)
 				return false;
@@ -114,32 +122,56 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					return false;
 			}
 
-			return true;
+			var isEndOfExpression = offset >= expression.Length;
+			if (isEndOfExpression)
+				return true;
+
+			var terminalCharacter = expression[offset];
+
+			return !isLiteralToken || char.IsLetter(terminalCharacter) == false;
 		}
 		private static Token LookForIdentifier(string expression, int offset, int line, int col)
 		{
 			var startAt = offset;
-			var letterStartAt = -1;
+			var lettersOffsetFromStartAt = -1;
 			for (; offset < expression.Length; offset++)
 			{
 				var charCode = expression[offset];
-				if (char.IsLetterOrDigit(charCode) || charCode == '_') // a-z A-Z 0-9
+				if (char.IsLetterOrDigit(charCode) || charCode == '_' || charCode == '@') // a-z A-Z 0-9
 				{
-					if (letterStartAt < 0)
-						letterStartAt = offset - startAt;
+					if (lettersOffsetFromStartAt < 0)
+					{
+						lettersOffsetFromStartAt = offset - startAt;
+					}
+
+					if (charCode == '@' && offset - (startAt + lettersOffsetFromStartAt) != 0)
+					{
+						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, expression[offset], offset + 1, 1), new Token(TokenType.None, expression[offset].ToString(), line, offset + 1, 1));
+					}
+
 					continue;
 				}
 
-				if (IsTermination(expression[offset]) || charCode == '"' || letterStartAt >= 0)
+				if (IsTerminationCharacter(expression[offset]) || lettersOffsetFromStartAt >= 0)
+				{
 					break;
+				}
 			}
-			var result = expression.Substring(startAt, offset - startAt);
-			var isWhitespace = letterStartAt < 0;
-			var value = isWhitespace ? result : result.Substring(letterStartAt);
-			var start = isWhitespace ? col : col + letterStartAt;
-			var length = result.Length - letterStartAt;
+			var isWhitespace = lettersOffsetFromStartAt < 0;
+			var start = isWhitespace ? startAt : startAt + lettersOffsetFromStartAt;
+			var length = offset - start;
 
-			return new Token(isWhitespace ? TokenType.None : TokenType.Identifier, value, line, start, length);
+			if (length == 1 && expression[start] == '@')
+			{
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, "@", start, length), new Token(TokenType.None, "@", line, start + 1, length));
+			}
+			else if (length > 1 && expression[start] == '@' && char.IsDigit(expression[start + 1]))
+			{
+				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, expression[start + 1], start + 2, 1), new Token(TokenType.None, expression[start + 1].ToString(), line, start + 2, 1));
+			}
+
+			var value = expression.Substring(start, length).TrimStart('@');
+			return new Token(isWhitespace ? TokenType.None : TokenType.Identifier, value, line, start + 1, length);
 		}
 		private static Token LookForLiteral(string expression, char termChar, int offset, int line, int col)
 		{
@@ -173,6 +205,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var state = STATE_INTEGER;
 			var startAt = offset;
+			var fractionStartAt = -1;
 			for (; offset < expression.Length; offset++)
 			{
 				if (state == STATE_COMPLETE)
@@ -187,7 +220,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{
 					case '.':
 						if (state == STATE_INTEGER)
+						{
+							fractionStartAt = offset;
 							state = STATE_FRACTION;
+						}
 						else
 						{
 							state = STATE_COMPLETE;
@@ -229,6 +265,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					default:
 						if (char.IsLetter(charValue))
 						{
+							if (state == STATE_FRACTION && offset - fractionStartAt == 1)
+							{
+								offset -= 2; // rewind offset because dot and letter are not part of number
+								state = STATE_COMPLETE;
+								break;
+							}
+
 							var invalidNumber = expression.Substring(startAt, offset - startAt);
 							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, charValue, line, col + invalidNumber.Length - 1), new Token(TokenType.None, invalidNumber, line, col, invalidNumber.Length));
 						}
@@ -238,11 +281,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				}
 			}
 			var result = expression.Substring(startAt, offset - startAt).ToLowerInvariant();
+			if (fractionStartAt == startAt)
+				result = "0" + result;
+
 			return new Token(TokenType.Number, result, line, col, result.Length);
 		}
-		private static bool IsTermination(char value)
+		private static bool IsTerminationCharacter(char value)
 		{
-			return Array.BinarySearch(TerminationCharacter, (short)value) >= 0;
+			return Array.BinarySearch(TerminationCharacter, (short)value) >= 0 || value == '\"' || char.IsWhiteSpace(value);
 		}
 	}
 }
