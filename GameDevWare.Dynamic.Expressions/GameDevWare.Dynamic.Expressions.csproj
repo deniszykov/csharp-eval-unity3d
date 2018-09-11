@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net35;net45;netstandard1.3;netcoreapp2.0</TargetFrameworks>
 		<Authors>Denis Zykov</Authors>
-		<Version>2.2.4-alpha</Version>
+		<Version>2.2.4</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions</PackageId>
 		<Product>GameDevWare.Dynamic.Expressions</Product>
 		<Description>C# expression parsing and execution library. 
@@ -86,7 +86,7 @@ Breaking changes
 * ITypeResolver now could be configured with TypeDiscoveryOptions</PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/deniszykov/csharp-eval-unity3d</PackageProjectUrl>
 		<PackageLicenseUrl>https://raw.githubusercontent.com/deniszykov/csharp-eval-unity3d/master/License.md</PackageLicenseUrl>
-		<Copyright>(c) Denis Zykov, GameDevWare 2017</Copyright>
+		<Copyright>(c) Denis Zykov, GameDevWare 2018</Copyright>
 		<RepositoryUrl>https://github.com/deniszykov/csharp-eval-unity3d</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>eval parser compiler expressions unity3d aot</PackageTags>
