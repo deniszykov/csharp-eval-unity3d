@@ -336,4 +336,10 @@
   <data name="EXCEPTION_PARSER_MISSING_OPERATOR" xml:space="preserve">
     <value>Missing operator between two or more expressions.</value>
   </data>
+  <data name="EXCEPTION_EXECUTION_CANTDONULLVALUE" xml:space="preserve">
+    <value>Can't '{1}' on a null value. Expression '{0}' gives null result.</value>
+  </data>
+  <data name="EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED" xml:space="preserve">
+    <value>Multi-parameter indexers are not supported.</value>
+  </data>
 </root>

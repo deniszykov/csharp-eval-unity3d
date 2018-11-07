@@ -14,14 +14,14 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 							 "[18] + (~19d - !20.0f) * 21m / 22u % 23l << 24UL + emptycall() ** a?.x + a?[] =>";
 			var expectedTokens = new TokenType[]
 			{
-				TokenType.Lparen, TokenType.Identifier, TokenType.Rparen, TokenType.Identifier, TokenType.Resolve, TokenType.Identifier, TokenType.Lparen, TokenType.Identifier, TokenType.Colon,
-				TokenType.Add, TokenType.Number, TokenType.Rshift, TokenType.Subtract, TokenType.Number, TokenType.Or, TokenType.Number, TokenType.And, TokenType.Number, TokenType.Xor, TokenType.Number, TokenType.Comma,
-				TokenType.Number, TokenType.Gt, TokenType.Number, TokenType.Gte, TokenType.Number, TokenType.Lt, TokenType.Number, TokenType.Lte, TokenType.Number, TokenType.Eq, TokenType.Number, TokenType.Neq,
-				TokenType.Number, TokenType.AndAlso, TokenType.Number, TokenType.OrElse, TokenType.Number, TokenType.Coalesce, TokenType.Number, TokenType.Comma, TokenType.Identifier, TokenType.Cond, TokenType.Number, TokenType.Colon,
-				TokenType.Number, TokenType.Rparen, TokenType.Lparen, TokenType.Identifier, TokenType.Colon, TokenType.Literal, TokenType.Comma, TokenType.Identifier, TokenType.Colon, TokenType.Identifier,
-				TokenType.Rparen, TokenType.Lbracket, TokenType.Number, TokenType.Rbracket, TokenType.Add, TokenType.Lparen, TokenType.Compl, TokenType.Number, TokenType.Subtract, TokenType.Not, TokenType.Number,
-				TokenType.Rparen, TokenType.Mul, TokenType.Number, TokenType.Div, TokenType.Number, TokenType.Mod, TokenType.Number, TokenType.Lshift, TokenType.Number, TokenType.Add, TokenType.Identifier, TokenType.Lparen, TokenType.Rparen,
-				TokenType.Pow,  TokenType.Identifier, TokenType.NullResolve, TokenType.Identifier,  TokenType.Add, TokenType.Identifier, TokenType.NullIndex, TokenType.Rbracket, TokenType.Lambda
+				TokenType.LeftParentheses, TokenType.Identifier, TokenType.RightParentheses, TokenType.Identifier, TokenType.Resolve, TokenType.Identifier, TokenType.LeftParentheses, TokenType.Identifier, TokenType.Colon,
+				TokenType.Add, TokenType.Number, TokenType.RightShift, TokenType.Subtract, TokenType.Number, TokenType.Or, TokenType.Number, TokenType.And, TokenType.Number, TokenType.Xor, TokenType.Number, TokenType.Comma,
+				TokenType.Number, TokenType.GreaterThan, TokenType.Number, TokenType.GreaterThanOrEquals, TokenType.Number, TokenType.LesserThan, TokenType.Number, TokenType.LesserThanOrEquals, TokenType.Number, TokenType.EqualsTo, TokenType.Number, TokenType.NotEqualsTo,
+				TokenType.Number, TokenType.AndAlso, TokenType.Number, TokenType.OrElse, TokenType.Number, TokenType.Coalesce, TokenType.Number, TokenType.Comma, TokenType.Identifier, TokenType.Conditional, TokenType.Number, TokenType.Colon,
+				TokenType.Number, TokenType.RightParentheses, TokenType.LeftParentheses, TokenType.Identifier, TokenType.Colon, TokenType.Literal, TokenType.Comma, TokenType.Identifier, TokenType.Colon, TokenType.Identifier,
+				TokenType.RightParentheses, TokenType.LeftBracket, TokenType.Number, TokenType.RightBracket, TokenType.Add, TokenType.LeftParentheses, TokenType.Complement, TokenType.Number, TokenType.Subtract, TokenType.Not, TokenType.Number,
+				TokenType.RightParentheses, TokenType.Multiplication, TokenType.Number, TokenType.Division, TokenType.Number, TokenType.Modulo, TokenType.Number, TokenType.LeftShift, TokenType.Number, TokenType.Add, TokenType.Identifier, TokenType.LeftParentheses, TokenType.RightParentheses,
+				TokenType.Power,  TokenType.Identifier, TokenType.NullResolve, TokenType.Identifier,  TokenType.Add, TokenType.Identifier, TokenType.NullIndex, TokenType.RightBracket, TokenType.Lambda
 			};
 
 			var actualTokens = Tokenizer.Tokenize(expression).Select(l => l.Type).ToArray();
@@ -40,7 +40,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			var expression = "(saas, issi) => saas + issi";
 			var expectedTokens = new TokenType[]
 			{
-				TokenType.Lparen, TokenType.Identifier, TokenType.Comma, TokenType.Identifier, TokenType.Rparen, TokenType.Lambda, TokenType.Identifier, TokenType.Add, TokenType.Identifier
+				TokenType.LeftParentheses, TokenType.Identifier, TokenType.Comma, TokenType.Identifier, TokenType.RightParentheses, TokenType.Lambda, TokenType.Identifier, TokenType.Add, TokenType.Identifier
 			};
 
 			var actualTokens = Tokenizer.Tokenize(expression).Select(l => l.Type).ToArray();

@@ -262,7 +262,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 						state = STATE_COMPLETE;
 						break;
-					default:
+					default: 
 						if (char.IsLetter(charValue))
 						{
 							if (state == STATE_FRACTION && offset - fractionStartAt == 1)

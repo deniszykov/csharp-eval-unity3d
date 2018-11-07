@@ -112,6 +112,11 @@ Breaking changes
 		<DefineConstants>$(DefineConstants);NET45</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Compile Remove="Temp\**" />
+	  <EmbeddedResource Remove="Temp\**" />
+	  <None Remove="Temp\**" />
+	</ItemGroup>
+	<ItemGroup>
 		<None Include="Properties\Resources.resx" />
 	</ItemGroup>
 	<ItemGroup>
@@ -133,6 +138,15 @@ Breaking changes
 		<None Update="Aot.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
 			<LastGenOutput>Aot.cs</LastGenOutput>
+		</None>
+		<None Update="TypeScriptResources.ts">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>TypeScriptResources.tt</DependentUpon>
+		</None>
+		<None Update="TypeScriptResources.tt">
+		  <Generator>TextTemplatingFileGenerator</Generator>
+		  <LastGenOutput>TypeScriptResources.ts</LastGenOutput>
 		</None>
 		<None Update="UnityResources.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>

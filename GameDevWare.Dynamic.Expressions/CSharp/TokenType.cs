@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -34,13 +34,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		Subtract,
 		Minus,
 		[Token("/")]
-		Div,
+		Division,
 		[Token("*")]
-		Mul,
+		Multiplication,
 		[Token("**")]
-		Pow,
+		Power,
 		[Token("%")]
-		Mod,
+		Modulo,
 		// bitwise
 		[Token("&")]
 		And,
@@ -49,11 +49,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		[Token("^")]
 		Xor,
 		[Token("~")]
-		Compl,
+		Complement,
 		[Token("<<")]
-		Lshift,
+		LeftShift,
 		[Token(">>")]
-		Rshift,
+		RightShift,
 		// logical
 		[Token("&&")]
 		AndAlso,
@@ -62,20 +62,20 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		[Token("!")]
 		Not,
 		[Token(">")]
-		Gt,
+		GreaterThan,
 		[Token(">=")]
-		Gte,
+		GreaterThanOrEquals,
 		[Token("<")]
-		Lt,
+		LesserThan,
 		[Token("<=")]
-		Lte,
+		LesserThanOrEquals,
 		[Token("==")]
-		Eq,
+		EqualsTo,
 		[Token("!=")]
-		Neq,
+		NotEqualsTo,
 		// other
 		[Token("?")]
-		Cond,
+		Conditional,
 		[Token("is")]
 		Is,
 		[Token("as")]
@@ -94,15 +94,15 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		[Token("?.")]
 		NullResolve,
 		[Token("(")]
-		Lparen,
+		LeftParentheses,
 		[Token(")")]
-		Rparen,
+		RightParentheses,
 		[Token("[")]
-		Lbracket,
+		LeftBracket,
 		[Token("?[")]
 		NullIndex,
 		[Token("]")]
-		Rbracket,
+		RightBracket,
 		[Token("=>")]
 		Lambda,
 		Call,

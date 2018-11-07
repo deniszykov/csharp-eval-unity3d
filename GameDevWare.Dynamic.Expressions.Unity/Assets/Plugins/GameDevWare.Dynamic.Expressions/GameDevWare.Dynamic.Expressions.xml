@@ -688,7 +688,7 @@
             Type of current node.
             </summary>
         </member>
-        <member name="F:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.Lexeme">
+        <member name="F:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.Token">
             <summary>
             Lexeme from which current node is originated.
             </summary>
@@ -710,17 +710,23 @@
             Returns number of child nodes.
             </summary>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ToSyntaxTree(System.Boolean)">
-            <summary>
-            Converts parse tree to syntax tree.
-            </summary>
-            <param name="checkedScope">Conversion and arithmetic operation overflow control. True is "throw on overflows", false is "ignore of overflows".</param>
-            <returns></returns>
-        </member>
         <member name="M:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ToString">
             <summary>
             Converts parse tree to string for debugging.
             </summary>
+        </member>
+        <member name="T:GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder">
+            <summary>
+            Helper class allowing conversion from <see cref="T:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode"/> to <see cref="T:GameDevWare.Dynamic.Expressions.SyntaxTreeNode"/>.
+            </summary>
+        </member>
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.ToSyntaxTree(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode,System.Boolean)">
+            <summary>
+            Convert <see cref="T:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode"/> to <see cref="T:GameDevWare.Dynamic.Expressions.SyntaxTreeNode"/> which is bindable on <see cref="T:System.Linq.Expressions.Expression"/> tree.
+            </summary>
+            <param name="parseNode">Parse tree node.</param>
+            <param name="checkedScope">Numeric operation scope. Checked mean - no number overflow is allowed. Unchecked mean - overflow is allowed.</param>
+            <returns>Prepared <see cref="T:GameDevWare.Dynamic.Expressions.SyntaxTreeNode"/> representing <see cref="T:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode"/>.</returns>
         </member>
         <member name="T:GameDevWare.Dynamic.Expressions.CSharp.Token">
             <summary>
