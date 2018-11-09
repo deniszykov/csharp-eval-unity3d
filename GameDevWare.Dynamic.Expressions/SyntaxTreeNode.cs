@@ -184,15 +184,16 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return arguments;
 		}
-		internal string GetPropertyOrFieldName(bool throwOnError)
+		internal string GetMemberName(bool throwOnError)
 		{
-			var propertyOrFieldNameObj = default(object);
-			if ((this.TryGetValue(Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out propertyOrFieldNameObj) ||
-				this.TryGetValue(Constants.NAME_ATTRIBUTE, out propertyOrFieldNameObj)) == false || propertyOrFieldNameObj is string == false)
+			var memberNameObj = default(object);
+			if ((this.TryGetValue(Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out memberNameObj) ||
+				this.TryGetValue(Constants.NAME_ATTRIBUTE, out memberNameObj)) == false ||
+				memberNameObj is string == false)
 			{
 				if (throwOnError)
 				{
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
+					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
 				}
 				else
 				{
@@ -200,8 +201,8 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 			}
 
-			var propertyOrFieldName = (string)propertyOrFieldNameObj;
-			return propertyOrFieldName;
+			var memberName = (string)memberNameObj;
+			return memberName;
 		}
 		internal object GetName(bool throwOnError)
 		{

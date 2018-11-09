@@ -21,7 +21,7 @@ using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
-	internal static class PropertyOrFieldBinder
+	internal static class MemberBinder
 	{
 		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
@@ -48,7 +48,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			var isStatic = false;
 			var targetType = default(Type);
-			var propertyOrFieldName = node.GetPropertyOrFieldName(throwOnError: true);
+			var propertyOrFieldName = node.GetMemberName(throwOnError: true);
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
 			if (bindingContext.TryResolveType(targetNode, out targetType))
 			{

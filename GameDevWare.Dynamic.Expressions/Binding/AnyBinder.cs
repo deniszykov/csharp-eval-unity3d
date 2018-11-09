@@ -40,7 +40,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				switch (expressionType)
 				{
 					case Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD:
-						return PropertyOrFieldBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
+						return MemberBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_CONSTANT:
 						return ConstantBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_CALL:

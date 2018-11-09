@@ -84,7 +84,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
 					return false;
 				}
-				argumentNames[i] = argumentNameTree.GetPropertyOrFieldName(throwOnError: true);
+				argumentNames[i] = argumentNameTree.GetMemberName(throwOnError: true);
 			}
 
 			var lambdaParameters = new ParameterExpression[argumentsTree.Count];
@@ -130,7 +130,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE, argumentNameType, Constants.EXPRESSION_TYPE_PARAMETER), node);
 				}
 
-				argumentNames[i] = argumentNameTree.GetPropertyOrFieldName(throwOnError: true);
+				argumentNames[i] = argumentNameTree.GetMemberName(throwOnError: true);
 			}
 			return argumentNames;
 		}

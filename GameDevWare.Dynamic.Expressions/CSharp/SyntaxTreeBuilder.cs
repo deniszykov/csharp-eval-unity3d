@@ -323,13 +323,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = null;
 			syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
-			syntaxNode[Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = parseNode.Value;
+			syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode.Value;
 		}
 		private static void ToResolveNode(ParseTreeNode parseNode, bool checkedScope, Dictionary<string, object> syntaxNode)
 		{
 			CheckNode(parseNode, 2, TokenType.None, TokenType.Identifier);
 			syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[0].ToSyntaxTree(checkedScope);
-			syntaxNode[Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = parseNode[1].Value;
+			syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode[1].Value;
 			syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
 			syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = parseNode.Type == TokenType.NullResolve ? Constants.TrueObject : Constants.FalseObject;
 		}
@@ -366,7 +366,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				CheckNode(parseNode, 2, TokenType.None, TokenType.Identifier);
 				syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = ToTypeName(parseNode[0], TypeNameOptions.None);
-				syntaxNode[Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = parseNode[1].Value;
+				syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode[1].Value;
 				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
 				syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = Constants.FalseObject;
 			}
@@ -377,7 +377,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					typeName = parseNode.Value;
 
 				syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = null;
-				syntaxNode[Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE] = typeName;
+				syntaxNode[Constants.NAME_ATTRIBUTE] = typeName;
 				syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = Constants.FalseObject;
 				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
 			}

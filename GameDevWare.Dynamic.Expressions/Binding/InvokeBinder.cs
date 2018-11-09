@@ -91,7 +91,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 			else if (methodTargetNode == null)
 			{
-				var methodName = methodNameNode.GetPropertyOrFieldName(throwOnError: false);
+				var methodName = methodNameNode.GetMemberName(throwOnError: false);
 				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, methodName ?? "<unknown>"), node);
 				return false;
 			}

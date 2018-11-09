@@ -15,7 +15,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			{
 				var memberAccessExpression = new Dictionary<string, object>(3) {
 					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
-					{ Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, expression.Member.Name },
+					{ Constants.NAME_ATTRIBUTE, expression.Member.Name },
 					{ Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(expression.Expression) },
 				};
 				return memberAccessExpression;

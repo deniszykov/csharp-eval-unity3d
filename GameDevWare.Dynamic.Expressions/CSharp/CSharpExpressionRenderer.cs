@@ -411,7 +411,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (builder == null) throw new ArgumentNullException("builder");
 
 			var target = node.GetExpression(throwOnError: false);
-			var propertyOrFieldName = node.GetPropertyOrFieldName(throwOnError: true);
+			var propertyOrFieldName = node.GetMemberName(throwOnError: true);
 			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
 			var arguments = node.GetArguments(throwOnError: false);
 			if (target != null)

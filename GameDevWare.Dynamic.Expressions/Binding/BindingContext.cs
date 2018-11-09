@@ -203,7 +203,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				{
 					var part = parts[parts.Count - 1 - p]; // reverse order
 					var arguments = part.GetTypeArguments(throwOnError: false);
-					var typeNamePart = part.GetPropertyOrFieldName(throwOnError: true);
+					var typeNamePart = part.GetMemberName(throwOnError: true);
 					if (typeNameParts == null) typeNameParts = new List<string>();
 					var typeArgumentsCount = 0;
 					if (arguments != null && arguments.Count > 0)
@@ -274,7 +274,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				var methodNameTree = (SyntaxTreeNode)value;
 
 				var arguments = methodNameTree.GetTypeArguments(throwOnError: false);
-				var methodName = methodNameTree.GetPropertyOrFieldName(throwOnError: true);
+				var methodName = methodNameTree.GetMemberName(throwOnError: true);
 				if (arguments != null && arguments.Count > 0)
 				{
 					typeArguments = new List<TypeReference>(10);

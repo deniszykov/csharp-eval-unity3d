@@ -13,7 +13,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			bindingError = null;
 
-			var name = node.GetPropertyOrFieldName(throwOnError: true);
+			var name = node.GetMemberName(throwOnError: true);
 
 			if (bindingContext.TryGetParameter(name, out boundExpression))
 				return true;
