@@ -76,10 +76,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			for (var i = 0; i < argumentNames.Length; i++)
 			{
 				var argumentNameTree = default(SyntaxTreeNode);
+				var argumentNameTreeType = default(string);
 				if (argumentsTree.TryGetValue(i, out argumentNameTree) == false ||
 					argumentNameTree == null ||
-					(argumentNameTree.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD ||
-					 argumentNameTree.GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_PARAMETER) == false)
+					(argumentNameTreeType = argumentNameTree.GetExpressionType(throwOnError: true)) == null ||
+					(argumentNameTreeType == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD ||
+					 argumentNameTreeType == Constants.EXPRESSION_TYPE_MEMBER_RESOLVE ||
+					 argumentNameTreeType == Constants.EXPRESSION_TYPE_PARAMETER) == false)
 				{
 					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
 					return false;
@@ -125,6 +128,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 				var argumentNameType = argumentNameTree.GetExpressionType(throwOnError: true);
 				if (argumentNameType != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD &&
+					argumentNameType != Constants.EXPRESSION_TYPE_MEMBER_RESOLVE &&
 					argumentNameType != Constants.EXPRESSION_TYPE_PARAMETER)
 				{
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE, argumentNameType, Constants.EXPRESSION_TYPE_PARAMETER), node);

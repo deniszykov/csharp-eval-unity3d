@@ -26,17 +26,6 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 	/// </summary>
 	public class ParseTreeNode : ILineInfo, IEnumerable<ParseTreeNode>
 	{
-		[Flags]
-		internal enum TypeNameOptions
-		{
-			None = 0,
-			Aliases = 0x1 << 0,
-			ShortNames = 0x1 << 1,
-			Arrays = 0x1 << 2,
-
-			All = Aliases | ShortNames | Arrays
-		}
-
 		internal struct ParseTreeNodes
 		{
 			public readonly int Count;
@@ -199,9 +188,6 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 		}
 
-		private static readonly Dictionary<int, string> ExpressionTypeByToken;
-		private static readonly Dictionary<string, string> TypeAliases;
-
 		private ParseTreeNodes nodes;
 
 		/// <summary>
@@ -241,76 +227,6 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return this.Token.TokenLength;
 		}
 
-		static ParseTreeNode()
-		{
-			ExpressionTypeByToken = new Dictionary<int, string>
-			{
-				{ (int)TokenType.Resolve, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
-				{ (int)TokenType.NullResolve, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
-				{ (int)TokenType.Identifier, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
-				{ (int)TokenType.Literal, Constants.EXPRESSION_TYPE_CONSTANT },
-				{ (int)TokenType.Number, Constants.EXPRESSION_TYPE_CONSTANT },
-				{ (int)TokenType.Convert, Constants.EXPRESSION_TYPE_CONVERT },
-				{ (int)TokenType.Group, Constants.EXPRESSION_TYPE_GROUP },
-				{ (int)TokenType.UncheckedScope, Constants.EXPRESSION_TYPE_UNCHECKED_SCOPE },
-				{ (int)TokenType.CheckedScope, Constants.EXPRESSION_TYPE_CHECKED_SCOPE },
-				{ (int)TokenType.Plus, Constants.EXPRESSION_TYPE_UNARY_PLUS },
-				{ (int)TokenType.Minus, Constants.EXPRESSION_TYPE_NEGATE },
-				{ (int)TokenType.Not, Constants.EXPRESSION_TYPE_NOT },
-				{ (int)TokenType.Complement, Constants.EXPRESSION_TYPE_COMPLEMENT },
-				{ (int)TokenType.Division, Constants.EXPRESSION_TYPE_DIVIDE },
-				{ (int)TokenType.Multiplication, Constants.EXPRESSION_TYPE_MULTIPLY },
-				{ (int)TokenType.Power, Constants.EXPRESSION_TYPE_POWER },
-				{ (int)TokenType.Modulo, Constants.EXPRESSION_TYPE_MODULO },
-				{ (int)TokenType.Add, Constants.EXPRESSION_TYPE_ADD },
-				{ (int)TokenType.Subtract, Constants.EXPRESSION_TYPE_SUBTRACT },
-				{ (int)TokenType.LeftShift, Constants.EXPRESSION_TYPE_LEFT_SHIFT },
-				{ (int)TokenType.RightShift, Constants.EXPRESSION_TYPE_RIGHT_SHIFT},
-				{ (int)TokenType.GreaterThan, Constants.EXPRESSION_TYPE_GREATER_THAN },
-				{ (int)TokenType.GreaterThanOrEquals, Constants.EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL },
-				{ (int)TokenType.LesserThan, Constants.EXPRESSION_TYPE_LESS_THAN },
-				{ (int)TokenType.LesserThanOrEquals, Constants.EXPRESSION_TYPE_LESS_THAN_OR_EQUAL },
-				{ (int)TokenType.Is, Constants.EXPRESSION_TYPE_TYPE_IS  },
-				{ (int)TokenType.As, Constants.EXPRESSION_TYPE_TYPE_AS },
-				{ (int)TokenType.EqualsTo, Constants.EXPRESSION_TYPE_EQUAL },
-				{ (int)TokenType.NotEqualsTo, Constants.EXPRESSION_TYPE_NOT_EQUAL },
-				{ (int)TokenType.And, Constants.EXPRESSION_TYPE_AND },
-				{ (int)TokenType.Or, Constants.EXPRESSION_TYPE_OR },
-				{ (int)TokenType.Xor, Constants.EXPRESSION_TYPE_EXCLUSIVE_OR },
-				{ (int)TokenType.AndAlso, Constants.EXPRESSION_TYPE_AND_ALSO },
-				{ (int)TokenType.OrElse, Constants.EXPRESSION_TYPE_OR_ELSE },
-				{ (int)TokenType.Coalesce, Constants.EXPRESSION_TYPE_COALESCE },
-				{ (int)TokenType.Conditional, Constants.EXPRESSION_TYPE_CONDITION },
-				{ (int)TokenType.Call, Constants.EXPRESSION_TYPE_INVOKE },
-				{ (int)TokenType.Typeof, Constants.EXPRESSION_TYPE_TYPE_OF },
-				{ (int)TokenType.Default, Constants.EXPRESSION_TYPE_DEFAULT },
-				{ (int)TokenType.New, Constants.EXPRESSION_TYPE_NEW },
-				{ (int)TokenType.LeftBracket, Constants.EXPRESSION_TYPE_INDEX },
-				{ (int)TokenType.Lambda, Constants.EXPRESSION_TYPE_LAMBDA },
-			};
-
-			TypeAliases = new Dictionary<string, string>
-			{
-				// ReSharper disable StringLiteralTypo
-				{ "void", typeof(void).FullName },
-				{ "char", typeof(char).FullName },
-				{ "bool", typeof(bool).FullName },
-				{ "byte", typeof(byte).FullName },
-				{ "sbyte", typeof(sbyte).FullName },
-				{ "decimal", typeof(decimal).FullName },
-				{ "double", typeof(double).FullName },
-				{ "float", typeof(float).FullName },
-				{ "int", typeof(int).FullName },
-				{ "uint", typeof(uint).FullName },
-				{ "long", typeof(long).FullName },
-				{ "ulong", typeof(ulong).FullName },
-				{ "object", typeof(object).FullName },
-				{ "short", typeof(short).FullName },
-				{ "ushort", typeof(ushort).FullName },
-				{ "string", typeof(string).FullName }
-				// ReSharper restore StringLiteralTypo
-			};
-		}
 		private ParseTreeNode(TokenType type, ParseTreeNode otherNode)
 		{
 			if (otherNode == null) throw new ArgumentNullException("otherNode");

@@ -73,7 +73,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			var methodNameNode = node.GetExpression(throwOnError: true);
 			var methodNameNodeType = methodNameNode.GetExpressionType(throwOnError: true);
-			if (methodNameNodeType != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD)
+			if (methodNameNodeType != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD &&
+				methodNameNodeType != Constants.EXPRESSION_TYPE_MEMBER_RESOLVE)
 			{
 				return false;
 			}

@@ -52,6 +52,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_TYPE_REFERENCE = "TypeRef";
 		public const string EXPRESSION_TYPE_MEMBER_REFERENCE = "MemberRef";
 		public const string EXPRESSION_TYPE_PROPERTY_OR_FIELD = "PropertyOrField";
+		public const string EXPRESSION_TYPE_MEMBER_RESOLVE = "MemberResolve";
 		public const string EXPRESSION_TYPE_CONSTANT = "Constant";
 		public const string EXPRESSION_TYPE_CONVERT = "Convert";
 		public const string EXPRESSION_TYPE_CONVERT_CHECKED = "ConvertChecked";

@@ -81,6 +81,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case Constants.EXPRESSION_TYPE_CHECKED_SCOPE:
 					case Constants.EXPRESSION_TYPE_GROUP: RenderGroup(node, builder, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_CONSTANT: RenderConstant(node, builder); break;
+					case Constants.EXPRESSION_TYPE_MEMBER_RESOLVE: 
 					case Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD: RenderPropertyOrField(node, builder, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_TYPE_OF: RenderTypeOf(node, builder); break;
 					case Constants.EXPRESSION_TYPE_DEFAULT: RenderDefault(node, builder); break;

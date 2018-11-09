@@ -188,6 +188,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				{
 					var expressionType = current.GetExpressionType(throwOnError: false);
 					if (expressionType != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD &&
+						expressionType != Constants.EXPRESSION_TYPE_MEMBER_RESOLVE &&
 						expressionType != Constants.EXPRESSION_TYPE_TYPE_REFERENCE)
 					{
 						return false;

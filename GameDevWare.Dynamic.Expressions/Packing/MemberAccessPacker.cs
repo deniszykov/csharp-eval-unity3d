@@ -14,7 +14,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			if (expression.Expression != null)
 			{
 				var memberAccessExpression = new Dictionary<string, object>(3) {
-					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
+					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
 					{ Constants.NAME_ATTRIBUTE, expression.Member.Name },
 					{ Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(expression.Expression) },
 				};
@@ -23,7 +23,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			else
 			{
 				var memberAccessExpression = new Dictionary<string, object>(2) {
-					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
+					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
 					{ Constants.MEMBER_ATTRIBUTE, AnyPacker.Pack(expression.Member) }
 				};
 				return memberAccessExpression;

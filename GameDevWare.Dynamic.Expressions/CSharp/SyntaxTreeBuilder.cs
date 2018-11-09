@@ -28,9 +28,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		{
 			ExpressionTypeByToken = new Dictionary<int, string>
 			{
-				{ (int)TokenType.Resolve, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
-				{ (int)TokenType.NullResolve, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
-				{ (int)TokenType.Identifier, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
+				{ (int)TokenType.Resolve, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
+				{ (int)TokenType.NullResolve, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
+				{ (int)TokenType.Identifier, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
 				{ (int)TokenType.Literal, Constants.EXPRESSION_TYPE_CONSTANT },
 				{ (int)TokenType.Number, Constants.EXPRESSION_TYPE_CONSTANT },
 				{ (int)TokenType.Convert, Constants.EXPRESSION_TYPE_CONVERT },
@@ -359,7 +359,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var syntaxNode = new Dictionary<string, object>
 			{
 				{ Constants.EXPRESSION_POSITION, parseNode.Token.Position },
-				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD },
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
 			};
 
 			if (parseNode.Type == TokenType.Resolve)

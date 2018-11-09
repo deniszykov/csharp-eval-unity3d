@@ -39,6 +39,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				var expressionType = node.GetExpressionType(throwOnError: true);
 				switch (expressionType)
 				{
+					case Constants.EXPRESSION_TYPE_MEMBER_RESOLVE:
 					case Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD:
 						return MemberBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					case Constants.EXPRESSION_TYPE_CONSTANT:
