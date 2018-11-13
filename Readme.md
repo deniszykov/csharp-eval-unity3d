@@ -113,7 +113,7 @@ iOS, WebGL and most console platforms use AOT compilation which imposes followin
 You can ensure that your generic [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) pass AOT compilation by registering it with **AotCompilation.RegisterFunc**
 
 ```csharp
-AotCompilation.RegisterFunc<int, bool>(); // template: RegisterFunc<Arg1T, ResultT>
+AotCompilation.RegisterFunc<int, bool>(); // will enable Func<int, bool> lambdas anywhere in expressions
 ```
 
 **Improving Performance**
@@ -150,8 +150,8 @@ AotCompilation.RegisterForFastCall<MyVectorMath, Vector4, float, Vector4>();
 
 You can send suggestions at support@gamedevware.com
 
-* Expression serialization	
-* Void expressions (`System.Action` delegates)
+* Expression serialization (in-progress)
+* Void expressions (`System.Action` delegates) (done)
 * Parser: Delegate construction from method reference
 * Parser: Type inference for generics	
 * Parser: Full C#6 syntax
