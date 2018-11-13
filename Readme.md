@@ -77,7 +77,10 @@ To access other types your should pass **typeResolver** parameter in **Parse** a
 var typeResolver = new KnownTypeResolver(typeof(Mathf), typeof(Time));
 CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0f, 3.0f)", typeResolver); 
 ```
-If you want to access all types in **UnityEngine** you can pass **AssemblyTypeResolver.UnityEngine** as typeResolver parameter.
+If you want to access all types in **UnityEngine** you can pass custom **AssemblyTypeResolver** as typeResolver parameter.
+```csharp
+var typeResolver = new AssemblyTypeResolver(typeof(UnityEngine.Application).Assembly);
+```
 
 For security reasons any member invocation on **System.Type** will throw exceptions until **System.Type** is added as known type.
 
