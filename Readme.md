@@ -2,9 +2,9 @@
 
 # Introduction
 
-**Attention!** This is a paid [package](https://www.assetstore.unity3d.com/#!/content/56706), you can not use it in your project if you have not purchased it through [Unity Asset Store](https://www.assetstore.unity3d.com/en/#!/content/56706).
+**Attention!** This is a paid [package](https://www.assetstore.unity3d.com/#!/content/56706), you can use it anywhere if you [purchased it](https://www.assetstore.unity3d.com/en/#!/content/56706).
 
-This package provides the API for parsing and expression execution written in C#. It is specially designed to work with the [Unity](http://unity3d.com/) on various platforms. Since it is written in C# 3.5, it should work with any version of Unity.
+This package provides the API for parsing and expression execution written in C#. It is specially designed to work with the [Unity](http://unity3d.com/) on various platforms. Since it is written in C# 3.5 and has no additional dependencies, it should work with any version of Unity (and .NET framework).
 
 It is tested to work on:
 * IOS
@@ -19,8 +19,8 @@ It should work on any other platforms.
 	* Evaluate
 	* Parse
 * AotCompilation
-	* RegisterFunc
-	* RegisterForFastCall
+	* RegisterFunc 
+	* RegisterForFastCall (optional stuff)
 
 ## Example
 Parsing C# expression into **System.Linq.Expression.Expression[T]**:
@@ -135,7 +135,7 @@ Example:
 ```csharp
 public class MyVectorMath
 {
-	public Vector4 Dot(Vector4 vector, Vector4 vector);
+    public Vector4 Dot(Vector4 vector, Vector4 vector);
     public Vector4 Cross(Vector4 vector, Vector4 vector);
     public Vector4 Scale(Vector4 vector, float scale);    
 }
@@ -166,8 +166,8 @@ You can send suggestions at support@gamedevware.com
 * * 'issa'scanned as 'is'[Operator] and 'sa'[Identifier], now as 'issa'
 * * '.09' scanned as '.'[Operator] and '09'[Number], now as '0.09'
 * * '0.1x' scanned as '0.1'[Number] and 'x'[Identifier], now cause error
-* added method call support for numbers (example 1.ToString())
-* added short number notation (examples '.9' for '0.9')
+* added *method calls* on numbers (example 1.ToString())
+* added short number notation (example '.9' for '0.9')
 * added '@' prefix for identifiers (example '@is') https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/verbatim
 * done small Tokenizer optimization (reduced string allocation during scanning)
 
