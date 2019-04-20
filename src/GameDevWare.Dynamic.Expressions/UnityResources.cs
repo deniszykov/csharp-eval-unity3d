@@ -66,7 +66,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		{
 			get
 			{
-				return new Dictionary<string, string>(73)
+				return new Dictionary<string, string>(75)
 				{
 					{ "EXCEPTION_BIND_UNABLETOBINDINDEXER", EXCEPTION_BIND_UNABLETOBINDINDEXER },
 					{ "EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED", EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED },
@@ -121,6 +121,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_BIND_MISSINGORWRONGARGUMENT", EXCEPTION_BIND_MISSINGORWRONGARGUMENT },
 					{ "EXCEPTION_BIND_MEMBERISNOTMETHOD", EXCEPTION_BIND_MEMBERISNOTMETHOD },
 					{ "EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE", EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE },
+					{ "EXCEPTION_EXECUTION_CANTDONULLVALUE", EXCEPTION_EXECUTION_CANTDONULLVALUE },
 					{ "EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ", EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ },
 					{ "EXCEPTION_PARSER_MISSING_OPERATOR", EXCEPTION_PARSER_MISSING_OPERATOR },
 					{ "EXCEPTION_BIND_INVALIDLAMBDABODYTYPE", EXCEPTION_BIND_INVALIDLAMBDABODYTYPE },
@@ -140,6 +141,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_COMPIL_NOUNARYOPONTYPE", EXCEPTION_COMPIL_NOUNARYOPONTYPE },
 					{ "EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION", EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION },
 					{ "EXCEPTION_BIND_TOOMANYARGUMENTS", EXCEPTION_BIND_TOOMANYARGUMENTS },
+					{ "EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED", EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED },
 					{ "EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION", EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION },
 				};
 			}
@@ -888,6 +890,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
+		/// Localization string with key EXCEPTION_EXECUTION_CANTDONULLVALUE
+		/// </summary>
+		public static string EXCEPTION_EXECUTION_CANTDONULLVALUE
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Can't '{1}' on a null value. Expression '{0}' gives null result.";
+					default: return "EXCEPTION_EXECUTION_CANTDONULLVALUE";
+				}
+			}
+		}
+		/// <summary>
 		/// Localization string with key EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ
 		/// </summary>
 		public static string EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ
@@ -1150,6 +1166,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "Too many arguments. Maximum number of supported arguments '{0}'.";
 					default: return "EXCEPTION_BIND_TOOMANYARGUMENTS";
+				}
+			}
+		}
+		/// <summary>
+		/// Localization string with key EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED
+		/// </summary>
+		public static string EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Multi-parameter indexers are not supported.";
+					default: return "EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED";
 				}
 			}
 		}

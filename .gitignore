@@ -31,8 +31,8 @@ Assets/StreamingAssets/
 Assets/Bundles/
 ProjectSettings/
 Assets/AssetStoreTools/
-GameDevWare.Dynamic.Expressions.Playmaker/Assets/PlayMaker/
-GameDevWare.Dynamic.Expressions.Playmaker/Assets/Gizmos/
-GameDevWare.Dynamic.Expressions.Playmaker/Assets/Plugins/PlayMaker/
-GameDevWare.Dynamic.Expressions.Playmaker/Assets/iTween/
-GameDevWare.Dynamic.Expressions.Playmaker/Assets/AssetStoreTools/
+src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/PlayMaker/
+src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/Gizmos/
+src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/Plugins/PlayMaker/
+src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/iTween/
+src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/AssetStoreTools/

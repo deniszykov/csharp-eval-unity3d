@@ -57,17 +57,17 @@ namespace GameDevWare.Dynamic.Expressions
 				default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).ContainsKey(default(System.String));
 				default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Add(default(System.String), default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode));
 				default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Remove(default(System.String));
-				var param_1137565873_100678040_1 = default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode);
-				default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).TryGetValue(default(System.String), out param_1137565873_100678040_1);
-				var property_1137565873_385878218 = default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Keys;
-				var property_1137565873_385878219 = default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Values;
+				var param_1137565873_100678045_1 = default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode);
+				default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).TryGetValue(default(System.String), out param_1137565873_100678045_1);
+				var property_1137565873_385878221 = default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Keys;
+				var property_1137565873_385878222 = default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Values;
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Add(default(System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>));
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Clear();
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Contains(default(System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>));
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).CopyTo(default(System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>[]), default(System.Int32));
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Remove(default(System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>));
-				var property_1579750118_385878215 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Count;
-				var property_1579750118_385878216 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).IsReadOnly;
+				var property_1579750118_385878218 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Count;
+				var property_1579750118_385878219 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).IsReadOnly;
 				default(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).GetEnumerator();
 				default(System.Collections.IEnumerable).GetEnumerator();
 				var param_33554451_100663466_1 = default(System.Type);
@@ -265,17 +265,17 @@ namespace GameDevWare.Dynamic.Expressions
 				default(System.Collections.Generic.IDictionary<System.String,System.Object>).ContainsKey(default(System.String));
 				default(System.Collections.Generic.IDictionary<System.String,System.Object>).Add(default(System.String), default(System.Object));
 				default(System.Collections.Generic.IDictionary<System.String,System.Object>).Remove(default(System.String));
-				var param_1400937435_100678040_1 = default(System.Object);
-				default(System.Collections.Generic.IDictionary<System.String,System.Object>).TryGetValue(default(System.String), out param_1400937435_100678040_1);
-				var property_1400937435_385878218 = default(System.Collections.Generic.IDictionary<System.String,System.Object>).Keys;
-				var property_1400937435_385878219 = default(System.Collections.Generic.IDictionary<System.String,System.Object>).Values;
+				var param_1400937435_100678045_1 = default(System.Object);
+				default(System.Collections.Generic.IDictionary<System.String,System.Object>).TryGetValue(default(System.String), out param_1400937435_100678045_1);
+				var property_1400937435_385878221 = default(System.Collections.Generic.IDictionary<System.String,System.Object>).Keys;
+				var property_1400937435_385878222 = default(System.Collections.Generic.IDictionary<System.String,System.Object>).Values;
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Add(default(System.Collections.Generic.KeyValuePair<System.String,System.Object>));
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Clear();
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Contains(default(System.Collections.Generic.KeyValuePair<System.String,System.Object>));
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).CopyTo(default(System.Collections.Generic.KeyValuePair<System.String,System.Object>[]), default(System.Int32));
 				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Remove(default(System.Collections.Generic.KeyValuePair<System.String,System.Object>));
-				var property_2133121867_385878215 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Count;
-				var property_2133121867_385878216 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).IsReadOnly;
+				var property_2133121867_385878218 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Count;
+				var property_2133121867_385878219 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).IsReadOnly;
 				default(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).GetEnumerator();
 				var field_33554457_67109004 = GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions.Default;
 				var field_33554457_67109005 = GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions.Interfaces;
@@ -806,11 +806,11 @@ namespace GameDevWare.Dynamic.Expressions
 				var param_33554552_100664100_4 = default(System.Exception);
 				GameDevWare.Dynamic.Expressions.Binding.UnaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554552_100664100_3, out param_33554552_100664100_4);
 				default(System.Collections.Generic.IEnumerable<System.Type>).GetEnumerator();
-				var property_570034569_385878220 = default(System.Collections.Generic.IEnumerator<System.Type>).Current;
+				var property_570034569_385878223 = default(System.Collections.Generic.IEnumerator<System.Type>).Current;
 				default(System.IDisposable).Dispose();
 				default(System.Collections.IEnumerator).MoveNext();
 				default(System.Collections.IEnumerator).Reset();
-				var property_33555570_385878105 = default(System.Collections.IEnumerator).Current;
+				var property_33555570_385878108 = default(System.Collections.IEnumerator).Current;
 				default(GameDevWare.Dynamic.Expressions.NameUtils.TypeNestingEnumerator).MoveNext();
 				default(GameDevWare.Dynamic.Expressions.NameUtils.TypeNestingEnumerator).Reset();
 				default(GameDevWare.Dynamic.Expressions.NameUtils.TypeNestingEnumerator).GetEnumerator();
@@ -1264,14 +1264,14 @@ namespace GameDevWare.Dynamic.Expressions
 				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Remove(ref param_33554610_100664661_0, default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
 				default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes).ToString();
 				var field_33554610_67109401 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes).Count;
-				var property_134116366_385878220 = default(System.Collections.Generic.IEnumerator<GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode>).Current;
+				var property_134116366_385878223 = default(System.Collections.Generic.IEnumerator<GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode>).Current;
 				var field_33554612_67109411 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.None;
 				var field_33554612_67109412 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.Aliases;
 				var field_33554612_67109413 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.ShortNames;
 				var field_33554612_67109414 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.Arrays;
 				var field_33554612_67109415 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.All;
 				default(System.Collections.Generic.IEnumerable<GameDevWare.Dynamic.Expressions.CSharp.Token>).GetEnumerator();
-				var property_33449497_385878220 = default(System.Collections.Generic.IEnumerator<GameDevWare.Dynamic.Expressions.CSharp.Token>).Current;
+				var property_33449497_385878223 = default(System.Collections.Generic.IEnumerator<GameDevWare.Dynamic.Expressions.CSharp.Token>).Current;
 			}
 		}
 	}
