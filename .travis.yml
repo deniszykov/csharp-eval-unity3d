@@ -6,7 +6,6 @@ install:
 - cd src
 - dotnet restore
 script:
-- cd src
 - dotnet build -f netcoreapp2.0
 - cd GameDevWare.Dynamic.Expressions.Tests
 - dotnet xunit -f netcoreapp2.0
