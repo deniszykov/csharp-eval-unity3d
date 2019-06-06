@@ -92,7 +92,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				var typeArguments = new[] { type.GetTypeInfo().GetElementType() };
 				var methodNameTree = new Dictionary<string, object>(3) {
 					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_TYPE_REFERENCE },
-					{ Constants.NAME_ATTRIBUTE, NameUtils.WriteFullName(typeof(Array)).ToString() },
+					{ Constants.NAME_ATTRIBUTE, typeof(Array).GetCSharpFullName().ToString() },
 					{ Constants.ARGUMENTS_ATTRIBUTE, Pack(typeArguments) }
 				};
 				return methodNameTree;
@@ -102,14 +102,14 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				var typeArguments = type.GetTypeInfo().GetGenericArguments();
 				var methodNameTree = new Dictionary<string, object>(3) {
 					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_TYPE_REFERENCE },
-					{ Constants.NAME_ATTRIBUTE, NameUtils.RemoveGenericSuffix(NameUtils.WriteFullName(type)).ToString() },
+					{ Constants.NAME_ATTRIBUTE, type.GetCSharpFullName(withGenericSuffix: false).ToString() },
 					{ Constants.ARGUMENTS_ATTRIBUTE, Pack(typeArguments) }
 				};
 				return methodNameTree;
 			}
 			else
 			{
-				return NameUtils.WriteFullName(type).ToString();
+				return type.GetCSharpFullName().ToString();
 			}
 		}
 		internal static object Pack(MemberInfo member)
@@ -117,7 +117,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			if (member.DeclaringType == null)
 				return null;
 
-			var memberName = (object)NameUtils.RemoveGenericSuffix(member.Name);
+			var memberName = (object)TypeNameUtils.RemoveGenericSuffix(member.Name);
 			if (member is MethodBase)
 			{
 				var methodBase = (MethodBase)member;

@@ -131,10 +131,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		private static TypeReference MakeTypeReference(Type type, bool fullName)
 		{
 			var typeNameBuilder = fullName ?
-				NameUtils.WriteFullName(type, writeGenericArguments: false) :
-				NameUtils.WriteName(type, writeGenericArguments: false);
+				TypeNameUtils.GetCSharpFullName(type, writeGenericArguments: false) :
+				TypeNameUtils.GetCSharpName(type, writeGenericArguments: false);
 
-			NameUtils.RemoveGenericSuffix(typeNameBuilder, 0, typeNameBuilder.Length);
+			TypeNameUtils.RemoveGenericSuffix(typeNameBuilder, 0, typeNameBuilder.Length);
 
 			var genericArguments = new List<TypeReference>();
 			foreach (var genArgument in type.GetTypeInfo().GetGenericArguments())

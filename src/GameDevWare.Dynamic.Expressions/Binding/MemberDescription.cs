@@ -104,7 +104,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (declaringType == null) throw new ArgumentNullException("declaringType");
 			if (method == null) throw new ArgumentNullException("method");
 
-			this.Name = method.IsGenericMethod ? NameUtils.RemoveGenericSuffix(method.Name) : method.Name;
+			this.Name = method.IsGenericMethod ? TypeNameUtils.RemoveGenericSuffix(method.Name) : method.Name;
 			this.DeclaringType = declaringType;
 			this.ResultType = method.ReturnType;
 			this.member = method;

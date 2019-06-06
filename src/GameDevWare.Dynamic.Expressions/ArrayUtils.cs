@@ -6,7 +6,7 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	internal static class ArrayUtils
 	{
-		public static ResultT[] ConvertAll<T, ResultT>(T[] array,
+		public static ResultT[] ConvertAll<T, ResultT>(this T[] array,
 #if NETSTANDARD
 			Func<T, ResultT> converter
 #else

@@ -99,7 +99,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			this.type = type;
 			this.hashCode = type.GetHashCode();
-			this.Name = NameUtils.RemoveGenericSuffix(NameUtils.WriteName(type)).ToString();
+			this.Name = TypeNameUtils.RemoveGenericSuffix(TypeNameUtils.GetCSharpName(type)).ToString();
 
 			cache.Add(type, this);
 

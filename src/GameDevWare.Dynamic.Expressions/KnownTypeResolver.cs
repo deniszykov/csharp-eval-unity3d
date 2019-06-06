@@ -126,7 +126,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			foreach (var type in this.knownTypes)
 			{
-				foreach (var name in NameUtils.GetTypeNames(type))
+				foreach (var name in type.GetTypeNames())
 				{
 					var typeList = default(List<Type>);
 					if (this.knownTypesByName.TryGetValue(name, out typeList) == false)
@@ -134,7 +134,7 @@ namespace GameDevWare.Dynamic.Expressions
 					typeList.Add(type);
 				}
 
-				foreach (var fullName in NameUtils.GetTypeFullNames(type))
+				foreach (var fullName in type.GetTypeFullNames())
 				{
 					var typeList = default(List<Type>);
 					if (this.knownTypesByFullName.TryGetValue(fullName, out typeList) == false)

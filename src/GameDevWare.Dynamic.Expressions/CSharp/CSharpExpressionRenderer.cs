@@ -1373,8 +1373,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (builder == null) throw new ArgumentNullException("builder");
 
 			var nameStartIndex = builder.Length;
-			NameUtils.WriteFullName(type, builder, writeGenericArguments: true);
-			NameUtils.RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
+			TypeNameUtils.GetCSharpFullName(type, builder, writeGenericArguments: true);
+			TypeNameUtils.RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
 		}
 		private static void RenderTextLiteral(string value, StringBuilder builder, bool isChar)
 		{
