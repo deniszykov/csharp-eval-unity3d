@@ -500,8 +500,8 @@ namespace GameDevWare.Dynamic.Expressions
 				var field_33554513_67109122 = GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME;
 				var field_33554513_67109123 = GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME;
 				var field_33554513_67109124 = GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG4_DEFAULT_NAME;
-				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionRenderer.Render(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(System.Boolean));
-				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionRenderer.Render(default(System.Linq.Expressions.Expression), default(System.Boolean));
+				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionFormatter.Render(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(System.Boolean));
+				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionFormatter.Render(default(System.Linq.Expressions.Expression), default(System.Boolean));
 				GameDevWare.Dynamic.Expressions.CSharp.Parser.Parse(default(System.Collections.Generic.IEnumerable<GameDevWare.Dynamic.Expressions.CSharp.Token>));
 				default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode).ToString();
 				var property_33554517_385876069 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode).Count;

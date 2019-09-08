@@ -97,7 +97,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 				(Expression<Func<bool>>)(() => string.Empty is string),
 			};
 			return (from expr in expressions
-					select new object[] { CSharpExpressionRenderer.Render(expr), expr });
+					select new object[] { CSharpExpressionFormatter.Render(expr), expr });
 		}
 
 		[Theory]
