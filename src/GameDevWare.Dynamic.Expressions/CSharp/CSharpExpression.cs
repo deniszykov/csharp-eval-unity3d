@@ -236,7 +236,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		[Obsolete("Use ParseFunc instead.")]
+		[Obsolete("Use ParseFunc instead.", error: true)]
 		public static Expression<Func<ResultT>> Parse<ResultT>(string expression, ITypeResolver typeResolver = null)
 		{
 			return ParseFunc<ResultT>(expression, typeResolver);
@@ -250,7 +250,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		[Obsolete("Use ParseFunc instead.")]
+		[Obsolete("Use ParseFunc instead.", error: true)]
 		public static Expression<Func<Arg1T, ResultT>> Parse<Arg1T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
 			return ParseFunc<Arg1T, ResultT>(expression, arg1Name, typeResolver);
@@ -267,7 +267,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		[Obsolete("Use ParseFunc instead.")]
+		[Obsolete("Use ParseFunc instead.", error: true)]
 		public static Expression<Func<Arg1T, Arg2T, ResultT>> Parse<Arg1T, Arg2T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
 			return ParseFunc<Arg1T, Arg2T, ResultT>(expression, arg1Name, arg2Name, typeResolver);
@@ -286,7 +286,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		[Obsolete("Use ParseFunc instead.")]
+		[Obsolete("Use ParseFunc instead.", error: true)]
 		public static Expression<Func<Arg1T, Arg2T, Arg3T, ResultT>> Parse<Arg1T, Arg2T, Arg3T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
 			return ParseFunc<Arg1T, Arg2T, Arg3T, ResultT>(expression, arg1Name, arg2Name, arg3Name, typeResolver);
@@ -307,7 +307,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg4Name">Fourth argument name or <see cref="ARG4_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		[Obsolete("Use ParseFunc instead.")]
+		[Obsolete("Use ParseFunc instead.", error: true)]
 		public static Expression<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>> Parse<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null)
 		{
 			return ParseFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(expression, arg1Name, arg2Name, arg3Name, arg4Name, typeResolver);
