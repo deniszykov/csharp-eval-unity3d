@@ -15,18 +15,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="syntaxTree">Syntax tree.</param>
 		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
 		/// <returns>Rendered expression.</returns>
-		[Obsolete("Use FormatAsCSharp() instead. Will be removed in next releases.", error: true)]
+		[Obsolete("Use CSharpExpression.Format() instead. Will be removed in next releases.", error: true)]
 		public static string Render(this SyntaxTreeNode syntaxTree, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
 		{
-			return syntaxTree.FormatAsCSharp(checkedScope);
+			return Format(syntaxTree, checkedScope);
 		}
-		/// <summary>
-		/// Formats <see cref="SyntaxTreeNode"/> into string representation.
-		/// </summary>
-		/// <param name="syntaxTree">An valid syntax tree.</param>
-		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows.</param>
-		/// <returns>C# formatted expression.</returns>
-		public static string FormatAsCSharp(this SyntaxTreeNode syntaxTree, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
+		
+		internal static string Format(this SyntaxTreeNode syntaxTree, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
 		{
 			if (syntaxTree == null) throw new ArgumentNullException("syntaxTree");
 			var builder = new StringBuilder();

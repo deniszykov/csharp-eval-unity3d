@@ -36,19 +36,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="expression">Syntax tree.</param>
 		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
 		/// <returns>Rendered expression.</returns>
-		[Obsolete("Use FormatAsCSharp() instead. Will be removed in next releases.", error: true)]
+		[Obsolete("Use CSharpExpression.Format() instead. Will be removed in next releases.", error: true)]
 		public static string Render(this Expression expression, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
 		{
-			return expression.FormatAsCSharp(checkedScope);
+			return Format(expression, checkedScope);
 		}
 
-		/// <summary>
-		/// Formats <see cref="Expression"/> into string representation.
-		/// </summary>
-		/// <param name="expression">An valid expression.</param>
-		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows.</param>
-		/// <returns>C# formatted expression.</returns>
-		public static string FormatAsCSharp(this Expression expression, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
+		internal static string Format(this Expression expression, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 

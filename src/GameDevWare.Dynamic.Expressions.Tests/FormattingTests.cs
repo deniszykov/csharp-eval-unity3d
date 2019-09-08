@@ -268,7 +268,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			this.output.WriteLine("Arguments: " + string.Join(", ", arguments.Select(a => a == null ? "<null>" : Convert.ToString(a)).ToArray()));
 			this.output.WriteLine("Expected: " + expected);
 
-			var formattedExpression = expression.Body.FormatAsCSharp();
+			var formattedExpression = CSharpExpression.Format(expression.Body);
 			this.output.WriteLine("Formatted Expression: " + formattedExpression);
 
 			var parsedExpression = ParseLambda(formattedExpression, expression.Type);
@@ -287,7 +287,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			this.output.WriteLine("Lambda Type: " + expression.Type.GetTypeInfo().GetCSharpFullName(null, options: TypeNameFormatOptions.IncludeGenericArguments));
 			this.output.WriteLine("Expression: " + expression);
 
-			var formattedExpression = expression.Body.FormatAsCSharp();
+			var formattedExpression = CSharpExpression.Format(expression.Body);
 			var iterations = 10;
 			var iterationLength = new int[iterations];
 			for (var i = 0; i < iterations; i++)
@@ -314,9 +314,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			this.output.WriteLine("Arguments: " + string.Join(", ", arguments.Select(a => a == null ? "<null>" : Convert.ToString(a)).ToArray()));
 			this.output.WriteLine("Expected: " + expected);
 
-			var formattedExpression = expression.Body.FormatAsCSharp();
+			var formattedExpression = CSharpExpression.Format(expression.Body);
 			this.output.WriteLine("Formatted Expression: " + formattedExpression);
-			var formattedSyntaxTree = Parse(formattedExpression).FormatAsCSharp();
+			var formattedSyntaxTree = CSharpExpression.Format(Parse(formattedExpression));
 			this.output.WriteLine("Formatted SyntaxTree: " + formattedSyntaxTree);
 
 			var parsedExpression = ParseLambda(formattedSyntaxTree, expression.Type);

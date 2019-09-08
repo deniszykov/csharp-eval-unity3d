@@ -581,5 +581,27 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			return (Expression<Action<Arg1T, Arg2T, Arg3T, Arg4T>>)expressionBinder.Bind(expressionTree);
 		}
+
+		/// <summary>
+		/// Formats <see cref="Expression"/> into string representation.
+		/// </summary>
+		/// <param name="expression">An valid expression.</param>
+		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows.</param>
+		/// <returns>C# formatted expression.</returns>
+		public static string Format(this Expression expression, bool checkedScope = DEFAULT_CHECKED_SCOPE)
+		{
+			return CSharpExpressionFormatter.Format(expression, checkedScope);
+		}
+
+		/// <summary>
+		/// Formats <see cref="SyntaxTreeNode"/> into string representation.
+		/// </summary>
+		/// <param name="syntaxTree">An valid syntax tree.</param>
+		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows.</param>
+		/// <returns>C# formatted expression.</returns>
+		internal static string Format(this SyntaxTreeNode syntaxTree, bool checkedScope = DEFAULT_CHECKED_SCOPE)
+		{
+			return CSharpSyntaxTreeFormatter.Format(syntaxTree, checkedScope);
+		}
 	}
 }
