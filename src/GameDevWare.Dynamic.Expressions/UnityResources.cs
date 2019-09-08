@@ -940,7 +940,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Failed to build lambda expression because body has type '{1}' which is not convertible to result type '{1}.'";
+					case 0: return "Failed to build lambda expression because body has type '{0}' which is not convertible to result type '{1}.'";
 					default: return "EXCEPTION_BIND_INVALIDLAMBDABODYTYPE";
 				}
 			}

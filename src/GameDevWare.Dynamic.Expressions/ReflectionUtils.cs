@@ -2,12 +2,53 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using GameDevWare.Dynamic.Expressions.Binding;
 
 namespace GameDevWare.Dynamic.Expressions
 {
 	internal static class ReflectionUtils
 	{
+		public static bool IsStatic(this MemberInfo memberInfo)
+		{
+			if (memberInfo == null) throw new ArgumentNullException("memberInfo");
+
+			var propertyInfo = memberInfo as PropertyInfo;
+			var fieldInfo = memberInfo as FieldInfo;
+			var eventInfo = memberInfo as EventInfo;
+			var methodInfo = memberInfo as MethodInfo;
+
+			if (propertyInfo != null)
+			{
+#if NETSTANDARD
+				var accessor = (propertyInfo.GetMethod ?? propertyInfo.SetMethod);
+#else
+				var accessor = (propertyInfo.GetGetMethod(nonPublic: true) ?? propertyInfo.GetSetMethod(nonPublic: true));
+#endif
+				return accessor != null && accessor.IsStatic;
+			}
+			else if (fieldInfo != null)
+			{
+				return fieldInfo.IsStatic;
+			}
+			else if (eventInfo != null)
+			{
+#if NETSTANDARD
+				var accessor = (eventInfo.AddMethod ?? eventInfo.RemoveMethod);
+#else
+				var accessor = (eventInfo.GetAddMethod(nonPublic: true) ?? eventInfo.GetRemoveMethod(nonPublic: true));
+#endif
+				return accessor != null && accessor.IsStatic;
+			}
+			else if (methodInfo != null)
+			{
+				return methodInfo.IsStatic;
+			}
+			else
+			{
+				return false;
+			}
+		}
 		public static bool IsStatic(this PropertyInfo propertyInfo)
 		{
 			if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
@@ -59,12 +100,50 @@ namespace GameDevWare.Dynamic.Expressions
 #endif
 			return accessor;
 		}
+		public static bool IsIndexer(this MethodInfo methodInfo)
+		{
+			if (methodInfo == null) throw new ArgumentNullException("methodInfo");
+
+			var type = methodInfo.DeclaringType;
+			while (type != null && type != typeof(object))
+			{
+				var properties = methodInfo
+					.DeclaringType
+#if NETSTANDARD
+					.GetTypeInfo()
+#endif
+					.GetDeclaredProperties();
+
+				foreach (var property in properties)
+				{
+					if (property.GetAnyGetter() == methodInfo ||
+						property.GetAnySetter() == methodInfo)
+					{
+						return true;
+					}
+				}
+
+				type = type
+#if NETSTANDARD
+					.GetTypeInfo()
+#endif
+					.BaseType;
+			}
+
+			return false;
+		}
 #if NETSTANDARD
 		public static IEnumerable<FieldInfo> GetDeclaredFields(this TypeInfo type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
 			return type.DeclaredFields;
+		}
+		public static IEnumerable<PropertyInfo> GetDeclaredProperties(this TypeInfo type)
+		{
+			if (type == null) throw new ArgumentNullException("type");
+
+			return type.DeclaredProperties;
 		}
 		public static IEnumerable<ConstructorInfo> GetPublicInstanceConstructors(this TypeInfo type)
 		{
@@ -116,7 +195,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return type.DeclaredMembers;
 		}
-		
+
 		public static Type[] GetGenericArguments(this TypeInfo type)
 		{
 			if (type == null) throw new ArgumentNullException("type");
@@ -155,6 +234,12 @@ namespace GameDevWare.Dynamic.Expressions
 			if (type == null) throw new ArgumentNullException("type");
 
 			return type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+		}
+		public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
+		{
+			if (type == null) throw new ArgumentNullException("type");
+
+			return type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 		}
 		public static IEnumerable<MethodInfo> GetDeclaredMethods(this Type type)
 		{
@@ -205,6 +290,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 		}
+
 #endif
 		public static MethodInfo FindConversion(this MemberDescription[] conversionOperators, Type fromType, Type toType)
 		{

@@ -47,7 +47,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			this.outputHelper.WriteLine("CLR Name: " + type.AssemblyQualifiedName);
 
-			var actualName = type.GetCSharpNameOnly(writeGenericArguments: true, withGenericSuffix: false).ToString();
+			var actualName = type.GetCSharpNameOnly(options: TypeNameFormatOptions.IncludeGenericArguments).ToString();
 
 			this.outputHelper.WriteLine("Actual name: " + actualName);
 
@@ -70,7 +70,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			this.outputHelper.WriteLine("CLR Name: " + type.AssemblyQualifiedName);
 
-			var actualName = type.GetCSharpName(writeGenericArguments: true, withGenericSuffix: false).ToString();
+			var actualName = type.GetCSharpName(options: TypeNameFormatOptions.IncludeGenericArguments).ToString();
 
 			this.outputHelper.WriteLine("Actual name: " + actualName);
 
@@ -90,7 +90,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			this.outputHelper.WriteLine("CLR Name: " + type.AssemblyQualifiedName);
 
-			var actualName = type.GetCSharpFullName(writeGenericArguments: true, withGenericSuffix: false).ToString();
+			var actualName = type.GetCSharpFullName(options: TypeNameFormatOptions.IncludeGenericArguments).ToString();
 
 			this.outputHelper.WriteLine("Actual name: " + actualName);
 

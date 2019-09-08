@@ -38,7 +38,7 @@ export class ExpressionResources {
 	public static readonly EXCEPTION_BIND_INVALIDCHARLITERAL: string = 'Invalid char literal \'{0}\'. It should be one character length.';
 	public static readonly EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION: string = 'Can\'t convert constant of type \'{0}\' to literal representation.';
 	public static readonly EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS: string = 'Invalid argument types or count for lambda of type \'{0}\'.';
-	public static readonly EXCEPTION_BIND_INVALIDLAMBDABODYTYPE: string = 'Failed to build lambda expression because body has type \'{1}\' which is not convertible to result type \'{1}.\'';
+	public static readonly EXCEPTION_BIND_INVALIDLAMBDABODYTYPE: string = 'Failed to build lambda expression because body has type \'{0}\' which is not convertible to result type \'{1}.\'';
 	public static readonly EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE: string = 'Invalid lambda parameter type \'{0}\' while \'{1}\' is expected.';
 	public static readonly EXCEPTION_BIND_MEMBERISNOTMETHOD: string = 'Referenced member \'{0}\' on type \'{1}\' is not method.';
 	public static readonly EXCEPTION_BIND_MISSINGATTRONNODE: string = 'Missing or wrong \'{0}\' attribute on one of expression nodes.';

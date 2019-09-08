@@ -18,7 +18,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-
+using GameDevWare.Dynamic.Expressions.CSharp;
 #if NETFRAMEWORK
 using TypeInfo = System.Type;
 #else
@@ -41,40 +41,13 @@ namespace GameDevWare.Dynamic.Expressions
 			if (string.IsNullOrEmpty(name))
 				return EmptyNames;
 
+			var alias = default(string);
 			if (typeInfo.Equals(typeof(Array)))
 				return new[] { name, name + "`1" };
 			else if (typeInfo.IsGenericType)
-				return new[] { GetCSharpName(typeInfo, withGenericSuffix: false).ToString(), GetCSharpName(typeInfo, withGenericSuffix: true).ToString() };
-			else if (typeInfo.Equals(typeof(byte)))
-				return new[] { "byte", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(sbyte)))
-				return new[] { "sbyte", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(short)))
-				return new[] { "short", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(ushort)))
-				return new[] { "ushort", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(int)))
-				return new[] { "int", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(uint)))
-				return new[] { "uint", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(long)))
-				return new[] { "long", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(ulong)))
-				return new[] { "ulong", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(float)))
-				return new[] { "float", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(double)))
-				return new[] { "double", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(decimal)))
-				return new[] { "decimal", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(char)))
-				return new[] { "char", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(string)))
-				return new[] { "string", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(object)))
-				return new[] { "object", GetCSharpName(typeInfo).ToString() };
-			else if (typeInfo.Equals(typeof(void)))
-				return new[] { "void", GetCSharpName(typeInfo).ToString() };
+				return new[] { GetCSharpName(typeInfo, options: TypeNameFormatOptions.None).ToString(), GetCSharpName(typeInfo, options: TypeNameFormatOptions.IncludeGenericSuffix).ToString() };
+			else if (CSharpTypeNameAlias.TryGetAlias(typeInfo, out alias))
+				return new[] { alias, GetCSharpName(typeInfo).ToString() };
 			else
 				return new[] { GetCSharpName(typeInfo).ToString() };
 		}
@@ -89,52 +62,64 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeInfo.Equals(typeof(Array)))
 				return new[] { fullName, fullName + "`1" };
 			else if (typeInfo.IsGenericType)
-				return new[] { GetCSharpFullName(typeInfo, withGenericSuffix: false).ToString(), GetCSharpFullName(typeInfo, withGenericSuffix: true).ToString() };
+				return new[] { GetCSharpFullName(typeInfo, options: TypeNameFormatOptions.None).ToString(), GetCSharpFullName(typeInfo, options: TypeNameFormatOptions.IncludeGenericSuffix).ToString() };
 			else
 				return new[] { GetCSharpFullName(typeInfo).ToString() };
 		}
 
-		public static StringBuilder GetCSharpFullName(this TypeInfo typeInfo, StringBuilder builder = null, bool writeGenericArguments = false, bool withGenericSuffix = true)
+		public static StringBuilder GetCSharpFullName(this TypeInfo typeInfo, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
 		{
 			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
 
-			if (builder == null) builder = new StringBuilder();
-
-			var nameStarts = builder.Length;
-			WriteName(typeInfo, builder, writeGenericArguments, NameFormat.NameWithNamespace);
-			if (!withGenericSuffix)
+			if (builder == null)
 			{
-				RemoveGenericSuffix(builder, nameStarts, builder.Length - nameStarts);
+				builder = new StringBuilder();
+			}
+
+			var nameStartIndex = builder.Length;
+			WriteName(typeInfo, builder, options | TypeNameFormatOptions.IncludeNamespace);
+
+			if ((options & TypeNameFormatOptions.IncludeGenericSuffix) == 0)
+			{
+				RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
 			}
 
 			return builder;
 		}
-		public static StringBuilder GetCSharpName(this TypeInfo typeInfo, StringBuilder builder = null, bool writeGenericArguments = false, bool withGenericSuffix = true)
+		public static StringBuilder GetCSharpName(this TypeInfo typeInfo, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
 		{
 			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
 
-			if (builder == null) builder = new StringBuilder();
-
-			var nameStarts = builder.Length;
-			WriteName(typeInfo, builder, writeGenericArguments, NameFormat.NameWithParents);
-			if (!withGenericSuffix)
+			if (builder == null)
 			{
-				RemoveGenericSuffix(builder, nameStarts, builder.Length - nameStarts);
+				builder = new StringBuilder();
+			}
+
+			var nameStartIndex = builder.Length;
+			WriteName(typeInfo, builder, (options & ~TypeNameFormatOptions.IncludeNamespace) | TypeNameFormatOptions.IncludeDeclaringType);
+
+			if ((options & TypeNameFormatOptions.IncludeGenericSuffix) == 0)
+			{
+				RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
 			}
 
 			return builder;
 		}
-		public static StringBuilder GetCSharpNameOnly(this TypeInfo typeInfo, StringBuilder builder = null, bool writeGenericArguments = false, bool withGenericSuffix = true)
+		public static StringBuilder GetCSharpNameOnly(this TypeInfo typeInfo, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
 		{
 			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
 
-			if (builder == null) builder = new StringBuilder();
-
-			var nameStarts = builder.Length;
-			WriteName(typeInfo, builder, writeGenericArguments, NameFormat.NameOnly);
-			if (!withGenericSuffix)
+			if (builder == null)
 			{
-				RemoveGenericSuffix(builder, nameStarts, builder.Length - nameStarts);
+				builder = new StringBuilder();
+			}
+
+			var nameStartIndex = builder.Length;
+			WriteName(typeInfo, builder, options & ~TypeNameFormatOptions.IncludeNamespace);
+
+			if ((options & TypeNameFormatOptions.IncludeGenericSuffix) == 0)
+			{
+				RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
 			}
 
 			return builder;
@@ -212,17 +197,17 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return GetTypeNames(typeInfo.GetTypeInfo());
 		}
-		public static StringBuilder GetCSharpNameOnly(this Type type, StringBuilder builder = null, bool writeGenericArguments = false, bool withGenericSuffix = true)
+		public static StringBuilder GetCSharpNameOnly(this Type type, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
-			return GetCSharpNameOnly(type.GetTypeInfo(), builder, writeGenericArguments, withGenericSuffix);
+			return GetCSharpNameOnly(type.GetTypeInfo(), builder, options);
 		}
-		public static StringBuilder GetCSharpName(this Type type, StringBuilder builder = null, bool writeGenericArguments = false, bool withGenericSuffix = true)
+		public static StringBuilder GetCSharpName(this Type type, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
-			return GetCSharpName(type.GetTypeInfo(), builder, writeGenericArguments, withGenericSuffix);
+			return GetCSharpName(type.GetTypeInfo(), builder, options);
 		}
 		public static TypeNestingEnumerator GetDeclaringTypes(this Type type)
 		{
@@ -230,19 +215,26 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return GetDeclaringTypes(type.GetTypeInfo());
 		}
-		public static StringBuilder GetCSharpFullName(this Type type, StringBuilder builder = null, bool writeGenericArguments = false, bool withGenericSuffix = true)
+		public static StringBuilder GetCSharpFullName(this Type type, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 
-			return GetCSharpFullName(type.GetTypeInfo(), builder, writeGenericArguments, withGenericSuffix);
+			return GetCSharpFullName(type.GetTypeInfo(), builder, options);
 		}
-
 #endif
 
-		private static void WriteName(TypeInfo typeInfo, StringBuilder builder, bool writeGenericArguments, NameFormat nameFormat)
+		private static void WriteName(TypeInfo typeInfo, StringBuilder builder, TypeNameFormatOptions options)
 		{
 			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
 			if (builder == null) throw new ArgumentNullException("builder");
+
+			var alias = default(string);
+			if ((options & TypeNameFormatOptions.UseAliases) == TypeNameFormatOptions.UseAliases &&
+				CSharpTypeNameAlias.TryGetAlias(typeInfo, out alias))
+			{
+				builder.Append(alias);
+				return;
+			}
 
 			var arrayDepth = 0;
 			while (typeInfo.IsArray)
@@ -251,9 +243,12 @@ namespace GameDevWare.Dynamic.Expressions
 				arrayDepth++;
 			}
 
+			var writeGenericArguments = (options & TypeNameFormatOptions.IncludeGenericArguments) == TypeNameFormatOptions.IncludeGenericArguments;
+			var namespaceWritten = (options & TypeNameFormatOptions.IncludeNamespace) != TypeNameFormatOptions.IncludeNamespace;
+			var writeDeclaringType = (options & TypeNameFormatOptions.IncludeDeclaringType) == TypeNameFormatOptions.IncludeDeclaringType;
+
 			var genericArguments = (typeInfo.IsGenericType && writeGenericArguments ? typeInfo.GetGenericArguments() : Type.EmptyTypes).ConvertAll(t => t.GetTypeInfo());
 			var genericArgumentOffset = 0;
-			var namespaceWritten = nameFormat != NameFormat.NameWithNamespace;
 			foreach (var declaringTypeInfo in new TypeNestingEnumerator(typeInfo))
 			{
 				if (!namespaceWritten)
@@ -268,9 +263,9 @@ namespace GameDevWare.Dynamic.Expressions
 				var genericArgumentsCount = (declaringTypeInfo.IsGenericType && writeGenericArguments ? declaringTypeInfo.GetGenericArguments().Length : 0) - genericArgumentOffset;
 				var partialGenerics = new ArraySegment<TypeInfo>(genericArguments, genericArgumentOffset, genericArgumentsCount);
 
-				if (nameFormat != NameFormat.NameOnly || declaringTypeInfo.Equals(typeInfo))
+				if (writeDeclaringType || declaringTypeInfo.Equals(typeInfo))
 				{
-					WriteNamePart(declaringTypeInfo, builder, partialGenerics, nameFormat);
+					WriteNamePart(declaringTypeInfo, builder, partialGenerics, options);
 
 					if (declaringTypeInfo.Equals(typeInfo) == false)
 						builder.Append('.');
@@ -284,7 +279,7 @@ namespace GameDevWare.Dynamic.Expressions
 				builder.Append("[]");
 			}
 		}
-		private static void WriteNamePart(TypeInfo type, StringBuilder builder, ArraySegment<TypeInfo> genericArguments, NameFormat nameFormat)
+		private static void WriteNamePart(TypeInfo type, StringBuilder builder, ArraySegment<TypeInfo> genericArguments, TypeNameFormatOptions options)
 		{
 			if (type == null) throw new ArgumentNullException("type");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -299,7 +294,7 @@ namespace GameDevWare.Dynamic.Expressions
 					// ReSharper disable once PossibleNullReferenceException
 					if (genericArguments.Array[i].IsGenericParameter == false)
 					{
-						WriteName(genericArguments.Array[i], builder, true, nameFormat);
+						WriteName(genericArguments.Array[i], builder, options);
 					}
 					builder.Append(',');
 				}
@@ -393,13 +388,6 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 
 			}
-		}
-
-		private enum NameFormat
-		{
-			NameOnly,
-			NameWithParents,
-			NameWithNamespace
 		}
 	}
 }

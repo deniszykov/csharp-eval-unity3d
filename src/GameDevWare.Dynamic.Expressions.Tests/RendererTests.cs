@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
 using Xunit.Abstractions;
@@ -10,930 +12,363 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 {
 	public class RendererTests
 	{
-		public class TestClass : IEnumerable
-		{
-			public static int StaticIntField = 100500;
-			public static int StaticIntProperty { get { return StaticIntField; } set { StaticIntField = value; } }
-
-			public int IntField = 100500 * 2;
-			public int IntProperty { get { return this.IntField; } set { this.IntField = value; } }
-			public ExecutorTests.TestClass TestClassField;
-			public ExecutorTests.TestClass TestClassProperty { get { return this.TestClassField; } set { this.TestClassField = value; } }
-			public List<int> ListField = new List<int>();
-			public List<int> ListProperty { get { return this.ListField; } set { this.ListField = value; } }
-
-			public void Add(int value)
-			{
-				this.ListField.Add(value);
-			}
-			public void Add(int value1, int value2)
-			{
-				this.ListField.Add(value1);
-				this.ListField.Add(value2);
-			}
-
-			public IEnumerator GetEnumerator()
-			{
-				return this.ListField.GetEnumerator();
-			}
-		}
+		private static readonly ITypeResolver TypeResolver;
 
 		private readonly ITestOutputHelper output;
+
+		static RendererTests()
+		{
+			TypeResolver = new KnownTypeResolver(typeof(Func<Type, object, bool>),
+				typeof(ExecutorTests.TestGenericClass<>),
+				typeof(ExecutorTests.TestGenericClass<>.TestSubClass<,>));
+		}
 		public RendererTests(ITestOutputHelper output)
 		{
 			this.output = output;
 		}
 
-		[Theory]
-		[InlineData("10", 10)]
-		[InlineData("10U", 10U)]
-		[InlineData("10L", 10L)]
-		[InlineData("10UL", 10UL)]
-		[InlineData("10u", 10U)]
-		[InlineData("10l", 10L)]
-		[InlineData("10uL", 10UL)]
-		[InlineData("10Ul", 10UL)]
-		[InlineData("10D", 10D)]
-		[InlineData("10d", 10D)]
-		[InlineData("10f", 10F)]
-		[InlineData("10F", 10F)]
-		[InlineData("\"a\"", "a")]
-		[InlineData("'a'", 'a')]
-		[InlineData("true", true)]
-		[InlineData("false", false)]
-		[InlineData("null", null)]
-		public void ConstantsTest(string expression, object expected)
+		public static IEnumerable<object[]> RenderingData()
 		{
-			expression = CSharpExpression.ParseFunc<object>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<object>(expression);
-
-
-			if (expected != null)
-				Assert.IsType(expected.GetType(), actual);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("2 * 2", 2 * 2)]
-		[InlineData("2 ** 2", 2 * 2)]
-		[InlineData("2 + 2", 2 + 2)]
-		[InlineData("2 * 2 + 3", 2 * 2 + 3)]
-		[InlineData("2 + 2 * 3", 2 + 2 * 3)]
-		[InlineData("2 + 4 / 2", 2 + 4 / 2)]
-		[InlineData("2 + 4 / 2 * 3", 2 + 4 / 2 * 3)]
-		[InlineData("2 * (2 + 3)", 2 * (2 + 3))]
-		[InlineData("2 * (2 + 3) << 1 - 1", 2 * (2 + 3) << 1 - 1)]
-		[InlineData("2 * (2 + 3) << 1 + 1 ^ 7", 2 * (2 + 3) << 1 + 1 ^ 7)]
-		[InlineData("2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10", 2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10)]
-		public void IntArithmeticTests(string expression, int expected)
-		{
-			expression = CSharpExpression.ParseFunc<int>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<int>(expression);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\")", (2 * (2 + 3) << (1 - 1) & 7 | 25 ^ 10) + 10)]
-		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(100, 1)", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0)]
-		[InlineData("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(100, 1) + Math.E", (2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + 10 + 100.0 + Math.E)]
-		[InlineData("10 *  (1 / (double)(1 * 1)) / 1", 10.0)]
-		public void ComplexExpressionTests(string expression, double expected)
-		{
-			expression = CSharpExpression.ParseFunc<double>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<double>(expression);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("\"\" + \"a\"", "a")]
-		[InlineData("\"\" + \"\"", "")]
-		[InlineData("\"a\" + \"b\"", "ab")]
-		[InlineData("\"a\" + \"b\"+ \"c\"", "abc")]
-		[InlineData("\"\" + \"\"+ \"\"", "")]
-		[InlineData("\"\" + \"a\"+ \"\"", "a")]
-		[InlineData("\"\\r\" + \"\\n\"", "\r\n")]
-		[InlineData("\"\\\\\" + \"\\\\\"", @"\\")]
-		[InlineData("\"\\\\\" + \"\\\\\\\\\"", @"\\\")]
-		[InlineData("\"a\\r\" + \"\\nb\"", "a\r\nb")]
-		[InlineData("\"\\x038\" + \"\\u0112\"+ \"\\112\"", "8Ēp")]
-		[InlineData("\"a\" + 1", "a1")] // string concatenation with object
-		[InlineData("1 + \"a\"", "1a")] // string concatenation with object
-		[InlineData("\"1\" + 'a'", "1a")]
-		[InlineData("\"1\" + '\t'", "1\t")]
-		public void StringConcatenationTest(string expression, string expected)
-		{
-			expression = CSharpExpression.ParseFunc<string>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<string>(expression);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("Math.Max(1.0,2.0)", 2.0)]
-		[InlineData("Math.Pow(2,2)", 4.0)]
-		[InlineData("System.Math.Pow(2,2)", 4.0)]
-		[InlineData("Math.E", Math.E)]
-		public void MathTest(string expression, double expected)
-		{
-			expression = CSharpExpression.ParseFunc<double>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<double>(expression);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("default(Math)?.ToString()", null)]
-		[InlineData("Math.E?.ToString()", "2.71828182845905")]
-		[InlineData("default(Math[])?[0]?.ToString()", null)]
-		public void NullResolveTest(string expression, object expected)
-		{
-			expression = CSharpExpression.ParseFunc<object>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<object>(expression);
-
-			if (expected == null)
-				Assert.Null(actual);
-			else
-				Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("typeof(Int32)", typeof(int))]
-		[InlineData("typeof(System.Int32)", typeof(int))]
-		[InlineData("typeof(short)", typeof(short))]
-		[InlineData("typeof(Math)", typeof(Math))]
-		public void TypeOfTest(string expression, Type expected)
-		{
-			expression = CSharpExpression.ParseFunc<Type>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<Type>(expression);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("default(Int32)", default(int))]
-		[InlineData("default(System.Int32)", default(int))]
-		[InlineData("default(String)", default(string))]
-		public void DefaultTest(string expression, object expected)
-		{
-			expression = CSharpExpression.ParseFunc<object>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<object>(expression);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("1 is Int32", true)]
-		[InlineData("1 is System.Int32", true)]
-		[InlineData("1 is Int16", false)]
-		[InlineData("1 is short", false)]
-		public void IsTest(string expression, bool expected)
-		{
-			expression = CSharpExpression.ParseFunc<bool>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<bool>(expression);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("arg1 as String", "", "")]
-		[InlineData("arg1 as System.String", 1, null)]
-		[InlineData("arg1 as string", "", "")]
-		[InlineData("arg1 as String", 1, null)]
-		[InlineData("arg1 as string", 1, null)]
-		public void AsTest(string expression, object arg1, object expected)
-		{
-			expression = CSharpExpression.ParseFunc<object, string>(expression, arg1Name: "arg1").Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<object, string>(expression, arg1, arg1Name: "arg1");
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("new String('a', 3)", "aaa")]
-		[InlineData("new System.String('a', 0)", "")]
-		[InlineData("new string('a', 3)", "aaa")]
-		[InlineData("\"a\" + new string('b', 1) + \"c\" + (\"d\" + 'e')", "abcde")]
-		public void NewTest(string expression, string expected)
-		{
-			expression = CSharpExpression.ParseFunc<string>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.Evaluate<string>(expression);
-
-			Assert.NotNull(actual);
-			Assert.Equal(expected, actual);
-		}
-
-		// convert enum
-
-		[Fact]
-		public void ArrayIndexTest()
-		{
-			Expression<Func<int[], int>> firstElementExpr = a => a[0];
-			Expression<Func<int[], int>> tenthExpr = a => a[9];
-
-			this.output.WriteLine("Rendered: " + firstElementExpr.Body.Render());
-			this.output.WriteLine("Rendered: " + tenthExpr.Body.Render());
-
-			Assert.NotNull(firstElementExpr.Body.Render());
-			Assert.NotNull(tenthExpr.Body.Render());
-		}
-
-		[Fact]
-		public void ArrayLengthTest()
-		{
-			Expression<Func<int[], int>> expression = a => a.Length;
-
-			this.output.WriteLine("Rendered: " + expression.Body.Render());
-			Assert.NotNull(expression.Body.Render());
-		}
-
-		[Fact]
-		public void QuoteTest()
-		{
-			Expression<Func<Expression<Func<int>>>> expression = () => (() => 1);
-
-			this.output.WriteLine("Rendered: " + expression.Body.Render());
-			Assert.NotNull(expression.Body.Render());
-		}
-
-		[Fact]
-		public void InvokeTest()
-		{
-			Expression<Func<Func<int>, int>> expression = a => a();
-
-			this.output.WriteLine("Rendered: " + expression.Body.Render());
-			Assert.NotNull(expression.Body.Render());
-		}
-
-		[Fact]
-		public void NewArrayInitTest()
-		{
-			Expression<Func<int[]>> expression = () => new int[] { 1, 2, 3, 4 };
-
-			Assert.NotNull(expression.Body.Render());
-		}
-
-		[Fact]
-		public void NewArrayBoundsTest()
-		{
-			Expression<Func<int[]>> expression = () => new int[10];
-
-			this.output.WriteLine("Rendered: " + expression.Body.Render());
-			Assert.NotNull(expression.Body.Render());
-		}
-
-		[Fact]
-		public void ListInitTest()
-		{
-			Expression<Func<List<int>>> expression = () => new List<int> { 1, 2, 3, 4 };
-
-			this.output.WriteLine("Rendered: " + expression.Body.Render());
-			Assert.NotNull(expression.Body.Render());
-		}
-
-		[Fact]
-		public void MemberAccessExpression()
-		{
-			Expression<Func<int>> staticFieldAccess = () => ExecutorTests.TestClass.StaticIntField;
-			Expression<Func<int>> staticPropertyAccess = () => ExecutorTests.TestClass.StaticIntProperty;
-			Expression<Func<ExecutorTests.TestClass, int>> instanceFieldAccess = t => t.IntField;
-			Expression<Func<ExecutorTests.TestClass, int>> instancePropertyAccess = t => t.IntProperty;
-
-			this.output.WriteLine("Rendered: " + staticFieldAccess.Body.Render());
-			this.output.WriteLine("Rendered: " + staticPropertyAccess.Body.Render());
-			this.output.WriteLine("Rendered: " + instanceFieldAccess.Body.Render());
-			this.output.WriteLine("Rendered: " + instancePropertyAccess.Body.Render());
-
-			Assert.NotNull(staticFieldAccess.Body.Render());
-			Assert.NotNull(staticPropertyAccess.Body.Render());
-			Assert.NotNull(instanceFieldAccess.Body.Render());
-			Assert.NotNull(instancePropertyAccess.Body.Render());
-		}
-
-		[Fact]
-		public void MemberInitTest()
-		{
-			Expression<Func<ExecutorTests.TestClass>> expression = () => new ExecutorTests.TestClass
-			{
-				IntField = 25,
-				IntProperty = 10,
-				TestClassField = new ExecutorTests.TestClass { { 1, 2 } },
-				ListField = { 2, 3 },
-				ListProperty = { 4, 5 }
+			var expressions = new Expression[] {
+				// Add
+				CSharpExpression.ParseFunc<int>("unchecked(2 + 2)"),
+				CSharpExpression.ParseFunc<string>("\"\" + \"a\""),
+				CSharpExpression.ParseFunc<string>("\"\" + \"\""),
+				CSharpExpression.ParseFunc<string>("\"a\" + \"b\""),
+				CSharpExpression.ParseFunc<string>("\"a\" + \"b\"+ \"c\""),
+				CSharpExpression.ParseFunc<string>("\"\" + \"\"+ \"\""),
+				CSharpExpression.ParseFunc<string>("\"\" + \"\"+ \"\""),
+				CSharpExpression.ParseFunc<string>("\"\" + \"a\"+ \"\""),
+				CSharpExpression.ParseFunc<string>("\"\\r\" + \"\\n\""),
+				CSharpExpression.ParseFunc<string>("\"\\\\\" + \"\\\\\""),
+				CSharpExpression.ParseFunc<string>("\"\\\\\" + \"\\\\\\\\\""),
+				CSharpExpression.ParseFunc<string>("\"a\\r\" + \"\\nb\""),
+				CSharpExpression.ParseFunc<string>("\"\\x038\" + \"\\u0112\"+ \"\\112\""),
+				CSharpExpression.ParseFunc<string>("\"a\" + 1"),
+				CSharpExpression.ParseFunc<string>("1 + \"a\""),
+				CSharpExpression.ParseFunc<string>("\"1\" + 'a'"),
+				CSharpExpression.ParseFunc<string>("\"1\" + '\t'"),
+				// AddChecked
+				CSharpExpression.ParseFunc<int>("checked(2 + 2)"),
+				CSharpExpression.ParseFunc<int>("checked((SByte)2 + (SByte)2)"),
+				// And
+				CSharpExpression.ParseFunc<int>("(SByte)2 & (SByte)2"),
+				// AndAlso
+				CSharpExpression.ParseFunc<bool>("true && true"),
+				// ArrayLength
+				(Expression<Func<int[], int>>)(arg1 => arg1.Length),
+				// ArrayIndex
+				(Expression<Func<int[], int>>)(arg1 => arg1[0]),
+				// Call
+				CSharpExpression.ParseFunc<double>("Math.Max(1.0, 2.0)"),
+				CSharpExpression.ParseFunc<double>("Math.Pow(3,4)"),
+				CSharpExpression.ParseFunc<double>("System.Math.Pow(5,6)"),
+				CSharpExpression.ParseFunc<double>("Math.Pow(7.0f, 8.0)"),
+				CSharpExpression.ParseFunc<double>("Math.Pow(9.0, y: 10.0)"),
+				CSharpExpression.ParseFunc<double>("Math.Pow(y: 11.0, x: 12.0)"),
+				CSharpExpression.ParseFunc<string>("default(Math)?.ToString()"),
+				CSharpExpression.ParseFunc<string>("Math.E?.ToString()"),
+				CSharpExpression.ParseFunc<int[], string>("arg1?[0].ToString()?[0]?.ToString().Trim()"),
+				// Coalesce
+				CSharpExpression.ParseFunc<int?>("null ?? 2"),
+				// Conditional
+				CSharpExpression.ParseFunc<int>("1 > 2 ? 1 : 2"),
+				CSharpExpression.ParseFunc<int>("true ? 1 : 2"),
+				CSharpExpression.ParseFunc<int>("false ? 1 : 2"),
+				CSharpExpression.ParseFunc<int>("true ? (false ? 3 : 4) : (true ? 5 : 6)"),
+				// Constant
+				CSharpExpression.ParseFunc<int>("10"),
+				CSharpExpression.ParseFunc<int>("-11"),
+				CSharpExpression.ParseFunc<uint>("12U"),
+				CSharpExpression.ParseFunc<long>("13L"),
+				CSharpExpression.ParseFunc<ulong>("14UL"),
+				CSharpExpression.ParseFunc<uint>("15u"),
+				CSharpExpression.ParseFunc<long>("16l"),
+				CSharpExpression.ParseFunc<ulong>("17uL"),
+				CSharpExpression.ParseFunc<ulong>("18Ul"),
+				CSharpExpression.ParseFunc<long>("-19l"),
+				CSharpExpression.ParseFunc<double>("20D"),
+				CSharpExpression.ParseFunc<double>("21d"),
+				CSharpExpression.ParseFunc<double>("22.01d"),
+				CSharpExpression.ParseFunc<double>("-23.01d"),
+				CSharpExpression.ParseFunc<float>("24f"),
+				CSharpExpression.ParseFunc<float>("25F"),
+				CSharpExpression.ParseFunc<float>("26.01F"),
+				CSharpExpression.ParseFunc<float>("-27.01F"),
+				CSharpExpression.ParseFunc<string>("\"a\""),
+				CSharpExpression.ParseFunc<char>("'b'"),
+				CSharpExpression.ParseFunc<bool>("true"),
+				CSharpExpression.ParseFunc<bool>("false"),
+				CSharpExpression.ParseFunc<object>("null"),
+				CSharpExpression.ParseFunc<Type>("typeof(Int32)"),
+				CSharpExpression.ParseFunc<Type>("typeof(short)"),
+				CSharpExpression.ParseFunc<Type>("typeof(Math)"),
+				// Convert
+				CSharpExpression.ParseFunc<byte>("unchecked((byte)(2147483647 * 2))"),
+				// ConvertChecked
+				CSharpExpression.ParseFunc<byte>("checked((byte)(4 * 2))"),
+				// Divide
+				CSharpExpression.ParseFunc<int>("2 / 2"),
+				CSharpExpression.ParseFunc<int>("(SByte)2 / (SByte)2"),
+				// Equal
+				CSharpExpression.ParseFunc<bool>("2 == 2"),
+				CSharpExpression.ParseFunc<bool>("(SByte)2 == (SByte)2"),
+				// ExclusiveOr
+				CSharpExpression.ParseFunc<int>("2 ^ 2"),
+				// GreaterThan
+				CSharpExpression.ParseFunc<bool>("2 > 2"),
+				CSharpExpression.ParseFunc<bool>("(SByte)2 > (SByte)2"),
+				// GreaterThanOrEqual
+				CSharpExpression.ParseFunc<bool>("2 >= 2"),
+				CSharpExpression.ParseFunc<bool>("(SByte)2 >= (SByte)2"),
+				// Invoke
+				CSharpExpression.ParseFunc<Func<int, int>, int>("arg1(2)", arg1Name: "arg1"),
+				// Lambda
+				CSharpExpression.ParseFunc<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", TypeResolver),
+				// LeftShift
+				CSharpExpression.ParseFunc<int>("(SByte)2 << 2"),
+				CSharpExpression.ParseFunc<int>("2 << 2"),
+				// LessThan
+				CSharpExpression.ParseFunc<bool>("(SByte)2 < (SByte)2"),
+				CSharpExpression.ParseFunc<bool>("2 < 2"),
+				// LessThanOrEqual
+				CSharpExpression.ParseFunc<bool>("(SByte)2 <= (SByte)2"),
+				CSharpExpression.ParseFunc<bool>("2 <= 2"),
+				// TODO ListInit
+				//(Expression<Func<List<int>>>)(() => new List<int> { 1, 2, 3, 4 }),
+				// MemberAccess
+				CSharpExpression.ParseFunc<object>("ExecutorTests.TestGenericClass<int>.Field", TypeResolver),
+				CSharpExpression.ParseFunc<object>("ExecutorTests.TestGenericClass<int>.Property", TypeResolver),
+				CSharpExpression.ParseFunc<object>("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().Field1", TypeResolver),
+				CSharpExpression.ParseFunc<object>("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().Property1", TypeResolver),
+				CSharpExpression.ParseFunc<double>("Math.E"),
+				// TODO MemberInit
+				//(Expression<Func<ExecutorTests.TestClass>>)(() => new ExecutorTests.TestClass
+				//{
+				//	IntField = 25,
+				//	IntProperty = 10,
+				//	TestClassField = new ExecutorTests.TestClass { { 1, 2 } },
+				//	ListField = { 2, 3 },
+				//	ListProperty = { 4, 5 }
+				//}),
+				// Modulo
+				CSharpExpression.ParseFunc<int>("5 % 2"),
+				CSharpExpression.ParseFunc<int>("(SByte)5 % (SByte)2"),
+				// Multiply
+				CSharpExpression.ParseFunc<int>("checked(2 * 2)"),
+				CSharpExpression.ParseFunc<int>("checked((SByte)2 * (SByte)2)"),
+				// MultiplyChecked
+				CSharpExpression.ParseFunc<int>("unchecked(2 * 2)"),
+				CSharpExpression.ParseFunc<int>("unchecked((SByte)2 * (SByte)2)"),
+				// NegateChecked
+				CSharpExpression.ParseFunc<int>("checked(-(101))"),
+				// Negate
+				CSharpExpression.ParseFunc<int>("unchecked(-(100))"),
+				// UnaryPlus
+				CSharpExpression.ParseFunc<int>("+(1)"),
+				// New
+				CSharpExpression.ParseFunc<object>("new ExecutorTests.TestGenericClass<int>()", TypeResolver),
+				CSharpExpression.ParseFunc<object>("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>()", TypeResolver),
+				CSharpExpression.ParseFunc<object>("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>()", TypeResolver),
+				// TODO NewArrayInit
+				//(Expression<Func<int[]>>)(() => new int[] { 1, 2, 3, 4 }),
+				// NewArrayBounds
+				(Expression<Func<int[]>>)(() => new int[8]),
+				// Not
+				CSharpExpression.ParseFunc<bool>("!true"),
+				CSharpExpression.ParseFunc<bool>("!false"),
+				// NotEqual
+				CSharpExpression.ParseFunc<bool>("2 != 2"),
+				CSharpExpression.ParseFunc<bool>("(SByte)2 != (SByte)2"),
+				// Or
+				CSharpExpression.ParseFunc<int>("(SByte)2 | (SByte)2"),
+				CSharpExpression.ParseFunc<int>("2 | 2"),
+				// OrElse
+				CSharpExpression.ParseFunc<bool>("true || false"),
+				// Parameter
+				CSharpExpression.ParseFunc<int, int>("arg1", arg1Name: "arg1"),
+				// Power
+				CSharpExpression.ParseFunc<int>("2 ** 2"),
+				CSharpExpression.ParseFunc<sbyte>("(SByte)2 ** (SByte)2"),
+				CSharpExpression.ParseFunc<float>("2f ** 2f"),
+				CSharpExpression.ParseFunc<double>("2d ** 2d"),
+				// Quote
+				// TODO Quote
+				//(Expression<Func<Expression<Func<int>>>>)(() => (() => 1)),
+				// RightShift
+				CSharpExpression.ParseFunc<int>("(SByte)2 >> 2"),
+				CSharpExpression.ParseFunc<int>("2 >> 2"),
+				// Subtract
+				CSharpExpression.ParseFunc<int>("unchecked((SByte)2 - (SByte)2)"),
+				CSharpExpression.ParseFunc<int>("unchecked(2 - 2)"),
+				CSharpExpression.ParseFunc<int>("unchecked(-(SByte)127 - (SByte)10)"),
+				// SubtractChecked
+				CSharpExpression.ParseFunc<int>("checked((SByte)2 - (SByte)2)"),
+				CSharpExpression.ParseFunc<int>("checked(2 - 2)"),
+				CSharpExpression.ParseFunc<int>("checked(-(SByte)127 - (SByte)10)"),
+				// TypeAs
+				CSharpExpression.ParseFunc<string>("'a' as String"),
+				CSharpExpression.ParseFunc<string>("\"a\" as System.String"),
+				CSharpExpression.ParseFunc<string>("1 as string"),
+				// TypeIs
+				CSharpExpression.ParseFunc<bool>("1 is Int32"),
+				CSharpExpression.ParseFunc<bool>("1 is Int16"),
+				// Default
+				CSharpExpression.ParseFunc<int>("default(System.Int32)"),
+				CSharpExpression.ParseFunc<string>("default(String)"),
+				// Index
+				CSharpExpression.ParseFunc<int[], int>("arg1[0]", arg1Name: "arg1"),
+				CSharpExpression.ParseFunc<int[], int?>("(default(int[]))?[0]", arg1Name: "arg1"),
+				// OnesComplement
+				CSharpExpression.ParseFunc<int>("checked(~1203)"),
+				// Other
+				CSharpExpression.ParseFunc<int>("2 * 2 + 3"),
+				CSharpExpression.ParseFunc<int>("2 + 2 * 3"),
+				CSharpExpression.ParseFunc<int>("2 + 2 * 3"),
+				CSharpExpression.ParseFunc<int>("2 + 4 / 2"),
+				CSharpExpression.ParseFunc<int>("2 * (2 + 3) << 1 - 1"),
+				CSharpExpression.ParseFunc<int>("2 * (2 + 3) << 1 + 1 ^ 7"),
+				CSharpExpression.ParseFunc<int>("2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10"),
+				CSharpExpression.ParseFunc<double>("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\")"),
+				CSharpExpression.ParseFunc<double>("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(100, 1)"),
+				CSharpExpression.ParseFunc<double>("(2 * (2 + 3) << 1 - 1 & 7 | 25 ^ 10) + System.Int32.Parse(\"10\") + Math.Pow(100, 1) + Math.E"),
+				CSharpExpression.ParseFunc<double>("10 *  (1 / (double)(1 * 1))"),
+				CSharpExpression.ParseFunc<double>("10 *  (1 / (double)(1 * 1))"),
+				CSharpExpression.ParseFunc<int>("1 != 1 || 1 == 1 ? 1 : 2"),
+				CSharpExpression.ParseFunc<int>("1 < 2 && 3 >= 2 ? 1 : 2"),
+				CSharpExpression.ParseFunc<int>("unchecked(2147483647 + 2)"),
+				CSharpExpression.ParseFunc<int>("unchecked(-2147483646 - 10)"),
+				CSharpExpression.ParseFunc<int>("unchecked(2147483647 * 2)"),
+				CSharpExpression.ParseFunc<int>("unchecked((int)(Byte)-1000)"),
+				CSharpExpression.ParseFunc<decimal>("unchecked((Decimal)(Byte)-1000)"),
+				CSharpExpression.ParseFunc<object>("new ExecutorTests.TestGenericClass<int>().InstanceMethod(10)", TypeResolver),
+				CSharpExpression.ParseFunc<object>("new ExecutorTests.TestGenericClass<int>().InstanceGenericMethod<int>(11)", TypeResolver),
+				CSharpExpression.ParseFunc<object>("ExecutorTests.TestGenericClass<int>.StaticGenericMethod<int>(12)", TypeResolver),
+				CSharpExpression.ParseFunc<object>("ExecutorTests.TestGenericClass<int>.StaticMethod()", TypeResolver),
+				CSharpExpression.ParseFunc<object>("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceMethod1()", TypeResolver),
+				CSharpExpression.ParseFunc<object>("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>(1,2,3,4)", TypeResolver),
+				CSharpExpression.ParseFunc<object>("GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>.StaticGenericMethod1<int>(13)", TypeResolver),
+				CSharpExpression.ParseFunc<object>("GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>.StaticMethod1(14)", TypeResolver),
 			};
-
-			this.output.WriteLine("Rendered: " + expression.Body.Render());
-			Assert.NotNull(expression.Body.Render());
-		}
-
-		[Fact]
-		public void TypeAsTest()
-		{
-			Expression<Func<object, Delegate>> expression = a => a as Delegate;
-
-			this.output.WriteLine("Rendered: " + expression.Body.Render());
-			Assert.NotNull(expression.Body.Render());
-		}
-
-		[Fact]
-		public void TypeIsTest()
-		{
-			Expression<Func<object, bool>> expression = a => a is Delegate;
-
-			this.output.WriteLine("Rendered: " + expression.Body.Render());
-			Assert.NotNull(expression.Body.Render());
+			return (from expression in expressions
+					let arguments = GetLambdaArguments((LambdaExpression)expression)
+					select new object[] { expression }
+				);
 		}
 
 		[Theory]
-		[InlineData("Math.Pow(1.0, 1.0)", 1.0)]
-		[InlineData("Math.Pow(1.0, y: 1.0)", 1.0)]
-		[InlineData("Math.Pow(x: 1.0, y: 1.0)", 1.0)]
-		public void CallTest(string expression, object expected)
+		[MemberData(nameof(RenderingData))]
+		public void RenderParseExpressionTest(LambdaExpression expression)
 		{
-			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var arguments = GetLambdaArguments(expression);
+			var expected = EvaluateLambda(expression, arguments);
 
-			Assert.Equal(expected, actual);
-		}
+			this.output.WriteLine("Lambda Type: " + expression.Type.GetTypeInfo().GetCSharpFullName(null, options: TypeNameFormatOptions.IncludeGenericArguments));
+			this.output.WriteLine("Expression: " + expression);
+			this.output.WriteLine("Arguments: " + string.Join(", ", arguments.Select(a => a == null ? "<null>" : Convert.ToString(a)).ToArray()));
+			this.output.WriteLine("Expected: " + expected);
 
-		[Theory]
-		[InlineData("1 > 2 ? 1 : 2", 1 > 2 ? 1 : 2)]
-		[InlineData("true ? 1 : 2", true ? 1 : 2)]
-		[InlineData("false ? 1 : 2", false ? 1 : 2)]
-		[InlineData("true ? (false ? 3 : 4) : (true ? 5 : 6)", true ? (false ? 3 : 4) : (true ? 5 : 6))]
-		[InlineData("1 != 1 || 1 == 1 ? 1 : 2", 1 != 1 || 1 == 1 ? 1 : 2)]
-		[InlineData("1 < 2 && 3 >= 2 ? 1 : 2", 1 < 2 && 3 >= 2 ? 1 : 2)]
-		public void ConditionalTest(string expression, object expected)
-		{
-			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
+			var formattedExpression = expression.Body.Render();
+			this.output.WriteLine("Formatted Expression: " + formattedExpression);
 
-			Assert.Equal(expected, actual);
-		}
+			var parsedExpression = ParseLambda(formattedExpression, expression.Type);
+			var actual = EvaluateLambda(parsedExpression, arguments);
 
-		[Theory]
-		[InlineData("-(1)", -(1))]
-		[InlineData("+(-1)", +(-1))]
-		[InlineData("!true", !true)]
-		[InlineData("!false", !false)]
-		[InlineData("~1", ~1)]
-		public void UnaryTest(string expression, object expected)
-		{
-			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("true && true", true)]
-		[InlineData("true || false", true)]
-		[InlineData("null ?? null", null)]
-		// int8
-		[InlineData("(SByte)2 + (SByte)2", (2 + 2))]
-		[InlineData("unchecked((SByte)127 + (SByte)2)", unchecked((127 + 2)))]
-		[InlineData("(SByte)2 - (SByte)2", (2 - 2))]
-		[InlineData("unchecked(-(SByte)127 - (SByte)10)", unchecked((-127 - 10)))]
-		[InlineData("(SByte)2 & (SByte)2", 2 & 2)]
-		[InlineData("(SByte)2 | (SByte)2", 2 | 2)]
-		[InlineData("(SByte)2 / (SByte)2", 2 / 2)]
-		[InlineData("(SByte)2 == (SByte)2", 2 == 2)]
-		[InlineData("(SByte)2 != (SByte)2", 2 != 2)]
-		[InlineData("(SByte)2 ^ (SByte)2", 2 ^ 2)]
-		[InlineData("(SByte)2 > (SByte)2", 2 > 2)]
-		[InlineData("(SByte)2 >= (SByte)2", 2 >= 2)]
-		[InlineData("(SByte)2 << 2", 2 << 2)]
-		[InlineData("(SByte)2 >> 2", 2 >> 2)]
-		[InlineData("(SByte)2 < (SByte)2", 2 < 2)]
-		[InlineData("(SByte)2 <= (SByte)2", 2 <= 2)]
-		[InlineData("(SByte)5 % (SByte)2", 5 % 2)]
-		[InlineData("unchecked((SByte)127 * (SByte)2)", unchecked((127 * 2)))]
-		[InlineData("(SByte)2 * (SByte)2", (2 * 2))]
-		// uint8
-		[InlineData("(Byte)2 + (Byte)2", (2 + 2))]
-		[InlineData("unchecked((Byte)256 + (Byte)2)", unchecked(((byte)256 + 2)))]
-		[InlineData("(Byte)2 - (Byte)2", (2 - 2))]
-		[InlineData("unchecked((Byte)0 - (Byte)10)", unchecked((0 - 10)))]
-		[InlineData("(Byte)2 & (Byte)2", 2 & 2)]
-		[InlineData("(Byte)2 | (Byte)2", 2 | 2)]
-		[InlineData("(Byte)2 / (Byte)2", 2 / 2)]
-		[InlineData("(Byte)2 == (Byte)2", 2 == 2)]
-		[InlineData("(Byte)2 != (Byte)2", 2 != 2)]
-		[InlineData("(Byte)2 ^ (Byte)2", 2 ^ 2)]
-		[InlineData("(Byte)2 > (Byte)2", 2 > 2)]
-		[InlineData("(Byte)2 >= (Byte)2", 2 >= 2)]
-		[InlineData("(Byte)2 << 2", 2 << 2)]
-		[InlineData("(Byte)2 >> 2", 2 >> 2)]
-		[InlineData("(Byte)2 < (Byte)2", 2 < 2)]
-		[InlineData("(Byte)2 <= (Byte)2", 2 <= 2)]
-		[InlineData("(Byte)5 % (Byte)2", 5 % 2)]
-		[InlineData("unchecked((Byte)256 * (Byte)2)", unchecked(((byte)256 * 2)))]
-		[InlineData("(Byte)2 * (Byte)2", (2 * 2))]
-		// int16
-		[InlineData("(Int16)2 + (Int16)2", (2 + 2))]
-		[InlineData("unchecked((Int16)32767 + (Int16)2)", unchecked((32767 + 2)))]
-		[InlineData("(Int16)2 - (Int16)2", (2 - 2))]
-		[InlineData("unchecked(-(Int16)32766 - (Int16)10)", unchecked((-32766 - 10)))]
-		[InlineData("(Int16)2 & (Int16)2", 2 & 2)]
-		[InlineData("(Int16)2 | (Int16)2", 2 | 2)]
-		[InlineData("(Int16)2 / (Int16)2", 2 / 2)]
-		[InlineData("(Int16)2 == (Int16)2", 2 == 2)]
-		[InlineData("(Int16)2 != (Int16)2", 2 != 2)]
-		[InlineData("(Int16)2 ^ (Int16)2", 2 ^ 2)]
-		[InlineData("(Int16)2 > (Int16)2", 2 > 2)]
-		[InlineData("(Int16)2 >= (Int16)2", 2 >= 2)]
-		[InlineData("(Int16)2 << 2", 2 << 2)]
-		[InlineData("(Int16)2 >> 2", 2 >> 2)]
-		[InlineData("(Int16)2 < (Int16)2", 2 < 2)]
-		[InlineData("(Int16)2 <= (Int16)2", 2 <= 2)]
-		[InlineData("(Int16)5 % (Int16)2", 5 % 2)]
-		[InlineData("unchecked((Int16)32767 * (Int16)2)", unchecked((32767 * 2)))]
-		[InlineData("(Int16)2 * (Int16)2", (2 * 2))]
-		// int16
-		[InlineData("(UInt16)2 + (UInt16)2", (2 + 2))]
-		[InlineData("unchecked((UInt16)65535 + (UInt16)2)", unchecked((65535 + 2)))]
-		[InlineData("(UInt16)2 - (UInt16)2", (2 - 2))]
-		[InlineData("unchecked(-(UInt16)0 - (UInt16)10)", unchecked(-(UInt16)0 - (UInt16)10))]
-		[InlineData("(UInt16)2 & (UInt16)2", 2 & 2)]
-		[InlineData("(UInt16)2 | (UInt16)2", 2 | 2)]
-		[InlineData("(UInt16)2 / (UInt16)2", 2 / 2)]
-		[InlineData("(UInt16)2 == (UInt16)2", 2 == 2)]
-		[InlineData("(UInt16)2 != (UInt16)2", 2 != 2)]
-		[InlineData("(UInt16)2 ^ (UInt16)2", 2 ^ 2)]
-		[InlineData("(UInt16)2 > (UInt16)2", 2 > 2)]
-		[InlineData("(UInt16)2 >= (UInt16)2", 2 >= 2)]
-		[InlineData("(UInt16)2 << 2", 2 << 2)]
-		[InlineData("(UInt16)2 >> 2", 2 >> 2)]
-		[InlineData("(UInt16)2 < (UInt16)2", 2 < 2)]
-		[InlineData("(UInt16)2 <= (UInt16)2", 2 <= 2)]
-		[InlineData("(UInt16)5 % (UInt16)2", 5 % 2)]
-		[InlineData("unchecked((UInt16)65535 * (UInt16)2)", unchecked((65535 * 2)))]
-		[InlineData("(UInt16)2 * (UInt16)2", (2 * 2))]
-		// int32
-		[InlineData("2 + 2", (2 + 2))]
-		[InlineData("unchecked(2147483647 + 2)", unchecked(2147483647 + 2))]
-		[InlineData("2 - 2", (2 - 2))]
-		[InlineData("unchecked(-2147483646 - 10)", unchecked(-2147483646 - 10))]
-		[InlineData("2 & 2", 2 & 2)]
-		[InlineData("2 | 2", 2 | 2)]
-		[InlineData("2 / 2", 2 / 2)]
-		[InlineData("2 == 2", 2 == 2)]
-		[InlineData("2 != 2", 2 != 2)]
-		[InlineData("2 ^ 2", 2 ^ 2)]
-		[InlineData("2 > 2", 2 > 2)]
-		[InlineData("2 >= 2", 2 >= 2)]
-		[InlineData("2 << 2", 2 << 2)]
-		[InlineData("2 >> 2", 2 >> 2)]
-		[InlineData("2 < 2", 2 < 2)]
-		[InlineData("2 <= 2", 2 <= 2)]
-		[InlineData("5 % 2", 5 % 2)]
-		[InlineData("unchecked(2147483647 * 2)", unchecked(2147483647 * 2))]
-		[InlineData("2 * 2", (2 * 2))]
-		// uint
-		[InlineData("2u + 2u", (2u + 2u))]
-		[InlineData("unchecked(4294967295u + 2u)", unchecked(4294967295u + 2u))]
-		[InlineData("2u - 2u", (2u - 2u))]
-		[InlineData("unchecked(0u - 10u)", unchecked(0u - 10u))]
-		[InlineData("2u & 2u", 2u & 2u)]
-		[InlineData("2u | 2u", 2u | 2u)]
-		[InlineData("2u / 2u", 2u / 2u)]
-		[InlineData("2u == 2u", 2u == 2u)]
-		[InlineData("2u != 2u", 2u != 2u)]
-		[InlineData("2u ^ 2u", 2u ^ 2u)]
-		[InlineData("2u > 2u", 2u > 2u)]
-		[InlineData("2u >= 2u", 2u >= 2u)]
-		[InlineData("2u << 2", 2u << 2)]
-		[InlineData("2u >> 2", 2u >> 2)]
-		[InlineData("2u < 2u", 2u < 2u)]
-		[InlineData("2u <= 2u", 2u <= 2u)]
-		[InlineData("5u % 2u", 5u % 2u)]
-		[InlineData("unchecked(4294967295u * 2u)", unchecked(4294967295u * 2u))]
-		[InlineData("2u * 2u", (2u * 2u))]
-		// int64
-		[InlineData("2L + 2L", (2L + 2L))]
-		[InlineData("unchecked(9223372036854775807L + 2L)", unchecked(9223372036854775807L + 2L))]
-		[InlineData("2L - 2L", (2L - 2L))]
-		[InlineData("unchecked(-9223372036854775807L - 10L)", unchecked(-9223372036854775807L - 10L))]
-		[InlineData("2L & 2L", 2L & 2L)]
-		[InlineData("2L | 2L", 2L | 2L)]
-		[InlineData("2L / 2L", 2L / 2L)]
-		[InlineData("2L == 2L", 2L == 2L)]
-		[InlineData("2L != 2L", 2L != 2L)]
-		[InlineData("2L ^ 2L", 2L ^ 2L)]
-		[InlineData("2L > 2L", 2L > 2L)]
-		[InlineData("2L >= 2L", 2L >= 2L)]
-		[InlineData("2L << 2", 2L << 2)]
-		[InlineData("2L >> 2", 2L >> 2)]
-		[InlineData("2L < 2L", 2L < 2L)]
-		[InlineData("2L <= 2L", 2L <= 2L)]
-		[InlineData("5L % 2L", 5L % 2L)]
-		[InlineData("unchecked(9223372036854775807L * 2L)", unchecked(9223372036854775807L * 2L))]
-		[InlineData("2L * 2L", (2L * 2L))]
-		// uin64
-		[InlineData("2UL + 2UL", (2UL + 2UL))]
-		[InlineData("unchecked(18446744073709551615UL + 2UL)", unchecked(18446744073709551615UL + 2UL))]
-		[InlineData("2UL - 2UL", (2UL - 2UL))]
-		[InlineData("unchecked(0UL - 10UL)", unchecked(0UL - 10UL))]
-		[InlineData("2UL & 2UL", 2UL & 2UL)]
-		[InlineData("2UL | 2UL", 2UL | 2UL)]
-		[InlineData("2UL / 2UL", 2UL / 2UL)]
-		[InlineData("2UL == 2UL", 2UL == 2UL)]
-		[InlineData("2UL != 2UL", 2UL != 2UL)]
-		[InlineData("2UL ^ 2UL", 2UL ^ 2UL)]
-		[InlineData("2UL > 2UL", 2UL > 2UL)]
-		[InlineData("2UL >= 2UL", 2UL >= 2UL)]
-		[InlineData("2UL << 2", 2UL << 2)]
-		[InlineData("2UL >> 2", 2UL >> 2)]
-		[InlineData("2UL < 2UL", 2UL < 2UL)]
-		[InlineData("2UL <= 2UL", 2UL <= 2UL)]
-		[InlineData("5UL % 2UL", 5UL % 2UL)]
-		[InlineData("unchecked(18446744073709551615UL * 2UL)", unchecked(18446744073709551615UL * 2UL))]
-		[InlineData("2UL * 2UL", (2UL * 2UL))]
-		// single
-		[InlineData("2f + 2f", (2f + 2f))]
-		[InlineData("unchecked(18446744073709551615f + 2f)", unchecked(18446744073709551615f + 2f))]
-		[InlineData("2f - 2f", (2f - 2f))]
-		[InlineData("unchecked(0f - 10f)", unchecked(0f - 10f))]
-		[InlineData("2f / 2f", 2f / 2f)]
-		[InlineData("2f == 2f", 2f == 2f)]
-		[InlineData("2f != 2f", 2f != 2f)]
-		[InlineData("2f > 2f", 2f > 2f)]
-		[InlineData("2f >= 2f", 2f >= 2f)]
-		[InlineData("2f < 2f", 2f < 2f)]
-		[InlineData("2f <= 2f", 2f <= 2f)]
-		[InlineData("5f % 2f", 5f % 2f)]
-		[InlineData("18446744073709551615f * 2f", unchecked(18446744073709551615f * 2f))]
-		[InlineData("2f * 2f", (2f * 2f))]
-		// double
-		[InlineData("2d + 2d", (2d + 2d))]
-		[InlineData("unchecked(18446744073709551615d + 2d)", unchecked(18446744073709551615d + 2d))]
-		[InlineData("2d - 2d", (2d - 2d))]
-		[InlineData("0d - 10d", unchecked(0d - 10d))]
-		[InlineData("2d / 2d", 2d / 2d)]
-		[InlineData("2d == 2d", 2d == 2d)]
-		[InlineData("2d != 2d", 2d != 2d)]
-		[InlineData("2d > 2d", 2d > 2d)]
-		[InlineData("2d >= 2d", 2d >= 2d)]
-		[InlineData("2d < 2d", 2d < 2d)]
-		[InlineData("2d <= 2d", 2d <= 2d)]
-		[InlineData("5d % 2d", 5d % 2d)]
-		[InlineData("unchecked(18446744073709551615d * 2d)", unchecked(18446744073709551615d * 2d))]
-		[InlineData("2d * 2d", (2d * 2d))]
-		public void BinaryTest(string expression, object expected)
-		{
-			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("2m + 2m", 2L + 2L)]
-		[InlineData("unchecked(2147483647m + 2m)", unchecked(2147483647L + 2L))]
-		[InlineData("2m - 2m", (2L - 2L))]
-		[InlineData("0m - 10m", unchecked(0 - 10))]
-		[InlineData("2m / 2m", 2L / 2L)]
-		[InlineData("5m % 2m", 5L % 2L)]
-		[InlineData("unchecked(2147483647m * 2m)", unchecked(2147483647L * 2L))]
-		[InlineData("2m * 2m", (2L * 2L))]
-		public void DecimalTest(string expression, object expectedInt64)
-		{
-			expression = CSharpExpression.ParseFunc<decimal>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var expressionFn = CSharpExpression.ParseFunc<decimal>(expression).CompileAot(forceAot: true);
-			var actual = expressionFn();
-			var expected = Convert.ToDecimal(expectedInt64);
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("2m == 2m", 2 == 2)]
-		[InlineData("2m != 2m", 2 != 2)]
-		[InlineData("2m > 2m", 2 > 2)]
-		[InlineData("2m >= 2m", 2 >= 2)]
-		[InlineData("2m < 2m", 2 < 2)]
-		[InlineData("2m <= 2m", 2 <= 2)]
-		public void DecimalComparisonTest(string expression, bool expected)
-		{
-			expression = CSharpExpression.ParseFunc<bool>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var expressionFn = CSharpExpression.ParseFunc<bool>(expression).CompileAot(forceAot: true);
-			var actual = expressionFn();
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		// default
-		[InlineData("(Byte)1", (byte)1)]
-		[InlineData("(SByte)1", (sbyte)1)]
-		[InlineData("(Int16)1", (short)1)]
-		[InlineData("(UInt16)1", (ushort)1)]
-		[InlineData("(Int32)1", 1)]
-		[InlineData("(UInt32)1", (uint)1)]
-		[InlineData("(Int64)1", (long)1)]
-		[InlineData("(UInt64)1", (ulong)1)]
-		[InlineData("(Single)1", (float)1)]
-		[InlineData("(Double)1", (double)1)]
-		// unchecked
-		[InlineData("unchecked((Byte)-1)", unchecked((byte)-1))]
-		[InlineData("unchecked((UInt16)-1)", unchecked((ushort)-1))]
-		[InlineData("unchecked((UInt32)-1)", unchecked((uint)-1))]
-		[InlineData("unchecked((UInt64)-1)", unchecked((ulong)-1))]
-		// byte
-		[InlineData("unchecked((Byte)(Byte)-1000)", unchecked(((byte)-1000)))]
-		[InlineData("unchecked((Byte)(SByte)-1000)", unchecked((byte)(sbyte)-1000))]
-		[InlineData("unchecked((Byte)(Int16)-1000)", unchecked((byte)-1000))]
-		[InlineData("unchecked((Byte)(UInt16)-1000)", unchecked((byte)(ushort)-1000))]
-		[InlineData("unchecked((Byte)(Int32)-1000)", unchecked((byte)-1000))]
-		[InlineData("unchecked((Byte)(UInt32)-1000)", unchecked((byte)(uint)-1000))]
-		[InlineData("unchecked((Byte)(Int64)-1000)", unchecked((byte)-1000))]
-		[InlineData("unchecked((Byte)(UInt64)-1000)", unchecked((byte)(ulong)-1000))]
-		[InlineData("unchecked((Byte)(Single)-1000)", unchecked((byte)(float)-1000))]
-		[InlineData("unchecked((Byte)(Double)-1000)", unchecked((byte)-1000))]
-		// signed byte
-		[InlineData("unchecked((SByte)(Byte)-1000)", unchecked((sbyte)(byte)-1000))]
-		[InlineData("unchecked((SByte)(SByte)-1000)", unchecked(((sbyte)-1000)))]
-		[InlineData("unchecked((SByte)(Int16)-1000)", unchecked((sbyte)-1000))]
-		[InlineData("unchecked((SByte)(UInt16)-1000)", unchecked((sbyte)(ushort)-1000))]
-		[InlineData("unchecked((SByte)(Int32)-1000)", unchecked((sbyte)-1000))]
-		[InlineData("unchecked((SByte)(UInt32)-1000)", unchecked((sbyte)(uint)-1000))]
-		[InlineData("unchecked((SByte)(Int64)-1000)", unchecked((sbyte)-1000))]
-		[InlineData("unchecked((SByte)(UInt64)-1000)", unchecked((sbyte)(ulong)-1000))]
-		[InlineData("unchecked((SByte)(Single)-1000)", unchecked((sbyte)(float)-1000))]
-		[InlineData("unchecked((SByte)(Double)-1000)", unchecked((sbyte)-1000))]
-		// int16
-		[InlineData("unchecked((Int16)(Byte)-1000)", unchecked((short)(byte)-1000))]
-		[InlineData("unchecked((Int16)(SByte)-1000)", unchecked((short)(sbyte)-1000))]
-		[InlineData("unchecked((Int16)(Int16)-1000)", unchecked(((short)-1000)))]
-		[InlineData("unchecked((Int16)(UInt16)-1000)", unchecked((short)(ushort)-1000))]
-		[InlineData("unchecked((Int16)(Int32)-1000)", unchecked((short)-1000))]
-		[InlineData("unchecked((Int16)(UInt32)-1000)", unchecked((short)(uint)-1000))]
-		[InlineData("unchecked((Int16)(Int64)-1000)", unchecked((short)(long)-1000))]
-		[InlineData("unchecked((Int16)(UInt64)-1000)", unchecked((short)(ulong)-1000))]
-		[InlineData("unchecked((Int16)(Single)-1000)", unchecked((short)(float)-1000))]
-		[InlineData("unchecked((Int16)(Double)-1000)", unchecked((short)(double)-1000))]
-		// unsigned int16
-		[InlineData("unchecked((UInt16)(Byte)-1000)", unchecked((ushort)(byte)-1000))]
-		[InlineData("unchecked((UInt16)(SByte)-1000)", unchecked((ushort)(sbyte)-1000))]
-		[InlineData("unchecked((UInt16)(Int16)-1000)", unchecked((ushort)-1000))]
-		[InlineData("unchecked((UInt16)(UInt16)-1000)", unchecked(((ushort)-1000)))]
-		[InlineData("unchecked((UInt16)(Int32)-1000)", unchecked((ushort)-1000))]
-		[InlineData("unchecked((UInt16)(UInt32)-1000)", unchecked((ushort)(uint)-1000))]
-		[InlineData("unchecked((UInt16)(Int64)-1000)", unchecked((ushort)-1000))]
-		[InlineData("unchecked((UInt16)(UInt64)-1000)", unchecked((ushort)(ulong)-1000))]
-		[InlineData("unchecked((UInt16)(Single)-1000)", unchecked((ushort)(float)-1000))]
-		[InlineData("unchecked((UInt16)(Double)-1000)", unchecked((ushort)-1000))]
-		// int32
-		[InlineData("unchecked((Int32)(Byte)-1000)", unchecked((int)(byte)-1000))]
-		[InlineData("unchecked((Int32)(SByte)-1000)", unchecked((int)(sbyte)-1000))]
-		[InlineData("unchecked((Int32)(Int16)-1000)", unchecked((-1000)))]
-		[InlineData("unchecked((Int32)(UInt16)-1000)", unchecked((int)(ushort)-1000))]
-		[InlineData("unchecked((Int32)(Int32)-1000)", unchecked((-1000)))]
-		[InlineData("unchecked((Int32)(UInt32)-1000)", unchecked((int)(uint)-1000))]
-		[InlineData("unchecked((Int32)(Int64)-1000)", unchecked((-1000)))]
-		[InlineData("unchecked((Int32)(UInt64)-1000)", unchecked((int)(ulong)-1000))]
-		[InlineData("unchecked((Int32)(Single)-1000)", unchecked((-1000)))]
-		[InlineData("unchecked((Int32)(Double)-1000)", unchecked((-1000)))]
-		// unsigned int32
-		[InlineData("unchecked((UInt32)(Byte)-1000)", unchecked((uint)(byte)-1000))]
-		[InlineData("unchecked((UInt32)(SByte)-1000)", unchecked((uint)(sbyte)-1000))]
-		[InlineData("unchecked((UInt32)(Int16)-1000)", unchecked((uint)-1000))]
-		[InlineData("unchecked((UInt32)(UInt16)-1000)", unchecked((uint)(ushort)-1000))]
-		[InlineData("unchecked((UInt32)(Int32)-1000)", unchecked((uint)-1000))]
-		[InlineData("unchecked((UInt32)(UInt32)-1000)", unchecked(((uint)-1000)))]
-		[InlineData("unchecked((UInt32)(Int64)-1000)", unchecked((uint)-1000))]
-		[InlineData("unchecked((UInt32)(UInt64)-1000)", unchecked((uint)(ulong)-1000))]
-		[InlineData("unchecked((UInt32)(Single)-1000)", unchecked((uint)(float)-1000))]
-		[InlineData("unchecked((UInt32)(Double)-1000)", unchecked((uint)-1000))]
-		// int64
-		[InlineData("unchecked((Int64)(Byte)-1000)", unchecked((long)(byte)-1000))]
-		[InlineData("unchecked((Int64)(SByte)-1000)", unchecked((long)(sbyte)-1000))]
-		[InlineData("unchecked((Int64)(Int16)-1000)", unchecked((long)-1000))]
-		[InlineData("unchecked((Int64)(UInt16)-1000)", unchecked((long)(ushort)-1000))]
-		[InlineData("unchecked((Int64)(Int32)-1000)", unchecked((long)-1000))]
-		[InlineData("unchecked((Int64)(UInt32)-1000)", unchecked((long)(uint)-1000))]
-		[InlineData("unchecked((Int64)(Int64)-1000)", unchecked(((long)-1000)))]
-		[InlineData("unchecked((Int64)(UInt64)-1000)", unchecked((long)(ulong)-1000))]
-		[InlineData("unchecked((Int64)(Single)-1000)", unchecked((long)(float)-1000))]
-		[InlineData("unchecked((Int64)(Double)-1000)", unchecked((long)(double)-1000))]
-		// unsigned int64
-		[InlineData("unchecked((UInt64)(Byte)-1000)", unchecked((ulong)(byte)-1000))]
-		[InlineData("unchecked((UInt64)(SByte)-1000)", unchecked((ulong)(sbyte)-1000))]
-		[InlineData("unchecked((UInt64)(Int16)-1000)", unchecked((ulong)-1000))]
-		[InlineData("unchecked((UInt64)(UInt16)-1000)", unchecked((ulong)(ushort)-1000))]
-		[InlineData("unchecked((UInt64)(Int32)-1000)", unchecked((ulong)-1000))]
-		[InlineData("unchecked((UInt64)(UInt32)-1000)", unchecked((ulong)(uint)-1000))]
-		[InlineData("unchecked((UInt64)(Int64)-1000)", unchecked((ulong)-1000))]
-		[InlineData("unchecked((UInt64)(UInt64)-1000)", unchecked(((ulong)-1000)))]
-		[InlineData("unchecked((UInt64)(Single)-1000)", unchecked((ulong)(float)-1000))]
-		[InlineData("unchecked((UInt64)(Double)-1000)", unchecked((ulong)-1000))]
-		// single
-		[InlineData("unchecked((Single)(Byte)-1000)", unchecked((float)(byte)-1000))]
-		[InlineData("unchecked((Single)(SByte)-1000)", unchecked((float)(sbyte)-1000))]
-		[InlineData("unchecked((Single)(Int16)-1000)", unchecked((float)-1000))]
-		[InlineData("unchecked((Single)(UInt16)-1000)", unchecked((float)(ushort)-1000))]
-		[InlineData("unchecked((Single)(Int32)-1000)", unchecked((float)-1000))]
-		[InlineData("unchecked((Single)(UInt32)-1000)", unchecked((float)(uint)-1000))]
-		[InlineData("unchecked((Single)(Int64)-1000)", unchecked((float)-1000))]
-		[InlineData("unchecked((Single)(UInt64)-1000)", unchecked((float)(ulong)-1000))]
-		[InlineData("unchecked((Single)(Single)-1000)", unchecked(((float)-1000)))]
-		[InlineData("unchecked((Single)(Double)-1000)", unchecked((float)(double)-1000))]
-		// double
-		[InlineData("unchecked((Double)(Byte)-1000)", unchecked((double)(byte)-1000))]
-		[InlineData("unchecked((Double)(SByte)-1000)", unchecked((double)(sbyte)-1000))]
-		[InlineData("unchecked((Double)(Int16)-1000)", unchecked((double)-1000))]
-		[InlineData("unchecked((Double)(UInt16)-1000)", unchecked((double)(ushort)-1000))]
-		[InlineData("unchecked((Double)(Int32)-1000)", unchecked((double)-1000))]
-		[InlineData("unchecked((Double)(UInt32)-1000)", unchecked((double)(uint)-1000))]
-		[InlineData("unchecked((Double)(Int64)-1000)", unchecked((double)-1000))]
-		[InlineData("unchecked((Double)(UInt64)-1000)", unchecked((double)(ulong)-1000))]
-		[InlineData("unchecked((Double)(Single)-1000)", unchecked((double)(float)-1000))]
-		[InlineData("unchecked((Double)(Double)-1000)", unchecked(((double)-1000)))]
-		public void ConvertNumbers(string expression, object expected)
-		{
-			var expectedType = expected?.GetType() ?? typeof(object);
-			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
-
-			Assert.Equal(expected, actual);
-		}
-
-		// decimal
-		[Theory]
-		[InlineData("unchecked((Decimal)(Byte)-1000)", unchecked((double)(byte)-1000))]
-		[InlineData("unchecked((Decimal)(SByte)-1000)", unchecked((double)(sbyte)-1000))]
-		[InlineData("unchecked((Decimal)(Int16)-1000)", unchecked((double)-1000))]
-		[InlineData("unchecked((Decimal)(UInt16)-1000)", unchecked((double)(ushort)-1000))]
-		[InlineData("unchecked((Decimal)(Int32)-1000)", unchecked((double)-1000))]
-		[InlineData("unchecked((Decimal)(UInt32)-1000)", unchecked((double)(uint)-1000))]
-		[InlineData("unchecked((Decimal)(Int64)-1000)", unchecked((double)-1000))]
-		[InlineData("unchecked((Decimal)(UInt64)1000)", unchecked((double)(ulong)1000))]
-		[InlineData("unchecked((Decimal)(Single)-1000)", unchecked((double)(float)-1000))]
-		[InlineData("unchecked((Decimal)(Double)-1000)", unchecked(((double)-1000)))]
-		public void ConvertDecimal(string expression, double expectedDouble)
-		{
-			expression = CSharpExpression.ParseFunc<decimal>(expression).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var expressionFn = CSharpExpression.ParseFunc<decimal>(expression).CompileAot(forceAot: true);
-			var expected = (decimal)expectedDouble;
-			var actual = expressionFn.DynamicInvoke();
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("a + b", 1, 2, 1 + 2)]
-		[InlineData("a * b", 1, 2, 1 * 2)]
-		[InlineData("a - b", 1, 2, 1 - 2)]
-		[InlineData("a / b", 1, 2, 1 / 2)]
-		[InlineData("a % b", 1, 2, 1 % 2)]
-		[InlineData("a & b", 1, 2, 1 & 2)]
-		[InlineData("a | b", 1, 2, 1 | 2)]
-		[InlineData("a ^ b", 1, 2, 1 ^ 2)]
-		[InlineData("a << b", 1, 2, 1 << 2)]
-		[InlineData("a >> b", 1, 2, 1 >> 2)]
-		[InlineData("a + b", 1, null, null)]
-		[InlineData("a * b", 1, null, null)]
-		[InlineData("a - b", 1, null, null)]
-		[InlineData("a / b", 1, null, null)]
-		[InlineData("a % b", 1, null, null)]
-		[InlineData("a & b", 1, null, null)]
-		[InlineData("a | b", 1, null, null)]
-		[InlineData("a ^ b", 1, null, null)]
-		[InlineData("a << b", 1, null, null)]
-		[InlineData("a >> b", 1, null, null)]
-		[InlineData("+b", 1, null, null)]
-		[InlineData("-b", 1, null, null)]
-		[InlineData("~b", 1, null, null)]
-		[InlineData("~b", 1, null, null)]
-		public void NullableBinaryTest(string expression, int? arg1, int? arg2, int? expected)
-		{
-			expression = CSharpExpression.ParseFunc<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.ParseFunc<int?, int?, int?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("a < b", 1, 2, true)]
-		[InlineData("a < b", 1, null, false)]
-		[InlineData("a > b", 1, null, false)]
-		[InlineData("a == b", 1, null, false)]
-		[InlineData("a >= b", 1, null, false)]
-		[InlineData("a <= b", 1, null, false)]
-		[InlineData("null == b", 1, null, true)] // this is special case
-		[InlineData("null == a", 1, null, false)] // this is special case
-		[InlineData("a != b", 1, null, true)] // this is special case
-		[InlineData("a != b", null, null, false)] // this is special case
-		public void NullableEquationTest(string expression, int? arg1, int? arg2, bool expected)
-		{
-			expression = CSharpExpression.ParseFunc<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.ParseFunc<int?, int?, bool>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
-			Assert.Equal(expected, actual);
-		}
-
-		[Fact]
-		public void LambdaTest()
-		{
-			var expression = CSharpExpression.ParseFunc<Func<int, int>>("a => a + 1").Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var expected = 2;
-			var lambda = CSharpExpression.ParseFunc<Func<int, int>>(expression).CompileAot(forceAot: true).Invoke();
-			var actual = lambda.Invoke(1);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Fact]
-		public void LambdaClosureTest()
-		{
-			var expression = CSharpExpression.ParseFunc<int, Func<int, int>>("a => arg1 + a + 1", arg1Name: "arg1").Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var expected = 3;
-			var lambda = CSharpExpression.ParseFunc<int, Func<int, int>>(expression, arg1Name: "arg1").CompileAot(forceAot: true).Invoke(1);
-			var actual = lambda.Invoke(1);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Fact]
-		public void LambdaConstructorTest()
-		{
-			var typeResolutionService = new KnownTypeResolver(typeof(Func<Type, object, bool>));
-			var expression = CSharpExpression.ParseFunc<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var expected = true;
-			var lambda = CSharpExpression.ParseFunc<Func<Type, object, bool>>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
-			var actual = lambda.Invoke(typeof(bool), null);
-
-			Assert.Equal(expected, actual);
-		}
-
-		[Theory]
-		[InlineData("typeof(Func<int>)", typeof(Func<int>), typeof(Type))]
-		[InlineData("1 is Func<int>", false, typeof(bool))]
-		[InlineData("new Func<int>(() => 1) as Array", null, typeof(object))]
-		[InlineData("default(int?)", null, typeof(object))]
-		public void GenericTypesInExpressionsTest(string expression, object expected, Type expectedType)
-		{
-			expression = ExpressionUtils.ParseFunc(expression, new[] { expectedType }).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = ExpressionUtils.Evaluate(expression, new[] { expectedType }, forceAot: true);
-
-			if (expected != null)
-			{
-				Assert.NotNull(actual);
-				Assert.IsAssignableFrom(expectedType, actual);
-				Assert.Equal(expected, actual);
-			}
+			if (expected is Delegate)
+				Assert.IsType(expected.GetType(), actual);
 			else
-			{
-				Assert.Null(actual);
-			}
+				Assert.Equal(actual, expected);
 		}
 
 		[Theory]
-		[InlineData("ExecutorTests.TestGenericClass<int>.Field", 0)]
-		[InlineData("ExecutorTests.TestGenericClass<int>.Property", 0)]
-		[InlineData("new ExecutorTests.TestGenericClass<int>().InstanceMethod(10)", 10)]
-		[InlineData("new ExecutorTests.TestGenericClass<int>().InstanceGenericMethod<int>(11)", 11)]
-		[InlineData("ExecutorTests.TestGenericClass<int>.StaticGenericMethod<int>(12)", 12)]
-		[InlineData("ExecutorTests.TestGenericClass<int>.StaticMethod()", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().Field1", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().Property1", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceMethod1()", 0)]
-		[InlineData("new GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>().InstanceGenericMethod1<int>(1,2,3,4)", 4)]
-		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>.StaticGenericMethod1<int>(13)", 13)]
-		[InlineData("GameDevWare.Dynamic.Expressions.Tests.ExecutorTests.TestGenericClass<int>.TestSubClass<int,int>.StaticMethod1(14)", 14)]
-		public void GenericInvocationTest(string expression, int expected)
+		[MemberData(nameof(RenderingData))]
+		public void RenderGrowTest(LambdaExpression expression)
 		{
-			var typeResolutionService = new KnownTypeResolver(typeof(ExecutorTests.TestGenericClass<>), typeof(ExecutorTests.TestGenericClass<>.TestSubClass<,>));
-			expression = CSharpExpression.ParseFunc<int>(expression, typeResolutionService).Body.Render();
-			this.output.WriteLine("Rendered: " + expression);
-			var actual = CSharpExpression.ParseFunc<int>(expression, typeResolutionService).CompileAot(forceAot: true).Invoke();
-			Assert.Equal(expected, actual);
+			this.output.WriteLine("Lambda Type: " + expression.Type.GetTypeInfo().GetCSharpFullName(null, options: TypeNameFormatOptions.IncludeGenericArguments));
+			this.output.WriteLine("Expression: " + expression);
+
+			var formattedExpression = expression.Body.Render();
+			var iterations = 10;
+			var iterationLength = new int[iterations];
+			for (var i = 0; i < iterations; i++)
+			{
+				this.output.WriteLine("Formatted Expression #" + i + ": " + formattedExpression);
+				expression = ParseLambda(formattedExpression, expression.Type);
+				this.output.WriteLine("Expression #" + i + ": " + expression);
+
+				iterationLength[i] = formattedExpression.Length;
+			}
+
+			Assert.Equal(iterationLength[0], iterationLength.Sum() / iterations);
+		}
+
+		[Theory]
+		[MemberData(nameof(RenderingData))]
+		public void RenderParseSyntaxTreeTest(LambdaExpression expression)
+		{
+			var arguments = GetLambdaArguments(expression);
+			var expected = EvaluateLambda(expression, arguments);
+
+			this.output.WriteLine("Lambda Type: " + expression.Type.GetTypeInfo().GetCSharpFullName(null, options: TypeNameFormatOptions.IncludeGenericArguments));
+			this.output.WriteLine("Expression: " + expression);
+			this.output.WriteLine("Arguments: " + string.Join(", ", arguments.Select(a => a == null ? "<null>" : Convert.ToString(a)).ToArray()));
+			this.output.WriteLine("Expected: " + expected);
+
+			var formattedExpression = expression.Body.Render();
+			this.output.WriteLine("Formatted Expression: " + formattedExpression);
+			var formattedSyntaxTree = Parse(formattedExpression).Render();
+			this.output.WriteLine("Formatted SyntaxTree: " + formattedSyntaxTree);
+
+			var parsedExpression = ParseLambda(formattedSyntaxTree, expression.Type);
+			var actual = EvaluateLambda(parsedExpression, arguments);
+
+			if (expected is Delegate)
+				Assert.IsType(expected.GetType(), actual);
+			else
+				Assert.Equal(actual, expected);
+		}
+
+		private static object[] GetLambdaArguments(LambdaExpression expression)
+		{
+			var lambdaTypes = expression.Type.GetGenericArguments();
+			var parameterTypes = lambdaTypes.Take(lambdaTypes.Length - 1).ToArray();
+			var arguments = new object[parameterTypes.Length];
+			for (var i = 0; i < parameterTypes.Length; i++)
+			{
+				if (parameterTypes[i] == typeof(Func<int, int>))
+					arguments[i] = new Func<int, int>(x => x + 100);
+				else if (parameterTypes[i] == typeof(int[]))
+					arguments[i] = Enumerable.Range(100, 100).ToArray();
+				else
+					arguments[i] = Activator.CreateInstance(parameterTypes[i]);
+			}
+			return arguments;
+		}
+		private static object EvaluateLambda(LambdaExpression expression, object[] arguments)
+		{
+			return expression.Compile().DynamicInvoke(arguments);
+		}
+		private static LambdaExpression ParseLambda(string formattedExpression, Type lambdaType)
+		{
+			var tokens = Tokenizer.Tokenize(formattedExpression);
+			var parseTree = Parser.Parse(tokens);
+			var expressionTree = parseTree.ToSyntaxTree();
+			var lambdaTypes = lambdaType.GetGenericArguments();
+			var resultType = lambdaTypes[lambdaTypes.Length - 1];
+			var parameters = new ParameterExpression[lambdaTypes.Length - 1];
+			for (var i = 0; i < parameters.Length; i++)
+			{
+				parameters[i] = Expression.Parameter(lambdaTypes[i], "arg" + (i + 1));
+			}
+			var expressionBuilder = new Binder(parameters, resultType: resultType, typeResolver: TypeResolver);
+			return expressionBuilder.Bind(expressionTree);
+		}
+		private static SyntaxTreeNode Parse(string formattedExpression)
+		{
+			var tokens = Tokenizer.Tokenize(formattedExpression);
+			var parseTree = Parser.Parse(tokens);
+			var expressionTree = parseTree.ToSyntaxTree();
+			return expressionTree;
 		}
 	}
 }

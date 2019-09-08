@@ -45,9 +45,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			}
 		}
 
-		public class TestGenericClass<T1>
+		public class TestGenericClass<T1> : IEquatable<TestGenericClass<T1>>
 		{
-			public class TestSubClass<T2, T3>
+			public class TestSubClass<T2, T3>: IEquatable<TestSubClass<T2, T3>>
 			{
 				public T2 Field1;
 				public T3 Property1 { get; set; }
@@ -67,6 +67,31 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 				public T3 InstanceMethod1()
 				{
 					return default(T3);
+				}
+				/// <inheritdoc />
+				public bool Equals(TestSubClass<T2, T3> other)
+				{
+					if (ReferenceEquals(null, other)) return false;
+					if (ReferenceEquals(this, other)) return true;
+
+					return EqualityComparer<T2>.Default.Equals(this.Field1, other.Field1) && EqualityComparer<T3>.Default.Equals(this.Property1, other.Property1);
+				}
+				/// <inheritdoc />
+				public override bool Equals(object obj)
+				{
+					if (ReferenceEquals(null, obj)) return false;
+					if (ReferenceEquals(this, obj)) return true;
+					if (obj.GetType() != this.GetType()) return false;
+
+					return Equals((TestSubClass<T2, T3>)obj);
+				}
+				/// <inheritdoc />
+				public override int GetHashCode()
+				{
+					unchecked
+					{
+						return (EqualityComparer<T2>.Default.GetHashCode(this.Field1) * 397) ^ EqualityComparer<T3>.Default.GetHashCode(this.Property1);
+					}
 				}
 			}
 
@@ -88,6 +113,25 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			public T1 InstanceMethod(T1 param1)
 			{
 				return param1;
+			}
+			/// <inheritdoc />
+			public bool Equals(TestGenericClass<T1> other)
+			{
+				return true;
+			}
+			/// <inheritdoc />
+			public override bool Equals(object obj)
+			{
+				if (ReferenceEquals(null, obj)) return false;
+				if (ReferenceEquals(this, obj)) return true;
+				if (obj.GetType() != this.GetType()) return false;
+
+				return Equals((TestGenericClass<T1>)obj);
+			}
+			/// <inheritdoc />
+			public override int GetHashCode()
+			{
+				return 100500;
 			}
 		}
 

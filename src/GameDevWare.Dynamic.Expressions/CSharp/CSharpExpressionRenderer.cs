@@ -79,9 +79,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case "Enclose":
 					case Constants.EXPRESSION_TYPE_UNCHECKED_SCOPE:
 					case Constants.EXPRESSION_TYPE_CHECKED_SCOPE:
-					case Constants.EXPRESSION_TYPE_GROUP: RenderGroup(node, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_GROUP: RenderGroup(node, builder, wrapped, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_CONSTANT: RenderConstant(node, builder); break;
-					case Constants.EXPRESSION_TYPE_MEMBER_RESOLVE: 
+					case Constants.EXPRESSION_TYPE_MEMBER_RESOLVE:
 					case Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD: RenderPropertyOrField(node, builder, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_TYPE_OF: RenderTypeOf(node, builder); break;
 					case Constants.EXPRESSION_TYPE_DEFAULT: RenderDefault(node, builder); break;
@@ -113,6 +113,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case Constants.EXPRESSION_TYPE_EXCLUSIVE_OR:
 					case Constants.EXPRESSION_TYPE_AND_ALSO:
 					case Constants.EXPRESSION_TYPE_OR_ELSE:
+					case Constants.EXPRESSION_TYPE_POWER:
 					case Constants.EXPRESSION_TYPE_COALESCE: RenderBinary(node, builder, wrapped, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_CONDITION: RenderCondition(node, builder, wrapped, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_CONVERT:
@@ -143,7 +144,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
 
-			Render(node.GetExpression(throwOnError: true) , builder, false, checkedScope);
+			Render(node.GetExpression(throwOnError: true), builder, false, checkedScope);
 			builder.Append(".Length");
 		}
 		private static void RenderTypeBinary(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
@@ -452,14 +453,22 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			if (valueObj == null)
 			{
-				builder.Append("default(");
-				RenderTypeName(typeObj, builder);
-				builder.Append(")");
-				return;
+				if (IsObjectType(typeObj))
+				{
+					builder.Append("null");
+					return;
+				}
+				else
+				{
+					builder.Append("default(");
+					RenderTypeName(typeObj, builder);
+					builder.Append(")");
+					return;
+				}
 			}
 
 			var type = Convert.ToString(typeObj, Constants.DefaultFormatProvider);
-			var value = Convert.ToString(valueObj, Constants.DefaultFormatProvider);
+			var value = Convert.ToString(valueObj, Constants.DefaultFormatProvider) ?? "";
 			switch (type)
 			{
 				case "System.Char":
@@ -520,10 +529,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				default:
 					builder.Append(value);
 					break;
-
 			}
 		}
-		private static void RenderGroup(SyntaxTreeNode node, StringBuilder builder, bool checkedScope)
+		private static void RenderGroup(SyntaxTreeNode node, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (builder == null) throw new ArgumentNullException("builder");
@@ -539,13 +547,23 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var expression = (SyntaxTreeNode)expressionObj;
 
-			if (expressionType == Constants.EXPRESSION_TYPE_UNCHECKED_SCOPE)
+			if (expressionType == Constants.EXPRESSION_TYPE_UNCHECKED_SCOPE && checkedScope)
+			{
 				builder.Append("unchecked");
-			if (expressionType == Constants.EXPRESSION_TYPE_CHECKED_SCOPE)
+				wrapped = false;
+				checkedScope = false;
+			}
+
+			if (expressionType == Constants.EXPRESSION_TYPE_CHECKED_SCOPE && !checkedScope)
+			{
 				builder.Append("checked");
-			builder.Append("(");
+				wrapped = false;
+				checkedScope = true;
+			}
+
+			if (!wrapped) builder.Append("(");
 			Render(expression, builder, true, checkedScope);
-			builder.Append(")");
+			if (!wrapped) builder.Append(")");
 		}
 		private static void RenderInvokeOrIndex(SyntaxTreeNode node, StringBuilder builder, bool checkedScope)
 		{
@@ -680,7 +698,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					RenderArrayIndex(expression, builder, checkedScope);
 					break;
 				case ExpressionType.Call:
-					RenderCall((MethodCallExpression)expression, builder, checkedScope);
+					RenderCall((MethodCallExpression)expression, builder, wrapped, checkedScope);
 					break;
 				case ExpressionType.Conditional:
 					RenderCondition((ConditionalExpression)expression, builder, wrapped, checkedScope);
@@ -743,56 +761,93 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		private static void RenderCondition(ConditionalExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
-			/*var nullTestExpressions = default(List<Expression>);
+			if (!wrapped) builder.Append("(");
+			var nullTestExpressions = default(List<Expression>);
 			var continuationExpression = default(Expression);
 			// try to detect null-propagation operation
 			if (ExpressionUtils.ExtractNullPropagationExpression(expression, out nullTestExpressions, out continuationExpression))
 			{
-				var callExpression = continuationExpression as MethodCallExpression;
-				var memberExpression = continuationExpression as MemberExpression;
-				var indexExpression = continuationExpression as BinaryExpression;
-
-				Render(nullTestExpressions, builder, false, checkedScope);
-				if (memberExpression != null)
-				{
-					builder.Append("?.");
-					builder.Append(memberExpression.Member.Name);
-				}
-				else if (callExpression != null && callExpression.NodeType == ExpressionType.Call)
-				{
-					builder.Append("?.");
-					builder.Append(callExpression.Method.Name);
-					builder.Append("(");
-					RenderArguments(callExpression.Arguments, builder, checkedScope);
-					builder.Append(")");
-				}
-				else if (callExpression != null && callExpression.NodeType == ExpressionType.ArrayIndex)
-				{
-					builder.Append("?[");
-					RenderArguments(callExpression.Arguments, builder, checkedScope);
-					builder.Append("]");
-				}
-				else if (indexExpression != null)
-				{
-					builder.Append("?[");
-					Render(indexExpression.Right, builder, false, checkedScope);
-					builder.Append("]");
-				}
-				else
-				{
-					throw new InvalidOperationException(string.Format("Unknown null-propagation pattern met: {0}?.{1}.", nullTestExpressions.NodeType, continuationExpression.NodeType));
-				}
+				RenderNullPropagationExpression(continuationExpression, builder, nullTestExpressions, 0, checkedScope);
 			}
-			else*/
+			else
 			{
 				var cond = expression;
-				if (!wrapped) builder.Append("(");
 				Render(cond.Test, builder, true, checkedScope);
 				builder.Append(" ? ");
 				Render(cond.IfTrue, builder, true, checkedScope);
 				builder.Append(" : ");
 				Render(cond.IfFalse, builder, true, checkedScope);
-				if (!wrapped) builder.Append(")");
+			}
+			if (!wrapped) builder.Append(")");
+		}
+		private static void RenderNullPropagationExpression(Expression expression, StringBuilder builder, List<Expression> nullPropagationExpressions, int depth, bool checkedScope)
+		{
+			if (expression == null) throw new ArgumentNullException("expression");
+			if (builder == null) throw new ArgumentNullException("builder");
+			if (nullPropagationExpressions == null) throw new ArgumentNullException("nullPropagationExpressions");
+
+			var callExpression = expression as MethodCallExpression;
+			var memberExpression = expression as MemberExpression;
+			var indexExpression = expression as BinaryExpression;
+			var isIndexer = (callExpression != null && callExpression.NodeType == ExpressionType.ArrayIndex) ||
+				(callExpression != null && callExpression.Method.IsIndexer());
+
+			if (memberExpression != null)
+			{
+				if (memberExpression.Member.IsStatic())
+				{
+					var methodType = memberExpression.Member.DeclaringType;
+					if (methodType != null)
+						RenderType(methodType, builder);
+					builder.Append(".");
+				}
+				else
+				{
+					RenderNullPropagationExpression(memberExpression.Expression, builder, nullPropagationExpressions, depth + 1, checkedScope);
+					builder.Append(nullPropagationExpressions.Contains(memberExpression.Expression) ? "?." : ".");
+				}
+
+				builder.Append(memberExpression.Member.Name);
+			}
+			else if (callExpression != null && !isIndexer)
+			{
+				if (callExpression.Method.IsStatic)
+				{
+					var methodType = callExpression.Method.DeclaringType;
+					if (methodType != null)
+						RenderType(methodType, builder);
+					builder.Append(".");
+				}
+				else
+				{
+					RenderNullPropagationExpression(callExpression.Object, builder, nullPropagationExpressions, depth + 1, checkedScope);
+					builder.Append(nullPropagationExpressions.Contains(callExpression.Object) ? "?." : ".");
+				}
+
+				builder.Append(callExpression.Method.Name);
+				builder.Append("(");
+				RenderArguments(callExpression.Arguments, builder, checkedScope);
+				builder.Append(")");
+			}
+			else if (callExpression != null)
+			{
+				RenderNullPropagationExpression(callExpression.Object, builder, nullPropagationExpressions, depth + 1, checkedScope);
+
+				builder.Append(nullPropagationExpressions.Contains(callExpression.Object) ? "?[" : "[");
+				RenderArguments(callExpression.Arguments, builder, checkedScope);
+				builder.Append("]");
+			}
+			else if (indexExpression != null)
+			{
+				RenderNullPropagationExpression(indexExpression.Left, builder, nullPropagationExpressions, depth + 1, checkedScope);
+
+				builder.Append(nullPropagationExpressions.Contains(indexExpression.Left) ? "?[" : "[");
+				Render(indexExpression.Right, builder, false, checkedScope);
+				builder.Append("]");
+			}
+			else
+			{
+				Render(expression, builder, false, checkedScope);
 			}
 		}
 		private static void RenderConvert(UnaryExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
@@ -986,7 +1041,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			builder.Append(expression.Member.Name);
 		}
-		private static void RenderCall(MethodCallExpression expression, StringBuilder builder, bool checkedScope)
+		private static void RenderCall(MethodCallExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (expression == null) throw new ArgumentException("expression");
 			if (builder == null) throw new ArgumentException("builder");
@@ -994,9 +1049,32 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var isIndex = expression.NodeType == ExpressionType.ArrayIndex;
 			if (expression.Method.IsStatic)
 			{
-				var methodType = expression.Method.DeclaringType;
-				if (methodType != null)
-					RenderType(methodType, builder);
+				if (expression.Method.DeclaringType == typeof(string) &&
+					expression.Method.Name == "Concat" &&
+					expression.Arguments.All(a => a.Type == typeof(string) || a.Type == typeof(object)))
+				{
+					if (wrapped)
+					{
+						builder.Append("(");
+					}
+					for (var i = 0; i < expression.Arguments.Count; i++)
+					{
+						Render(expression.Arguments[i], builder, true, checkedScope);
+						if (i != expression.Arguments.Count - 1)
+							builder.Append(" + ");
+					}
+					if (wrapped)
+					{
+						builder.Append(")");
+					}
+					return;
+				}
+				else
+				{
+					var methodType = expression.Method.DeclaringType;
+					if (methodType != null)
+						RenderType(methodType, builder);
+				}
 			}
 			else
 			{
@@ -1077,10 +1155,18 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			if (expression.Value == null)
 			{
-				builder.Append("default(");
-				RenderType(expression.Type, builder);
-				builder.Append(")");
-				return;
+				if (expression.Type == typeof(object))
+				{
+					builder.Append("null");
+					return;
+				}
+				else
+				{
+					builder.Append("default(");
+					RenderType(expression.Type, builder);
+					builder.Append(")");
+					return;
+				}
 			}
 
 			var strValue = Convert.ToString(expression.Value, Constants.DefaultFormatProvider);
@@ -1372,9 +1458,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (type == null) throw new ArgumentNullException("type");
 			if (builder == null) throw new ArgumentNullException("builder");
 
-			var nameStartIndex = builder.Length;
-			TypeNameUtils.GetCSharpFullName(type, builder, writeGenericArguments: true);
-			TypeNameUtils.RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
+			type.GetCSharpFullName(builder, TypeNameFormatOptions.UseAliases | TypeNameFormatOptions.IncludeGenericArguments);
 		}
 		private static void RenderTextLiteral(string value, StringBuilder builder, bool isChar)
 		{
@@ -1425,6 +1509,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				builder.Append("'");
 			else
 				builder.Append("\"");
+		}
+		private static bool IsObjectType(object typeObj)
+		{
+			return string.Equals("object", typeObj as string, StringComparison.Ordinal) ||
+				string.Equals("Object", typeObj as string, StringComparison.Ordinal) ||
+				string.Equals("System.Object", typeObj as string, StringComparison.Ordinal);
 		}
 	}
 }

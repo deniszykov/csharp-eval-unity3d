@@ -1,4 +1,4 @@
-﻿/*
+/*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
@@ -504,7 +504,8 @@ namespace GameDevWare.Dynamic.Expressions
 			else if (testExpression.NodeType == ExpressionType.AndAlso)
 			{
 				var andAlsoExpression = (BinaryExpression)testExpression;
-				return TryExtractTestTargets(andAlsoExpression.Left, ref nullTestExpressions) && TryExtractTestTargets(andAlsoExpression.Right, ref nullTestExpressions);
+				return TryExtractTestTargets(andAlsoExpression.Left, ref nullTestExpressions) &&
+					TryExtractTestTargets(andAlsoExpression.Right, ref nullTestExpressions);
 			}
 			else
 			{

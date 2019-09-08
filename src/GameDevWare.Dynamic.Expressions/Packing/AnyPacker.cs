@@ -102,7 +102,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				var typeArguments = type.GetTypeInfo().GetGenericArguments();
 				var methodNameTree = new Dictionary<string, object>(3) {
 					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_TYPE_REFERENCE },
-					{ Constants.NAME_ATTRIBUTE, type.GetCSharpFullName(withGenericSuffix: false).ToString() },
+					{ Constants.NAME_ATTRIBUTE, type.GetCSharpFullName(options: TypeNameFormatOptions.None).ToString() },
 					{ Constants.ARGUMENTS_ATTRIBUTE, Pack(typeArguments) }
 				};
 				return methodNameTree;

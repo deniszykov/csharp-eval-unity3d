@@ -246,13 +246,6 @@ namespace GameDevWare.Dynamic.Expressions
 				var field_33554453_67108998 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Parameter4Name;
 				var field_33554453_67108999 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).ReturnType;
 				var field_33554453_67109000 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Count;
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetTypeNames(default(System.Type));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetTypeFullNames(default(System.Type));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetCSharpFullName(default(System.Type), default(System.Text.StringBuilder), default(System.Boolean));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetCSharpName(default(System.Type), default(System.Text.StringBuilder), default(System.Boolean));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.RemoveGenericSuffix(default(System.String));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.RemoveGenericSuffix(default(System.Text.StringBuilder));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.RemoveGenericSuffix(default(System.Text.StringBuilder), default(System.Int32), default(System.Int32));
 				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).ContainsKey(default(System.String));
 				var param_33554456_100663552_1 = default(System.Object);
 				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).TryGetValue(default(System.String), out param_33554456_100663552_1);

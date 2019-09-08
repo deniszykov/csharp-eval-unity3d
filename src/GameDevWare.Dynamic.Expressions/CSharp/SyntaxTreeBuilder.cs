@@ -22,7 +22,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		}
 
 		private static readonly Dictionary<int, string> ExpressionTypeByToken;
-		private static readonly Dictionary<string, string> TypeAliases;
+
 
 		static SyntaxTreeBuilder()
 		{
@@ -72,27 +72,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{ (int)TokenType.Lambda, Constants.EXPRESSION_TYPE_LAMBDA },
 			};
 
-			TypeAliases = new Dictionary<string, string>
-			{
-				// ReSharper disable StringLiteralTypo
-				{ "void", typeof(void).FullName },
-				{ "char", typeof(char).FullName },
-				{ "bool", typeof(bool).FullName },
-				{ "byte", typeof(byte).FullName },
-				{ "sbyte", typeof(sbyte).FullName },
-				{ "decimal", typeof(decimal).FullName },
-				{ "double", typeof(double).FullName },
-				{ "float", typeof(float).FullName },
-				{ "int", typeof(int).FullName },
-				{ "uint", typeof(uint).FullName },
-				{ "long", typeof(long).FullName },
-				{ "ulong", typeof(ulong).FullName },
-				{ "object", typeof(object).FullName },
-				{ "short", typeof(short).FullName },
-				{ "ushort", typeof(ushort).FullName },
-				{ "string", typeof(string).FullName }
-				// ReSharper restore StringLiteralTypo
-			};
+
 		}
 
 		/// <summary>
@@ -341,7 +321,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (parseNode.Type == TokenType.Identifier && parseNode.Count == 0 && allowShortName)
 			{
 				var typeName = default(string);
-				if (allowAliases && TypeAliases.TryGetValue(parseNode.Value, out typeName))
+				if (allowAliases && CSharpTypeNameAlias.TryGetTypeName(parseNode.Value, out typeName))
 					return typeName;
 				else
 					return parseNode.Value;
@@ -373,7 +353,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			else if (parseNode.Type == TokenType.Identifier)
 			{
 				var typeName = parseNode.Value;
-				if (allowAliases && TypeAliases.TryGetValue(parseNode.Value, out typeName) == false)
+				if (allowAliases && CSharpTypeNameAlias.TryGetTypeName(parseNode.Value, out typeName) == false)
 					typeName = parseNode.Value;
 
 				syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = null;
