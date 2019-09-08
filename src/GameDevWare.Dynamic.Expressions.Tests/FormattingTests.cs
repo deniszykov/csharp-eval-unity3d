@@ -10,24 +10,24 @@ using Xunit.Abstractions;
 
 namespace GameDevWare.Dynamic.Expressions.Tests
 {
-	public class RendererTests
+	public class FormattingTests
 	{
 		private static readonly ITypeResolver TypeResolver;
 
 		private readonly ITestOutputHelper output;
 
-		static RendererTests()
+		static FormattingTests()
 		{
 			TypeResolver = new KnownTypeResolver(typeof(Func<Type, object, bool>),
 				typeof(ExecutorTests.TestGenericClass<>),
 				typeof(ExecutorTests.TestGenericClass<>.TestSubClass<,>));
 		}
-		public RendererTests(ITestOutputHelper output)
+		public FormattingTests(ITestOutputHelper output)
 		{
 			this.output = output;
 		}
 
-		public static IEnumerable<object[]> RenderingData()
+		public static IEnumerable<object[]> ExpressionData()
 		{
 			var expressions = new Expression[] {
 				// Add
@@ -257,8 +257,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
-		[MemberData(nameof(RenderingData))]
-		public void RenderParseExpressionTest(LambdaExpression expression)
+		[MemberData(nameof(ExpressionData))]
+		public void FormatAndParseExpressionTest(LambdaExpression expression)
 		{
 			var arguments = GetLambdaArguments(expression);
 			var expected = EvaluateLambda(expression, arguments);
@@ -268,7 +268,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			this.output.WriteLine("Arguments: " + string.Join(", ", arguments.Select(a => a == null ? "<null>" : Convert.ToString(a)).ToArray()));
 			this.output.WriteLine("Expected: " + expected);
 
-			var formattedExpression = expression.Body.Render();
+			var formattedExpression = expression.Body.FormatAsCSharp();
 			this.output.WriteLine("Formatted Expression: " + formattedExpression);
 
 			var parsedExpression = ParseLambda(formattedExpression, expression.Type);
@@ -281,13 +281,13 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
-		[MemberData(nameof(RenderingData))]
-		public void RenderGrowTest(LambdaExpression expression)
+		[MemberData(nameof(ExpressionData))]
+		public void FormatNoGrowTest(LambdaExpression expression)
 		{
 			this.output.WriteLine("Lambda Type: " + expression.Type.GetTypeInfo().GetCSharpFullName(null, options: TypeNameFormatOptions.IncludeGenericArguments));
 			this.output.WriteLine("Expression: " + expression);
 
-			var formattedExpression = expression.Body.Render();
+			var formattedExpression = expression.Body.FormatAsCSharp();
 			var iterations = 10;
 			var iterationLength = new int[iterations];
 			for (var i = 0; i < iterations; i++)
@@ -303,8 +303,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
-		[MemberData(nameof(RenderingData))]
-		public void RenderParseSyntaxTreeTest(LambdaExpression expression)
+		[MemberData(nameof(ExpressionData))]
+		public void FormatAndParseSyntaxTreeTest(LambdaExpression expression)
 		{
 			var arguments = GetLambdaArguments(expression);
 			var expected = EvaluateLambda(expression, arguments);
@@ -314,9 +314,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			this.output.WriteLine("Arguments: " + string.Join(", ", arguments.Select(a => a == null ? "<null>" : Convert.ToString(a)).ToArray()));
 			this.output.WriteLine("Expected: " + expected);
 
-			var formattedExpression = expression.Body.Render();
+			var formattedExpression = expression.Body.FormatAsCSharp();
 			this.output.WriteLine("Formatted Expression: " + formattedExpression);
-			var formattedSyntaxTree = Parse(formattedExpression).Render();
+			var formattedSyntaxTree = Parse(formattedExpression).FormatAsCSharp();
 			this.output.WriteLine("Formatted SyntaxTree: " + formattedSyntaxTree);
 
 			var parsedExpression = ParseLambda(formattedSyntaxTree, expression.Type);

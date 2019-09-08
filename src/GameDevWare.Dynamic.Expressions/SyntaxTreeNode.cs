@@ -529,7 +529,7 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				var expression = this.GetCSharpExpression(throwOnError: false);
 				if (string.IsNullOrEmpty(expression))
-					expression = this.Render();
+					expression = this.FormatAsCSharp();
 				return expression;
 			}
 			catch

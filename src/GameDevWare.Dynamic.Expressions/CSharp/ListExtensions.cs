@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
-	internal static class ListExtentions
+	internal static class ListExtensions
 	{
 		public static T Dequeue<T>(this List<T> list)
 		{
