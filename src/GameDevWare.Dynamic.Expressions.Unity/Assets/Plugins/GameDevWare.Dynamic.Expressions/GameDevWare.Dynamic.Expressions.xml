@@ -645,24 +645,45 @@
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="T:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionRenderer">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Format(System.Linq.Expressions.Expression,System.Boolean)">
             <summary>
-            Helper class for rendering parsed C# expressions to it's string representation.
+            Formats <see cref="T:System.Linq.Expressions.Expression"/> into string representation.
+            </summary>
+            <param name="expression">An valid expression.</param>
+            <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows.</param>
+            <returns>C# formatted expression.</returns>
+        </member>
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Format(GameDevWare.Dynamic.Expressions.SyntaxTreeNode,System.Boolean)">
+            <summary>
+            Formats <see cref="T:GameDevWare.Dynamic.Expressions.SyntaxTreeNode"/> into string representation.
+            </summary>
+            <param name="syntaxTree">An valid syntax tree.</param>
+            <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows.</param>
+            <returns>C# formatted expression.</returns>
+        </member>
+        <member name="T:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionFormatter">
+            <summary>
+            Type extension class for <see cref="T:System.Linq.Expressions.Expression"/>. Add expression formatting methods for <see cref="T:System.Linq.Expressions.Expression"/>.
             </summary>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionRenderer.Render(GameDevWare.Dynamic.Expressions.SyntaxTreeNode,System.Boolean)">
-            <summary>
-            Renders syntax tree into string representation.
-            </summary>
-            <param name="node">Syntax tree.</param>
-            <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
-            <returns>Rendered expression.</returns>
-        </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionRenderer.Render(System.Linq.Expressions.Expression,System.Boolean)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionFormatter.Render(System.Linq.Expressions.Expression,System.Boolean)">
             <summary>
             Renders syntax tree into string representation.
             </summary>
             <param name="expression">Syntax tree.</param>
+            <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
+            <returns>Rendered expression.</returns>
+        </member>
+        <member name="T:GameDevWare.Dynamic.Expressions.CSharp.CSharpSyntaxTreeFormatter">
+            <summary>
+            Type extension class for <see cref="T:GameDevWare.Dynamic.Expressions.SyntaxTreeNode"/>. Add expression formatting methods for <see cref="T:GameDevWare.Dynamic.Expressions.SyntaxTreeNode"/>.
+            </summary>
+        </member>
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpSyntaxTreeFormatter.Render(GameDevWare.Dynamic.Expressions.SyntaxTreeNode,System.Boolean)">
+            <summary>
+            Renders syntax tree into string representation.
+            </summary>
+            <param name="syntaxTree">Syntax tree.</param>
             <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
             <returns>Rendered expression.</returns>
         </member>
@@ -720,12 +741,13 @@
             Helper class allowing conversion from <see cref="T:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode"/> to <see cref="T:GameDevWare.Dynamic.Expressions.SyntaxTreeNode"/>.
             </summary>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.ToSyntaxTree(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode,System.Boolean)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.ToSyntaxTree(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode,System.Boolean,System.String)">
             <summary>
             Convert <see cref="T:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode"/> to <see cref="T:GameDevWare.Dynamic.Expressions.SyntaxTreeNode"/> which is bindable on <see cref="T:System.Linq.Expressions.Expression"/> tree.
             </summary>
             <param name="parseNode">Parse tree node.</param>
             <param name="checkedScope">Numeric operation scope. Checked mean - no number overflow is allowed. Unchecked mean - overflow is allowed.</param>
+            <param name="cSharpExpression">Original C# expression from which this AST was build.</param>
             <returns>Prepared <see cref="T:GameDevWare.Dynamic.Expressions.SyntaxTreeNode"/> representing <see cref="T:GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode"/>.</returns>
         </member>
         <member name="T:GameDevWare.Dynamic.Expressions.CSharp.Token">
@@ -1652,6 +1674,11 @@
             Localization string with key EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE
             </summary>
         </member>
+        <member name="P:GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_EXECUTION_CANTDONULLVALUE">
+            <summary>
+            Localization string with key EXCEPTION_EXECUTION_CANTDONULLVALUE
+            </summary>
+        </member>
         <member name="P:GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ">
             <summary>
             Localization string with key EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ
@@ -1745,6 +1772,11 @@
         <member name="P:GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_TOOMANYARGUMENTS">
             <summary>
             Localization string with key EXCEPTION_BIND_TOOMANYARGUMENTS
+            </summary>
+        </member>
+        <member name="P:GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED">
+            <summary>
+            Localization string with key EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED
             </summary>
         </member>
         <member name="P:GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION">

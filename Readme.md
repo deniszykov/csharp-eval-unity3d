@@ -161,6 +161,26 @@ You can send suggestions at support@gamedevware.com
 * Custom editor with auto-completion for Unity
 
 ## Changes
+# 2.2.6
+changed order or SyntaxTreeNode fields and added "original C# expression" field to parsed AST.
+refactored C# expression rendering to support null-propagation expressions, type aliases (int, byte, object ...),
+renamed "Render" methods to "FormatAsCSharp". Now it is "formatting"
+moved c# "formatting" methods to CSharpExpression class
+mark old "Parse" functions as errors
+mark old "Render" methods as obsolete
+renamed CSharpExpressionFormatter to CSharpExpressionFormatter
+fixed indexer experssion rendering
+refactored NameUtils to properly render C# type names
+
+# 2.2.5
+renamed ParseTreeNode.Lexeme to .Token
+renamed few member of TokenType for better clarity
+added documentation file in Unity project assets
+changed 'propertyOrFieldName' attribute to 'name' in SyntaxTreeNode
+renamed PropertyOfFieldBinder to MemberBinder
+changed 'PropertyOrField' expression type to 'MemberResolve' in SyntaxTreeNode
+added backward compatibility checks in all related classes
+
 # 2.2.4
 * added protection against wrong expressions like 'a b' which later bound as 'b'
 * fixed some tokenization errors:
