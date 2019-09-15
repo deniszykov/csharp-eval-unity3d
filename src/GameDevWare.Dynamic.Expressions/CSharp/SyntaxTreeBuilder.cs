@@ -243,8 +243,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private static void ToLambdaNode(ParseTreeNode parseNode, bool checkedScope, Dictionary<string, object> syntaxNode)
 		{
 			CheckNode(parseNode, 2, TokenType.Arguments);
-			syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareArguments(parseNode, 0, checkedScope);
 			syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[1].ToSyntaxTree(checkedScope);
+			syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareArguments(parseNode, 0, checkedScope);
 		}
 		private static void ToConditionalNode(ParseTreeNode parseNode, bool checkedScope, Dictionary<string, object> syntaxNode)
 		{
@@ -264,8 +264,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private static void ToConvertNode(ParseTreeNode parseNode, bool checkedScope, Dictionary<string, object> syntaxNode)
 		{
 			CheckNode(parseNode, 2);
-			syntaxNode[Constants.TYPE_ATTRIBUTE] = ToTypeName(parseNode[0], TypeNameOptions.All);
 			syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[1].ToSyntaxTree(checkedScope);
+			syntaxNode[Constants.TYPE_ATTRIBUTE] = ToTypeName(parseNode[0], TypeNameOptions.All);
 			if (checkedScope)
 				syntaxNode[Constants.EXPRESSION_TYPE_ATTRIBUTE] += Constants.EXPRESSION_TYPE_CHECKED_SUFFIX;
 		}
@@ -306,7 +306,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 
 			syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = null;
-			syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
+			if (parseNode.Count > 0)
+			{
+				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
+			}
 			syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode.Value;
 		}
 		private static void ToResolveNode(ParseTreeNode parseNode, bool checkedScope, Dictionary<string, object> syntaxNode)
@@ -314,7 +317,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			CheckNode(parseNode, 2, TokenType.None, TokenType.Identifier);
 			syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[0].ToSyntaxTree(checkedScope);
 			syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode[1].Value;
-			syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
+			if (parseNode[1].Count > 0)
+			{
+				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
+			}
 			syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = parseNode.Type == TokenType.NullResolve ? Constants.TrueObject : Constants.FalseObject;
 		}
 		private static object ToTypeName(ParseTreeNode parseNode, TypeNameOptions options)
@@ -351,7 +357,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				CheckNode(parseNode, 2, TokenType.None, TokenType.Identifier);
 				syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = ToTypeName(parseNode[0], TypeNameOptions.None);
 				syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode[1].Value;
-				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
+				if (parseNode[1].Count > 0)
+				{
+					syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
+				}
 				syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = Constants.FalseObject;
 			}
 			else if (parseNode.Type == TokenType.Identifier)
@@ -363,7 +372,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = null;
 				syntaxNode[Constants.NAME_ATTRIBUTE] = typeName;
 				syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = Constants.FalseObject;
-				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
+				if (parseNode.Count > 0)
+				{
+					syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
+				}
 			}
 			else
 			{
@@ -448,6 +460,6 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				throw new ExpressionParserException(e.Message, e, token);
 			}
 		}
-		
+
 	}
 }
