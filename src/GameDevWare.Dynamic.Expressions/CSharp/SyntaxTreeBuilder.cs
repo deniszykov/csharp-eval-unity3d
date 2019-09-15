@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
@@ -80,8 +78,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// </summary>
 		/// <param name="parseNode">Parse tree node.</param>
 		/// <param name="checkedScope">Numeric operation scope. Checked mean - no number overflow is allowed. Unchecked mean - overflow is allowed.</param>
+		/// <param name="cSharpExpression">Original C# expression from which this AST was build.</param>
 		/// <returns>Prepared <see cref="SyntaxTreeNode"/> representing <see cref="ParseTreeNode"/>.</returns>
-		public static SyntaxTreeNode ToSyntaxTree(this ParseTreeNode parseNode, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
+		public static SyntaxTreeNode ToSyntaxTree(this ParseTreeNode parseNode, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE, string cSharpExpression = null)
 		{
 			if (parseNode == null) throw new ArgumentNullException("parseNode");
 
@@ -91,9 +90,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				if (ExpressionTypeByToken.TryGetValue((int)parseNode.Type, out expressionType) == false)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE, parseNode.Type), parseNode);
 
-				var syntaxNode = new Dictionary<string, object>
+				var syntaxNode = new Dictionary<string, object>(6)
 				{
-					{ Constants.EXPRESSION_POSITION, parseNode.Token.Position },
 					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType },
 				};
 
@@ -192,6 +190,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					default:
 						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE, parseNode.Type), parseNode);
 				}
+
+				if (string.IsNullOrEmpty(cSharpExpression) == false)
+				{
+					syntaxNode.Add(Constants.EXPRESSION_ORIGINAL_C_SHARP, cSharpExpression);
+				}
+				syntaxNode.Add(Constants.EXPRESSION_POSITION, parseNode.Token.Position);
 
 				return new SyntaxTreeNode(syntaxNode);
 			}

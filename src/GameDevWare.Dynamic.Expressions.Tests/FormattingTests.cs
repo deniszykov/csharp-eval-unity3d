@@ -352,7 +352,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var tokens = Tokenizer.Tokenize(formattedExpression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: formattedExpression);
 			var lambdaTypes = lambdaType.GetGenericArguments();
 			var resultType = lambdaTypes[lambdaTypes.Length - 1];
 			var parameters = new ParameterExpression[lambdaTypes.Length - 1];
@@ -367,7 +367,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var tokens = Tokenizer.Tokenize(formattedExpression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: formattedExpression);
 			return expressionTree;
 		}
 	}

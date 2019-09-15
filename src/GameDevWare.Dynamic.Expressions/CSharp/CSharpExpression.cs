@@ -328,7 +328,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new ParameterExpression[0], resultType: typeof(ResultT), typeResolver: typeResolver);
 			return (Expression<Func<ResultT>>)expressionBinder.Bind(expressionTree);
 		}
@@ -349,7 +349,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBuilder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME)
@@ -375,7 +375,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
@@ -405,7 +405,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
@@ -438,7 +438,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
@@ -464,7 +464,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new ParameterExpression[0], resultType: typeof(void), typeResolver: typeResolver);
 			return (Expression<Action>)expressionBinder.Bind(expressionTree);
 		}
@@ -484,7 +484,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBuilder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME)
@@ -509,7 +509,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
@@ -538,7 +538,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
@@ -570,7 +570,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
-			var expressionTree = parseTree.ToSyntaxTree();
+			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new[]
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
