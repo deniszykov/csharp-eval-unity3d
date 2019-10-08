@@ -38,7 +38,7 @@
 		<DefineConstants>$(DefineConstants);NET45</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Include="..\GameDevWare.Dynamic.Expressions.Unity\Assets\Scripts\Example\PatternString.cs" Link="PatternString.cs" />
+		<Compile Include="..\GameDevWare.Dynamic.Expressions.Unity.3.4\Assets\Scripts\Example\PatternString.cs" Link="PatternString.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
