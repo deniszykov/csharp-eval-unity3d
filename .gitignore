@@ -30,7 +30,7 @@ Temp/
 Assets/StreamingAssets/
 Assets/Bundles/
 ProjectSettings/
-Assets/AssetStoreTools/
+AssetStoreTools/
 src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/PlayMaker/
 src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/Gizmos/
 src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/Plugins/PlayMaker/
