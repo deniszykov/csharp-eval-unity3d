@@ -14,7 +14,7 @@ jobs:
     - name: Setup .NET Framework 3.5
       uses: crazy-max/ghaction-chocolatey@v1
       with:
-        args: install dotnet3.5
+        args: install windows-sdk-7.1
     - name: Build with dotnet
       working-directory: ./src/
       run: dotnet msbuild -p:Configuration=Release -t:Pack
