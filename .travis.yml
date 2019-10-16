@@ -1,11 +1,11 @@
 language: csharp
 mono: none
-dotnet: 2.0.3
+dotnet: lastest
 dist: trusty
 install:
 - cd src
 - dotnet restore
 script:
-- dotnet build -f netcoreapp2.0
+- dotnet build -f netcoreapp2.1
 - cd GameDevWare.Dynamic.Expressions.Tests
-- dotnet xunit -f netcoreapp2.0
+- dotnet xunit -f netcoreapp2.1
