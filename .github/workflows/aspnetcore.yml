@@ -9,17 +9,26 @@ jobs:
         
     steps:
     - uses: actions/checkout@v1
+    
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
+      
     - name: Setup .NET Framework 3.5
       uses: crazy-max/ghaction-chocolatey@v1
       with:
         args: install dotnet3.5
+    
+    - name: dotnet restore
+      working-directory: ./src/
+      run: dotnet restore
+    
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
-    - name: Build with dotnet
+            
+    - name: Build with MSBuild
       working-directory: ./src/
       run: msbuild -p:Configuration=Release -t:Pack
+      
     - name: Run rests
       working-directory: ./src/GameDevWare.Dynamic.Expressions.Tests/
       run: dotnet xunit
