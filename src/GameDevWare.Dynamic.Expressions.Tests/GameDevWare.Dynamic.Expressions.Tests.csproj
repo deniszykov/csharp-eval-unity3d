@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<PropertyGroup>
-		<TargetFrameworks>net45;netcoreapp2.0</TargetFrameworks>
-		<RuntimeFrameworkVersion Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">2.0.3</RuntimeFrameworkVersion>
+		<TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
 		<Authors>Denis Zykov</Authors>
 		<Version>0.0.0</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions.Tests</PackageId>
@@ -41,6 +40,7 @@
 		<Compile Include="..\GameDevWare.Dynamic.Expressions.Unity.3.4\Assets\Scripts\Example\PatternString.cs" Link="PatternString.cs" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.3.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
 		<PackageReference Include="xunit" Version="2.3.1" />
 		<DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
