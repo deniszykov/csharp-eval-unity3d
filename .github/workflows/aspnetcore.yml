@@ -1,0 +1,21 @@
+name: ASP.NET Core CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 2.2.108
+    - name: Build with dotnet
+      working-directory: ./src/
+      run: dotnet build --configuration Release
+    - name: Run rests
+      working-directory: ./src/GameDevWare.Dynamic.Expressions.Tests/
+      run: dotnet xunit
