@@ -14,10 +14,12 @@ jobs:
     - name: Setup .NET Framework 3.5
       uses: crazy-max/ghaction-chocolatey@v1
       with:
-        args: install windows-sdk-7.1
+        args: install dotnet3.5
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
     - name: Build with dotnet
       working-directory: ./src/
-      run: dotnet msbuild -p:Configuration=Release -t:Pack
+      run: msbuild -p:Configuration=Release -t:Pack
     - name: Run rests
       working-directory: ./src/GameDevWare.Dynamic.Expressions.Tests/
       run: dotnet xunit
