@@ -27,8 +27,8 @@ jobs:
             
     - name: Build with MSBuild
       working-directory: ./src/
-      run: msbuild -p:Configuration=Release -t:Pack
+      run: msbuild -t:Pack
       
     - name: Run rests
       working-directory: ./src/GameDevWare.Dynamic.Expressions.Tests/
-      run: dotnet test
+      run: dotnet test -f netcoreapp2.0
