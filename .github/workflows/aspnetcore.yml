@@ -1,18 +1,26 @@
-name: ASP.NET Core CI
+name: .NET CI
 
 on: [push]
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
-    
+    runs-on: windows-latest
+        
     steps:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 2.2.108
+    - name: Setup .NET 4.5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 4.5
+    - name: Setup .NET 3.5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.4
     - name: Build with dotnet
       working-directory: ./src/
       run: dotnet build --configuration Release
