@@ -17,7 +17,7 @@ jobs:
         args: install dotnet3.5
     - name: Build with dotnet
       working-directory: ./src/
-      run: dotnet build --configuration Release
+      run: dotnet msbuild --configuration Release -t:Clean;Pack
     - name: Run rests
       working-directory: ./src/GameDevWare.Dynamic.Expressions.Tests/
       run: dotnet xunit
