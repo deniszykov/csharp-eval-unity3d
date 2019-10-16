@@ -31,4 +31,4 @@ jobs:
       
     - name: Run rests
       working-directory: ./src/GameDevWare.Dynamic.Expressions.Tests/
-      run: dotnet test -f netcoreapp2.0
+      run: dotnet test -f netcoreapp2.1
