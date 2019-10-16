@@ -11,8 +11,10 @@ jobs:
     - uses: actions/checkout@v1
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
+    - name: Setup .NET Framework 3.5
+      uses: crazy-max/ghaction-chocolatey@v1
       with:
-        dotnet-version: 2.2.108
+        args: install dotnet3.5
     - name: Build with dotnet
       working-directory: ./src/
       run: dotnet build --configuration Release
