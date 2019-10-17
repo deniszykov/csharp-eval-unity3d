@@ -1,4 +1,4 @@
-﻿[![Build Status](https://travis-ci.org/deniszykov/csharp-eval-unity3d.svg?branch=master)](https://github.com/deniszykov/csharp-eval-unity3d)
+[![Actions Status](https://github.com/deniszykov/csharp-eval-unity3d/workflows/dotnet_build/badge.svg)](https://github.com/deniszykov/csharp-eval-unity3d/actions)
 
 # Introduction
 
