@@ -1,4 +1,4 @@
-name: .NET CI
+name: dotnet_build
 
 on: [push]
 
