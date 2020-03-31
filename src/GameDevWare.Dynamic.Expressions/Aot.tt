@@ -35,7 +35,7 @@
 
 // ReSharper disable All
 
-#pragma warning disable 1720, 0219
+#pragma warning disable 1720, 0219, 0619
 
 namespace GameDevWare.Dynamic.Expressions
 {

@@ -1,11 +1,7 @@
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-#if NETFRAMEWORK
-using TypeInfo = System.Type;
-#else
-using System.Reflection;
-#endif
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
@@ -52,11 +48,20 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			return AliasByTypeName.TryGetValue(typeName, out alias);
 		}
+#if NETFRAMEWORK
+		public static bool TryGetAlias(Type typeInfo, out string alias)
+		{
+			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
+
+			return TryGetAlias(typeInfo.FullName, out alias);
+		}
+#else
 		public static bool TryGetAlias(TypeInfo typeInfo, out string alias)
 		{
 			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
 
 			return TryGetAlias(typeInfo.FullName, out alias);
 		}
+#endif
 	}
 }

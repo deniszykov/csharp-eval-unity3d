@@ -17,6 +17,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 using GameDevWare.Dynamic.Expressions.Execution;
 
 namespace GameDevWare.Dynamic.Expressions
@@ -38,7 +39,19 @@ namespace GameDevWare.Dynamic.Expressions
 #if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR)
 			IsAotRuntime = true;
 #else
-			try { Expression.Lambda<Func<bool>>(Expression.Constant(true)).Compile(); }
+			try
+			{
+				// check lambdas are supported
+				Expression.Lambda<Func<bool>>(Expression.Constant(true)).Compile();
+
+#if !NETSTANDARD1_3
+				// check dynamic methods are supported
+				var voidDynamicMethod = new DynamicMethod("TestVoidMethod", typeof(void), Type.EmptyTypes, restrictedSkipVisibility: true);
+				var il = voidDynamicMethod.GetILGenerator();
+				il.Emit(OpCodes.Nop);
+				voidDynamicMethod.CreateDelegate(typeof(Action));
+#endif
+			}
 			catch (Exception) { IsAotRuntime = true; }
 #endif
 		}
