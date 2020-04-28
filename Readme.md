@@ -2,7 +2,7 @@
 
 # Introduction
 
-**Attention!** This is a paid [package](https://www.assetstore.unity3d.com/#!/content/56706), you can use it anywhere if you [purchased it](https://www.assetstore.unity3d.com/en/#!/content/56706).
+**Attention!** This is a paid [package](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706), you can use it anywhere if you [purchased it](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706).
 
 This package provides the API for parsing and expression execution written in C#. It is specially designed to work with the [Unity](http://unity3d.com/) on various platforms. Since it is written in C# 3.5 and has no additional dependencies, it should work with any version of Unity (and .NET framework).
 
@@ -295,7 +295,5 @@ Unity:
 Please send any questions at support@gamedevware.com
 
 ## License
-If you embed this package, you must provide a [link](https://www.assetstore.unity3d.com/#!/content/56706) and warning about embedded *C# Eval()* for your customers in the description of your package.
-If your package is free, they could use embedded *C# Eval()* free of charge. In either case, they must acquire this package from Unity Store.
 
 [Asset Store Terms of Service and EULA](LICENSE.md)
