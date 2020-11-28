@@ -599,7 +599,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="syntaxTree">An valid syntax tree.</param>
 		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows.</param>
 		/// <returns>C# formatted expression.</returns>
-		internal static string Format(this SyntaxTreeNode syntaxTree, bool checkedScope = DEFAULT_CHECKED_SCOPE)
+		public static string Format(this SyntaxTreeNode syntaxTree, bool checkedScope = DEFAULT_CHECKED_SCOPE)
 		{
 			return CSharpSyntaxTreeFormatter.Format(syntaxTree, checkedScope);
 		}

@@ -521,16 +521,25 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 
 		/// <summary>
-		/// Renders syntax tree as C# expression.
+		/// Format syntax tree as a C# expression. Throw exceptions if exception could not be formed.
+		/// </summary>
+		/// <returns>C# Expression.</returns>
+		public string ToCSharpExpression()
+		{
+			var expression = this.GetCSharpExpression(throwOnError: false);
+			if (string.IsNullOrEmpty(expression))
+				expression = CSharpExpression.Format(this);
+			return expression;
+		}
+
+		/// <summary>
+		/// Format syntax tree as C# expression.
 		/// </summary>
 		public override string ToString()
 		{
 			try
 			{
-				var expression = this.GetCSharpExpression(throwOnError: false);
-				if (string.IsNullOrEmpty(expression))
-					expression = CSharpExpression.Format(this);
-				return expression;
+				return this.ToCSharpExpression();
 			}
 			catch
 			{
@@ -538,7 +547,7 @@ namespace GameDevWare.Dynamic.Expressions
 				sb.Append("{ ");
 				foreach (var kv in this)
 				{
-					sb.Append(kv.Key).Append(": ").Append("'").Append(kv.Value).Append("' ");
+					sb.Append(kv.Key).Append(": ").Append("'").Append(kv.Value).Append("', ");
 				}
 				sb.Append("}");
 				return sb.ToString();
