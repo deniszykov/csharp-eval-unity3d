@@ -29,10 +29,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public static readonly TypeDescription[] EmptyTypes;
 		public static readonly TypeDescription ObjectType;
 		public static readonly TypeDescription Int32Type;
+		public static readonly Expression NullObjectDefaultExpression = Expression.Constant(null, typeof(object));
 
 		private readonly Type type;
 		private readonly int hashCode;
 		private TypeDescription nullableType;
+		private Expression defaultExpression;
 
 		public readonly Dictionary<string, MemberDescription[]> MembersByName;
 		public readonly MemberDescription[] ImplicitConvertTo;
@@ -60,7 +62,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public readonly string Name;
 		public readonly TypeCode TypeCode;
-		public readonly Expression DefaultExpression;
+		public Expression DefaultExpression { get { return this.GetOrCreateDefaultExpression(); } }
 		public readonly bool IsNullable;
 		public readonly bool CanBeNull;
 		public readonly bool IsEnum;
@@ -68,6 +70,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public readonly bool IsNumber;
 		public readonly bool IsDelegate;
 		public readonly bool IsInterface;
+		public readonly bool IsByRefLike;
 		public readonly bool IsValueType;
 		public readonly bool HasGenericParameters;
 		public readonly TypeDescription BaseType;
@@ -126,11 +129,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.IsEnum = typeInfo.IsEnum;
 			this.IsVoid = type == typeof(void);
 			this.IsDelegate = typeof(Delegate).GetTypeInfo().IsAssignableFrom(typeInfo) && type != typeof(Delegate) && type != typeof(MulticastDelegate);
+			this.IsByRefLike = HasByRefLikeAttribute(type);
+#if NETFRAMEWORK
+			this.IsByRefLike = this.IsByRefLike || type == typeof(TypedReference) || type == typeof(ArgIterator) || type == typeof(RuntimeArgumentHandle);
+#endif
 			this.HasGenericParameters = typeInfo.ContainsGenericParameters;
-			if (this.IsVoid)
-				this.DefaultExpression = Expression.Constant(null, typeof(object));
-			else
-				this.DefaultExpression = Expression.Constant(typeInfo.IsValueType && this.IsNullable == false ? Activator.CreateInstance(type) : null, type);
 			this.TypeCode = ReflectionUtils.GetTypeCode(type);
 
 			this.MembersByName = this.GetMembersByName(ref this.Indexers);
@@ -161,7 +164,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.BitwiseOr = this.GetOperators(methods, methodsDescriptions, "op_BitwiseOr");
 			// ReSharper restore LocalizableElement
 			this.Conversions = Combine(this.ImplicitConvertTo, this.ImplicitConvertFrom, this.ExplicitConvertTo, this.ExplicitConvertFrom);
-			this.Constructors = type.GetTypeInfo().GetPublicInstanceConstructors().Select(ctr => new MemberDescription(this, ctr)).ToArray();
+			this.Constructors = type.GetTypeInfo().GetPublicInstanceConstructors()
+				.Select(ctr => new MemberDescription(this, ctr))
+				.Where(ctr => !ctr.HasByRefLikeParameters).ToArray();
 
 			Array.Sort(this.Conversions);
 			Array.Sort(this.Constructors);
@@ -180,21 +185,54 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			for (var i = 0; i < methods.Count; i++)
 			{
 				var method = methods[i];
-				if (method.Name != operatorName) continue;
+				if (method.Name != operatorName)
+				{
+					continue;
+				}
 
 				if (methodsDescriptions[i] == null)
+				{
 					methodsDescriptions[i] = new MemberDescription(this, method);
+				}
 
 				var methodDescription = methodsDescriptions[i];
-				if (compareParameterIndex.HasValue && methodDescription.GetParameterType(compareParameterIndex.Value) != this.type) continue;
+				if (compareParameterIndex.HasValue && methodDescription.GetParameterType(compareParameterIndex.Value) != this.type)
+				{
+					continue;
+				}
 
-				if (operators == null) operators = new List<MemberDescription>();
+				if (operators == null)
+				{
+					operators = new List<MemberDescription>();
+				}
 				operators.Add(new MemberDescription(this, method));
 			}
 
 			return operators != null ? operators.ToArray() : EmptyMembers;
 		}
-
+		private Expression GetOrCreateDefaultExpression()
+		{
+			if (this.defaultExpression != null)
+			{
+				return this.defaultExpression;
+			}
+			if (this.IsVoid || this.IsByRefLike || this.type.IsPointer)
+			{
+				this.defaultExpression = NullObjectDefaultExpression;
+			}
+			else
+			{
+				try
+				{
+					this.defaultExpression = Expression.Constant(this.IsValueType && this.IsNullable == false ? Activator.CreateInstance(this.type) : null, this.type);
+				}
+				catch
+				{
+					this.defaultExpression = Expression.Constant(null, this.type);
+				}
+			}
+			return this.defaultExpression;
+		}
 		private Dictionary<string, MemberDescription[]> GetMembersByName(ref MemberDescription[] indexers)
 		{
 			var declaredMembers = GetDeclaredMembers(this.type);
@@ -312,6 +350,15 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				offset += array.Length;
 			}
 			return newArray;
+		}
+
+		public static bool HasByRefLikeAttribute(Type type)
+		{
+			return type.GetTypeInfo().GetCustomAttributes(inherit: true).Any(attribute => IsByRefLikeAttributeType(attribute.GetType()));
+		}
+		private static bool IsByRefLikeAttributeType(Type attributeType)
+		{
+			return attributeType.Namespace == "System.Runtime.CompilerServices" && attributeType.Name == "IsByRefLikeAttribute";
 		}
 
 		public MemberDescription[] GetMembers(string memberName)

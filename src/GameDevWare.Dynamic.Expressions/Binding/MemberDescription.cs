@@ -44,6 +44,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public readonly bool IsPropertyOrField;
 		public readonly bool IsStatic;
 		public readonly bool IsImplicitOperator;
+		public readonly bool HasByRefLikeParameters;
 		public readonly Type[] GenericArguments;
 		public readonly int GenericArgumentsCount;
 		public readonly Expression ConstantValueExpression;
@@ -129,6 +130,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					this.genericDefinition = genericMethodDefinition;
 				}
 			}
+
+			this.HasByRefLikeParameters = this.parameters.Any(parameter => TypeDescription.HasByRefLikeAttribute(parameter.ParameterType));
 			this.IsMethod = true;
 			this.IsStatic = method.IsStatic;
 			this.IsImplicitOperator = method.IsSpecialName && this.Name == "op_Implicit";
@@ -148,6 +151,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.hashCode = constructor.GetHashCode();
 			this.GenericArgumentsCount = constructor.IsGenericMethod ? constructor.GetGenericArguments().Length : 0;
 
+			this.HasByRefLikeParameters = this.parameters.Any(parameter => TypeDescription.HasByRefLikeAttribute(parameter.ParameterType));
 			this.IsConstructor = true;
 			this.IsStatic = constructor.IsStatic;
 		}
