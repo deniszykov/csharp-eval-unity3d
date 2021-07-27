@@ -47,7 +47,6 @@ namespace GameDevWare.Dynamic.Expressions
 			this.Count = 0;
 		}
 		public MethodCallSignature(Type parameter1Type, string parameter1Name, Type returnType)
-			: this(returnType)
 		{
 			if (parameter1Type == null) throw new ArgumentNullException("parameter1Type");
 			if (parameter1Name == null) throw new ArgumentNullException("parameter1Name");
@@ -56,10 +55,11 @@ namespace GameDevWare.Dynamic.Expressions
 			this.Parameter1Type = parameter1Type;
 			this.Parameter1Name = parameter1Name;
 
+			this.ReturnType = returnType;
+			this.hashCode = this.ComputeHashCode();
 			this.Count = 1;
 		}
 		public MethodCallSignature(Type parameter1Type, string parameter1Name, Type parameter2Type, string parameter2Name, Type returnType)
-			: this(returnType)
 		{
 			if (parameter1Type == null) throw new ArgumentNullException("parameter1Type");
 			if (parameter2Type == null) throw new ArgumentNullException("parameter2Type");
@@ -73,10 +73,11 @@ namespace GameDevWare.Dynamic.Expressions
 			this.Parameter1Name = parameter1Name;
 			this.Parameter2Name = parameter2Name;
 
+			this.ReturnType = returnType;
+			this.hashCode = this.ComputeHashCode();
 			this.Count = 2;
 		}
 		public MethodCallSignature(Type parameter1Type, string parameter1Name, Type parameter2Type, string parameter2Name, Type parameter3Type, string parameter3Name, Type returnType)
-			: this(returnType)
 		{
 			if (parameter1Type == null) throw new ArgumentNullException("parameter1Type");
 			if (parameter2Type == null) throw new ArgumentNullException("parameter2Type");
@@ -94,10 +95,11 @@ namespace GameDevWare.Dynamic.Expressions
 			this.Parameter2Name = parameter2Name;
 			this.Parameter3Name = parameter3Name;
 
+			this.ReturnType = returnType;
+			this.hashCode = this.ComputeHashCode();
 			this.Count = 3;
 		}
 		public MethodCallSignature(Type parameter1Type, string parameter1Name, Type parameter2Type, string parameter2Name, Type parameter3Type, string parameter3Name, Type parameter4Type, string parameter4Name, Type returnType)
-			: this(returnType)
 		{
 			if (parameter1Type == null) throw new ArgumentNullException("parameter1Type");
 			if (parameter2Type == null) throw new ArgumentNullException("parameter2Type");
@@ -119,6 +121,8 @@ namespace GameDevWare.Dynamic.Expressions
 			this.Parameter3Name = parameter3Name;
 			this.Parameter4Name = parameter4Name;
 
+			this.ReturnType = returnType;
+			this.hashCode = this.ComputeHashCode();
 			this.Count = 4;
 		}
 		public MethodCallSignature(MethodInfo method, bool includeParameterNames = true)
@@ -132,24 +136,20 @@ namespace GameDevWare.Dynamic.Expressions
 
 					this.Parameter4Name = includeParameterNames ?  parameter[3].Name : "";
 					this.Parameter4Type = parameter[3].ParameterType;
-					goto arg3;
+					goto case 3;
 				case 3:
-					arg3:
 					this.Parameter3Name = includeParameterNames ? parameter[2].Name : "";
 					this.Parameter3Type = parameter[2].ParameterType;
-					goto arg2;
+					goto case 2;
 				case 2:
-					arg2:
 					this.Parameter2Name = includeParameterNames ? parameter[1].Name : "";
 					this.Parameter2Type = parameter[1].ParameterType;
-					goto arg1;
+					goto case 1;
 				case 1:
-					arg1:
 					this.Parameter1Name = includeParameterNames ? parameter[0].Name : "";
 					this.Parameter1Type = parameter[0].ParameterType;
-					goto arg0;
+					goto case 0;
 				case 0:
-					arg0:
 					this.ReturnType = method.ReturnType;
 					break;
 				default:
@@ -183,14 +183,14 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			return unchecked
 			(
-				(this.Parameter1Type != null ? this.Parameter1Type.GetHashCode() : 0) +
-				(this.Parameter2Type != null ? this.Parameter2Type.GetHashCode() : 0) +
-				(this.Parameter3Type != null ? this.Parameter3Type.GetHashCode() : 0) +
-				(this.Parameter4Type != null ? this.Parameter4Type.GetHashCode() : 0) +
-				(this.Parameter1Name != null ? this.Parameter1Name.GetHashCode() : 0) +
-				(this.Parameter2Name != null ? this.Parameter2Name.GetHashCode() : 0) +
-				(this.Parameter3Name != null ? this.Parameter3Name.GetHashCode() : 0) +
-				(this.Parameter4Name != null ? this.Parameter4Name.GetHashCode() : 0) +
+				(this.Parameter1Type != null ? this.Parameter1Type.GetHashCode() : 0) * 17 +
+				(this.Parameter2Type != null ? this.Parameter2Type.GetHashCode() : 0) * 17 +
+				(this.Parameter3Type != null ? this.Parameter3Type.GetHashCode() : 0) * 17 +
+				(this.Parameter4Type != null ? this.Parameter4Type.GetHashCode() : 0) * 17 +
+				(this.Parameter1Name != null ? this.Parameter1Name.GetHashCode() : 0) * 17 +
+				(this.Parameter2Name != null ? this.Parameter2Name.GetHashCode() : 0) * 17 +
+				(this.Parameter3Name != null ? this.Parameter3Name.GetHashCode() : 0) * 17 +
+				(this.Parameter4Name != null ? this.Parameter4Name.GetHashCode() : 0) * 17 +
 				this.ReturnType.GetHashCode()
 			);
 		}

@@ -1186,9 +1186,15 @@
             Get hash code of syntax tree.
             </summary>
         </member>
+        <member name="M:GameDevWare.Dynamic.Expressions.SyntaxTreeNode.ToCSharpExpression">
+            <summary>
+            Format syntax tree as a C# expression. Throw exceptions if exception could not be formed.
+            </summary>
+            <returns>C# Expression.</returns>
+        </member>
         <member name="M:GameDevWare.Dynamic.Expressions.SyntaxTreeNode.ToString">
             <summary>
-            Renders syntax tree as C# expression.
+            Format syntax tree as C# expression.
             </summary>
         </member>
         <member name="T:GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions">

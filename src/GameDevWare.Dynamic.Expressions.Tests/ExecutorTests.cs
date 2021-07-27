@@ -934,16 +934,16 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt32)-1)", unchecked((uint)-1))]
 		[InlineData("unchecked((UInt64)-1)", unchecked((ulong)-1))]
 		// byte
-		[InlineData("unchecked((Byte)(Byte)-1000)", unchecked(((byte)-1000)))]
+		[InlineData("unchecked((Byte)(Byte)-1000)", unchecked((byte)(byte)-1000))]
 		[InlineData("unchecked((Byte)(SByte)-1000)", unchecked((byte)(sbyte)-1000))]
-		[InlineData("unchecked((Byte)(Int16)-1000)", unchecked((byte)-1000))]
+		[InlineData("unchecked((Byte)(Int16)-1000)", unchecked((byte)(short)-1000))]
 		[InlineData("unchecked((Byte)(UInt16)-1000)", unchecked((byte)(ushort)-1000))]
-		[InlineData("unchecked((Byte)(Int32)-1000)", unchecked((byte)-1000))]
+		[InlineData("unchecked((Byte)(Int32)-1000)", unchecked((byte)(int)-1000))]
 		[InlineData("unchecked((Byte)(UInt32)-1000)", unchecked((byte)(uint)-1000))]
-		[InlineData("unchecked((Byte)(Int64)-1000)", unchecked((byte)-1000))]
+		[InlineData("unchecked((Byte)(Int64)-1000)", unchecked((byte)(long)-1000))]
 		[InlineData("unchecked((Byte)(UInt64)-1000)", unchecked((byte)(ulong)-1000))]
 		[InlineData("unchecked((Byte)(Single)-1000)", unchecked((byte)(float)-1000))]
-		[InlineData("unchecked((Byte)(Double)-1000)", unchecked((byte)-1000))]
+		[InlineData("unchecked((Byte)(Double)-1000)", unchecked((byte)(double)-1000))]
 		// signed byte
 		[InlineData("unchecked((SByte)(Byte)-1000)", unchecked((sbyte)(byte)-1000))]
 		[InlineData("unchecked((SByte)(SByte)-1000)", unchecked(((sbyte)-1000)))]
@@ -954,7 +954,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((SByte)(Int64)-1000)", unchecked((sbyte)-1000))]
 		[InlineData("unchecked((SByte)(UInt64)-1000)", unchecked((sbyte)(ulong)-1000))]
 		[InlineData("unchecked((SByte)(Single)-1000)", unchecked((sbyte)(float)-1000))]
-		[InlineData("unchecked((SByte)(Double)-1000)", unchecked((sbyte)-1000))]
+		[InlineData("unchecked((SByte)(Double)-1000)", unchecked((sbyte)(double)-1000))]
 		// int16
 		[InlineData("unchecked((Int16)(Byte)-1000)", unchecked((short)(byte)-1000))]
 		[InlineData("unchecked((Int16)(SByte)-1000)", unchecked((short)(sbyte)-1000))]
@@ -976,7 +976,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt16)(Int64)-1000)", unchecked((ushort)-1000))]
 		[InlineData("unchecked((UInt16)(UInt64)-1000)", unchecked((ushort)(ulong)-1000))]
 		[InlineData("unchecked((UInt16)(Single)-1000)", unchecked((ushort)(float)-1000))]
-		[InlineData("unchecked((UInt16)(Double)-1000)", unchecked((ushort)-1000))]
+		[InlineData("unchecked((UInt16)(Double)-1000)", unchecked((ushort)(double)-1000))]
 		// int32
 		[InlineData("unchecked((Int32)(Byte)-1000)", unchecked((int)(byte)-1000))]
 		[InlineData("unchecked((Int32)(SByte)-1000)", unchecked((int)(sbyte)-1000))]
@@ -987,7 +987,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Int32)(Int64)-1000)", unchecked((-1000)))]
 		[InlineData("unchecked((Int32)(UInt64)-1000)", unchecked((int)(ulong)-1000))]
 		[InlineData("unchecked((Int32)(Single)-1000)", unchecked((-1000)))]
-		[InlineData("unchecked((Int32)(Double)-1000)", unchecked((-1000)))]
+		[InlineData("unchecked((Int32)(Double)-1000)", unchecked(((double)-1000)))]
 		// unsigned int32
 		[InlineData("unchecked((UInt32)(Byte)-1000)", unchecked((uint)(byte)-1000))]
 		[InlineData("unchecked((UInt32)(SByte)-1000)", unchecked((uint)(sbyte)-1000))]
@@ -998,7 +998,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt32)(Int64)-1000)", unchecked((uint)-1000))]
 		[InlineData("unchecked((UInt32)(UInt64)-1000)", unchecked((uint)(ulong)-1000))]
 		[InlineData("unchecked((UInt32)(Single)-1000)", unchecked((uint)(float)-1000))]
-		[InlineData("unchecked((UInt32)(Double)-1000)", unchecked((uint)-1000))]
+		[InlineData("unchecked((UInt32)(Double)-1000)", unchecked((uint)(double)-1000))]
 		// int64
 		[InlineData("unchecked((Int64)(Byte)-1000)", unchecked((long)(byte)-1000))]
 		[InlineData("unchecked((Int64)(SByte)-1000)", unchecked((long)(sbyte)-1000))]
@@ -1020,7 +1020,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt64)(Int64)-1000)", unchecked((ulong)-1000))]
 		[InlineData("unchecked((UInt64)(UInt64)-1000)", unchecked(((ulong)-1000)))]
 		[InlineData("unchecked((UInt64)(Single)-1000)", unchecked((ulong)(float)-1000))]
-		[InlineData("unchecked((UInt64)(Double)-1000)", unchecked((ulong)-1000))]
+		[InlineData("unchecked((UInt64)(Double)-1000)", unchecked((ulong)(double)-1000))]
 		// single
 		[InlineData("unchecked((Single)(Byte)-1000)", unchecked((float)(byte)-1000))]
 		[InlineData("unchecked((Single)(SByte)-1000)", unchecked((float)(sbyte)-1000))]
@@ -1042,7 +1042,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Double)(Int64)-1000)", unchecked((double)-1000))]
 		[InlineData("unchecked((Double)(UInt64)-1000)", unchecked((double)(ulong)-1000))]
 		[InlineData("unchecked((Double)(Single)-1000)", unchecked((double)(float)-1000))]
-		[InlineData("unchecked((Double)(Double)-1000)", unchecked(((double)-1000)))]
+		[InlineData("unchecked((Double)(Double)-1000)", unchecked(((double)(double)-1000)))]
 		public void NumberConversion(string expression, object expected)
 		{
 			var expectedType = expected?.GetType() ?? typeof(object);
