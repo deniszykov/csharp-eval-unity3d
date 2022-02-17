@@ -39,6 +39,7 @@ namespace GameDevWare.Dynamic.Expressions
 			// AOT
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
+				JitSupportDetector.IsDynamicCompilationAvailable();
 				System.Linq.Expressions.ExpressionExtensions.CompileAot(default(System.Linq.Expressions.Expression<System.Action>), default(System.Boolean));
 				GameDevWare.Dynamic.Expressions.AotCompilation.RegisterAction();
 				var field_33554435_67108865 = GameDevWare.Dynamic.Expressions.AotCompilation.IsAotRuntime;

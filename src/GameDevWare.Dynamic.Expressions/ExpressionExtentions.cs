@@ -38,7 +38,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TResult>();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareFunc<TResult>(expression.Body);
 			else
 				return expression.Compile();
@@ -57,7 +57,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TArg1, TResult>();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareFunc<TArg1, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -77,7 +77,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TArg1, TArg2, TResult>();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareFunc<TArg1, TArg2, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -98,7 +98,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TArg1, TArg2, TArg3, TResult>();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareFunc<TArg1, TArg2, TArg3, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -120,7 +120,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterFunc<TArg1, TArg2, TArg3, TArg4, TResult>();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareFunc<TArg1, TArg2, TArg3, TArg4, TResult>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -138,7 +138,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterAction();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareAction(expression.Body);
 			else
 				return expression.Compile();
@@ -156,7 +156,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterAction<TArg1>();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareAction<TArg1>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -175,7 +175,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterAction<TArg1, TArg2>();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareAction<TArg1, TArg2>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -195,7 +195,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterAction<TArg1, TArg2, TArg3>();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareAction<TArg1, TArg2, TArg3>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
@@ -216,7 +216,7 @@ namespace System.Linq.Expressions
 
 			AotCompilation.RegisterAction<TArg1, TArg2, TArg3, TArg4>();
 
-			if (AotCompilation.IsAotRuntime || forceAot)
+			if (!JitSupportDetector.IsDynamicCompilationAvailable() || forceAot)
 				return AotCompiler.PrepareAction<TArg1, TArg2, TArg3, TArg4>(expression.Body, expression.Parameters);
 			else
 				return expression.Compile();
