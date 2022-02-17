@@ -942,8 +942,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Byte)(UInt32)-1000)", unchecked((byte)(uint)-1000))]
 		[InlineData("unchecked((Byte)(Int64)-1000)", unchecked((byte)(long)-1000))]
 		[InlineData("unchecked((Byte)(UInt64)-1000)", unchecked((byte)(ulong)-1000))]
-		[InlineData("unchecked((Byte)(Single)-1000)", unchecked((byte)(float)-1000))]
-		[InlineData("unchecked((Byte)(Double)-1000)", unchecked((byte)(double)-1000))]
 		// signed byte
 		[InlineData("unchecked((SByte)(Byte)-1000)", unchecked((sbyte)(byte)-1000))]
 		[InlineData("unchecked((SByte)(SByte)-1000)", unchecked(((sbyte)-1000)))]
@@ -953,8 +951,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((SByte)(UInt32)-1000)", unchecked((sbyte)(uint)-1000))]
 		[InlineData("unchecked((SByte)(Int64)-1000)", unchecked((sbyte)-1000))]
 		[InlineData("unchecked((SByte)(UInt64)-1000)", unchecked((sbyte)(ulong)-1000))]
-		[InlineData("unchecked((SByte)(Single)-1000)", unchecked((sbyte)(float)-1000))]
-		[InlineData("unchecked((SByte)(Double)-1000)", unchecked((sbyte)(double)-1000))]
 		// int16
 		[InlineData("unchecked((Int16)(Byte)-1000)", unchecked((short)(byte)-1000))]
 		[InlineData("unchecked((Int16)(SByte)-1000)", unchecked((short)(sbyte)-1000))]
@@ -975,8 +971,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt16)(UInt32)-1000)", unchecked((ushort)(uint)-1000))]
 		[InlineData("unchecked((UInt16)(Int64)-1000)", unchecked((ushort)-1000))]
 		[InlineData("unchecked((UInt16)(UInt64)-1000)", unchecked((ushort)(ulong)-1000))]
-		[InlineData("unchecked((UInt16)(Single)-1000)", unchecked((ushort)(float)-1000))]
-		[InlineData("unchecked((UInt16)(Double)-1000)", unchecked((ushort)(double)-1000))]
+		[InlineData("unchecked((UInt16)(Single)1000)", unchecked((ushort)(float)1000))]
+		[InlineData("unchecked((UInt16)(Double)1000)", unchecked((ushort)(double)1000))]
 		// int32
 		[InlineData("unchecked((Int32)(Byte)-1000)", unchecked((int)(byte)-1000))]
 		[InlineData("unchecked((Int32)(SByte)-1000)", unchecked((int)(sbyte)-1000))]
@@ -997,8 +993,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt32)(UInt32)-1000)", unchecked(((uint)-1000)))]
 		[InlineData("unchecked((UInt32)(Int64)-1000)", unchecked((uint)-1000))]
 		[InlineData("unchecked((UInt32)(UInt64)-1000)", unchecked((uint)(ulong)-1000))]
-		[InlineData("unchecked((UInt32)(Single)-1000)", unchecked((uint)(float)-1000))]
-		[InlineData("unchecked((UInt32)(Double)-1000)", unchecked((uint)(double)-1000))]
+		[InlineData("unchecked((UInt32)(Single)1000)", unchecked((uint)(float)1000))]
+		[InlineData("unchecked((UInt32)(Double)1000)", unchecked((uint)(double)1000))]
 		// int64
 		[InlineData("unchecked((Int64)(Byte)-1000)", unchecked((long)(byte)-1000))]
 		[InlineData("unchecked((Int64)(SByte)-1000)", unchecked((long)(sbyte)-1000))]
@@ -1019,11 +1015,9 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt64)(UInt32)-1000)", unchecked((ulong)(uint)-1000))]
 		[InlineData("unchecked((UInt64)(Int64)-1000)", unchecked((ulong)-1000))]
 		[InlineData("unchecked((UInt64)(UInt64)-1000)", unchecked(((ulong)-1000)))]
-		[InlineData("unchecked((UInt64)(Single)-1000)", unchecked((ulong)(float)-1000))]
-		[InlineData("unchecked((UInt64)(Double)-1000)", unchecked((ulong)(double)-1000))]
+		[InlineData("unchecked((UInt64)(Single)1000)", unchecked((ulong)(float)1000))]
+		[InlineData("unchecked((UInt64)(Double)1000)", unchecked((ulong)(double)1000))]
 		// single
-		[InlineData("unchecked((Single)(Byte)-1000)", unchecked((float)(byte)-1000))]
-		[InlineData("unchecked((Single)(SByte)-1000)", unchecked((float)(sbyte)-1000))]
 		[InlineData("unchecked((Single)(Int16)-1000)", unchecked((float)-1000))]
 		[InlineData("unchecked((Single)(UInt16)-1000)", unchecked((float)(ushort)-1000))]
 		[InlineData("unchecked((Single)(Int32)-1000)", unchecked((float)-1000))]
@@ -1033,8 +1027,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Single)(Single)-1000)", unchecked(((float)-1000)))]
 		[InlineData("unchecked((Single)(Double)-1000)", unchecked((float)(double)-1000))]
 		// double
-		[InlineData("unchecked((Double)(Byte)-1000)", unchecked((double)(byte)-1000))]
-		[InlineData("unchecked((Double)(SByte)-1000)", unchecked((double)(sbyte)-1000))]
 		[InlineData("unchecked((Double)(Int16)-1000)", unchecked((double)-1000))]
 		[InlineData("unchecked((Double)(UInt16)-1000)", unchecked((double)(ushort)-1000))]
 		[InlineData("unchecked((Double)(Int32)-1000)", unchecked((double)-1000))]
