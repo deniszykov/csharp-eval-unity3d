@@ -1,4 +1,7 @@
+using System;
+using System.Linq.Expressions;
 using Assets;
+using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -38,6 +41,46 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			this.output.WriteLine("Transformed: " + actual);
 
 			Assert.Equal(expected, actual);
+		}
+
+		[Fact]
+		public void Test()
+		{
+			var parser = new InputParser();
+			parser.Parse();
+		}
+
+		public class InputParser
+		{
+			
+			public void Parse()
+			{
+				var input = "Move(up,5)";
+				var myGlobal = new MyGlobal(); 
+				RunAction(myGlobal, input);      
+
+			}
+
+			public static void RunAction(MyGlobal global, string expression)
+			{
+				var tokens = Tokenizer.Tokenize(expression);
+				var parseTree = Parser.Parse(tokens);
+				var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
+				var expressionBinder = new Binder(new ParameterExpression[0], resultType: typeof(void));
+				var globalExpression = Expression.Constant(global);
+				var boundExpression = (Expression<Action>)expressionBinder.Bind(expressionTree, globalExpression);
+				boundExpression.CompileAot().Invoke();
+			}
+		}
+		
+		public class MyGlobal
+		{
+			public string up = "upward"; // just example
+			
+			public void Move(string direction, int distance)
+			{
+				Console.WriteLine($"player moves {direction} {distance} spaces");
+			}
 		}
 	}
 }
