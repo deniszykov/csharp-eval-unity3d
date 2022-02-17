@@ -1,3 +1,6 @@
+# 2.2.8
+- made AotCompilation.IsAotRuntime is mutable, this will allow to signal for AOT runtime and suppress further checks.
+
 # 2.2.7
 - added public CSharpExpression.Format method for SyntaxTreeNode
 

@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net35;net45;netstandard1.3;netcoreapp2.0</TargetFrameworks>
 		<Authors>Denis Zykov</Authors>
-		<Version>2.2.7</Version>
+		<Version>2.2.8</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions</PackageId>
 		<Product>GameDevWare.Dynamic.Expressions</Product>
 		<Description>C# expression parsing and execution library. 
@@ -114,5 +114,7 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 		
 		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2017/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2017/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 	</Target>
 </Project>

@@ -117,6 +117,15 @@ You can ensure that your generic [Func<>](https://msdn.microsoft.com/en-us/libra
 AotCompilation.RegisterFunc<int, bool>(); // will enable Func<int, bool> lambdas anywhere in expressions
 ```
 
+### Unity 2020.3.2 Issues
+This version of Unity has runtime bug related to lambda compilation. Please use following workaround for IL2CPP/AOT runtime:
+```cs
+#if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR)
+GameDevWare.Dynamic.Expressions.AotCompilation.IsAotRuntime = true;
+#endif
+```
+
+
 **Improving Performance**
 
 You can improve the performance of methods invocation by registering their signatures in **AotCompilation.RegisterForFastCall()**. 
