@@ -1,8 +1,10 @@
 [![Actions Status](https://github.com/deniszykov/csharp-eval-unity3d/workflows/dotnet_build/badge.svg)](https://github.com/deniszykov/csharp-eval-unity3d/actions)
 
-# Introduction
+# Licensing
 
-**Attention!** This is a paid [package](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706), you can use it anywhere if you [purchased it](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706).
+This is a paid [package](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706), you can use it anywhere if you [purchased it](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706).
+
+# Introduction
 
 This package provides the API for parsing and expression execution written in C#. It is specially designed to work with the [Unity](http://unity3d.com/) on various platforms. Since it is written in C# 3.5 and has no additional dependencies, it should work with any version of Unity (and .NET framework).
 
@@ -12,7 +14,9 @@ It is tested to work on:
 * WebGL
 * PC/Mac
 
-It should work on any other platforms. For AOT execution platforms (iOS, WebGL) a [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) should be added to project's root directory. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
+It should work on any other platforms. 
+
+> :warning: For AOT execution platforms (**iOS, WebGL, IL2CPP**) a [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) should be added to project's root directory. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
 
 **API**
 * CSharpExpression
@@ -82,7 +86,7 @@ If you want to access all types in **UnityEngine** you can pass custom **Assembl
 var typeResolver = new AssemblyTypeResolver(typeof(UnityEngine.Application).Assembly);
 ```
 
-For security reasons any member invocation on **System.Type** will throw exceptions until **System.Type** is added as known type.
+> ℹ️ For security reasons any member invocation on **System.Type** will throw exceptions until **System.Type** is added as known type.
 
 ## AOT Execution
 You can compile and evaluate expression created by **System.Linq.Expression** and execute it in AOT environment where it is usually impossible. 
@@ -99,7 +103,7 @@ iOS, WebGL and most console platforms use AOT compilation which imposes followin
 * only **Expression&lt;Func&lt;...&gt;&gt;** could be used with **CompileAot()** and Lambda types
 * only static methods using primitives (int, float, string, object ...) are optimized for fast calls
 * all used classes/methods/properties should be visible to [Unity's static code analyser](https://docs.unity3d.com/Manual/ScriptingRestrictions.html)
-* :grey_exclamation: An additional preparation should be made for AOT execution platforms. This [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) should be added in project's root folder. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
+* ⚠️ An additional preparation should be made for AOT execution platforms. This [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) should be added in project's root folder. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
 
 **See Also**
 * [AOT Exception Patterns and Hacks](https://github.com/neuecc/UniRx/wiki/AOT-Exception-Patterns-and-Hacks)
