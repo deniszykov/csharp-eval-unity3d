@@ -4,7 +4,7 @@
 		<OutputType>Library</OutputType>
 	</PropertyGroup>
 	<PropertyGroup>
-		<TargetFrameworks>net461;netcoreapp2.1</TargetFrameworks>
+		<TargetFrameworks>net461;net5.0</TargetFrameworks>
 		<Authors>Denis Zykov</Authors>
 		<Version>0.0.0</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions.Tests</PackageId>
