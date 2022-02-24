@@ -99,7 +99,7 @@ iOS, WebGL and most console platforms use AOT compilation which imposes followin
 * only **Expression&lt;Func&lt;...&gt;&gt;** could be used with **CompileAot()** and Lambda types
 * only static methods using primitives (int, float, string, object ...) are optimized for fast calls
 * all used classes/methods/properties should be visible to [Unity's static code analyser](https://docs.unity3d.com/Manual/ScriptingRestrictions.html)
-* :grey_exclamation: An additional preparation should be made for AOT execution platforms. This [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) should be added in project's root folder. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
+* :grey_exclamation: An additional preparation should be made for AOT execution platforms. This [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) should be added in project's root folder. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
 
 **See Also**
 * [AOT Exception Patterns and Hacks](https://github.com/neuecc/UniRx/wiki/AOT-Exception-Patterns-and-Hacks)
