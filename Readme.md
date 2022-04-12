@@ -72,9 +72,9 @@ Enumerations are supported.
 **Known Types**
 
 For security reasons the parser does not provide access to any types except:
-* argument types
+* types used in arguments
 * primitive types
-* Math, Array, Func<> (up to 4 arguments) types
+* `Math`, `Array`, `Func<>` types
 
 To access other types your should pass **typeResolver** parameter in **Parse** and **Evaluate** method:
 ```csharp
@@ -86,7 +86,7 @@ If you want to access all types in **UnityEngine** you can pass custom **Assembl
 var typeResolver = new AssemblyTypeResolver(typeof(UnityEngine.Application).Assembly);
 ```
 
-> ℹ️ For security reasons any member invocation on **System.Type** will throw exceptions until **System.Type** is added as known type.
+> ℹ️ For security reasons any method/property calls on **System.Type** will throw exceptions until **System.Type** is added as known type.
 
 ## AOT Execution
 You can compile and evaluate expression created by **System.Linq.Expression** and execute it in AOT environment where it is usually impossible. 
@@ -100,8 +100,8 @@ fn(); // -> Vector3(1.0f, 1.0f, 1.0f)
 
 iOS, WebGL and most console platforms use AOT compilation which imposes following restrictions on the dynamic code execution:
 
-* only **Expression&lt;Func&lt;...&gt;&gt;** could be used with **CompileAot()** and Lambda types
-* only static methods using primitives (int, float, string, object ...) are optimized for fast calls
+* only **Expression&lt;Func&lt;...&gt;&gt;** delegate type could be used with **CompileAot()**.
+* only static methods using primitives (int, float, string, object ...) are optimized for fast calls, others are called with reflection.
 * all used classes/methods/properties should be visible to [Unity's static code analyser](https://docs.unity3d.com/Manual/ScriptingRestrictions.html)
 * ⚠️ An additional preparation should be made for AOT execution platforms. This [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) should be added in project's root folder. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
 
@@ -111,11 +111,11 @@ iOS, WebGL and most console platforms use AOT compilation which imposes followin
 
 ### WebGL and iOS
 
-* Only [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) (up to 4 arguments) Lambdas are supported
-* Instance methods invocation performs slowly due reflection
+* Only [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) (up to 4 arguments) lambdas are supported with `CompileAot()`.
+* Instance methods calls performs slowly due reflection
 * Moderate boxing for value types (see roadmap)
 
-You can ensure that your generic [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) pass AOT compilation by registering it with **AotCompilation.RegisterFunc**
+You can prepare [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) lambda for AOT compilation/execution by registering it with **AotCompilation.RegisterFunc**.
 
 ```csharp
 AotCompilation.RegisterFunc<int, bool>(); // will enable Func<int, bool> lambdas anywhere in expressions
