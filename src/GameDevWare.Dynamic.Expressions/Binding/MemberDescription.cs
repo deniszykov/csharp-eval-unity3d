@@ -124,7 +124,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				}
 				else
 				{
-					if (genericMethodDefinition == null) throw new ArgumentNullException("genericMethodDefinition");
+					if (genericMethodDefinition == null)
+					{
+						genericMethodDefinition = new MemberDescription(declaringType, method.GetGenericMethodDefinition());
+					}
 
 					this.methodInstantiations = genericMethodDefinition.methodInstantiations;
 					this.genericDefinition = genericMethodDefinition;
@@ -203,7 +206,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var instantiatedMethod = ((MethodInfo)this.genericDefinition).MakeGenericMethod(genericArguments);
 			instantiatedMethodDescription = new MemberDescription(this.DeclaringType, instantiatedMethod, this.genericDefinition);
 			lock (this.methodInstantiations)
+			{
 				this.methodInstantiations[key] = instantiatedMethodDescription;
+			}
 			return instantiatedMethodDescription;
 		}
 

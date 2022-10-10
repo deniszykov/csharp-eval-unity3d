@@ -1,6 +1,7 @@
 using System;
-using System.Linq.Expressions;
+#if !NETSTANDARD1_3
 using System.Reflection.Emit;
+#endif
 
 namespace GameDevWare.Dynamic.Expressions
 {
@@ -20,12 +21,11 @@ namespace GameDevWare.Dynamic.Expressions
 				return IsDynamicCompilationResult.Value;
 			}
 
-
 			try
 			{
 #if NETSTANDARD1_3
 				// check lambdas are supported
-				Expression.Lambda<Func<bool>>(Expression.Constant(true)).Compile();
+				System.Linq.Expressions.Expression.Lambda<Func<bool>>(System.Linq.Expressions.Expression.Constant(true)).Compile();
 #else
 				// check dynamic methods are supported
 				var voidDynamicMethod = new DynamicMethod("TestVoidMethod", typeof(void), Type.EmptyTypes, restrictedSkipVisibility: true);

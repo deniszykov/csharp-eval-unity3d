@@ -93,7 +93,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				typeof(char?), typeof(string), typeof(float?), typeof(double?), typeof(decimal?),
 				typeof(byte?), typeof(sbyte?), typeof(short?), typeof(ushort?), typeof(int?), typeof(uint?),
 				typeof(long?), typeof(ulong?), typeof(Enum), typeof(MulticastDelegate)
-			}, t => GetTypeDescription(t));
+			}, GetTypeDescription);
 		}
 		public TypeDescription(Type type, TypeCache cache)
 		{
@@ -102,7 +102,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			this.type = type;
 			this.hashCode = type.GetHashCode();
-			this.Name = TypeNameUtils.RemoveGenericSuffix(TypeNameUtils.GetCSharpName(type)).ToString();
+			this.Name = TypeNameUtils.RemoveGenericSuffix(type.GetCSharpName()).ToString();
 
 			cache.Add(type, this);
 
@@ -185,7 +185,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			for (var i = 0; i < methods.Count; i++)
 			{
 				var method = methods[i];
-				if (method.Name != operatorName)
+				if (method.Name != operatorName || method.IsGenericMethod)
 				{
 					continue;
 				}
@@ -205,7 +205,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				{
 					operators = new List<MemberDescription>();
 				}
-				operators.Add(new MemberDescription(this, method));
+				operators.Add(methodDescription);
 			}
 
 			return operators != null ? operators.ToArray() : EmptyMembers;
