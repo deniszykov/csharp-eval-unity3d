@@ -1,3 +1,6 @@
+# 2.2.9
+fix: fixed error with instantiated generic method on types (which is impossible in normal conditions, but fine for Unity AOT runtime).
+
 # 2.2.8
 - made AotCompilation.IsAotRuntime is mutable, this will allow to signal for AOT runtime and suppress further checks.
 
