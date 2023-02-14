@@ -74,7 +74,7 @@ namespace GameDevWare.Dynamic.Expressions
 				typeof(UnityEngine.Quaternion),
 				typeof(UnityEngine.Vector4),
 				typeof(UnityEngine.Vector3),
-				typeof(UnityEngine.Vector3),
+				typeof(UnityEngine.Vector2),
 				typeof(UnityEngine.Color),
 				typeof(UnityEngine.Color32),
 				typeof(UnityEngine.Matrix4x4),
