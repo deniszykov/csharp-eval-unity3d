@@ -302,7 +302,7 @@ Install-Package GameDevWare.Dynamic.Expressions
 ```
 Unity:
 
-[Package at Unity Asset Store](https://www.assetstore.unity3d.com/en/#!/content/56706)
+[Package at Unity Asset Store](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706)
 
 ## Contacts
 Please send any questions at support@gamedevware.com
