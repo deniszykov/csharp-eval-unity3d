@@ -274,7 +274,7 @@
             Binds specified syntax tree to concrete types and optional context.
             </summary>
             <param name="node">Syntax tree. Not null.</param>
-            <param name="global">Context expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns></returns>
         </member>
         <member name="M:GameDevWare.Dynamic.Expressions.Binder.ToString">
@@ -287,39 +287,40 @@
         </member>
         <member name="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.DEFAULT_CHECKED_SCOPE">
             <summary>
-            Default value of "checked scope" parameter for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``1(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``1(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> methods.
+            Default value of "checked scope" parameter for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``1(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``1(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> methods.
             </summary>
         </member>
         <member name="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME">
             <summary>
-            Default name of first argument for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``2(System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``2(System.String,``0,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> methods.
+            Default name of first argument for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``2(System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``2(System.String,``0,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> methods.
             </summary>
         </member>
         <member name="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME">
             <summary>
-            Default name of second argument for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``3(System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``3(System.String,``0,``1,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> methods.
+            Default name of second argument for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``3(System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``3(System.String,``0,``1,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> methods.
             </summary>
         </member>
         <member name="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME">
             <summary>
-            Default name of third argument for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``4(System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``4(System.String,``0,``1,``2,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> methods.
+            Default name of third argument for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``4(System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``4(System.String,``0,``1,``2,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> methods.
             </summary>
         </member>
         <member name="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG4_DEFAULT_NAME">
             <summary>
-            Default name of fourth argument for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``5(System.String,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``5(System.String,``0,``1,``2,``3,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)"/> methods.
+            Default name of fourth argument for <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``5(System.String,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> and <see cref="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``5(System.String,``0,``1,``2,``3,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)"/> methods.
             </summary>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``1(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``1(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Evaluate specified C# expression and return result.
             </summary>
             <typeparam name="ResultT">Result type.</typeparam>
             <param name="expression">A valid c# expression. Not null, not empty string.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``2(System.String,``0,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``2(System.String,``0,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Evaluate specified C# expression and return result.
             </summary>
@@ -329,9 +330,10 @@
             <param name="arg1">First argument value.</param>
             <param name="arg1Name">First argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``3(System.String,``0,``1,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``3(System.String,``0,``1,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Evaluate specified C# expression and return result.
             </summary>
@@ -344,9 +346,10 @@
             <param name="arg1Name">First argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg2Name">Second argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``4(System.String,``0,``1,``2,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``4(System.String,``0,``1,``2,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Evaluate specified C# expression and return result.
             </summary>
@@ -362,9 +365,10 @@
             <param name="arg2Name">Second argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg3Name">Third argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``5(System.String,``0,``1,``2,``3,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Evaluate``5(System.String,``0,``1,``2,``3,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Evaluate specified C# expression and return result.
             </summary>
@@ -383,17 +387,19 @@
             <param name="arg3Name">Third argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg4Name">Fourth argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG4_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Executes specified C# expression.
             </summary>
             <param name="expression">A valid c# expression. Not null, not empty string.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute``1(System.String,``0,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute``1(System.String,``0,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Executes specified C# expression.
             </summary>
@@ -402,9 +408,10 @@
             <param name="arg1">First argument value.</param>
             <param name="arg1Name">First argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute``2(System.String,``0,``1,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute``2(System.String,``0,``1,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Executes specified C# expression.
             </summary>
@@ -416,9 +423,10 @@
             <param name="arg1Name">First argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg2Name">Second argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute``3(System.String,``0,``1,``2,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute``3(System.String,``0,``1,``2,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Executes specified C# expression.
             </summary>
@@ -433,9 +441,10 @@
             <param name="arg2Name">Second argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg3Name">Third argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute``4(System.String,``0,``1,``2,``3,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute``4(System.String,``0,``1,``2,``3,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Executes specified C# expression.
             </summary>
@@ -453,6 +462,7 @@
             <param name="arg3Name">Third argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg4Name">Fourth argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG4_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>Evaluated value.</returns>
         </member>
         <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Parse``1(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
@@ -520,16 +530,17 @@
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``1(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``1(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
             <typeparam name="ResultT">Result type.</typeparam>
             <param name="expression">A valid c# expression. Not null, not empty string.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``2(System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``2(System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
@@ -538,9 +549,10 @@
             <param name="expression">A valid c# expression. Not null, not empty string.</param>
             <param name="arg1Name">First argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``3(System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``3(System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
@@ -551,9 +563,10 @@
             <param name="arg1Name">First argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg2Name">Second argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``4(System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``4(System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
@@ -566,9 +579,10 @@
             <param name="arg2Name">Second argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg3Name">Third argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``5(System.String,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseFunc``5(System.String,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
@@ -583,17 +597,19 @@
             <param name="arg3Name">Third argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg4Name">Fourth argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG4_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction(System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
             <param name="expression">A valid c# expression. Not null, not empty string.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction``1(System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction``1(System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
@@ -601,9 +617,10 @@
             <param name="expression">A valid c# expression. Not null, not empty string.</param>
             <param name="arg1Name">First argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction``2(System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction``2(System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
@@ -613,9 +630,10 @@
             <param name="arg1Name">First argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg2Name">Second argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction``3(System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction``3(System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
@@ -627,9 +645,10 @@
             <param name="arg2Name">Second argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg3Name">Third argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
-        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction``4(System.String,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver)">
+        <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction``4(System.String,System.String,System.String,System.String,System.String,GameDevWare.Dynamic.Expressions.ITypeResolver,System.Linq.Expressions.Expression)">
             <summary>
             Parses specified C# expression and returns <see cref="T:System.Linq.Expressions.Expression`1"/> which could be compiled with <see cref="M:System.Linq.Expressions.ExpressionExtensions.CompileAot``1(System.Linq.Expressions.Expression{System.Func{``0}},System.Boolean)"/> and executed.
             </summary>
@@ -643,6 +662,7 @@
             <param name="arg3Name">Third argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME"/> if not specified.</param>
             <param name="arg4Name">Fourth argument name or <see cref="F:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG4_DEFAULT_NAME"/> if not specified.</param>
             <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="F:GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver"/> if not specified.</param>
+            <param name="global">Global object expression. Can be null. Usually <see cref="M:System.Linq.Expressions.Expression.Constant(System.Object)"/>.</param>
             <returns>A parsed and bound syntax tree.</returns>
         </member>
         <member name="M:GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Format(System.Linq.Expressions.Expression,System.Boolean)">
