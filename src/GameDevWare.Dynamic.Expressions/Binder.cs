@@ -121,7 +121,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// Binds specified syntax tree to concrete types and optional context.
 		/// </summary>
 		/// <param name="node">Syntax tree. Not null.</param>
-		/// <param name="global">Context expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns></returns>
 		public LambdaExpression Bind(SyntaxTreeNode node, Expression global = null)
 		{

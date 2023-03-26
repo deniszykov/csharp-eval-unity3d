@@ -53,10 +53,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <typeparam name="ResultT">Result type.</typeparam>
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static ResultT Evaluate<ResultT>(string expression, ITypeResolver typeResolver = null)
+		public static ResultT Evaluate<ResultT>(string expression, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseFunc<ResultT>(expression, typeResolver).CompileAot();
+			var func = ParseFunc<ResultT>(expression, typeResolver, global).CompileAot();
 			var result = func.Invoke();
 			return result;
 		}
@@ -69,10 +70,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg1">First argument value.</param>
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static ResultT Evaluate<Arg1T, ResultT>(string expression, Arg1T arg1, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static ResultT Evaluate<Arg1T, ResultT>(string expression, Arg1T arg1, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseFunc<Arg1T, ResultT>(expression, arg1Name, typeResolver).CompileAot();
+			var func = ParseFunc<Arg1T, ResultT>(expression, arg1Name, typeResolver, global).CompileAot();
 			var result = func.Invoke(arg1);
 			return result;
 		}
@@ -88,10 +90,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static ResultT Evaluate<Arg1T, Arg2T, ResultT>(string expression, Arg1T arg1, Arg2T arg2, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static ResultT Evaluate<Arg1T, Arg2T, ResultT>(string expression, Arg1T arg1, Arg2T arg2, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseFunc<Arg1T, Arg2T, ResultT>(expression, arg1Name, arg2Name, typeResolver).CompileAot();
+			var func = ParseFunc<Arg1T, Arg2T, ResultT>(expression, arg1Name, arg2Name, typeResolver, global).CompileAot();
 			var result = func.Invoke(arg1, arg2);
 			return result;
 		}
@@ -110,10 +113,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static ResultT Evaluate<Arg1T, Arg2T, Arg3T, ResultT>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static ResultT Evaluate<Arg1T, Arg2T, Arg3T, ResultT>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseFunc<Arg1T, Arg2T, Arg3T, ResultT>(expression, arg1Name, arg2Name, arg3Name, typeResolver).CompileAot();
+			var func = ParseFunc<Arg1T, Arg2T, Arg3T, ResultT>(expression, arg1Name, arg2Name, arg3Name, typeResolver, global).CompileAot();
 			var result = func.Invoke(arg1, arg2, arg3);
 			return result;
 		}
@@ -135,10 +139,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg4Name">Fourth argument name or <see cref="ARG4_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static ResultT Evaluate<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, Arg4T arg4, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static ResultT Evaluate<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, Arg4T arg4, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(expression, arg1Name, arg2Name, arg3Name, arg4Name, typeResolver).CompileAot();
+			var func = ParseFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(expression, arg1Name, arg2Name, arg3Name, arg4Name, typeResolver, global).CompileAot();
 			var result = func.Invoke(arg1, arg2, arg3, arg4);
 			return result;
 		}
@@ -148,10 +153,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// </summary>
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static void Execute(string expression, ITypeResolver typeResolver = null)
+		public static void Execute(string expression, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseAction(expression, typeResolver).CompileAot();
+			var func = ParseAction(expression, typeResolver, global).CompileAot();
 			func.Invoke();
 		}
 		/// <summary>
@@ -162,10 +168,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg1">First argument value.</param>
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static void Execute<Arg1T>(string expression, Arg1T arg1, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static void Execute<Arg1T>(string expression, Arg1T arg1, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseAction<Arg1T>(expression, arg1Name, typeResolver).CompileAot();
+			var func = ParseAction<Arg1T>(expression, arg1Name, typeResolver, global).CompileAot();
 			func.Invoke(arg1);
 		}
 		/// <summary>
@@ -179,10 +186,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static void Execute<Arg1T, Arg2T>(string expression, Arg1T arg1, Arg2T arg2, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static void Execute<Arg1T, Arg2T>(string expression, Arg1T arg1, Arg2T arg2, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseAction<Arg1T, Arg2T>(expression, arg1Name, arg2Name, typeResolver).CompileAot();
+			var func = ParseAction<Arg1T, Arg2T>(expression, arg1Name, arg2Name, typeResolver, global).CompileAot();
 			func.Invoke(arg1, arg2);
 		}
 		/// <summary>
@@ -199,10 +207,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static void Execute<Arg1T, Arg2T, Arg3T>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static void Execute<Arg1T, Arg2T, Arg3T>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseAction<Arg1T, Arg2T, Arg3T>(expression, arg1Name, arg2Name, arg3Name, typeResolver).CompileAot();
+			var func = ParseAction<Arg1T, Arg2T, Arg3T>(expression, arg1Name, arg2Name, arg3Name, typeResolver, global).CompileAot();
 			func.Invoke(arg1, arg2, arg3);
 		}
 		/// <summary>
@@ -222,10 +231,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg4Name">Fourth argument name or <see cref="ARG4_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>Evaluated value.</returns>
-		public static void Execute<Arg1T, Arg2T, Arg3T, Arg4T>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, Arg4T arg4, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static void Execute<Arg1T, Arg2T, Arg3T, Arg4T>(string expression, Arg1T arg1, Arg2T arg2, Arg3T arg3, Arg4T arg4, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
-			var func = ParseAction<Arg1T, Arg2T, Arg3T, Arg4T>(expression, arg1Name, arg2Name, arg3Name, arg4Name, typeResolver).CompileAot();
+			var func = ParseAction<Arg1T, Arg2T, Arg3T, Arg4T>(expression, arg1Name, arg2Name, arg3Name, arg4Name, typeResolver, global).CompileAot();
 			func.Invoke(arg1, arg2, arg3, arg4);
 		}
 
@@ -319,8 +329,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <typeparam name="ResultT">Result type.</typeparam>
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Func<ResultT>> ParseFunc<ResultT>(string expression, ITypeResolver typeResolver = null)
+		public static Expression<Func<ResultT>> ParseFunc<ResultT>(string expression, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -330,7 +341,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new ParameterExpression[0], resultType: typeof(ResultT), typeResolver: typeResolver);
-			return (Expression<Func<ResultT>>)expressionBinder.Bind(expressionTree);
+			return (Expression<Func<ResultT>>)expressionBinder.Bind(expressionTree, global);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
@@ -340,8 +351,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Func<Arg1T, ResultT>> ParseFunc<Arg1T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static Expression<Func<Arg1T, ResultT>> ParseFunc<Arg1T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -354,7 +366,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME)
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
-			return (Expression<Func<Arg1T, ResultT>>)expressionBuilder.Bind(expressionTree);
+			return (Expression<Func<Arg1T, ResultT>>)expressionBuilder.Bind(expressionTree, global);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
@@ -366,8 +378,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Func<Arg1T, Arg2T, ResultT>> ParseFunc<Arg1T, Arg2T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static Expression<Func<Arg1T, Arg2T, ResultT>> ParseFunc<Arg1T, Arg2T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -382,7 +395,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
 
-			return (Expression<Func<Arg1T, Arg2T, ResultT>>)expressionBinder.Bind(expressionTree);
+			return (Expression<Func<Arg1T, Arg2T, ResultT>>)expressionBinder.Bind(expressionTree, global);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
@@ -396,8 +409,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Func<Arg1T, Arg2T, Arg3T, ResultT>> ParseFunc<Arg1T, Arg2T, Arg3T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static Expression<Func<Arg1T, Arg2T, Arg3T, ResultT>> ParseFunc<Arg1T, Arg2T, Arg3T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -413,7 +427,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg3T), arg3Name ?? ARG3_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
 
-			return (Expression<Func<Arg1T, Arg2T, Arg3T, ResultT>>)expressionBinder.Bind(expressionTree);
+			return (Expression<Func<Arg1T, Arg2T, Arg3T, ResultT>>)expressionBinder.Bind(expressionTree, global);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
@@ -429,8 +443,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg4Name">Fourth argument name or <see cref="ARG4_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>> ParseFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static Expression<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>> ParseFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -447,7 +462,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg4T), arg4Name ?? ARG4_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
 
-			return (Expression<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>)expressionBinder.Bind(expressionTree);
+			return (Expression<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>)expressionBinder.Bind(expressionTree, global);
 		}
 
 		/// <summary>
@@ -455,8 +470,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// </summary>
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Action> ParseAction(string expression, ITypeResolver typeResolver = null)
+		public static Expression<Action> ParseAction(string expression, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -466,7 +482,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
 			var expressionBinder = new Binder(new ParameterExpression[0], resultType: typeof(void), typeResolver: typeResolver);
-			return (Expression<Action>)expressionBinder.Bind(expressionTree);
+			return (Expression<Action>)expressionBinder.Bind(expressionTree, global);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
@@ -475,8 +491,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="expression">A valid c# expression. Not null, not empty string.</param>
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Action<Arg1T>> ParseAction<Arg1T>(string expression, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static Expression<Action<Arg1T>> ParseAction<Arg1T>(string expression, string arg1Name = ARG1_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -489,7 +506,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME)
 			}, resultType: typeof(void), typeResolver: typeResolver);
-			return (Expression<Action<Arg1T>>)expressionBuilder.Bind(expressionTree);
+			return (Expression<Action<Arg1T>>)expressionBuilder.Bind(expressionTree, global);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
@@ -500,8 +517,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg1Name">First argument name or <see cref="ARG1_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Action<Arg1T, Arg2T>> ParseAction<Arg1T, Arg2T>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static Expression<Action<Arg1T, Arg2T>> ParseAction<Arg1T, Arg2T>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -516,7 +534,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
 			}, resultType: typeof(void), typeResolver: typeResolver);
 
-			return (Expression<Action<Arg1T, Arg2T>>)expressionBinder.Bind(expressionTree);
+			return (Expression<Action<Arg1T, Arg2T>>)expressionBinder.Bind(expressionTree, global);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
@@ -529,8 +547,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg2Name">Second argument name or <see cref="ARG2_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Action<Arg1T, Arg2T, Arg3T>> ParseAction<Arg1T, Arg2T, Arg3T>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static Expression<Action<Arg1T, Arg2T, Arg3T>> ParseAction<Arg1T, Arg2T, Arg3T>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -546,7 +565,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg3T), arg3Name ?? ARG3_DEFAULT_NAME),
 			}, resultType: typeof(void), typeResolver: typeResolver);
 
-			return (Expression<Action<Arg1T, Arg2T, Arg3T>>)expressionBinder.Bind(expressionTree);
+			return (Expression<Action<Arg1T, Arg2T, Arg3T>>)expressionBinder.Bind(expressionTree, global);
 		}
 		/// <summary>
 		/// Parses specified C# expression and returns <see cref="Expression{TDelegate}"/> which could be compiled with <see cref="ExpressionExtensions.CompileAot{TResult}"/> and executed.
@@ -561,8 +580,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="arg3Name">Third argument name or <see cref="ARG3_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="arg4Name">Fourth argument name or <see cref="ARG4_DEFAULT_NAME"/> if not specified.</param>
 		/// <param name="typeResolver">Type resolver for C# expression. Or <seealso cref="Binder.DefaultTypeResolver"/> if not specified.</param>
+		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)"/>.</param>
 		/// <returns>A parsed and bound syntax tree.</returns>
-		public static Expression<Action<Arg1T, Arg2T, Arg3T, Arg4T>> ParseAction<Arg1T, Arg2T, Arg3T, Arg4T>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null)
+		public static Expression<Action<Arg1T, Arg2T, Arg3T, Arg4T>> ParseAction<Arg1T, Arg2T, Arg3T, Arg4T>(string expression, string arg1Name = ARG1_DEFAULT_NAME, string arg2Name = ARG2_DEFAULT_NAME, string arg3Name = ARG3_DEFAULT_NAME, string arg4Name = ARG4_DEFAULT_NAME, ITypeResolver typeResolver = null, Expression global = null)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 
@@ -579,7 +599,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg4T), arg4Name ?? ARG4_DEFAULT_NAME),
 			}, resultType: typeof(void), typeResolver: typeResolver);
 
-			return (Expression<Action<Arg1T, Arg2T, Arg3T, Arg4T>>)expressionBinder.Bind(expressionTree);
+			return (Expression<Action<Arg1T, Arg2T, Arg3T, Arg4T>>)expressionBinder.Bind(expressionTree, global);
 		}
 
 		/// <summary>
