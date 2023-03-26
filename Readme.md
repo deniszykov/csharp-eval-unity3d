@@ -174,6 +174,21 @@ You can send suggestions at support@gamedevware.com
 * Custom editor with auto-completion for Unity
 
 ## Changes
+# 2.3.0
+* fix: fixed netcore related error with enumerable.empty<T>
+* feature: added  optional `global` parameter to all CSharpExpression methods to allow specify global object for expression.
+* test: removed flaky test with double.tostring() comparison
+* fix: fixed typo in `arg4Name` in `CSharpExpression.ParseFunc{4}` and `CSharpExpression.ParseAction{4}`
+
+# 2.2.9
+* fix: fixed error with instantiated generic method on types (which is impossible in normal conditions, but fine for Unity AOT runtime).
+
+# 2.2.8
+* feature:made AotCompilation.IsAotRuntime is mutable, this will allow to signal for AOT runtime and suppress further checks.
+
+# 2.2.7
+* feature: added public CSharpExpression.Format method for SyntaxTreeNode
+
 # 2.2.6
 * changed order or SyntaxTreeNode fields and added "original C# expression" field to parsed AST.
 * refactored C# expression rendering to support null-propagation expressions, type aliases (int, byte, object ...),
