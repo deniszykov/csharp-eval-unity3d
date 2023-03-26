@@ -444,7 +444,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg3T), arg3Name ?? ARG3_DEFAULT_NAME),
-				Expression.Parameter(typeof(Arg4T), arg3Name ?? ARG4_DEFAULT_NAME),
+				Expression.Parameter(typeof(Arg4T), arg4Name ?? ARG4_DEFAULT_NAME),
 			}, resultType: typeof(ResultT), typeResolver: typeResolver);
 
 			return (Expression<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>)expressionBinder.Bind(expressionTree);
@@ -576,7 +576,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Expression.Parameter(typeof(Arg1T), arg1Name ?? ARG1_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg2T), arg2Name ?? ARG2_DEFAULT_NAME),
 				Expression.Parameter(typeof(Arg3T), arg3Name ?? ARG3_DEFAULT_NAME),
-				Expression.Parameter(typeof(Arg4T), arg3Name ?? ARG4_DEFAULT_NAME),
+				Expression.Parameter(typeof(Arg4T), arg4Name ?? ARG4_DEFAULT_NAME),
 			}, resultType: typeof(void), typeResolver: typeResolver);
 
 			return (Expression<Action<Arg1T, Arg2T, Arg3T, Arg4T>>)expressionBinder.Bind(expressionTree);
