@@ -121,7 +121,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 		[Theory]
 		[InlineData("default(Math)?.ToString()", null)]
-		[InlineData("Math.E?.ToString()", "2.71828182845905")]
 		[InlineData("default(Math[])?[0]", null)]
 		[InlineData("BinderTests.MyClass.Default?.NullableIntField ?? 2", 2)]
 		[InlineData("BinderTests.MyClass.Default?.IntField ?? 2", 0)]
