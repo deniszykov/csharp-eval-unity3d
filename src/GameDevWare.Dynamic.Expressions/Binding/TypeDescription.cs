@@ -137,7 +137,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.TypeCode = ReflectionUtils.GetTypeCode(type);
 
 			this.MembersByName = this.GetMembersByName(ref this.Indexers);
-			this.Indexers = this.Indexers ?? (MemberDescription[])Enumerable.Empty<MemberDescription>();
+			this.Indexers = this.Indexers ?? ArrayUtils.Empty<MemberDescription>();
 
 			var methods = typeInfo.GetAllMethods().Where(m => m.IsPublic && m.IsStatic).ToList();
 			var methodsDescriptions = new MemberDescription[methods.Count];

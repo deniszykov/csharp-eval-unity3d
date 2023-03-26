@@ -53,7 +53,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <param name="otherTypeResolver">Backup type resolver used if current can't find a type.</param>
 		/// <param name="assemblies">List of assemblies to add as source of known types.</param>
 		public AssemblyTypeResolver(IEnumerable<Assembly> assemblies, ITypeResolver otherTypeResolver)
-			: base(GetAssembliesPublicTypes(assemblies ?? Enumerable.Empty<Assembly>()), otherTypeResolver)
+			: base(GetAssembliesPublicTypes(assemblies ?? ArrayUtils.Empty<Assembly>()), otherTypeResolver)
 		{
 			if (assemblies == null) throw new ArgumentNullException("assemblies");
 		}

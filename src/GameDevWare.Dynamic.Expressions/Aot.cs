@@ -512,7 +512,7 @@ namespace GameDevWare.Dynamic.Expressions
 				default(GameDevWare.Dynamic.Expressions.Execution.UnaryNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
 				GameDevWare.Dynamic.Expressions.Execution.UnaryNode.Create(default(System.Linq.Expressions.UnaryExpression), default(System.Linq.Expressions.ConstantExpression[]), default(System.Linq.Expressions.ParameterExpression[]));
 				default(GameDevWare.Dynamic.Expressions.Execution.UnaryNode).ToString();
-				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute(default(System.String), default(GameDevWare.Dynamic.Expressions.ITypeResolver));
+				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute(default(System.String), default(GameDevWare.Dynamic.Expressions.ITypeResolver), default(System.Linq.Expressions.Expression));
 				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction(default(System.String), default(GameDevWare.Dynamic.Expressions.ITypeResolver));
 				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Format(default(System.Linq.Expressions.Expression), default(System.Boolean));
 				var field_33554514_67109127 = GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.DEFAULT_CHECKED_SCOPE;
