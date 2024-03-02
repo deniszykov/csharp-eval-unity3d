@@ -225,7 +225,7 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				var genericParameters = default(Type[]);
 				var foundTypeInfo = foundType.GetTypeInfo();
-				if (foundTypeInfo.IsGenericType && (genericParameters = foundTypeInfo.GetGenericArguments()).Length == typeReference.TypeArguments.Count)
+				if (foundTypeInfo.IsGenericType && (genericParameters = foundTypeInfo.GetGenericArguments()).Length == typeReference.TypeArguments.Count) // BUG: will not match for nested generic types like MyType<T>.MyInnerType<T1> because it will only count one generic argument from last part of type refernce
 				{
 					var typeArguments = new Type[genericParameters.Length];
 					var allArgumentBound = true;
