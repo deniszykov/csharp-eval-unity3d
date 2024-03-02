@@ -42,9 +42,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			Conversions = new Dictionary<TypeTuple2, TypeConversion>(EqualityComparer<TypeTuple2>.Default);
 
 			// typeof(char), typeof(string), typeof(float), typeof(double), typeof(byte), typeof(sbyte), typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong)
+			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(char), typeof(ushort), typeof(uint), typeof(int), typeof(long), typeof(ulong), typeof(float), typeof(double));
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(float), typeof(double));
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(byte), typeof(ushort), typeof(short), typeof(uint), typeof(int), typeof(long), typeof(ulong), typeof(float), typeof(double));
-			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(char), typeof(ushort), typeof(uint), typeof(int), typeof(long), typeof(ulong), typeof(float), typeof(double));
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(ushort), typeof(uint), typeof(int), typeof(long), typeof(ulong), typeof(float), typeof(double));
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(uint), typeof(long), typeof(ulong), typeof(float), typeof(double));
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(ulong), typeof(float), typeof(double));
@@ -53,10 +53,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(int), typeof(long), typeof(float), typeof(double));
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(long), typeof(float), typeof(double));
 
+			SetNaturalConversion(QUALITY_EXPLICIT_CONVERSION, typeof(char), typeof(sbyte), typeof(byte));
 			SetNaturalConversion(QUALITY_EXPLICIT_CONVERSION, typeof(double), typeof(float), typeof(long), typeof(ulong), typeof(int), typeof(uint), typeof(short), typeof(char), typeof(ushort), typeof(sbyte), typeof(byte));
 			SetNaturalConversion(QUALITY_EXPLICIT_CONVERSION, typeof(float), typeof(long), typeof(ulong), typeof(int), typeof(uint), typeof(short), typeof(char), typeof(ushort), typeof(sbyte), typeof(byte));
 			SetNaturalConversion(QUALITY_EXPLICIT_CONVERSION, typeof(byte), typeof(sbyte));
-			SetNaturalConversion(QUALITY_EXPLICIT_CONVERSION, typeof(char), typeof(sbyte), typeof(byte));
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(ushort), typeof(char), typeof(short), typeof(byte), typeof(sbyte));
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(uint), typeof(int), typeof(char), typeof(ushort), typeof(short), typeof(byte), typeof(sbyte));
 			SetNaturalConversion(QUALITY_IMPLICIT_CONVERSION, typeof(ulong), typeof(long), typeof(uint), typeof(int), typeof(char), typeof(ushort), typeof(short), typeof(byte), typeof(sbyte));

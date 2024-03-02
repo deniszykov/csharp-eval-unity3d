@@ -54,7 +54,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				if (ifTrueBranch.Type != ifFalseBranch.Type)
 				{
 					float quality;
-					ExpressionUtils.TryMorphType(ref ifTrueBranch, ifFalseBranch.Type, out quality);
+					ExpressionUtils.TryCoerceType(ref ifTrueBranch, ifFalseBranch.Type, out quality);
 				}
 
 				boundExpression = Expression.Condition(testExpression, ifTrueBranch, ifFalseBranch);

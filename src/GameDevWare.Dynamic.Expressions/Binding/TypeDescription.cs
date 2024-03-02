@@ -352,10 +352,19 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			return newArray;
 		}
 
+		public static bool HasByRefLikeAttribute(ParameterInfo parameterInfo)
+		{
+			if (parameterInfo.Member.Name == "ToString" && parameterInfo.Position == -1 /* return value */)
+			{
+				return false; // fix for https://github.com/mono/mono/issues/17192
+			}
+			return parameterInfo.GetCustomAttributes(inherit: true).Any(attribute => IsByRefLikeAttributeType(attribute.GetType()));
+		}
 		public static bool HasByRefLikeAttribute(Type type)
 		{
 			return type.GetTypeInfo().GetCustomAttributes(inherit: true).Any(attribute => IsByRefLikeAttributeType(attribute.GetType()));
 		}
+
 		private static bool IsByRefLikeAttributeType(Type attributeType)
 		{
 			return attributeType.Namespace == "System.Runtime.CompilerServices" && attributeType.Name == "IsByRefLikeAttribute";

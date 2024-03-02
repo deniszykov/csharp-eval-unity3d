@@ -241,6 +241,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
 			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
 
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 			switch (expression.NodeType)
 			{
 				case ExpressionType.ArrayIndex:

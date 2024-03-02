@@ -134,7 +134,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				}
 			}
 
-			this.HasByRefLikeParameters = this.parameters.Any(parameter => TypeDescription.HasByRefLikeAttribute(parameter.ParameterType));
+			this.HasByRefLikeParameters = this.parameters.Any(parameter => TypeDescription.HasByRefLikeAttribute(parameter) || TypeDescription.HasByRefLikeAttribute(parameter.ParameterType)) ||
+				TypeDescription.HasByRefLikeAttribute(this.returnParameter);
 			this.IsMethod = true;
 			this.IsStatic = method.IsStatic;
 			this.IsImplicitOperator = method.IsSpecialName && this.Name == "op_Implicit";
@@ -306,7 +307,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				Debug.Assert(argValue != null, "argValue != null");
 
 				var quality = 0.0f;
-				if (ExpressionUtils.TryMorphType(ref argValue, expectedType, out quality) == false || quality <= 0)
+				if (ExpressionUtils.TryCoerceType(ref argValue, expectedType, out quality) == false || quality <= 0)
 					return false;// failed to bind parameter
 
 				parametersQuality += quality; // casted

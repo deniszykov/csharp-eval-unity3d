@@ -129,7 +129,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var quality = 0.0f;
 				var rightOperandTmp = rightOperand;
 				var expectedRightType = promoteRightToNullable ? typeof(ulong?) : typeof(ulong);
-				if (NumberUtils.IsSignedInteger(rightTypeCode) && TryMorphType(ref rightOperandTmp, expectedRightType, out quality) == false)
+				if (NumberUtils.IsSignedInteger(rightTypeCode) && TryCoerceType(ref rightOperandTmp, expectedRightType, out quality) == false)
 					return false; // will throw exception
 
 				rightOperand = rightOperandTmp;
@@ -140,7 +140,7 @@ namespace GameDevWare.Dynamic.Expressions
 				var quality = 0.0f;
 				var leftOperandTmp = leftOperand;
 				var expectedLeftType = promoteLeftToNullable ? typeof(ulong?) : typeof(ulong);
-				if (NumberUtils.IsSignedInteger(leftTypeCode) && TryMorphType(ref leftOperandTmp, expectedLeftType, out quality) == false)
+				if (NumberUtils.IsSignedInteger(leftTypeCode) && TryCoerceType(ref leftOperandTmp, expectedLeftType, out quality) == false)
 					return false; // will throw exception
 
 				leftOperand = leftOperandTmp;
@@ -198,6 +198,7 @@ namespace GameDevWare.Dynamic.Expressions
 				if (promoteToNullable)
 					rightOperand = ConvertToNullable(rightOperand, leftType);
 
+				// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 				switch (type)
 				{
 					case ExpressionType.Add: operation = Expression.Add(leftOperand, rightOperand); break;
@@ -266,11 +267,11 @@ namespace GameDevWare.Dynamic.Expressions
 			var promoteToNullable = operandType.IsNullable;
 
 			if (operandTypeUnwrap.IsEnum)
-				MorphType(ref operand, promoteToNullable ? operandTypeUnwrap.UnderlyingType.GetNullableType() : operandTypeUnwrap.UnderlyingType);
+				CoerceType(ref operand, promoteToNullable ? operandTypeUnwrap.UnderlyingType.GetNullableType() : operandTypeUnwrap.UnderlyingType);
 			else if (operandTypeUnwrap.TypeCode >= TypeCode.SByte && operandTypeUnwrap.TypeCode <= TypeCode.UInt16)
-				MorphType(ref operand, promoteToNullable ? typeof(int?) : typeof(int));
+				CoerceType(ref operand, promoteToNullable ? typeof(int?) : typeof(int));
 			else if (operandTypeUnwrap.TypeCode == TypeCode.UInt32 && type == ExpressionType.Not)
-				MorphType(ref operand, promoteToNullable ? typeof(long?) : typeof(long));
+				CoerceType(ref operand, promoteToNullable ? typeof(long?) : typeof(long));
 
 			return false;
 		}
@@ -291,16 +292,16 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return constantExpression.Value == null && constantExpression.Type == typeof(object);
 		}
-		public static void MorphType(ref Expression expression, Type toType)
+		public static void CoerceType(ref Expression expression, Type toType)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 			if (toType == null) throw new ArgumentNullException("toType");
 
 			var quality = 0.0f;
-			if (TryMorphType(ref expression, toType, out quality) == false || quality <= TypeConversion.QUALITY_NO_CONVERSION)
+			if (TryCoerceType(ref expression, toType, out quality) == false || quality <= TypeConversion.QUALITY_NO_CONVERSION)
 				throw new InvalidOperationException(string.Format("Failed to change type of expression '{0}' to '{1}'.", expression, toType));
 		}
-		public static bool TryMorphType(ref Expression expression, Type toType, out float quality)
+		public static bool TryCoerceType(ref Expression expression, Type toType, out float quality)
 		{
 			if (expression == null) throw new ArgumentNullException("expression");
 			if (toType == null) throw new ArgumentNullException("toType");

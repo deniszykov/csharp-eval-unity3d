@@ -216,10 +216,10 @@ namespace GameDevWare.Dynamic.Expressions
 				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryPromoteUnaryOperation(ref param_33554448_100663424_0, default(System.Linq.Expressions.ExpressionType), out param_33554448_100663424_2);
 				GameDevWare.Dynamic.Expressions.ExpressionUtils.IsNull(default(System.Linq.Expressions.Expression), default(System.Boolean));
 				var param_33554448_100663426_0 = default(System.Linq.Expressions.Expression);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.MorphType(ref param_33554448_100663426_0, default(System.Type));
+				GameDevWare.Dynamic.Expressions.ExpressionUtils.CoerceType(ref param_33554448_100663426_0, default(System.Type));
 				var param_33554448_100663427_0 = default(System.Linq.Expressions.Expression);
 				var param_33554448_100663427_2 = default(System.Single);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryMorphType(ref param_33554448_100663427_0, default(System.Type), out param_33554448_100663427_2);
+				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryCoerceType(ref param_33554448_100663427_0, default(System.Type), out param_33554448_100663427_2);
 				GameDevWare.Dynamic.Expressions.ExpressionUtils.MakeNullPropagationExpression(default(System.Collections.Generic.List<System.Linq.Expressions.Expression>), default(System.Linq.Expressions.Expression));
 				var param_33554448_100663432_1 = default(System.Collections.Generic.List<System.Linq.Expressions.Expression>);
 				var param_33554448_100663432_2 = default(System.Linq.Expressions.Expression);
