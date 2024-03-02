@@ -132,6 +132,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return false;
 		}
+
 #if NETSTANDARD
 		public static IEnumerable<FieldInfo> GetDeclaredFields(this TypeInfo type)
 		{
@@ -205,6 +206,12 @@ namespace GameDevWare.Dynamic.Expressions
 		public static TypeCode GetTypeCode(Type type)
 		{
 			if (type == null) return TypeCode.Empty;
+
+			if (type.GetTypeInfo().IsEnum)
+			{
+				type = Enum.GetUnderlyingType(type);
+			}
+
 			if (type == typeof(bool)) return TypeCode.Boolean;
 			if (type == typeof(char)) return TypeCode.Char;
 			if (type == typeof(sbyte)) return TypeCode.SByte;
@@ -290,7 +297,6 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 		}
-
 #endif
 		public static MethodInfo FindConversion(this MemberDescription[] conversionOperators, Type fromType, Type toType)
 		{
