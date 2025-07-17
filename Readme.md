@@ -1,148 +1,135 @@
 [![Actions Status](https://github.com/deniszykov/csharp-eval-unity3d/workflows/dotnet_build/badge.svg)](https://github.com/deniszykov/csharp-eval-unity3d/actions)
 
-# Licensing
+# Licensing  
+This package is available for [purchase](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706) on the Unity Asset Store. A valid license is required for use in any project.
 
-This is a paid [package](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706), you can use it anywhere if you [purchased it](https://assetstore.unity.com/packages/tools/visual-scripting/c-eval-56706).
+# Overview  
+This package delivers a C# parsing and expression execution API designed for [Unity](http://unity3d.com/) compatibility across multiple platforms. Implemented in C# 3.5 with no external dependencies, it maintains broad compatibility with Unity versions and .NET frameworks.
 
-# Introduction
+## Verified Platform Support  
+• iOS  
+• Android  
+• WebGL  
+• Windows/macOS/Linux  
 
-This package provides the API for parsing and expression execution written in C#. It is specially designed to work with the [Unity](http://unity3d.com/) on various platforms. Since it is written in C# 3.5 and has no additional dependencies, it should work with any version of Unity (and .NET framework).
+The solution should function on additional Unity-supported platforms.  
 
-It is tested to work on:
-* IOS
-* Android
-* WebGL
-* PC/Mac
+> **Important Note for AOT Platforms (iOS, WebGL, IL2CPP):**  
+> Projects targeting AOT compilation require inclusion of a [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) file in the project root directory. Refer to Unity's documentation on [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) for additional context.
 
-It should work on any other platforms. 
+## Core API  
+• **CSharpExpression**  
+  - Evaluate  
+  - Parse  
+• **AotCompilation**  
+  - RegisterFunc  
+  - RegisterForFastCall (performance optimization)  
 
-> :warning: For AOT execution platforms (**iOS, WebGL, IL2CPP**) a [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) should be added to project's root directory. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
+## Implementation Examples  
 
-**API**
-* CSharpExpression
-	* Evaluate
-	* Parse
-* AotCompilation
-	* RegisterFunc 
-	* RegisterForFastCall (optional stuff)
-
-## Example
-Parsing C# expression into **System.Linq.Expression.Expression[T]**:
+**Expression Parsing:**  
 ```csharp
 var mathExpr = "Math.Max(x, y)";
-var exprTree = CSharpExpression.Parse<double, double, double>(mathExpr, arg1Name: "x", arg2Name: "y") 
-// exprTree -> Expression<Func<double, double, double>>
+var exprTree = CSharpExpression.Parse<double, double, double>(mathExpr, arg1Name: "x", arg2Name: "y");
+// Returns Expression<Func<double, double, double>>  
+var expr = exprTree.CompileAot();
+// Returns Func<double, double, double>  
 ```
-Evaluating C# expression:
+
+**Expression Evaluation:**  
 ```csharp
 var arifExpr = "2 * (2 + 3) << 1 + 1 & 7 | 25 ^ 10";
 var result = CSharpExpression.Evaluate<int>(arifExpr); 
-// result -> 19
+// Returns 19
 ```
 
-## Parser
-The parser recognizes the C# 4 grammar only. It includes:
+## Parser Specifications  
+The parser implements C# 4 grammar with support for:  
 
-* Arithmetic operations
-* Bitwise operations
-* Logical operations
-* [Conditional operator](https://msdn.microsoft.com/en-us/library/ty67wk28.aspx)
-* [Null-coalescing operator](https://msdn.microsoft.com/en-us/library/ms173224.aspx)
-* Method/Delegate/Constructor call
-* [Property/Field access](https://msdn.microsoft.com/en-us/library/6zhxzbds.aspx)
-* [Indexers](https://msdn.microsoft.com/en-gb/library/6x16t2tx.aspx)
-* [Casting and Conversion](https://msdn.microsoft.com/en-us/library/ms173105.aspx)
-* [Is Operator](https://msdn.microsoft.com/en-us/library/scekt9xw.aspx)
-* [As Operator](https://msdn.microsoft.com/en-us/library/cscsdfbt.aspx)
-* [TypeOf Operator](https://msdn.microsoft.com/en-us/library/58918ffs.aspx)
-* [Default Operator](https://msdn.microsoft.com/en-us/library/xwth0h0d.aspx)
-* [Expression grouping with parentheses](https://msdn.microsoft.com/en-us/library/0z4503sa.aspx)
-* [Checked/Unchecked scopes](https://msdn.microsoft.com/en-us/library/khy08726.aspx)
-* [Aliases for Built-In Types](https://msdn.microsoft.com/en-us/library/ya5y69ds.aspx)
-* [Null-conditional Operators](https://msdn.microsoft.com/en-us/library/dn986595.aspx)
-* Power operator ``**``
-* [Lambda expressions](https://msdn.microsoft.com/en-us/library/bb397687.aspx)
-* "true", "false", "null"
+• Arithmetic, bitwise, and logical operations  
+• [Conditional](https://msdn.microsoft.com/en-us/library/ty67wk28.aspx) and [null-coalescing operators](https://msdn.microsoft.com/en-us/library/ms173224.aspx)  
+• Method/delegate/constructor invocation  
+• [Property/field access](https://msdn.microsoft.com/en-us/library/6zhxzbds.aspx) and [indexers](https://msdn.microsoft.com/en-gb/library/6x16t2tx.aspx)  
+• Type operations ([casting, conversion](https://msdn.microsoft.com/en-us/library/ms173105.aspx), [is](https://msdn.microsoft.com/en-us/library/scekt9xw.aspx)/[as](https://msdn.microsoft.com/en-us/library/cscsdfbt.aspx)/[typeof](https://msdn.microsoft.com/en-us/library/58918ffs.aspx)/[default](https://msdn.microsoft.com/en-us/library/xwth0h0d.aspx))  
+• [Expression grouping](https://msdn.microsoft.com/en-us/library/0z4503sa.aspx) and [checked/unchecked contexts](https://msdn.microsoft.com/en-us/library/khy08726.aspx)  
+• [Type aliases](https://msdn.microsoft.com/en-us/library/ya5y69ds.aspx) and [null-conditional operators](https://msdn.microsoft.com/en-us/library/dn986595.aspx)  
+• Power operator (**)  
+• [Lambda expressions](https://msdn.microsoft.com/en-us/library/bb397687.aspx)  
+• Literal values (true, false, null)  
 
-Nullable types are supported. 
-Generics are supported.
-Enumerations are supported.
-[Type inference](https://docs.microsoft.com/en-us/dotnet/articles/fsharp/language-reference/type-inference) is not available and your should always specify generic parameters on types and methods.
+**Type Support:**  
+• Nullable types  
+• Generics  
+• Enumerations  
 
-**Known Types**
+> **Note:** [Type inference](https://docs.microsoft.com/en-us/dotnet/articles/fsharp/language-reference/type-inference) is not implemented - explicit generic parameter specification is required.
 
-For security reasons the parser does not provide access to any types except:
-* types used in arguments
-* primitive types
-* `Math`, `Array`, `Func<>` types
+## Type Resolution  
+For security, the parser restricts type access to:  
+• Argument types  
+• Primitive types  
+• Math, Array, and Func<> types  
 
-To access other types your should pass **typeResolver** parameter in **Parse** and **Evaluate** method:
+Additional types require specification through the typeResolver parameter:  
 ```csharp
 var typeResolver = new KnownTypeResolver(typeof(Mathf), typeof(Time));
-CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0f, 3.0f)", typeResolver); 
+CSharpExpression.Evaluate<int>("Mathf.Clamp(Time.time, 1.0f, 3.0f)", typeResolver);
 ```
-If you want to access all types in **UnityEngine** you can pass custom **AssemblyTypeResolver** as typeResolver parameter.
+
+Full namespace access can be enabled via AssemblyTypeResolver:  
 ```csharp
 var typeResolver = new AssemblyTypeResolver(typeof(UnityEngine.Application).Assembly);
 ```
 
-> ℹ️ For security reasons any method/property calls on **System.Type** will throw exceptions until **System.Type** is added as known type.
+> **Security Note:** System.Type operations will throw exceptions unless **System.Type** explicitly added as a known type.
 
-## AOT Execution
-You can compile and evaluate expression created by **System.Linq.Expression** and execute it in AOT environment where it is usually impossible. 
+## AOT Compilation Support  
+The package enables compilation and execution of System.Linq.Expression expressions in AOT environments:  
+
 ```csharp
 var expr = (Expression<Func<Vector3>>)(() => new Vector3(1.0f, 1.0f, 1.0f));
 var fn = expr.CompileAot();
-
-fn; // -> Func<Vector3>
-fn(); // -> Vector3(1.0f, 1.0f, 1.0f)
+// Returns Func<Vector3>
 ```
 
-iOS, WebGL and most console platforms use AOT compilation which imposes following restrictions on the dynamic code execution:
-
-* only **Expression&lt;Func&lt;...&gt;&gt;** delegate type could be used with **CompileAot()**.
-* only static methods using primitives (int, float, string, object ...) are optimized for fast calls, others are called with reflection.
-* all used classes/methods/properties should be visible to [Unity's static code analyser](https://docs.unity3d.com/Manual/ScriptingRestrictions.html)
-* ⚠️ An additional preparation should be made for AOT execution platforms. This [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) should be added in project's root folder. Read more about [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html) in official documentation.
+**AOT Environment Requirements (iOS, WebGL and most console platforms):**  
+1. Only Expression<Func<...>> delegate types supported  
+2. Only static methods using primitives arguments receive optimization  
+3. All referenced members must be visible to [Unity's static analyzer](https://docs.unity3d.com/Manual/ScriptingRestrictions.html) to prevent eager [IL code stripping](https://docs.unity3d.com/Manual/IL2CPP-BytecodeStripping.html)  
+4. ⚠️ Required [link.xml](https://github.com/deniszykov/csharp-eval-unity3d/blob/master/src/GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/link.xml) configuration (see above)  
 
 **See Also**
 * [AOT Exception Patterns and Hacks](https://github.com/neuecc/UniRx/wiki/AOT-Exception-Patterns-and-Hacks)
 * [Ahead of Time Compilation (AOT)](http://www.mono-project.com/docs/advanced/runtime/docs/aot/)
 
-### WebGL and iOS
 
-* Only [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) (up to 4 arguments) lambdas are supported with `CompileAot()`.
-* Instance methods calls performs slowly due reflection
-* Moderate boxing for value types (see roadmap)
+### Platform-Specific Considerations  
 
-You can prepare [Func<>](https://msdn.microsoft.com/en-us/library/bb534960(v=vs.110).aspx) lambda for AOT compilation/execution by registering it with **AotCompilation.RegisterFunc**.
+**WebGL and iOS:**  
+• Func<> lambdas limited to 4 arguments  
+• Instance methods incur reflection overhead  
+• Value types experience moderate boxing  
 
+**Preparation for AOT Execution:**  
 ```csharp
-AotCompilation.RegisterFunc<int, bool>(); // will enable Func<int, bool> lambdas anywhere in expressions
+AotCompilation.RegisterFunc<int, bool>(); // Enables Func<int, bool> in expressions
 ```
 
-### Unity 2020.3.2 Issues
-This version of Unity has runtime bug related to lambda compilation. Please use following workaround for IL2CPP/AOT runtime:
-```cs
-#if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR)
+**Unity 2020.3.2 Workaround:**  
+```csharp
+#if ((UNITY_WEBGL || UNITY_IOS || ENABLE_IL2CPP) && !UNITY_EDITOR
 GameDevWare.Dynamic.Expressions.AotCompilation.IsAotRuntime = true;
 #endif
 ```
 
+## Performance Optimization  
+Method invocation performance can be enhanced through signature registration:  
 
-**Improving Performance**
-
-You can improve the performance of methods invocation by registering their signatures in **AotCompilation.RegisterForFastCall()**. 
-
-```
-// Supports up to 3 arguments.
-// First generic argument is your class type.
-// Last generic argument is return type.
-
-AotCompilation.RegisterForFastCall<InstanceT, ResultT>()
-AotCompilation.RegisterForFastCall<InstanceT, Arg1T, ResultT>()
-AotCompilation.RegisterForFastCall<InstanceT, Arg1T, Arg2T, ResultT>()
-AotCompilation.RegisterForFastCall<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>()
+```csharp
+// Supports up to 3 arguments
+AotCompilation.RegisterForFastCall<MyClass, ReturnType>();
+AotCompilation.RegisterForFastCall<MyClass, Arg1Type, ReturnType>();
+// Additional signatures...
 ```
 
 Example:
@@ -160,18 +147,29 @@ AotCompilation.RegisterForFastCall<MyVectorMath, Vector4, Vector4, Vector4>();
 AotCompilation.RegisterForFastCall<MyVectorMath, Vector4, float, Vector4>();
 ```
 
+## Development Roadmap  
+• Expression serialization (completed)  
+• Void expression support (completed)  
+• Future enhancements:  
+  - Delegate construction from method references  
+  - Generic type inference  
+  - C#6 syntax support  
+  - Extension method support  
+  - Type/list initializers  
+
+Feature suggestions may be submitted to support@gamedevware.com.  
+
 ## Roadmap
 
 You can send suggestions at support@gamedevware.com
 
-* Expression serialization (in-progress)
-* Void expressions (`System.Action` delegates) (done)
+* ~Expression serialization~
+* ~Void expressions (`System.Action` delegates)~
 * Parser: Delegate construction from method reference
 * Parser: Type inference for generics	
-* Parser: Full C#6 syntax
+* Parser: Full C#6 expression syntax
 * Parser: Extension methods
 * Parser: Type initializers, List initializers
-* Custom editor with auto-completion for Unity
 
 ## Changes
 # 2.3.0
