@@ -23,12 +23,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class NewBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
 			if (expectedType == null) throw new ArgumentNullException("expectedType");
-
 
 			if (node == null) throw new ArgumentNullException("node");
 
@@ -44,7 +44,15 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return TryBindToType(node, typeName, arguments, bindingContext, expectedType, out boundExpression, out bindingError);
 			}
 		}
-		private static bool TryBindToType(SyntaxTreeNode node, object typeName, ArgumentsTree arguments, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		private static bool TryBindToType
+		(
+			SyntaxTreeNode node,
+			object typeName,
+			ArgumentsTree arguments,
+			BindingContext bindingContext,
+			TypeDescription expectedType,
+			out Expression boundExpression,
+			out Exception bindingError)
 		{
 			boundExpression = null;
 			bindingError = null;
@@ -60,7 +68,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			// feature: lambda building via new Func()
 			var lambdaArgument = default(SyntaxTreeNode);
-			if (typeDescription.IsDelegate && arguments.Count == 1 && (lambdaArgument = arguments.Values.Single()).GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA)
+			if (typeDescription.IsDelegate &&
+				arguments.Count == 1 &&
+				(lambdaArgument = arguments.Values.Single()).GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA)
 				return LambdaBinder.TryBind(lambdaArgument, bindingContext, typeDescription, out boundExpression, out bindingError);
 
 			var selectedConstructorQuality = MemberDescription.QUALITY_INCOMPATIBLE;
@@ -90,7 +100,15 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			return true;
 		}
 
-		private static bool TryBindToMethod(SyntaxTreeNode node, object methodName, ArgumentsTree arguments, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		private static bool TryBindToMethod
+		(
+			SyntaxTreeNode node,
+			object methodName,
+			ArgumentsTree arguments,
+			BindingContext bindingContext,
+			TypeDescription expectedType,
+			out Expression boundExpression,
+			out Exception bindingError)
 		{
 			boundExpression = null;
 			bindingError = null;
@@ -106,7 +124,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			// feature: lambda building via new Func()
 			var lambdaArgument = default(SyntaxTreeNode);
-			if (typeDescription.IsDelegate && arguments.Count == 1 && (lambdaArgument = arguments.Values.Single()).GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA)
+			if (typeDescription.IsDelegate &&
+				arguments.Count == 1 &&
+				(lambdaArgument = arguments.Values.Single()).GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA)
 				return LambdaBinder.TryBind(lambdaArgument, bindingContext, typeDescription, out boundExpression, out bindingError);
 
 			var constructorQuality = MemberDescription.QUALITY_INCOMPATIBLE;
@@ -114,8 +134,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			{
 				return true;
 			}
-			
-			bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, constructorDescription.DeclaringType), node);
+
+			bindingError = new ExpressionParserException(
+				string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, constructorDescription.DeclaringType), node);
 			return false;
 		}
 	}

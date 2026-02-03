@@ -1,11 +1,13 @@
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class NewArrayInitBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
@@ -15,30 +17,32 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			bindingError = null;
 
 			var typeName = node.GetTypeName(throwOnError: true);
-			var type = default(Type);
-			if (bindingContext.TryResolveType(typeName, out type) == false)
+			if (!bindingContext.TryResolveType(typeName, out var type))
 			{
 				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
 				return false;
 			}
 
 			var elementType = TypeDescription.GetTypeDescription(type);
-			var arguments = node.GetArguments(throwOnError: true);
-			var argumentExpressions = new Expression[arguments.Count];
-			for (var i = 0; i < arguments.Count; i++)
+			var initializers = node.EnumerateInitializers(throwOnError: true).ToList();
+			var valueExpressions = new Expression[initializers.Count];
+			var index = 0;
+			foreach (var initializerNode in initializers)
 			{
-				var argument = default(SyntaxTreeNode);
-				if (arguments.TryGetValue(i, out argument) == false)
+				if (initializerNode == null)
 				{
-					bindingError = new ExpressionParserException(Properties.Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS, node);
 					return false;
 				}
 
-				if (AnyBinder.TryBindInNewScope(argument, bindingContext, elementType, out argumentExpressions[i], out bindingError) == false)
+				if (!AnyBinder.TryBindInNewScope(initializerNode, bindingContext, elementType, out valueExpressions[index], out bindingError))
+				{
 					return false;
+				}
+
+				index++;
 			}
 
-			boundExpression = Expression.NewArrayInit(type, argumentExpressions);
+			boundExpression = Expression.NewArrayInit(type, valueExpressions);
 			return true;
 		}
 	}

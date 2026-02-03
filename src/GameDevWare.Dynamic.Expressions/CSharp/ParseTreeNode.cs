@@ -44,8 +44,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				this.item1 = item1;
 				this.item2 = item2;
 				this.Count = item2 != null ? 3 :
-							 item1 != null ? 2 :
-							 item0 != null ? 1 : 0;
+					item1 != null ? 2 :
+					item0 != null ? 1 : 0;
 				this.items = null;
 			}
 			private ParseTreeNodes(List<ParseTreeNode> items)
@@ -120,6 +120,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							case 2: nodes = new ParseTreeNodes(nodes.item0, node, null); break;
 							default: throw new ArgumentOutOfRangeException("index");
 						}
+
 						break;
 					case 2:
 						switch (index)
@@ -129,6 +130,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							case 2: nodes = new ParseTreeNodes(nodes.item0, nodes.item1, node); break;
 							default: throw new ArgumentOutOfRangeException("index");
 						}
+
 						break;
 					case 3:
 						items = new List<ParseTreeNode> { nodes.item0, nodes.item1, nodes.item2 };
@@ -140,7 +142,6 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			public static void RemoveAt(ref ParseTreeNodes nodes, int index)
 			{
-
 				var items = nodes.items;
 				if (items != null)
 				{
@@ -179,6 +180,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					nodes = new ParseTreeNodes(nodes.item1, nodes.item2, null);
 				else
 					return false;
+
 				return true;
 			}
 
@@ -244,11 +246,15 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			this.nodes = new ParseTreeNodes();
 			if (nodes != null)
 			{
-				foreach(var node in nodes)
+				foreach (var node in nodes)
 					this.Add(node);
 			}
 		}
 
+		internal void InsertAt(int Index, ParseTreeNode node)
+		{
+			ParseTreeNodes.Insert(ref this.nodes, Index, node);
+		}
 		internal void Add(ParseTreeNode node)
 		{
 			ParseTreeNodes.Add(ref this.nodes, node);
@@ -258,16 +264,16 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			ParseTreeNodes.RemoveAt(ref this.nodes, index);
 			ParseTreeNodes.Insert(ref this.nodes, index, node);
 		}
-		
+
 		internal ParseTreeNode WithOtherType(TokenType newType)
 		{
 			return new ParseTreeNode(newType, this);
 		}
-		
+
 		private void Write(StringBuilder sb, int depth)
 		{
 			sb.Append(' ', depth * 4)
-				.Append(this.Type)
+				.Append(this.Type).Append(' ')
 				.Append('\'').Append(this.Value).Append('\'');
 
 			for (var i = 0; i < this.nodes.Count; i++)

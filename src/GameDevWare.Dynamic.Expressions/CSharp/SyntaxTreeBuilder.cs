@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
@@ -21,11 +22,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		private static readonly Dictionary<int, string> ExpressionTypeByToken;
 
-
 		static SyntaxTreeBuilder()
 		{
-			ExpressionTypeByToken = new Dictionary<int, string>
-			{
+			ExpressionTypeByToken = new Dictionary<int, string> {
 				{ (int)TokenType.Resolve, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
 				{ (int)TokenType.NullResolve, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
 				{ (int)TokenType.Identifier, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
@@ -46,12 +45,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{ (int)TokenType.Add, Constants.EXPRESSION_TYPE_ADD },
 				{ (int)TokenType.Subtract, Constants.EXPRESSION_TYPE_SUBTRACT },
 				{ (int)TokenType.LeftShift, Constants.EXPRESSION_TYPE_LEFT_SHIFT },
-				{ (int)TokenType.RightShift, Constants.EXPRESSION_TYPE_RIGHT_SHIFT},
+				{ (int)TokenType.RightShift, Constants.EXPRESSION_TYPE_RIGHT_SHIFT },
 				{ (int)TokenType.GreaterThan, Constants.EXPRESSION_TYPE_GREATER_THAN },
 				{ (int)TokenType.GreaterThanOrEquals, Constants.EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL },
 				{ (int)TokenType.LesserThan, Constants.EXPRESSION_TYPE_LESS_THAN },
 				{ (int)TokenType.LesserThanOrEquals, Constants.EXPRESSION_TYPE_LESS_THAN_OR_EQUAL },
-				{ (int)TokenType.Is, Constants.EXPRESSION_TYPE_TYPE_IS  },
+				{ (int)TokenType.Is, Constants.EXPRESSION_TYPE_TYPE_IS },
 				{ (int)TokenType.As, Constants.EXPRESSION_TYPE_TYPE_AS },
 				{ (int)TokenType.EqualsTo, Constants.EXPRESSION_TYPE_EQUAL },
 				{ (int)TokenType.NotEqualsTo, Constants.EXPRESSION_TYPE_NOT_EQUAL },
@@ -68,9 +67,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{ (int)TokenType.New, Constants.EXPRESSION_TYPE_NEW },
 				{ (int)TokenType.LeftBracket, Constants.EXPRESSION_TYPE_INDEX },
 				{ (int)TokenType.Lambda, Constants.EXPRESSION_TYPE_LAMBDA },
+				{ (int)TokenType.MemberOrListInit, Constants.EXPRESSION_TYPE_MEMBER_INIT },
 			};
-
-
 		}
 
 		/// <summary>
@@ -80,7 +78,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <param name="checkedScope">Numeric operation scope. Checked mean - no number overflow is allowed. Unchecked mean - overflow is allowed.</param>
 		/// <param name="cSharpExpression">Original C# expression from which this AST was build.</param>
 		/// <returns>Prepared <see cref="SyntaxTreeNode"/> representing <see cref="ParseTreeNode"/>.</returns>
-		public static SyntaxTreeNode ToSyntaxTree(this ParseTreeNode parseNode, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE, string cSharpExpression = null)
+		public static SyntaxTreeNode ToSyntaxTree
+			(this ParseTreeNode parseNode, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE, string cSharpExpression = null)
 		{
 			if (parseNode == null) throw new ArgumentNullException("parseNode");
 
@@ -90,8 +89,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				if (ExpressionTypeByToken.TryGetValue((int)parseNode.Type, out expressionType) == false)
 					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE, parseNode.Type), parseNode);
 
-				var syntaxNode = new Dictionary<string, object>(6)
-				{
+				var syntaxNode = new Dictionary<string, object>(6) {
 					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType },
 				};
 
@@ -105,7 +103,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						ToIdentifierNode(parseNode, syntaxNode);
 						break;
 					case TokenType.Literal:
-						syntaxNode[Constants.TYPE_ATTRIBUTE] = string.IsNullOrEmpty(parseNode.Value) == false && parseNode.Value[0] == '\'' ? typeof(char).FullName : typeof(string).FullName;
+						syntaxNode[Constants.TYPE_ATTRIBUTE] = string.IsNullOrEmpty(parseNode.Value) == false && parseNode.Value[0] == '\'' ? typeof(char).FullName :
+							typeof(string).FullName;
 						syntaxNode[Constants.VALUE_ATTRIBUTE] = UnescapeAndUnquote(parseNode.Value, parseNode.Token);
 						break;
 					case TokenType.Number:
@@ -116,6 +115,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						break;
 					case TokenType.CheckedScope:
 						CheckNode(parseNode, 1);
+
 						// ReSharper disable once RedundantArgumentDefaultValue
 						syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[0].ToSyntaxTree(checkedScope: true);
 						break;
@@ -178,23 +178,32 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case TokenType.New:
 						ToNewNode(parseNode, checkedScope, syntaxNode);
 						break;
+					case TokenType.MemberOrListInit:
+						ToMemberOrListInitNode(parseNode, checkedScope, syntaxNode);
+						break;
 					case TokenType.None:
 					case TokenType.Colon:
 					case TokenType.Comma:
+					case TokenType.Initializers:
 					case TokenType.LeftParentheses:
 					case TokenType.RightParentheses:
+					case TokenType.RightCurlyBracket:
 					case TokenType.LeftBracket:
 					case TokenType.NullIndex:
 					case TokenType.RightBracket:
 					case TokenType.Arguments:
+					case TokenType.Assignment:
+					case TokenType.LeftCurlyBracket:
 					default:
-						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE, parseNode.Type), parseNode);
+						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE, parseNode.Type),
+							parseNode);
 				}
 
 				if (string.IsNullOrEmpty(cSharpExpression) == false)
 				{
 					syntaxNode.Add(Constants.EXPRESSION_ORIGINAL_C_SHARP, cSharpExpression);
 				}
+
 				syntaxNode.Add(Constants.EXPRESSION_POSITION, parseNode.Token.Position);
 
 				return new SyntaxTreeNode(syntaxNode);
@@ -213,6 +222,127 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				throw new ExpressionParserException(exception.Message, exception, parseNode);
 			}
+		}
+		private static void ToMemberOrListInitNode(ParseTreeNode parseNode, bool checkedScope, Dictionary<string, object> syntaxNode)
+		{
+			CheckNode(parseNode, 2, TokenType.New, TokenType.Initializers);
+
+			var newObjParseNode = parseNode[0];
+			var bindingsOrInitNodes = parseNode[1];
+			var isMemberInit = bindingsOrInitNodes.Any(node => node.Type == TokenType.Assignment);
+
+			if (newObjParseNode.Count >= 2 && newObjParseNode[1].Value == "[")
+			{
+				syntaxNode[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_NEW_ARRAY_INIT;
+				syntaxNode[Constants.TYPE_ATTRIBUTE] = ToTypeName(newObjParseNode[0], TypeNameOptions.All);
+				syntaxNode[Constants.INITIALIZERS_ATTRIBUTE] = ToListInitializers(bindingsOrInitNodes, checkedScope);
+			}
+			else if (isMemberInit)
+			{
+				var newObjSyntaxNode = new Dictionary<string, object>(6) {
+					[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_NEW
+				};
+				ToNewNode(newObjParseNode, checkedScope, newObjSyntaxNode);
+
+				syntaxNode[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_MEMBER_INIT;
+				syntaxNode[Constants.NEW_ATTRIBUTE] = newObjSyntaxNode;
+				syntaxNode[Constants.BINDINGS_ATTRIBUTE] = ToMemberBindings(bindingsOrInitNodes, checkedScope);
+			}
+			else
+			{
+				var newObjSyntaxNode = new Dictionary<string, object>(6) {
+					[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_NEW
+				};
+				ToNewNode(newObjParseNode, checkedScope, newObjSyntaxNode);
+
+				syntaxNode[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_LIST_INIT;
+				syntaxNode[Constants.NEW_ATTRIBUTE] = newObjSyntaxNode;
+				syntaxNode[Constants.INITIALIZERS_ATTRIBUTE] = ToElementInitBindings(bindingsOrInitNodes, checkedScope);
+			}
+		}
+		private static Dictionary<string, object> ToElementInitBindings(IEnumerable<ParseTreeNode> initializerNodes, bool checkedScope)
+		{
+			var elemInitSyntaxNodes = new Dictionary<string, object>();
+			foreach (var initializerNode in initializerNodes)
+			{
+				if (initializerNode.Type == TokenType.Assignment)
+				{
+					throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDMEMBERINITIALIZERINLISTINITIALIZERS, initializerNode);
+				}
+
+				var elemInitSyntaxNode = new Dictionary<string, object>(2) {
+					[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_ELEMENT_INIT_BINDING
+				};
+				if (initializerNode.Type == TokenType.Initializers)
+				{
+					elemInitSyntaxNode[Constants.INITIALIZERS_ATTRIBUTE] = ToListInitializers(initializerNode, checkedScope);
+				}
+				else
+				{
+					elemInitSyntaxNode[Constants.INITIALIZERS_ATTRIBUTE] = new Dictionary<string, object> {
+						{ "0", initializerNode.ToSyntaxTree(checkedScope) }
+					};
+				}
+
+				elemInitSyntaxNodes.Add(Constants.GetIndexAsString(elemInitSyntaxNodes.Count), elemInitSyntaxNode);
+			}
+
+			return elemInitSyntaxNodes;
+		}
+		private static Dictionary<string, object> ToListInitializers(IEnumerable<ParseTreeNode> initializerNodes, bool checkedScope)
+		{
+			var initExpressionTree = new Dictionary<string, object>();
+			foreach (var initializerNode in initializerNodes)
+			{
+				if (initializerNode.Type == TokenType.Assignment)
+				{
+					throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDMEMBERINITIALIZERINLISTINITIALIZERS, initializerNode);
+				}
+
+				initExpressionTree.Add(Constants.GetIndexAsString(initExpressionTree.Count), initializerNode.ToSyntaxTree(checkedScope));
+			}
+
+			return initExpressionTree;
+		}
+		private static Dictionary<string, object> ToMemberBindings(IEnumerable<ParseTreeNode> initializerNodes, bool checkedScope)
+		{
+			var bindings = new Dictionary<string, object>();
+			foreach (var initializerNode in initializerNodes)
+			{
+				if (initializerNode.Type != TokenType.Assignment)
+				{
+					throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS, initializerNode);
+				}
+
+				CheckNode(initializerNode, 2, TokenType.Identifier);
+
+				var memberName = initializerNode[0].Value;
+				var initializerValueNode = initializerNode[1];
+				var isSubInitializer = initializerValueNode.Type == TokenType.Initializers;
+				var isSubMemberInit = isSubInitializer && initializerValueNode.Any(node => node.Type == TokenType.Assignment);
+				var bindingSyntaxNode = new Dictionary<string, object>(6) {
+					[Constants.NAME_ATTRIBUTE] = memberName
+				};
+				if (isSubInitializer && isSubMemberInit)
+				{
+					bindingSyntaxNode[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_MEMBER_BINDING;
+					bindingSyntaxNode[Constants.BINDINGS_ATTRIBUTE] = ToMemberBindings(initializerValueNode, checkedScope);
+				}
+				else if (isSubInitializer)
+				{
+					bindingSyntaxNode[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_LIST_BINDING;
+					bindingSyntaxNode[Constants.INITIALIZERS_ATTRIBUTE] = ToElementInitBindings(initializerValueNode, checkedScope);
+				}
+				else
+				{
+					bindingSyntaxNode[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING;
+					bindingSyntaxNode[Constants.EXPRESSION_ATTRIBUTE] = initializerValueNode.ToSyntaxTree(checkedScope);
+				}
+
+				bindings.Add(Constants.GetIndexAsString(bindings.Count), bindingSyntaxNode);
+			}
+
+			return bindings;
 		}
 
 		private static void ToNewNode(ParseTreeNode parseNode, bool checkedScope, Dictionary<string, object> syntaxNode)
@@ -297,7 +427,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private static void ToIdentifierNode(ParseTreeNode parseNode, Dictionary<string, object> syntaxNode)
 		{
 			if (parseNode.Count == 0 &&
-				(parseNode.Value == Constants.VALUE_TRUE_STRING || parseNode.Value == Constants.VALUE_FALSE_STRING || parseNode.Value == Constants.VALUE_NULL_STRING))
+				(parseNode.Value == Constants.VALUE_TRUE_STRING ||
+					parseNode.Value == Constants.VALUE_FALSE_STRING ||
+					parseNode.Value == Constants.VALUE_NULL_STRING))
 			{
 				syntaxNode[Constants.EXPRESSION_TYPE_ATTRIBUTE] = ExpressionTypeByToken[(int)TokenType.Literal]; // constant
 				syntaxNode[Constants.TYPE_ATTRIBUTE] = parseNode.Value == Constants.VALUE_NULL_STRING ? typeof(object).FullName : typeof(bool).FullName;
@@ -310,6 +442,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
 			}
+
 			syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode.Value;
 		}
 		private static void ToResolveNode(ParseTreeNode parseNode, bool checkedScope, Dictionary<string, object> syntaxNode)
@@ -321,6 +454,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
 			}
+
 			syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = parseNode.Type == TokenType.NullResolve ? Constants.TrueObject : Constants.FalseObject;
 		}
 		private static object ToTypeName(ParseTreeNode parseNode, TypeNameOptions options)
@@ -346,8 +480,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				return ToTypeName(arrayNode, TypeNameOptions.None);
 			}
 
-			var syntaxNode = new Dictionary<string, object>
-			{
+			var syntaxNode = new Dictionary<string, object> {
 				{ Constants.EXPRESSION_POSITION, parseNode.Token.Position },
 				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
 			};
@@ -361,6 +494,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{
 					syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
 				}
+
 				syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = Constants.FalseObject;
 			}
 			else if (parseNode.Type == TokenType.Identifier)
@@ -410,6 +544,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					args[argName] = argNode.ToSyntaxTree(checkedScope);
 				}
 			}
+
 			return args;
 		}
 		private static Dictionary<string, object> PrepareTypeArguments(ParseTreeNode parseNode, int argumentChildIndex)
@@ -427,30 +562,37 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				var argName = Constants.GetIndexAsString(argIdx++);
 				args[argName] = ToTypeName(argNode, TypeNameOptions.Aliases | TypeNameOptions.Arrays);
 			}
+
 			return args;
 		}
 		private static void CheckNode(ParseTreeNode parseNode, int childCount, TokenType childType0 = 0, TokenType childType1 = 0, TokenType childType2 = 0)
 		{
 			// ReSharper disable HeapView.BoxingAllocation
 			if (parseNode.Count < childCount)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE, parseNode.Type, parseNode.Count, childCount), parseNode);
+				throw new ExpressionParserException(
+					string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE, parseNode.Type, parseNode.Count, childCount), parseNode);
 
 			for (int i = 0, ct = Math.Min(3, childCount); i < ct; i++)
 			{
 				var childNode = parseNode[i];
 				var childNodeType = parseNode[i].Type;
 				if (i == 0 && childType0 != TokenType.None && childType0 != childNodeType)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType0), childNode);
+					throw new ExpressionParserException(
+						string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType0), childNode);
 				if (i == 1 && childType1 != TokenType.None && childType1 != childNodeType)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType1), childNode);
+					throw new ExpressionParserException(
+						string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType1), childNode);
 				if (i == 2 && childType2 != TokenType.None && childType2 != childNodeType)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType2), childNode);
+					throw new ExpressionParserException(
+						string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType2), childNode);
 			}
+
 			// ReSharper restore HeapView.BoxingAllocation
 		}
 		private static object UnescapeAndUnquote(string value, Token token)
 		{
 			if (value == null) return null;
+
 			try
 			{
 				return StringUtils.UnescapeAndUnquote(value);
@@ -460,6 +602,5 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				throw new ExpressionParserException(e.Message, e, token);
 			}
 		}
-
 	}
 }

@@ -13,9 +13,9 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			if (expression == null) throw new ArgumentNullException("expression");
 
 			return new Dictionary<string, object>(3) {
-				{Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_INIT},
-				{Constants.NEW_ATTRIBUTE, AnyPacker.Pack(expression.NewExpression)},
-				{Constants.BINDINGS_ATTRIBUTE, Pack(expression.Bindings)},
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_INIT },
+				{ Constants.NEW_ATTRIBUTE, AnyPacker.Pack(expression.NewExpression) },
+				{ Constants.BINDINGS_ATTRIBUTE, Pack(expression.Bindings) },
 			};
 		}
 		public static Dictionary<string, object> Pack(ReadOnlyCollection<MemberBinding> expressionBindings)
@@ -41,15 +41,15 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 					default: throw new ArgumentOutOfRangeException();
 				}
 			}
+
 			return bindingList;
 		}
 		public static Dictionary<string, object> Pack(MemberListBinding memberListBinding)
 		{
 			if (memberListBinding == null) throw new ArgumentNullException("memberListBinding");
-			
-			return new Dictionary<string, object>(3)
-			{
-				{ Constants.TYPE_ATTRIBUTE, "ListBinding" },
+
+			return new Dictionary<string, object>(3) {
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_LIST_BINDING },
 				{ Constants.MEMBER_ATTRIBUTE, AnyPacker.Pack(memberListBinding.Member) },
 				{ Constants.INITIALIZERS_ATTRIBUTE, Pack(memberListBinding.Initializers) }
 			};
@@ -58,9 +58,8 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 		{
 			if (memberMemberBinding == null) throw new ArgumentNullException("memberMemberBinding");
 
-			return new Dictionary<string, object>(3)
-			{
-				{ Constants.TYPE_ATTRIBUTE, "MemberBinding" },
+			return new Dictionary<string, object>(3) {
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_BINDING },
 				{ Constants.MEMBER_ATTRIBUTE, AnyPacker.Pack(memberMemberBinding.Member) },
 				{ Constants.BINDINGS_ATTRIBUTE, Pack(memberMemberBinding.Bindings) }
 			};
@@ -69,9 +68,8 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 		{
 			if (memberAssignment == null) throw new ArgumentNullException("memberAssignment");
 
-			return new Dictionary<string, object>
-			{
-				{ Constants.TYPE_ATTRIBUTE, "Assignment" },
+			return new Dictionary<string, object> {
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING },
 				{ Constants.MEMBER_ATTRIBUTE, AnyPacker.Pack(memberAssignment.Member) },
 				{ Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(memberAssignment.Expression) }
 			};
@@ -81,9 +79,9 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			if (elementInit == null) throw new ArgumentNullException("elementInit");
 
 			var arguments = elementInit.Arguments.ToArray();
-			
-			return new Dictionary<string, object>(2)
-			{
+
+			return new Dictionary<string, object>(2) {
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_ELEMENT_INIT_BINDING },
 				{ Constants.METHOD_ATTRIBUTE, AnyPacker.Pack(elementInit.AddMethod) },
 				{ Constants.ARGUMENTS_ATTRIBUTE, AnyPacker.Pack(arguments, null) }
 			};

@@ -71,6 +71,10 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_NEW_ARRAY_INIT = "NewArrayInit";
 		public const string EXPRESSION_TYPE_MEMBER_INIT = "MemberInit";
 		public const string EXPRESSION_TYPE_LIST_INIT = "ListInit";
+		public const string EXPRESSION_TYPE_LIST_BINDING = "ListBinding";
+		public const string EXPRESSION_TYPE_MEMBER_BINDING = "MemberBinding";
+		public const string EXPRESSION_TYPE_ELEMENT_INIT_BINDING = "ElementInitBinding";
+		public const string EXPRESSION_TYPE_ASSIGNMENT_BINDING = "Assignment";
 		public const string EXPRESSION_TYPE_ADD = "Add";
 		public const string EXPRESSION_TYPE_ADD_CHECKED = "AddChecked";
 		public const string EXPRESSION_TYPE_SUBTRACT = "Subtract";
@@ -112,7 +116,6 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string VALUE_NULL_STRING = "null";
 
 		public const int MAX_ARGUMENTS_COUNT = 100;
-
 
 		public static readonly object TrueObject = true;
 		public static readonly object FalseObject = false;

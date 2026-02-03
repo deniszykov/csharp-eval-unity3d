@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
@@ -25,7 +26,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 
 			var initializers = default(ElementInit[]);
-			if (TryGetListInitializers(node, bindingContext, out initializers, out bindingError) == false)
+			if (TryGetListInitializers(newExpression.Type, node, bindingContext, out initializers, out bindingError) == false)
 			{
 				if (bindingError == null)
 					bindingError = new ExpressionParserException(Properties.Resources.EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS, node);
@@ -36,49 +37,83 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			return true;
 		}
 
-		internal static bool TryGetListInitializers(SyntaxTreeNode listNode, BindingContext bindingContext, out ElementInit[] initializers, out Exception bindingError)
+		internal static bool TryGetListInitializers(Type newExpressionType, SyntaxTreeNode listNode, BindingContext bindingContext, out ElementInit[] initializers, out Exception bindingError)
 		{
 			if (listNode == null) throw new ArgumentNullException("listNode");
 			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
 
 			bindingError = null;
-			var initializerNodes = listNode.GetInitializers(throwOnError: true);
+			var initializerNodes = listNode.EnumerateInitializers(throwOnError: true).ToList();
 			initializers = new ElementInit[initializerNodes.Count];
-			for (var i = 0; i < initializers.Length; i++)
+			var index = 0;
+			foreach (var initializerNode in initializerNodes)
 			{
-				var index = Constants.GetIndexAsString(i);
-				var initializerObj = default(object);
-				if (initializerNodes.TryGetValue(index, out initializerObj) == false || initializerObj is SyntaxTreeNode == false)
+				if (initializerNode == null)
 				{
 					return false; // failed to get initializer #i
 				}
-				var initializerNode = (SyntaxTreeNode)initializerObj;
-				var addMethodName = initializerNode.GetMethodName(throwOnError: true);
-				var addMethod = default(MemberDescription);
-				if (bindingContext.TryResolveMember(addMethodName, out addMethod) == false || addMethod.IsMethod == false)
-				{
-					return false; // failed to resolve 'Add' method
-				}
 
-				var argumentNodes = initializerNode.GetArguments(throwOnError: true);
-				var arguments = new Expression[argumentNodes.Count];
-				for (var p = 0; p < arguments.Length; p++)
-				{
-					var parameter = addMethod.GetParameter(p);
-					var parameterType = TypeDescription.GetTypeDescription(parameter.ParameterType);
-					var argumentNode = default(SyntaxTreeNode);
-					if (argumentNodes.TryGetValue(p, out argumentNode) == false && argumentNodes.TryGetValue(parameter.Name, out argumentNode) == false)
-					{
-						return false; // failed to find argument #p
-					}
-
-					if (AnyBinder.TryBindInNewScope(argumentNode, bindingContext, parameterType, out arguments[p], out bindingError) == false)
-					{
-						return false; // failed to bind argument #p
-					}
-				}
-				initializers[i] = Expression.ElementInit(addMethod, arguments);
+				var elemInit = default(ElementInit);
+				if (!TryCreateElementInitNode(newExpressionType, initializerNode, bindingContext, ref bindingError, out elemInit)) return false;
+				initializers[index] = elemInit;;
+				index++;
 			}
+			return true;
+		}
+		private static bool TryCreateElementInitNode
+		(
+			Type newExpressionType,
+			SyntaxTreeNode initializerNode,
+			BindingContext bindingContext,
+			ref Exception bindingError,
+			out ElementInit elemInit)
+		{
+			var initializers = initializerNode.EnumerateInitializers(throwOnError: true).ToList();
+			var addMethod = default(MemberDescription);
+			var addMethodNameObj = initializerNode.GetMethodName(throwOnError: false);
+			if (addMethodNameObj != null)
+			{
+				bindingContext.TryResolveMember(addMethodNameObj, out addMethod);
+				if (!addMethod.IsMethod) addMethodNameObj = null;
+			}
+			else
+			{
+				addMethodNameObj = "Add";
+				var typeDescription = TypeDescription.GetTypeDescription(newExpressionType);
+				addMethod = typeDescription.GetMembers("Add").FirstOrDefault(memberDesc =>
+					!memberDesc.IsStatic && memberDesc.IsMethod && memberDesc.GetParametersCount() == initializers.Count);
+			}
+
+			if (addMethod == null)
+			{
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDMEMBER, addMethodNameObj, newExpressionType), initializerNode);
+				elemInit = null;
+				return false;
+			}
+
+			var arguments = new Expression[initializers.Count];
+			var index = 0;
+			foreach (var initializerValueNode in initializers)
+			{
+				if (initializerValueNode == null)
+				{
+					// invalid syntax node
+					elemInit = null;
+					return false;
+				}
+				var parameter = addMethod.GetParameter(index);
+				var parameterType = TypeDescription.GetTypeDescription(parameter.ParameterType);
+
+				if (AnyBinder.TryBindInNewScope(initializerValueNode, bindingContext, parameterType, out arguments[index], out bindingError) == false)
+				{
+					elemInit = null;
+					return false;
+				}
+
+				index++;
+			}
+
+			elemInit = Expression.ElementInit(addMethod, arguments);
 			return true;
 		}
 	}

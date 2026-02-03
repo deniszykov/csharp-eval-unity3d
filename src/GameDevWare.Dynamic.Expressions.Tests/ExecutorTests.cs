@@ -7,8 +7,11 @@ using System.Linq.Expressions;
 using GameDevWare.Dynamic.Expressions.CSharp;
 using Xunit;
 
-// ReSharper disable CompareOfFloatsByEqualityOperator
-// ReSharper disable EqualExpressionComparison
+#pragma warning disable CA2211
+
+// ReSharper disable HeuristicUnreachableCode ShiftExpressionResultEqualsZero UseCollectionExpression RedundantCast RedundantBoolCompare BitwiseOperatorOnEnumWithoutFlags RedundantLogicalConditionalExpressionOperand
+// ReSharper disable UnusedParameter.Local RedundantExplicitArrayCreation UnusedMember.Global ArrangeAccessorOwnerBody PropertyCanBeMadeInitOnly.Global FieldCanBeMadeReadOnly.Global UnusedParameter.Global
+// ReSharper disable UnassignedField.Global NonReadonlyMemberInGetHashCode CompareOfFloatsByEqualityOperator EqualExpressionComparison UnusedAutoPropertyAccessor.Global
 
 namespace GameDevWare.Dynamic.Expressions.Tests
 {
@@ -23,6 +26,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			public int IntField = 100500 * 2;
 			public int IntProperty { get { return this.IntField; } set { this.IntField = value; } }
 			public TestClass TestClassField;
+			public TestGenericClass<int> TestGenericClassFieldNotNull = new TestGenericClass<int>();
 			public TestClass TestClassProperty { get { return this.TestClassField; } set { this.TestClassField = value; } }
 			public List<int> ListField = new List<int>();
 			public List<int> ListProperty { get { return this.ListField; } set { this.ListField = value; } }
@@ -47,7 +51,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 
 		public class TestGenericClass<T1> : IEquatable<TestGenericClass<T1>>
 		{
-			public class TestSubClass<T2, T3>: IEquatable<TestSubClass<T2, T3>>
+			public class TestSubClass<T2, T3> : IEquatable<TestSubClass<T2, T3>>
 			{
 				public T2 Field1;
 				public T3 Property1 { get; set; }
@@ -94,6 +98,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 					}
 				}
 			}
+
+			public T1 GenericField;
 
 			public static T1 Field;
 			public static T1 Property { get; set; }
@@ -203,11 +209,11 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void NewArrayInit()
 		{
-			Expression<Func<int[]>> expression = () => new int[] { 1, 2, 3, 4 };
+			string expression = "new int[] { 1, 2, 3, 4 }";
 
 			var expected = new int[] { 1, 2, 3, 4 };
-			var actual = expression.CompileAot(forceAot: true).Invoke();
-			var expectedAlt = expression.CompileAot(forceAot: false).Invoke();
+			var actual = (int[])ExpressionUtils.Evaluate(expression, new[] { typeof(int[]) }, typeResolver: null, forceAot: true);
+			var expectedAlt = (int[])ExpressionUtils.Evaluate(expression, new[] { typeof(int[]) }, typeResolver: null, forceAot: false);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -216,11 +222,11 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void NewArrayBounds()
 		{
-			Expression<Func<int[]>> expression = () => new int[10];
+			string expression = "new int[10]";
 
 			var expected = new int[10];
-			var actual = expression.CompileAot(forceAot: true).Invoke();
-			var expectedAlt = expression.CompileAot(forceAot: false).Invoke();
+			var actual = (int[])ExpressionUtils.Evaluate(expression, new[] { typeof(int[]) }, typeResolver: null, forceAot: true);
+			var expectedAlt = (int[])ExpressionUtils.Evaluate(expression, new[] { typeof(int[]) }, typeResolver: null, forceAot: false);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -229,11 +235,11 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void ListInit()
 		{
-			Expression<Func<List<int>>> expression = () => new List<int> { 1, 2, 3, 4 };
+			string expression = "new List<int> { 1, 2, 3, 4 }";
 
 			var expected = new List<int> { 1, 2, 3, 4 };
-			var actual = expression.CompileAot(forceAot: true).Invoke();
-			var expectedAlt = expression.CompileAot(forceAot: false).Invoke();
+			var actual = (List<int>)ExpressionUtils.Evaluate(expression, new[] { typeof(List<int>) }, typeResolver: null, forceAot: true);
+			var expectedAlt = (List<int>)ExpressionUtils.Evaluate(expression, new[] { typeof(List<int>) }, typeResolver: null, forceAot: false);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -246,7 +252,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Expression<Func<int>> staticPropertyAccess = () => TestClass.StaticIntProperty;
 			Expression<Func<TestClass, int>> instanceFieldAccess = t => t.IntField;
 			Expression<Func<TestClass, int>> instancePropertyAccess = t => t.IntProperty;
-
 
 			var expected = TestClass.StaticIntField;
 			var actual = staticFieldAccess.CompileAot(forceAot: true).Invoke();
@@ -281,29 +286,32 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[Fact]
 		public void MemberInit()
 		{
-			Expression<Func<TestClass>> expression = () => new TestClass
-			{
+			var expression = @"
+new ExecutorTests.TestClass
+{
+	IntField = 25,
+	IntProperty = 10,
+	TestClassField = new ExecutorTests.TestClass { { 1, 2 } },
+	TestGenericClassFieldNotNull = { GenericField = 123 },
+	ListField = new List<int>() { 2, 3 },
+	ListProperty = { 4, 5 }
+}";
+			var knownTypes = new KnownTypeResolver(typeof(TestClass), typeof(List<int>));
+			var expected = new TestClass {
 				IntField = 25,
 				IntProperty = 10,
 				TestClassField = new TestClass { { 1, 2 } },
-				ListField = { 2, 3 },
+				TestGenericClassFieldNotNull = { GenericField = 123 },
+				ListField = new List<int>() { 2, 3 },
 				ListProperty = { 4, 5 }
 			};
-
-			var expected = new TestClass
-			{
-				IntField = 25,
-				IntProperty = 10,
-				TestClassField = new TestClass { { 1, 2 } },
-				ListField = { 2, 3 },
-				ListProperty = { 4, 5 }
-			};
-			var actual = expression.CompileAot(forceAot: true).Invoke();
-			var expectedAlt = expression.CompileAot(forceAot: false).Invoke();
+			var actual = (TestClass)ExpressionUtils.Evaluate(expression, new[] { typeof(TestClass) }, typeResolver: knownTypes, forceAot: true);
+			var expectedAlt = (TestClass)ExpressionUtils.Evaluate(expression, new[] { typeof(TestClass) }, typeResolver: knownTypes, forceAot: false);
 
 			Assert.Equal(expected.IntField, actual.IntField);
 			Assert.Equal(expected.IntProperty, actual.IntProperty);
 			Assert.Equal(expected.TestClassField.ListField, actual.TestClassField.ListField);
+			Assert.Equal(expected.TestGenericClassFieldNotNull.GenericField, actual.TestGenericClassFieldNotNull.GenericField);
 			Assert.Equal(expected.ListField, actual.ListField);
 			Assert.Equal(expected.ListProperty, actual.ListProperty);
 
@@ -363,14 +371,14 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("arg1?.ListField?[1]?.ToString()", "2")]
 		public void NullPropagation(string expression, object expected)
 		{
-			var testClass = new TestClass
-			{
+			var testClass = new TestClass {
 				ArrayField = new[] { 1, 2, 3 },
 				ListField = new List<int> { 1, 2, 3 }
 			};
 			var expectedType = expected?.GetType() ?? typeof(object);
 			var actual = ExpressionUtils.Evaluate(expression, new[] { testClass.GetType(), expectedType }, forceAot: true, arguments: new object[] { testClass });
-			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { testClass.GetType(), expectedType }, forceAot: false, arguments: new object[] { testClass });
+			var expectedAlt = ExpressionUtils.Evaluate(expression, new[] { testClass.GetType(), expectedType }, forceAot: false,
+				arguments: new object[] { testClass });
 
 			Assert.Equal(expectedAlt, actual);
 
@@ -408,25 +416,32 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+
 		// basic tests
 		[InlineData("1 > 2 ? 1 : 2", 1 > 2 ? 1 : 2)]
 		[InlineData("true ? 1 : 2", true ? 1 : 2)]
 		[InlineData("false ? 1 : 2", false ? 1 : 2)]
+
 		// inner conditions
 		[InlineData("true ? (false ? 3 : 4) : (true ? 5 : 6)", true ? (false ? 3 : 4) : (true ? 5 : 6))]
+
 		// operators priority
 		[InlineData("1 != 1 || 1 == 1 ? 1 : 2", 1 != 1 || 1 == 1 ? 1 : 2)]
 		[InlineData("1 < 2 && 3 >= 2 ? 1 ^ 3 : 4 & 2", 1 < 2 && 3 >= 2 ? 1 ^ 3 : 4 & 2)]
+
 		// numberic promotion
 		[InlineData("true ? 1 : 2.0", true ? 1 : 2.0)]
 		[InlineData("true ? 1.0f : 2.0", true ? 1.0f : 2.0)]
 		[InlineData("true ? 1.0 : 2.0f", true ? 1.0 : 2.0f)]
 		[InlineData("true ? (byte)1 : (byte)2", true ? 1 : 2)]
+
 		// common base class promotion
 		[InlineData("true ? default(MemoryStream) : default(Stream)", null)]
 		[InlineData("true ? default(Comparer<int>) : default(IComparer<int>)", null)]
+
 		// check if false clause executed even if condition is true
 		[InlineData("true ? string.Empty : default(object).ToString()", "")]
+
 		// check if true clause executed even if condition is false
 		[InlineData("false ? default(object).ToString() : string.Empty", "")]
 		public void ConditionalOperation(string expression, object expected)
@@ -441,6 +456,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+
 		// basic tests
 		[InlineData("false && default(object).ToString() == null", false)]
 		[InlineData("true || default(object).ToString() == null", true)]
@@ -455,7 +471,6 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
 		}
-
 
 		[Theory]
 		[InlineData("null ?? null", null)]
@@ -501,81 +516,97 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+
 		// 16
 		// signed on un-signed
 		[InlineData("(Int16)2 ** (SByte)2", (short)2 * 2)]
 		[InlineData("(Int16)2 ** (Int16)2", (short)2 * 2)]
 		[InlineData("(Int16)2 ** (Int32)2", (short)2 * 2)]
 		[InlineData("(Int16)2 ** (Int64)2", (short)2 * (long)2)]
+
 		// un-signed on un-signed
 		[InlineData("(UInt16)2 ** (SByte)2", (ushort)2 * 2)]
 		[InlineData("(UInt16)2 ** (Int16)2", (ushort)2 * 2)]
 		[InlineData("(UInt16)2 ** (Int32)2", (ushort)2 * 2)]
 		[InlineData("(UInt16)2 ** (Int64)2", (ushort)2 * (long)2)]
+
 		// 32
 		// signed on signed
 		[InlineData("(Int32)2 ** (SByte)2", 2 * 2)]
 		[InlineData("(Int32)2 ** (Int16)2", 2 * 2)]
 		[InlineData("(Int32)2 ** (Int32)2", 2 * 2)]
 		[InlineData("(Int32)2 ** (Int64)2", 2 * (long)2)]
+
 		// signed on un-signed
 		[InlineData("(Int32)2 ** (Byte)2", 2 * 2)]
 		[InlineData("(Int32)2 ** (UInt16)2", 2 * 2)]
 		[InlineData("(Int32)2 ** (UInt32)2", 2 * (uint)2)]
 		[InlineData("(Int32)2 ** (UInt64)2", 2 * (ulong)2)]
+
 		// un-signed on signed
 		[InlineData("(UInt32)2 ** (SByte)2", (uint)2 * (sbyte)2)]
 		[InlineData("(UInt32)2 ** (Int16)2", (uint)2 * (short)2)]
 		[InlineData("(UInt32)2 ** (Int32)2", (uint)2 * 2)]
 		[InlineData("(UInt32)2 ** (Int64)2", 2 * (long)2)]
+
 		// un-signed on un-signed
 		[InlineData("(UInt32)2 ** (Byte)2", (uint)2 * 2)]
 		[InlineData("(UInt32)2 ** (UInt16)2", (uint)2 * 2)]
 		[InlineData("(UInt32)2 ** (UInt32)2", 2 * (uint)2)]
 		[InlineData("(UInt32)2 ** (UInt64)2", 2 * (ulong)2)]
+
 		// 64
 		// signed on signed
 		[InlineData("(Int64)2 ** (Int32)2", (ulong)2 * 2)]
 		[InlineData("(Int64)2 ** (Int64)2", (ulong)2 * 2)]
+
 		// signed on un-signed
 		[InlineData("(Int64)2 ** (Byte)2", (ulong)2 * 2)]
 		[InlineData("(Int64)2 ** (UInt16)2", (ulong)2 * 2)]
 		[InlineData("(Int64)2 ** (UInt32)2", (ulong)2 * 2)]
 		[InlineData("(Int64)2 ** (UInt64)2", 2 * (ulong)2)]
+
 		// un-signed on signed
 		[InlineData("(UInt64)2 ** (Int32)2", (ulong)2 * 2)]
 		[InlineData("(UInt64)2 ** (Int64)2", (ulong)2 * 2)]
+
 		// un-signed on un-signed
 		[InlineData("(UInt64)2 ** (Byte)2", (ulong)2 * 2)]
 		[InlineData("(UInt64)2 ** (UInt16)2", (ulong)2 * 2)]
 		[InlineData("(UInt64)2 ** (UInt32)2", (ulong)2 * 2)]
 		[InlineData("(UInt64)2 ** (UInt64)2", 2 * (ulong)2)]
+
 		// floating-point
 		// float to double
 		[InlineData("(Single)2 ** (Single)2", 2 * (float)2)]
 		[InlineData("(Double)2 ** (Single)2", (double)2 * (float)2)]
 		[InlineData("(Single)2 ** (Double)2", (float)2 * (double)2)]
 		[InlineData("(Double)2 ** (Double)2", 2 * (double)2)]
+
 		// signed on float
 		[InlineData("(SByte)2 ** (Single)2", 2 * (float)2)]
 		[InlineData("(Int16)2 ** (Single)2", 2 * (float)2)]
 		[InlineData("(Int32)2 ** (Single)2", 2 * (float)2)]
 		[InlineData("(Int64)2 ** (Single)2", 2 * (float)2)]
+
 		// un-signed on float
 		[InlineData("(Byte)2 ** (Single)2", 2 * (float)2)]
 		[InlineData("(UInt16)2 ** (Single)2", 2 * (float)2)]
 		[InlineData("(UInt32)2 ** (Single)2", 2 * (float)2)]
 		[InlineData("(UInt64)2 ** (Single)2", 2 * (float)2)]
+
 		// signed on double
 		[InlineData("(SByte)2 ** (Double)2", 2 * (double)2)]
 		[InlineData("(Int16)2 ** (Double)2", 2 * (double)2)]
 		[InlineData("(Int32)2 ** (Double)2", 2 * (double)2)]
 		[InlineData("(Int64)2 ** (Double)2", 2 * (double)2)]
+
 		// un-signed on double
 		[InlineData("(Byte)2 ** (Double)2", 2 * (double)2)]
 		[InlineData("(UInt16)2 ** (Double)2", 2 * (double)2)]
 		[InlineData("(UInt32)2 ** (Double)2", 2 * (double)2)]
 		[InlineData("(UInt64)2 ** (Double)2", 2 * (double)2)]
+
 		//nullable
 		// null on value
 		[InlineData("default(Int16?) ** (SByte)2", null)]
@@ -585,6 +616,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("default(UInt16?) ** (SByte)2", null)]
 		[InlineData("default(UInt32?) ** (Byte)2", null)]
 		[InlineData("default(UInt64?) ** (Int32)2", null)]
+
 		// value on null
 		[InlineData("(Int16)2 ** default(SByte?)", null)]
 		[InlineData("(Int32)2 ** default(Int16?)", null)]
@@ -620,6 +652,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+
 		// int8
 		[InlineData("(SByte)2 + (SByte)2", (2 + 2))]
 		[InlineData("unchecked((SByte)127 + (SByte)2)", unchecked((127 + 2)))]
@@ -641,6 +674,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((SByte)127 * (SByte)2)", unchecked((127 * 2)))]
 		[InlineData("(SByte)2 * (SByte)2", (2 * 2))]
 		[InlineData("(SByte)2 ** (SByte)2", (2 * 2))]
+
 		// uint8
 		[InlineData("(Byte)2 + (Byte)2", (2 + 2))]
 		[InlineData("unchecked((Byte)256 + (Byte)2)", unchecked(((byte)256 + 2)))]
@@ -662,6 +696,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Byte)256 * (Byte)2)", unchecked(((byte)256 * 2)))]
 		[InlineData("(Byte)2 * (Byte)2", (2 * 2))]
 		[InlineData("(Byte)2 ** (Byte)2", (2 * 2))]
+
 		// int16
 		[InlineData("(Int16)2 + (Int16)2", (2 + 2))]
 		[InlineData("unchecked((Int16)32767 + (Int16)2)", unchecked((32767 + 2)))]
@@ -683,6 +718,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Int16)32767 * (Int16)2)", unchecked((32767 * 2)))]
 		[InlineData("(Int16)2 * (Int16)2", (2 * 2))]
 		[InlineData("(Int16)2 ** (Int16)2", (2 * 2))]
+
 		// int16
 		[InlineData("(UInt16)2 + (UInt16)2", (2 + 2))]
 		[InlineData("unchecked((UInt16)65535 + (UInt16)2)", unchecked((65535 + 2)))]
@@ -704,6 +740,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt16)65535 * (UInt16)2)", unchecked((65535 * 2)))]
 		[InlineData("(UInt16)2 * (UInt16)2", (2 * 2))]
 		[InlineData("(UInt16)2 ** (UInt16)2", (2 * 2))]
+
 		// int32
 		[InlineData("2 + 2", (2 + 2))]
 		[InlineData("unchecked(2147483647 + 2)", unchecked(2147483647 + 2))]
@@ -725,6 +762,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked(2147483647 * 2)", unchecked(2147483647 * 2))]
 		[InlineData("2 * 2", (2 * 2))]
 		[InlineData("2 ** 2", (2 * 2))]
+
 		// uint
 		[InlineData("2u + 2u", (2u + 2u))]
 		[InlineData("unchecked(4294967295u + 2u)", unchecked(4294967295u + 2u))]
@@ -746,6 +784,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked(4294967295u * 2u)", unchecked(4294967295u * 2u))]
 		[InlineData("2u * 2u", (2u * 2u))]
 		[InlineData("2u ** 2u", (2u * 2u))]
+
 		// int64
 		[InlineData("2L + 2L", (2L + 2L))]
 		[InlineData("unchecked(9223372036854775807L + 2L)", unchecked(9223372036854775807L + 2L))]
@@ -767,6 +806,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked(9223372036854775807L * 2L)", unchecked(9223372036854775807L * 2L))]
 		[InlineData("2L * 2L", (2L * 2L))]
 		[InlineData("2L ** 2L", (2L * 2L))]
+
 		// uin64
 		[InlineData("2UL + 2UL", (2UL + 2UL))]
 		[InlineData("unchecked(18446744073709551615UL + 2UL)", unchecked(18446744073709551615UL + 2UL))]
@@ -788,6 +828,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked(18446744073709551615UL * 2UL)", unchecked(18446744073709551615UL * 2UL))]
 		[InlineData("2UL * 2UL", (2UL * 2UL))]
 		[InlineData("2UL ** 2UL", (2UL * 2UL))]
+
 		// single
 		[InlineData("2f + 2f", (2f + 2f))]
 		[InlineData("unchecked(18446744073709551615f + 2f)", unchecked(18446744073709551615f + 2f))]
@@ -804,6 +845,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("18446744073709551615f * 2f", unchecked(18446744073709551615f * 2f))]
 		[InlineData("2f * 2f", (2f * 2f))]
 		[InlineData("2f ** 2f", (2f * 2f))]
+
 		// double
 		[InlineData("2d + 2d", (2d + 2d))]
 		[InlineData("unchecked(18446744073709551615d + 2d)", unchecked(18446744073709551615d + 2d))]
@@ -851,9 +893,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 			Assert.Equal(expectedAlt, actual);
 		}
 
-
-
 		[Theory]
+
 		// binary
 		[InlineData("2m + 2m", 2L + 2L)]
 		[InlineData("unchecked(2147483647m + 2m)", unchecked(2147483647L + 2L))]
@@ -864,6 +905,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked(2147483647m * 2m)", unchecked(2147483647L * 2L))]
 		[InlineData("2m * 2m", (2L * 2L))]
 		[InlineData("2 ** 2", (2L * 2L))]
+
 		// comparison
 		[InlineData("2m == 2m", 2 == 2)]
 		[InlineData("2m != 2m", 2 != 2)]
@@ -888,6 +930,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+
 		// binary
 		[InlineData("ConsoleColor.DarkCyan + 1", ConsoleColor.DarkCyan + 1)]
 		[InlineData("ConsoleColor.DarkCyan - 1", ConsoleColor.DarkCyan - 1)]
@@ -896,8 +939,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("ConsoleColor.DarkCyan ^ ConsoleColor.DarkBlue", ConsoleColor.DarkCyan ^ ConsoleColor.DarkBlue)]
 		[InlineData("ConsoleColor.DarkCyan & ConsoleColor.DarkBlue", ConsoleColor.DarkCyan & ConsoleColor.DarkBlue)]
 		[InlineData("ConsoleColor.DarkCyan | ConsoleColor.DarkBlue", ConsoleColor.DarkCyan | ConsoleColor.DarkBlue)]
+
 		// unary
 		[InlineData("~ConsoleColor.DarkCyan", ~ConsoleColor.DarkCyan)]
+
 		// comparison
 		[InlineData("ConsoleColor.Black == ConsoleColor.DarkBlue", ConsoleColor.Black == ConsoleColor.DarkBlue)]
 		[InlineData("ConsoleColor.Black != ConsoleColor.DarkBlue", ConsoleColor.Black != ConsoleColor.DarkBlue)]
@@ -917,6 +962,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+
 		// default
 		[InlineData("(Byte)1", (byte)1)]
 		[InlineData("(SByte)1", (sbyte)1)]
@@ -928,11 +974,13 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("(UInt64)1", (ulong)1)]
 		[InlineData("(Single)1", (float)1)]
 		[InlineData("(Double)1", (double)1)]
+
 		// unchecked
 		[InlineData("unchecked((Byte)-1)", unchecked((byte)-1))]
 		[InlineData("unchecked((UInt16)-1)", unchecked((ushort)-1))]
 		[InlineData("unchecked((UInt32)-1)", unchecked((uint)-1))]
 		[InlineData("unchecked((UInt64)-1)", unchecked((ulong)-1))]
+
 		// byte
 		[InlineData("unchecked((Byte)(Byte)-1000)", unchecked((byte)(byte)-1000))]
 		[InlineData("unchecked((Byte)(SByte)-1000)", unchecked((byte)(sbyte)-1000))]
@@ -942,6 +990,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Byte)(UInt32)-1000)", unchecked((byte)(uint)-1000))]
 		[InlineData("unchecked((Byte)(Int64)-1000)", unchecked((byte)(long)-1000))]
 		[InlineData("unchecked((Byte)(UInt64)-1000)", unchecked((byte)(ulong)-1000))]
+
 		// signed byte
 		[InlineData("unchecked((SByte)(Byte)-1000)", unchecked((sbyte)(byte)-1000))]
 		[InlineData("unchecked((SByte)(SByte)-1000)", unchecked(((sbyte)-1000)))]
@@ -951,6 +1000,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((SByte)(UInt32)-1000)", unchecked((sbyte)(uint)-1000))]
 		[InlineData("unchecked((SByte)(Int64)-1000)", unchecked((sbyte)-1000))]
 		[InlineData("unchecked((SByte)(UInt64)-1000)", unchecked((sbyte)(ulong)-1000))]
+
 		// int16
 		[InlineData("unchecked((Int16)(Byte)-1000)", unchecked((short)(byte)-1000))]
 		[InlineData("unchecked((Int16)(SByte)-1000)", unchecked((short)(sbyte)-1000))]
@@ -962,6 +1012,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Int16)(UInt64)-1000)", unchecked((short)(ulong)-1000))]
 		[InlineData("unchecked((Int16)(Single)-1000)", unchecked((short)(float)-1000))]
 		[InlineData("unchecked((Int16)(Double)-1000)", unchecked((short)(double)-1000))]
+
 		// unsigned int16
 		[InlineData("unchecked((UInt16)(Byte)-1000)", unchecked((ushort)(byte)-1000))]
 		[InlineData("unchecked((UInt16)(SByte)-1000)", unchecked((ushort)(sbyte)-1000))]
@@ -973,6 +1024,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt16)(UInt64)-1000)", unchecked((ushort)(ulong)-1000))]
 		[InlineData("unchecked((UInt16)(Single)1000)", unchecked((ushort)(float)1000))]
 		[InlineData("unchecked((UInt16)(Double)1000)", unchecked((ushort)(double)1000))]
+
 		// int32
 		[InlineData("unchecked((Int32)(Byte)-1000)", unchecked((int)(byte)-1000))]
 		[InlineData("unchecked((Int32)(SByte)-1000)", unchecked((int)(sbyte)-1000))]
@@ -984,6 +1036,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Int32)(UInt64)-1000)", unchecked((int)(ulong)-1000))]
 		[InlineData("unchecked((Int32)(Single)-1000)", unchecked((-1000)))]
 		[InlineData("unchecked((Int32)(Double)-1000)", unchecked(((double)-1000)))]
+
 		// unsigned int32
 		[InlineData("unchecked((UInt32)(Byte)-1000)", unchecked((uint)(byte)-1000))]
 		[InlineData("unchecked((UInt32)(SByte)-1000)", unchecked((uint)(sbyte)-1000))]
@@ -995,6 +1048,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt32)(UInt64)-1000)", unchecked((uint)(ulong)-1000))]
 		[InlineData("unchecked((UInt32)(Single)1000)", unchecked((uint)(float)1000))]
 		[InlineData("unchecked((UInt32)(Double)1000)", unchecked((uint)(double)1000))]
+
 		// int64
 		[InlineData("unchecked((Int64)(Byte)-1000)", unchecked((long)(byte)-1000))]
 		[InlineData("unchecked((Int64)(SByte)-1000)", unchecked((long)(sbyte)-1000))]
@@ -1006,6 +1060,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Int64)(UInt64)-1000)", unchecked((long)(ulong)-1000))]
 		[InlineData("unchecked((Int64)(Single)-1000)", unchecked((long)(float)-1000))]
 		[InlineData("unchecked((Int64)(Double)-1000)", unchecked((long)(double)-1000))]
+
 		// unsigned int64
 		[InlineData("unchecked((UInt64)(Byte)-1000)", unchecked((ulong)(byte)-1000))]
 		[InlineData("unchecked((UInt64)(SByte)-1000)", unchecked((ulong)(sbyte)-1000))]
@@ -1017,6 +1072,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((UInt64)(UInt64)-1000)", unchecked(((ulong)-1000)))]
 		[InlineData("unchecked((UInt64)(Single)1000)", unchecked((ulong)(float)1000))]
 		[InlineData("unchecked((UInt64)(Double)1000)", unchecked((ulong)(double)1000))]
+
 		// single
 		[InlineData("unchecked((Single)(Int16)-1000)", unchecked((float)-1000))]
 		[InlineData("unchecked((Single)(UInt16)-1000)", unchecked((float)(ushort)-1000))]
@@ -1026,6 +1082,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("unchecked((Single)(UInt64)-1000)", unchecked((float)(ulong)-1000))]
 		[InlineData("unchecked((Single)(Single)-1000)", unchecked(((float)-1000)))]
 		[InlineData("unchecked((Single)(Double)-1000)", unchecked((float)(double)-1000))]
+
 		// double
 		[InlineData("unchecked((Double)(Int16)-1000)", unchecked((double)-1000))]
 		[InlineData("unchecked((Double)(UInt16)-1000)", unchecked((double)(ushort)-1000))]
@@ -1250,6 +1307,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+
 		// C# Specs -> 7.3.7 Lifted operators -> For the binary operators
 		[InlineData("a + b", 1, 2, 1 + 2)]
 		[InlineData("a * b", 1, 2, 1 * 2)]
@@ -1271,6 +1329,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a ^ b", 1, null, null)]
 		[InlineData("a << b", 1, null, null)]
 		[InlineData("a >> b", 1, null, null)]
+
 		// C# Specs -> 7.3.7 Lifted operators -> For the unary operators
 		[InlineData("+b", null, null, null)]
 		[InlineData("+b", null, 1, 1)]
@@ -1288,6 +1347,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+
 		// C# Specs -> 7.3.7 Lifted operators -> For the relational operators
 		[InlineData("a < b", 1, 2, true)]
 		[InlineData("a < b", 1, null, false)]
@@ -1295,6 +1355,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		[InlineData("a == b", 1, null, false)]
 		[InlineData("a >= b", 1, null, false)]
 		[InlineData("a <= b", 1, null, false)]
+
 		// C# Specs -> 7.3.7 Lifted operators -> For the equality operators
 		[InlineData("null == a", null, null, true)]
 		[InlineData("null == a", 1, null, false)]
@@ -1312,6 +1373,7 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		}
 
 		[Theory]
+
 		// C# Specs -> 7.11.4 Nullable boolean logical operators
 		[InlineData("a & b", true, true, true)]
 		[InlineData("a & b", true, false, false)]
@@ -1328,7 +1390,8 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		public void LiftedBoolOperation(string expression, bool? arg1, bool? arg2, bool? expected)
 		{
 			var actual = CSharpExpression.ParseFunc<bool?, bool?, bool?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: true).Invoke(arg1, arg2);
-			var expectedAlt = CSharpExpression.ParseFunc<bool?, bool?, bool?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false).Invoke(arg1, arg2);
+			var expectedAlt = CSharpExpression.ParseFunc<bool?, bool?, bool?>(expression, arg1Name: "a", arg2Name: "b").CompileAot(forceAot: false)
+				.Invoke(arg1, arg2);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);
@@ -1372,8 +1435,10 @@ namespace GameDevWare.Dynamic.Expressions.Tests
 		{
 			var expected = true;
 			var typeResolutionService = new KnownTypeResolver(typeof(Func<Type, object, bool>));
-			var actual = CSharpExpression.ParseFunc<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: true).Invoke().Invoke(typeof(bool), null);
-			var expectedAlt = CSharpExpression.ParseFunc<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService).CompileAot(forceAot: false).Invoke().Invoke(typeof(bool), null);
+			var actual = CSharpExpression.ParseFunc<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService)
+				.CompileAot(forceAot: true).Invoke().Invoke(typeof(bool), null);
+			var expectedAlt = CSharpExpression.ParseFunc<Func<Type, object, bool>>("new Func<Type, object, bool>((t, c) => t != null)", typeResolutionService)
+				.CompileAot(forceAot: false).Invoke().Invoke(typeof(bool), null);
 
 			Assert.Equal(expected, actual);
 			Assert.Equal(expectedAlt, actual);

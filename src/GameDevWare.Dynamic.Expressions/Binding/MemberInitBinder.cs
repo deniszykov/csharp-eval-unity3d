@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -26,7 +27,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 
 			var bindings = default(MemberBinding[]);
-			if (TryGetBindings(node, bindingContext, out bindings, out bindingError) == false)
+			if (TryGetBindings(newExpression.Type, node, bindingContext, out bindings, out bindingError) == false)
 			{
 				return false;
 			}
@@ -34,27 +35,29 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			boundExpression = Expression.MemberInit((NewExpression)newExpression, bindings);
 			return true;
 		}
-		private static bool TryGetBindings(SyntaxTreeNode node, BindingContext bindingContext, out MemberBinding[] bindings, out Exception bindingError)
+		private static bool TryGetBindings(Type newExpressionType, SyntaxTreeNode node, BindingContext bindingContext, out MemberBinding[] bindings, out Exception bindingError)
 		{
 			if (node == null) throw new ArgumentNullException("node");
 			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
 
-			var bindingNodes = node.GetBindings(throwOnError: true);
+			var bindingNodes = node.EnumerateBindings(throwOnError: true).ToList();
 			bindingError = null;
 
 			bindings = new MemberBinding[bindingNodes.Count];
-			for (var i = 0; i < bindings.Length; i++)
+			var index = 0;
+			foreach (var bindingNode in bindingNodes)
 			{
-				if (TryGetBinding(bindingNodes[Constants.GetIndexAsString(i)], bindingContext, out bindings[i], out bindingError))
-					continue;
-
-				bindingError = bindingError ?? new ExpressionParserException(Properties.Resources.EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS, node);
-				return false;
+				if (!TryGetBinding(newExpressionType, bindingNode, bindingContext, out bindings[index], out bindingError))
+				{
+					bindingError = new ExpressionParserException(Properties.Resources.EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS, node);
+					return false;
+				}
+				index++;
 			}
 
 			return true;
 		}
-		private static bool TryGetBinding(object bindingNode, BindingContext bindingContext, out MemberBinding memberBinding, out Exception bindingError)
+		private static bool TryGetBinding(Type newExpressionType, object bindingNode, BindingContext bindingContext, out MemberBinding memberBinding, out Exception bindingError)
 		{
 			bindingError = null;
 			memberBinding = null;
@@ -64,19 +67,32 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return false;
 			}
 
-			var bindingType = (string)bindingNodeTree.GetTypeName(throwOnError: true);
-			var memberObj = bindingNodeTree.GetMember(throwOnError: true);
+			var bindingType = bindingNodeTree.GetExpressionType(throwOnError: true);
 			var member = default(MemberDescription);
-			if (bindingContext.TryResolveMember(memberObj, out member) == false)
+			var memberOrNameObj = (object)bindingNodeTree.GetMember(throwOnError: false);
+			if (memberOrNameObj != null)
 			{
+				bindingContext.TryResolveMember(memberOrNameObj, out member);
+			}
+			else
+			{
+				memberOrNameObj = bindingNodeTree.GetName(throwOnError: true);
+				var memberName = memberOrNameObj.ToString();
+				var typeDescription = TypeDescription.GetTypeDescription(newExpressionType);
+				member = typeDescription.GetMembers(memberName).FirstOrDefault(memberDesc => !memberDesc.IsStatic);
+			}
+
+			if (member == null)
+			{
+				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDMEMBER, memberOrNameObj, newExpressionType), bindingNodeTree);
 				return false;
 			}
-			var memberValueType = TypeDescription.GetTypeDescription(member.ResultType);
 
+			var memberValueType = TypeDescription.GetTypeDescription(member.ResultType);
 			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (bindingType)
 			{
-				case "Assignment":
+				case Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING:
 					var expressionNode = bindingNodeTree.GetExpression(throwOnError: true);
 					var expression = default(Expression);
 					if (AnyBinder.TryBindInNewScope(expressionNode, bindingContext, memberValueType, out expression, out bindingError) == false)
@@ -89,9 +105,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					else
 						memberBinding = Expression.Bind((MemberInfo)member, expression);
 					return true;
-				case "MemberBinding":
+				case Constants.EXPRESSION_TYPE_MEMBER_BINDING:
 					var bindings = default(MemberBinding[]);
-					if (TryGetBindings(bindingNodeTree, bindingContext, out bindings, out bindingError) == false)
+					if (TryGetBindings(member.ResultType, bindingNodeTree, bindingContext, out bindings, out bindingError) == false)
 					{
 						return false; // failed to resolve bindings
 					}
@@ -100,9 +116,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					else
 						memberBinding = Expression.MemberBind((MemberInfo)member, bindings);
 					return true;
-				case "ListBinding":
+				case Constants.EXPRESSION_TYPE_LIST_BINDING:
 					var initializers = default(ElementInit[]);
-					if (ListInitBinder.TryGetListInitializers(bindingNodeTree, bindingContext, out initializers, out bindingError) == false)
+					if (ListInitBinder.TryGetListInitializers(member.ResultType, bindingNodeTree, bindingContext, out initializers, out bindingError) == false)
 					{
 						return false; // failed to resolve list initializers
 					}

@@ -23,6 +23,7 @@ media/
 bin/
 obj/
 packages/
+src/.idea/
 deploy/
 Assembly-*
 Library/

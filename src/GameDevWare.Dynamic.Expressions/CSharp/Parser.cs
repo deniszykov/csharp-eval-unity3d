@@ -28,9 +28,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private static readonly Dictionary<int, int> UnaryReplacement;
 		private static readonly Dictionary<int, int> TokenPrecedence;
 		private static readonly TokenType[] ConditionTerm = new[] { TokenType.Colon };
-		private static readonly TokenType[] NewTerm = new[] { TokenType.Call };
+		private static readonly TokenType[] NewTerm = new[] { TokenType.Call, TokenType.LeftCurlyBracket };
 		private static readonly TokenType[] GeneticArgumentsTerm = new[] { TokenType.Comma, TokenType.GreaterThan, TokenType.RightShift };
-		private static readonly TokenType[] CommonTerm = new[] { TokenType.Comma, TokenType.RightParentheses, TokenType.RightBracket };
+		private static readonly TokenType[] CommonTerm = new[] { TokenType.Comma, TokenType.RightParentheses, TokenType.RightBracket, TokenType.RightCurlyBracket };
 		private static readonly TokenType[] NullableTerm = new[] { TokenType.Comma, TokenType.RightParentheses, TokenType.GreaterThan, TokenType.RightShift };
 
 		private readonly List<Token> tokens;
@@ -38,46 +38,59 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		static Parser()
 		{
-			UnaryReplacement = new Dictionary<int, int>
-			{
+			UnaryReplacement = new Dictionary<int, int> {
 				{ (int)TokenType.Add, (int)TokenType.Plus },
 				{ (int)TokenType.Subtract, (int)TokenType.Minus }
 			};
 			TokenPrecedence = new Dictionary<int, int>();
-			var tokenPrecedenceList = (new[]
-			{
+			var tokenPrecedenceList = (new[] {
 				// Primary
-				new[] {TokenType.Resolve, TokenType.NullResolve, TokenType.Call, TokenType.Typeof, TokenType.Default},
+				new[] { TokenType.Resolve, TokenType.NullResolve, TokenType.Call, TokenType.Typeof, TokenType.Default },
+
 				// New
-				new[] {TokenType.New },
+				new[] { TokenType.New },
+
 				// Unary
-				new[] {TokenType.Plus, TokenType.Minus, TokenType.Not, TokenType.Complement, TokenType.Convert},
+				new[] { TokenType.Plus, TokenType.Minus, TokenType.Not, TokenType.Complement, TokenType.Convert },
+
 				// Multiplicative
-				new[] {TokenType.Division, TokenType.Multiplication, TokenType.Power, TokenType.Modulo},
+				new[] { TokenType.Division, TokenType.Multiplication, TokenType.Power, TokenType.Modulo },
+
 				// Additive
-				new[] {TokenType.Add, TokenType.Subtract},
+				new[] { TokenType.Add, TokenType.Subtract },
+
 				// Shift
-				new[] {TokenType.LeftShift, TokenType.RightShift},
+				new[] { TokenType.LeftShift, TokenType.RightShift },
+
 				// Relational and type testing
-				new[] {TokenType.GreaterThan, TokenType.GreaterThanOrEquals, TokenType.LesserThan, TokenType.LesserThanOrEquals, TokenType.Is, TokenType.As},
+				new[] { TokenType.GreaterThan, TokenType.GreaterThanOrEquals, TokenType.LesserThan, TokenType.LesserThanOrEquals, TokenType.Is, TokenType.As },
+
 				// Equality
-				new[] {TokenType.EqualsTo, TokenType.NotEqualsTo},
+				new[] { TokenType.EqualsTo, TokenType.NotEqualsTo },
+
 				// Logical AND
-				new[] {TokenType.And},
+				new[] { TokenType.And },
+
 				// Logical XOR
-				new[] {TokenType.Xor},
+				new[] { TokenType.Xor },
+
 				// Logical OR
-				new[] {TokenType.Or},
+				new[] { TokenType.Or },
+
 				// Conditional AND
-				new[] {TokenType.AndAlso},
+				new[] { TokenType.AndAlso },
+
 				// Conditional OR
-				new[] {TokenType.OrElse},
+				new[] { TokenType.OrElse },
+
 				// Null-coalescing
-				new[] {TokenType.Coalesce},
+				new[] { TokenType.Coalesce },
+
 				// Conditional
-				new[] {TokenType.Conditional},
+				new[] { TokenType.Conditional },
+
 				// Other
-				new[] {TokenType.Colon, TokenType.Lambda}
+				new[] { TokenType.Colon, TokenType.Assignment, TokenType.Lambda }
 			});
 			for (var i = 0; i < tokenPrecedenceList.Length; i++)
 			{
@@ -107,7 +120,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (parser.stack.Count == 0)
 				throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_EXPRESSIONISEMPTY, default(ILineInfo));
 
-			if(parser.stack.Count > 1)
+			if (parser.stack.Count > 1)
 				throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_MISSING_OPERATOR, parser.stack.First());
 
 			return parser.stack.Pop();
@@ -123,12 +136,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				try
 				{
 					if (iterations == 0 && UnaryReplacement.ContainsKey((int)token.Type))
-						token = new Token((TokenType)UnaryReplacement[(int)token.Type], token.Value, token.LineNumber, token.ColumnNumber, token.TokenLength);
+						token = token.ChangeType((TokenType)UnaryReplacement[(int)token.Type]);
 
 					if ((token.Type == TokenType.LeftParentheses && iterations > 0) || token.Type == TokenType.LeftBracket || token.Type == TokenType.NullIndex)
 					{
-						var callToken = new Token(TokenType.Call, token.Value, token.LineNumber, token.ColumnNumber, token.TokenLength);
-						token = new Token(TokenType.Arguments, token.Value, token.LineNumber, token.ColumnNumber, token.TokenLength);
+						var callToken = token.ChangeType(TokenType.Call);
+						token = token.ChangeType(TokenType.Arguments);
 
 						this.tokens.Insert(0, token);
 						this.tokens.Insert(0, callToken);
@@ -142,6 +155,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					}
 
 					var node = new ParseTreeNode(token);
+
+					// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 					switch (token.Type)
 					{
 						case TokenType.Identifier:
@@ -158,6 +173,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							this.stack.Push(node);
 							if (!this.Expression(node.Type, terminator))
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESOPERAND, token.Type), token);
+
 							this.CombineUnary(node.Token);
 							changed = true;
 							break;
@@ -165,19 +181,61 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							this.stack.Push(node);
 							if (!this.Expression(node.Type, UnionTerminators(terminator, NewTerm)))
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESOPERAND, token.Type), token);
+
 							this.CombineUnary(node.Token); // collect Type for 'NEW'
-							this.CheckAndConsumeToken(TokenType.Call);
-							var argumentsNode = new ParseTreeNode(this.tokens.Dequeue());
-							this.stack.Push(argumentsNode); // push 'ARGUMENTS' into stack
-							while (this.Expression(argumentsNode.Type, CommonTerm))
+
+							// parse constructor call
+							bool haveConstructor = false;
+							if (this.PeekNextTokenType() == TokenType.Call)
 							{
-								this.CombineUnary(argumentsNode.Token); // push argument
-								if (this.tokens.Count == 0 || this.tokens[0].Type != TokenType.Comma)
-									break;
-								this.CheckAndConsumeToken(TokenType.Comma);
+								haveConstructor = true;
+
+								this.CheckAndConsumeToken(TokenType.Call);
+								var constructorNode = new ParseTreeNode(this.tokens.Dequeue());
+								this.stack.Push(constructorNode); // push 'ARGUMENTS' into stack
+
+								while (this.Expression(constructorNode.Type, CommonTerm))
+								{
+									this.CombineUnary(constructorNode.Token); // push 'ARGUMENTS'
+									if (this.tokens.Count == 0 || this.PeekNextTokenType() != TokenType.Comma)
+										break;
+
+									this.CheckAndConsumeToken(TokenType.Comma);
+								}
+
+								this.CheckAndConsumeToken(TokenType.RightParentheses, TokenType.RightBracket);
+								this.CombineUnary(constructorNode.Token); // collect Arguments for 'NEW'
 							}
-							this.CheckAndConsumeToken(TokenType.RightParentheses, TokenType.RightBracket);
-							this.CombineUnary(argumentsNode.Token); // collect Arguments for 'NEW'
+
+							// parse initializer
+							if (this.PeekNextTokenType() == TokenType.LeftCurlyBracket)
+							{
+								if (!haveConstructor)
+								{
+									// push empty constructor into 'NEW' node
+									var constructorNode = new ParseTreeNode(token, TokenType.Arguments);
+									this.stack.Push(constructorNode); // push 'ARGUMENTS' into stack
+									this.CombineUnary(constructorNode.Token); // collect Arguments for 'NEW'
+								}
+
+								var initializerNode = new ParseTreeNode(this.tokens.Dequeue(), TokenType.Initializers);
+
+								this.stack.Push(initializerNode.WithOtherType(TokenType.MemberOrListInit)); // push 'INIT' into stack
+								this.stack.Push(initializerNode); // push 'INITIALIZERS' into stack
+
+								while (this.Expression(initializerNode.Type, CommonTerm))
+								{
+									this.CombineUnary(initializerNode.Token); // push 'INITIALIZERS'
+									if (this.tokens.Count == 0 || this.PeekNextTokenType() != TokenType.Comma)
+										break;
+
+									this.CheckAndConsumeToken(TokenType.Comma);
+								}
+
+								this.CheckAndConsumeToken(TokenType.RightCurlyBracket);
+								this.CombineBinary(initializerNode.Token);
+							}
+
 							changed = true;
 							break;
 						case TokenType.Add:
@@ -203,6 +261,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.NullResolve:
 						case TokenType.Coalesce:
 						case TokenType.Colon:
+						case TokenType.Assignment:
 						case TokenType.Comma:
 						case TokenType.Is:
 						case TokenType.As:
@@ -214,6 +273,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								continue;
 							}
 
+							if (token.Type == TokenType.Assignment && @operator != TokenType.Initializers)
+								goto default; // unexpected '=' token
+
 							if (@operator != TokenType.None && this.ComputePrecedence(node.Type, @operator) <= 0)
 							{
 								this.tokens.Insert(0, token);
@@ -223,6 +285,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							this.stack.Push(node);
 							if (!this.Expression(node.Type, terminator))
 								throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND, token.Type), token);
+
 							this.CombineBinary(node.Token);
 
 							if (token.Type == TokenType.Call &&
@@ -238,9 +301,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							{
 								var newType = string.Equals(node[0].Value, "unchecked", StringComparison.Ordinal) ? TokenType.UncheckedScope :
 									string.Equals(node[0].Value, "checked", StringComparison.Ordinal) ? TokenType.CheckedScope :
-										string.Equals(node[0].Value, "typeof", StringComparison.Ordinal) ? TokenType.Typeof :
-											string.Equals(node[0].Value, "default", StringComparison.Ordinal) ? TokenType.Default :
-												TokenType.Call;
+									string.Equals(node[0].Value, "typeof", StringComparison.Ordinal) ? TokenType.Typeof :
+									string.Equals(node[0].Value, "default", StringComparison.Ordinal) ? TokenType.Default :
+									TokenType.Call;
 
 								var newNode = node[1].WithOtherType(newType);
 
@@ -251,6 +314,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							{
 								var lambda = this.stack.Pop();
 								var lambdaArguments = lambda[0];
+
+								// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 								switch (lambdaArguments.Type)
 								{
 									case TokenType.Identifier:
@@ -266,8 +331,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 									default:
 										throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKEN, token), token);
 								}
+
 								this.stack.Push(lambda);
 							}
+
 							changed = true;
 							break;
 						case TokenType.Conditional:
@@ -287,8 +354,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							var colonIdx = this.FindConditionClosingToken();
 							if (colonIdx < 0)
 								throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_COLONISEXPRECTED, token);
+
 							this.Expression(terminator: ConditionTerm);
-							this.CheckAndConsumeToken(TokenType.Colon);
+							this.CheckAndConsumeToken(TokenType.Colon, TokenType.Assignment);
 							this.Expression(terminator: UnionTerminators(CommonTerm, terminator).ToArray());
 							this.CombineTernary(node.Token);
 							changed = true;
@@ -296,20 +364,34 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TokenType.NullIndex:
 						case TokenType.LeftBracket:
 						case TokenType.LeftParentheses:
+						case TokenType.LeftCurlyBracket:
 						case TokenType.Arguments:
 							if (token.Type == TokenType.LeftParentheses)
 								node = node.WithOtherType(TokenType.Group);
+
+							if (token.Type == TokenType.LeftCurlyBracket && (@operator == TokenType.Initializers || @operator == TokenType.Assignment))
+								node = node.WithOtherType(TokenType.Initializers);
+							else if (token.Type == TokenType.LeftCurlyBracket)
+								goto default; // unexpected '{' token
+
 							this.stack.Push(node);
 							while (this.Expression(node.Type, CommonTerm))
 							{
 								this.CombineUnary(node.Token);
-								if (this.tokens.Count == 0 || this.tokens[0].Type != TokenType.Comma)
+								if (this.tokens.Count == 0 || this.PeekNextTokenType() != TokenType.Comma)
 									break;
+
 								this.CheckAndConsumeToken(TokenType.Comma);
 							}
-							this.CheckAndConsumeToken(TokenType.RightParentheses, TokenType.RightBracket);
-							if (token.Type == TokenType.LeftParentheses && iterations == 0 && node.Count == 1 && (node[0].Type == TokenType.Identifier || node[0].Type == TokenType.Resolve))
+
+							this.CheckAndConsumeToken(TokenType.RightParentheses, TokenType.RightBracket, TokenType.RightCurlyBracket);
+
+							if (token.Type == TokenType.LeftParentheses &&
+								iterations == 0 &&
+								node.Count == 1 &&
+								(node[0].Type == TokenType.Identifier || node[0].Type == TokenType.Resolve))
 							{
+								// conversion operation
 								if (this.Expression(TokenType.Convert, terminator) && this.stack.Any(n => ReferenceEquals(n, node)))
 								{
 									this.CombineUnary(node.Token);
@@ -317,11 +399,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 									this.stack.Push(node.WithOtherType(TokenType.Convert));
 								}
 							}
+
 							changed = true;
 							break;
 						default:
 							throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKEN, token), token);
 					}
+
 					iterations++;
 				}
 				catch (ExpressionParserException)
@@ -339,6 +423,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					throw new ExpressionParserException(exception.Message, exception, token);
 				}
 			}
+
 			return changed;
 		}
 
@@ -362,20 +447,24 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				while (this.Expression(argumentsNode.Type, GeneticArgumentsTerm))
 				{
 					argumentAdded = true;
+
 					// put argument into 'Arguments' node
 					this.CombineUnary(currentToken);
 
-					if (this.tokens.Count == 0 || this.tokens[0].Type != TokenType.Comma)
+					if (this.tokens.Count == 0 || this.PeekNextTokenType() != TokenType.Comma)
 						break;
+
 					this.CheckAndConsumeToken(TokenType.Comma);
 					argumentAdded = false;
 				}
 
 				closingToken = this.tokens.Dequeue();
 				if (closingToken.Type == TokenType.RightShift) // split '>>' into 2 '>' tokens
-					this.tokens.Insert(0, new Token(TokenType.GreaterThan, ">", closingToken.LineNumber, closingToken.ColumnNumber + 1, closingToken.TokenLength - 1));
+					this.tokens.Insert(0,
+						new Token(TokenType.GreaterThan, ">", closingToken.LineNumber, closingToken.ColumnNumber + 1, closingToken.TokenLength - 1));
 				else if (closingToken.Type != TokenType.Comma && closingToken.Type != TokenType.GreaterThan)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED, TokenType.GreaterThan), closingToken);
+					throw new ExpressionParserException(
+						string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED, TokenType.GreaterThan), closingToken);
 
 				if (argumentAdded)
 					continue;
@@ -383,7 +472,6 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				// add 'None' as argument if empty argument is specified
 				this.stack.Push(new ParseTreeNode(closingToken, TokenType.Identifier, string.Empty));
 				this.CombineUnary(currentToken);
-
 			} while (closingToken.Type != TokenType.GreaterThan && closingToken.Type != TokenType.RightShift);
 
 			// put 'Arguments' into 'Identifier' node
@@ -400,7 +488,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			// and ')' '>' ',' token ahead
 			var stackTop = this.stack.Peek();
 			if ((stackTop.Type != TokenType.Identifier && stackTop.Type != TokenType.Resolve) ||
-				(this.tokens.Count != 0 && Array.IndexOf(NullableTerm, this.tokens[0].Type) < 0))
+				(this.tokens.Count != 0 && Array.IndexOf(NullableTerm, this.PeekNextTokenType()) < 0))
 				return false;
 
 			var identifier = this.stack.Pop();
@@ -420,6 +508,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var depth = 0;
 			for (var i = 0; i < this.tokens.Count; i++)
 			{
+				// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 				switch (this.tokens[i].Type)
 				{
 					case TokenType.Colon:
@@ -433,7 +522,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						continue;
 					case TokenType.RightParentheses:
 					case TokenType.RightBracket:
-					depth--;
+						depth--;
 						continue;
 					case TokenType.Comma:
 						if (depth == 0)
@@ -443,8 +532,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					default:
 						continue;
 				}
+
 				break;
 			}
+
 			return lastTokenIdx;
 		}
 		private int FindGenericArgClosingToken()
@@ -454,6 +545,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var depth = 0;
 			for (var i = 0; i < this.tokens.Count; i++)
 			{
+				// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 				switch (this.tokens[i].Type)
 				{
 					case TokenType.Identifier:
@@ -465,11 +557,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						depth--;
 						if (depth < 0)
 							return i;
+
 						break;
 					case TokenType.RightShift:
 						depth -= 2;
 						if (depth < 0)
 							return i;
+
 						break;
 					case TokenType.LesserThan:
 						depth++;
@@ -478,22 +572,31 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						return NOT_FOUND;
 				}
 			}
+
 			return NOT_FOUND;
 		}
 
-		private void CheckAndConsumeToken(TokenType expectedType1, TokenType expectedType2 = 0)
+		private void CheckAndConsumeToken(TokenType expectedType1, TokenType expectedType2 = 0, TokenType expectedType3 = 0)
 		{
 			var token = this.tokens.Count > 0 ? this.tokens.Dequeue() : default(Token);
 			var actualType = token.Type;
-			if (actualType == TokenType.None || (actualType != expectedType1 && actualType != expectedType2))
+			if (actualType == TokenType.None || (actualType != expectedType1 && actualType != expectedType2 && actualType != expectedType3))
 			{
-				var expectedTokens = expectedType2 != TokenType.None ? string.Concat(expectedType1.ToString(), ", ", expectedType2.ToString()) : expectedType1.ToString();
+				var expectedTokens = expectedType1 +
+					(expectedType2 != TokenType.None ? expectedType2.ToString() : string.Empty) +
+					(expectedType3 != TokenType.None ? expectedType3.ToString() : string.Empty);
 				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED, expectedTokens), token);
 			}
+		}
+		private TokenType PeekNextTokenType()
+		{
+			var token = this.tokens.Count > 0 ? this.tokens[0] : default(Token);
+			return token.Type;
 		}
 		private void CombineUnary(Token operation)
 		{
 			if (this.stack.Count < 2) throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_UNARYOPREQOPERAND, operation);
+
 			var operand = this.stack.Pop();
 			var @operator = this.stack.Pop();
 
@@ -503,6 +606,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private void CombineBinary(Token operation)
 		{
 			if (this.stack.Count < 3) throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_BINARYOPREQOPERAND, operation);
+
 			var rightOperand = this.stack.Pop();
 			var @operator = this.stack.Pop();
 			var leftOperand = this.stack.Pop();
@@ -533,6 +637,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				return second;
 			else if (second == null)
 				return first;
+
 			if (ReferenceEquals(first, second))
 				return first;
 
@@ -569,6 +674,5 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			return prec2.CompareTo(prec1);
 		}
-
 	}
 }

@@ -26,6 +26,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		Number,
 		Literal,
 		Identifier,
+
 		// arithmetic
 		[Token("+")]
 		Add,
@@ -41,6 +42,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		Power,
 		[Token("%")]
 		Modulo,
+
 		// bitwise
 		[Token("&")]
 		And,
@@ -54,6 +56,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		LeftShift,
 		[Token(">>")]
 		RightShift,
+
 		// logical
 		[Token("&&")]
 		AndAlso,
@@ -73,6 +76,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		EqualsTo,
 		[Token("!=")]
 		NotEqualsTo,
+
 		// other
 		[Token("?")]
 		Conditional,
@@ -82,12 +86,15 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		As,
 		[Token(":")]
 		Colon,
+		[Token("=")]
+		Assignment,
 		[Token(",")]
 		Comma,
 		[Token("??")]
 		Coalesce,
 		[Token("new")]
 		New,
+
 		// structure
 		[Token(".")]
 		Resolve,
@@ -105,8 +112,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		RightBracket,
 		[Token("=>")]
 		Lambda,
+		[Token("{")]
+		LeftCurlyBracket,
+		[Token("}")]
+		RightCurlyBracket,
 		Call,
 		Arguments,
+		Initializers,
+		MemberOrListInit,
 		Convert,
 		Typeof,
 		Default,

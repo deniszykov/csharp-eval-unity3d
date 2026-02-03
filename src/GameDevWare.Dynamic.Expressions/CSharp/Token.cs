@@ -49,7 +49,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		/// <summary>
 		/// Returns token's position as string.
 		/// </summary>
-		public string Position { get { return string.Format("{0}:{1}+{2}", this.LineNumber.ToString(), this.ColumnNumber.ToString(), this.TokenLength.ToString()); } }
+		public string Position
+		{
+			get { return string.Format("{0}:{1}+{2}", this.LineNumber.ToString(), this.ColumnNumber.ToString(), this.TokenLength.ToString()); }
+		}
 
 		int ILineInfo.GetLineNumber()
 		{
@@ -74,6 +77,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			this.LineNumber = line;
 			this.ColumnNumber = col;
 			this.TokenLength = len;
+		}
+
+		/// <summary>
+		/// Change type of token and return it as new token instance.
+		/// </summary>
+		public Token ChangeType(TokenType newType)
+		{
+			return new Token(newType, this.Value, this.LineNumber, this.ColumnNumber, this.TokenLength);
 		}
 
 		/// <summary>
