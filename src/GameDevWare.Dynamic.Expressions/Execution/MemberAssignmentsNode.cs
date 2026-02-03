@@ -3,13 +3,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class MemberAssignmentsNode : ExecutionNode
 	{
-		public static readonly MemberAssignmentsNode Empty = new MemberAssignmentsNode(new ReadOnlyCollection<MemberBinding>(new MemberBinding[0]), new ConstantExpression[0], new ParameterExpression[0]);
-
 		internal struct PreparedMemberAssignment
 		{
 			public readonly MemberInfo Member;
@@ -22,23 +21,27 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			}
 		}
 
+		public static readonly MemberAssignmentsNode Empty = new MemberAssignmentsNode(new ReadOnlyCollection<MemberBinding>(Array.Empty<MemberBinding>()), Array.Empty<ConstantExpression>(), Array.Empty<ParameterExpression>());
+
 		private readonly PreparedMemberAssignment[] memberAssignments;
 
 		public MemberAssignmentsNode(ReadOnlyCollection<MemberBinding> bindings, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (bindings == null) throw new ArgumentNullException("bindings");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (bindings == null) throw new ArgumentNullException(nameof(bindings));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.memberAssignments = new PreparedMemberAssignment[bindings.Count(b => b is MemberAssignment)];
 			var i = 0;
 			foreach (var binding in bindings)
 			{
-				var memberAssignment = binding as MemberAssignment;
-				if (memberAssignment == null)
+				if (!(binding is MemberAssignment memberAssignment))
+				{
 					continue;
+				}
 
-				this.memberAssignments[i++] = new PreparedMemberAssignment(memberAssignment.Member, AotCompiler.Compile(memberAssignment.Expression, constExpressions, parameterExpressions));
+				this.memberAssignments[i++] = new PreparedMemberAssignment(memberAssignment.Member,
+					AotCompiler.Compile(memberAssignment.Expression, constExpressions, parameterExpressions));
 			}
 		}
 		/// <inheritdoc />
@@ -65,7 +68,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				else if (propertyInfo != null)
 					propertyInfo.SetValue(instance, value, null);
 				else
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION, member));
+					throw new InvalidOperationException(string.Format(Resources.EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION, member));
 			}
 
 			return instance;

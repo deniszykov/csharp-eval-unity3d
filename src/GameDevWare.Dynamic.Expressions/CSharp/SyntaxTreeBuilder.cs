@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
 	/// <summary>
-	/// Helper class allowing conversion from <see cref="ParseTreeNode"/> to <see cref="SyntaxTreeNode"/>.
+	///     Helper class allowing conversion from <see cref="ParseTreeNode" /> to <see cref="SyntaxTreeNode" />.
 	/// </summary>
 	public static class SyntaxTreeBuilder
 	{
@@ -67,30 +68,33 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{ (int)TokenType.New, Constants.EXPRESSION_TYPE_NEW },
 				{ (int)TokenType.LeftBracket, Constants.EXPRESSION_TYPE_INDEX },
 				{ (int)TokenType.Lambda, Constants.EXPRESSION_TYPE_LAMBDA },
-				{ (int)TokenType.MemberOrListInit, Constants.EXPRESSION_TYPE_MEMBER_INIT },
+				{ (int)TokenType.MemberOrListInit, Constants.EXPRESSION_TYPE_MEMBER_INIT }
 			};
 		}
 
 		/// <summary>
-		/// Convert <see cref="ParseTreeNode"/> to <see cref="SyntaxTreeNode"/> which is bindable on <see cref="System.Linq.Expressions.Expression"/> tree.
+		///     Convert <see cref="ParseTreeNode" /> to <see cref="SyntaxTreeNode" /> which is bindable on
+		///     <see cref="System.Linq.Expressions.Expression" /> tree.
 		/// </summary>
 		/// <param name="parseNode">Parse tree node.</param>
-		/// <param name="checkedScope">Numeric operation scope. Checked mean - no number overflow is allowed. Unchecked mean - overflow is allowed.</param>
+		/// <param name="checkedScope">
+		///     Numeric operation scope. Checked mean - no number overflow is allowed. Unchecked mean -
+		///     overflow is allowed.
+		/// </param>
 		/// <param name="cSharpExpression">Original C# expression from which this AST was build.</param>
-		/// <returns>Prepared <see cref="SyntaxTreeNode"/> representing <see cref="ParseTreeNode"/>.</returns>
+		/// <returns>Prepared <see cref="SyntaxTreeNode" /> representing <see cref="ParseTreeNode" />.</returns>
 		public static SyntaxTreeNode ToSyntaxTree
 			(this ParseTreeNode parseNode, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE, string cSharpExpression = null)
 		{
-			if (parseNode == null) throw new ArgumentNullException("parseNode");
+			if (parseNode == null) throw new ArgumentNullException(nameof(parseNode));
 
 			try
 			{
-				var expressionType = default(string);
-				if (ExpressionTypeByToken.TryGetValue((int)parseNode.Type, out expressionType) == false)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE, parseNode.Type), parseNode);
+				if (!ExpressionTypeByToken.TryGetValue((int)parseNode.Type, out var expressionType))
+					throw new ExpressionParserException(string.Format(Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE, parseNode.Type), parseNode);
 
 				var syntaxNode = new Dictionary<string, object>(6) {
-					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType },
+					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType }
 				};
 
 				switch (parseNode.Type)
@@ -103,7 +107,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						ToIdentifierNode(parseNode, syntaxNode);
 						break;
 					case TokenType.Literal:
-						syntaxNode[Constants.TYPE_ATTRIBUTE] = string.IsNullOrEmpty(parseNode.Value) == false && parseNode.Value[0] == '\'' ? typeof(char).FullName :
+						syntaxNode[Constants.TYPE_ATTRIBUTE] = !string.IsNullOrEmpty(parseNode.Value) && parseNode.Value[0] == '\'' ? typeof(char).FullName :
 							typeof(string).FullName;
 						syntaxNode[Constants.VALUE_ATTRIBUTE] = UnescapeAndUnquote(parseNode.Value, parseNode.Token);
 						break;
@@ -117,11 +121,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						CheckNode(parseNode, 1);
 
 						// ReSharper disable once RedundantArgumentDefaultValue
-						syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[0].ToSyntaxTree(checkedScope: true);
+						syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[0].ToSyntaxTree(true);
 						break;
 					case TokenType.UncheckedScope:
 						CheckNode(parseNode, 1);
-						syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[0].ToSyntaxTree(checkedScope: false);
+						syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[0].ToSyntaxTree(false);
 						break;
 					case TokenType.As:
 					case TokenType.Is:
@@ -195,14 +199,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case TokenType.Assignment:
 					case TokenType.LeftCurlyBracket:
 					default:
-						throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE, parseNode.Type),
+						throw new ExpressionParserException(string.Format(Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE, parseNode.Type),
 							parseNode);
 				}
 
-				if (string.IsNullOrEmpty(cSharpExpression) == false)
-				{
-					syntaxNode.Add(Constants.EXPRESSION_ORIGINAL_C_SHARP, cSharpExpression);
-				}
+				if (!string.IsNullOrEmpty(cSharpExpression)) syntaxNode.Add(Constants.EXPRESSION_ORIGINAL_C_SHARP, cSharpExpression);
 
 				syntaxNode.Add(Constants.EXPRESSION_POSITION, parseNode.Token.Position);
 
@@ -266,17 +267,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			foreach (var initializerNode in initializerNodes)
 			{
 				if (initializerNode.Type == TokenType.Assignment)
-				{
-					throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDMEMBERINITIALIZERINLISTINITIALIZERS, initializerNode);
-				}
+					throw new ExpressionParserException(Resources.EXCEPTION_PARSER_UNEXPECTEDMEMBERINITIALIZERINLISTINITIALIZERS, initializerNode);
 
 				var elemInitSyntaxNode = new Dictionary<string, object>(2) {
 					[Constants.EXPRESSION_TYPE_ATTRIBUTE] = Constants.EXPRESSION_TYPE_ELEMENT_INIT_BINDING
 				};
 				if (initializerNode.Type == TokenType.Initializers)
-				{
 					elemInitSyntaxNode[Constants.INITIALIZERS_ATTRIBUTE] = ToListInitializers(initializerNode, checkedScope);
-				}
 				else
 				{
 					elemInitSyntaxNode[Constants.INITIALIZERS_ATTRIBUTE] = new Dictionary<string, object> {
@@ -295,9 +292,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			foreach (var initializerNode in initializerNodes)
 			{
 				if (initializerNode.Type == TokenType.Assignment)
-				{
-					throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDMEMBERINITIALIZERINLISTINITIALIZERS, initializerNode);
-				}
+					throw new ExpressionParserException(Resources.EXCEPTION_PARSER_UNEXPECTEDMEMBERINITIALIZERINLISTINITIALIZERS, initializerNode);
 
 				initExpressionTree.Add(Constants.GetIndexAsString(initExpressionTree.Count), initializerNode.ToSyntaxTree(checkedScope));
 			}
@@ -310,9 +305,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			foreach (var initializerNode in initializerNodes)
 			{
 				if (initializerNode.Type != TokenType.Assignment)
-				{
-					throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS, initializerNode);
-				}
+					throw new ExpressionParserException(Resources.EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS, initializerNode);
 
 				CheckNode(initializerNode, 2, TokenType.Identifier);
 
@@ -438,10 +431,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 
 			syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = null;
-			if (parseNode.Count > 0)
-			{
-				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
-			}
+			if (parseNode.Count > 0) syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
 
 			syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode.Value;
 		}
@@ -450,10 +440,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			CheckNode(parseNode, 2, TokenType.None, TokenType.Identifier);
 			syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = parseNode[0].ToSyntaxTree(checkedScope);
 			syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode[1].Value;
-			if (parseNode[1].Count > 0)
-			{
-				syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
-			}
+			if (parseNode[1].Count > 0) syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
 
 			syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = parseNode.Type == TokenType.NullResolve ? Constants.TrueObject : Constants.FalseObject;
 		}
@@ -464,25 +451,26 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var allowArrays = (options & TypeNameOptions.Arrays) != 0;
 			if (parseNode.Type == TokenType.Identifier && parseNode.Count == 0 && allowShortName)
 			{
-				var typeName = default(string);
-				if (allowAliases && CSharpTypeNameAlias.TryGetTypeName(parseNode.Value, out typeName))
+				if (allowAliases && CSharpTypeNameAlias.TryGetTypeName(parseNode.Value, out var typeName))
 					return typeName;
-				else
-					return parseNode.Value;
+
+				return parseNode.Value;
 			}
 
 			if (parseNode.Type == TokenType.Call && parseNode.Count == 2 && parseNode.Value == "[" && parseNode[1].Count == 0 && allowArrays)
 			{
-				var arrayNode = new ParseTreeNode(parseNode.Token, TokenType.Identifier, typeof(Array).Name);
-				var argumentsNode = new ParseTreeNode(parseNode.Token, TokenType.Arguments, "<");
-				argumentsNode.Add(parseNode[0]);
+				var arrayNode = new ParseTreeNode(parseNode.Token, TokenType.Identifier, nameof(Array));
+				var argumentsNode = new ParseTreeNode(parseNode.Token, TokenType.Arguments, "<")
+				{
+					parseNode[0]
+				};
 				arrayNode.Add(argumentsNode);
 				return ToTypeName(arrayNode, TypeNameOptions.None);
 			}
 
 			var syntaxNode = new Dictionary<string, object> {
 				{ Constants.EXPRESSION_POSITION, parseNode.Token.Position },
-				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE }
 			};
 
 			if (parseNode.Type == TokenType.Resolve)
@@ -490,31 +478,23 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				CheckNode(parseNode, 2, TokenType.None, TokenType.Identifier);
 				syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = ToTypeName(parseNode[0], TypeNameOptions.None);
 				syntaxNode[Constants.NAME_ATTRIBUTE] = parseNode[1].Value;
-				if (parseNode[1].Count > 0)
-				{
-					syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
-				}
+				if (parseNode[1].Count > 0) syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode[1], 0);
 
 				syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = Constants.FalseObject;
 			}
 			else if (parseNode.Type == TokenType.Identifier)
 			{
 				var typeName = parseNode.Value;
-				if (allowAliases && CSharpTypeNameAlias.TryGetTypeName(parseNode.Value, out typeName) == false)
+				if (allowAliases && !CSharpTypeNameAlias.TryGetTypeName(parseNode.Value, out typeName))
 					typeName = parseNode.Value;
 
 				syntaxNode[Constants.EXPRESSION_ATTRIBUTE] = null;
 				syntaxNode[Constants.NAME_ATTRIBUTE] = typeName;
 				syntaxNode[Constants.USE_NULL_PROPAGATION_ATTRIBUTE] = Constants.FalseObject;
-				if (parseNode.Count > 0)
-				{
-					syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
-				}
+				if (parseNode.Count > 0) syntaxNode[Constants.ARGUMENTS_ATTRIBUTE] = PrepareTypeArguments(parseNode, 0);
 			}
 			else
-			{
-				throw new ExpressionParserException(Properties.Resources.EXCEPTION_PARSER_TYPENAMEEXPECTED, parseNode);
-			}
+				throw new ExpressionParserException(Resources.EXCEPTION_PARSER_TYPENAMEEXPECTED, parseNode);
 
 			return new SyntaxTreeNode(syntaxNode);
 		}
@@ -528,9 +508,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var argIdx = 0;
 			var argumentsNode = parseNode[argumentChildIndex];
 			args = new Dictionary<string, object>(argumentsNode.Count);
-			for (var i = 0; i < argumentsNode.Count; i++)
+			foreach (var argNode in argumentsNode)
 			{
-				var argNode = argumentsNode[i];
 				if (argNode.Type == TokenType.Colon)
 				{
 					CheckNode(argNode, 2, TokenType.Identifier);
@@ -556,9 +535,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var argIdx = 0;
 			var argumentsNode = parseNode[argumentChildIndex];
 			args = new Dictionary<string, object>(argumentsNode.Count);
-			for (var i = 0; i < argumentsNode.Count; i++)
+			foreach (var argNode in argumentsNode)
 			{
-				var argNode = argumentsNode[i];
 				var argName = Constants.GetIndexAsString(argIdx++);
 				args[argName] = ToTypeName(argNode, TypeNameOptions.Aliases | TypeNameOptions.Arrays);
 			}
@@ -569,22 +547,32 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		{
 			// ReSharper disable HeapView.BoxingAllocation
 			if (parseNode.Count < childCount)
+			{
 				throw new ExpressionParserException(
-					string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE, parseNode.Type, parseNode.Count, childCount), parseNode);
+					string.Format(Resources.EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE, parseNode.Type, parseNode.Count, childCount), parseNode);
+			}
 
 			for (int i = 0, ct = Math.Min(3, childCount); i < ct; i++)
 			{
 				var childNode = parseNode[i];
 				var childNodeType = parseNode[i].Type;
 				if (i == 0 && childType0 != TokenType.None && childType0 != childNodeType)
+				{
 					throw new ExpressionParserException(
-						string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType0), childNode);
+						string.Format(Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType0), childNode);
+				}
+
 				if (i == 1 && childType1 != TokenType.None && childType1 != childNodeType)
+				{
 					throw new ExpressionParserException(
-						string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType1), childNode);
+						string.Format(Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType1), childNode);
+				}
+
 				if (i == 2 && childType2 != TokenType.None && childType2 != childNodeType)
+				{
 					throw new ExpressionParserException(
-						string.Format(Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType2), childNode);
+						string.Format(Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE, parseNode.Type, childNodeType, childType2), childNode);
+				}
 			}
 
 			// ReSharper restore HeapView.BoxingAllocation

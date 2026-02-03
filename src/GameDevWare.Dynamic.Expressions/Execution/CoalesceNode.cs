@@ -11,9 +11,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public CoalesceNode(BinaryExpression binaryExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (binaryExpression == null) throw new ArgumentNullException("binaryExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (binaryExpression == null) throw new ArgumentNullException(nameof(binaryExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.binaryExpression = binaryExpression;
 			this.leftNode = AotCompiler.Compile(binaryExpression.Left, constExpressions, parameterExpressions);
@@ -24,9 +24,11 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		{
 			var left = closure.Unbox<object>(this.leftNode.Run(closure));
 			if (left != null)
+			{
 				return left;
-			else
-				return this.rightNode.Run(closure);
+			}
+
+			return this.rightNode.Run(closure);
 		}
 
 		/// <inheritdoc />

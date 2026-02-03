@@ -6,15 +6,15 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 	internal sealed class ConditionalNode : ExecutionNode
 	{
 		private readonly ConditionalExpression conditionalExpression;
-		private readonly ExecutionNode trueBranchNode;
-		private readonly ExecutionNode falseBranchNode;
 		private readonly ExecutionNode conditionTestNode;
+		private readonly ExecutionNode falseBranchNode;
+		private readonly ExecutionNode trueBranchNode;
 
 		public ConditionalNode(ConditionalExpression conditionalExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (conditionalExpression == null) throw new ArgumentNullException("conditionalExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (conditionalExpression == null) throw new ArgumentNullException(nameof(conditionalExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.conditionalExpression = conditionalExpression;
 

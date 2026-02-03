@@ -5,20 +5,22 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class NewArrayInitNode : ExecutionNode
 	{
-		private readonly NewArrayExpression newArrayExpression;
 		private readonly ExecutionNode[] initializationValueNodes;
+		private readonly NewArrayExpression newArrayExpression;
 
 		public NewArrayInitNode(NewArrayExpression newArrayExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (newArrayExpression == null) throw new ArgumentNullException("newArrayExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (newArrayExpression == null) throw new ArgumentNullException(nameof(newArrayExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.newArrayExpression = newArrayExpression;
 
 			this.initializationValueNodes = new ExecutionNode[newArrayExpression.Expressions.Count];
 			for (var i = 0; i < this.initializationValueNodes.Length; i++)
+			{
 				this.initializationValueNodes[i] = AotCompiler.Compile(newArrayExpression.Expressions[i], constExpressions, parameterExpressions);
+			}
 		}
 
 		/// <inheritdoc />

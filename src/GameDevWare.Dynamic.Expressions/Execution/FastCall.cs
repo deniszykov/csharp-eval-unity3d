@@ -6,19 +6,22 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class FastCall
 	{
-		public delegate object Invoker(Closure closure, ExecutionNode[] argumentFns);
 		public delegate Invoker InvokeOperationCreator(MethodInfo method, ParameterInfo[] parameters);
 
-		private static readonly Dictionary<MethodInfo, Invoker> StaticMethods = new Dictionary<MethodInfo, Invoker>();
+		public delegate object Invoker(Closure closure, ExecutionNode[] argumentFns);
+
+		private static readonly Dictionary<Type, Dictionary<MethodCallSignature, InvokeOperationCreator>[]> InstanceMethodCreators =
+			new Dictionary<Type, Dictionary<MethodCallSignature, InvokeOperationCreator>[]>();
 		private static readonly Dictionary<MethodInfo, Invoker> InstanceMethods = new Dictionary<MethodInfo, Invoker>();
-		private static readonly Dictionary<Type, Dictionary<MethodCallSignature, InvokeOperationCreator>[]> InstanceMethodCreators = new Dictionary<Type, Dictionary<MethodCallSignature, InvokeOperationCreator>[]>();
+
+		private static readonly Dictionary<MethodInfo, Invoker> StaticMethods = new Dictionary<MethodInfo, Invoker>();
 
 		private readonly Delegate fn;
 
 		private FastCall(Type delegateType, MethodInfo method)
 		{
-			if (delegateType == null) throw new ArgumentNullException("method");
-			if (method == null) throw new ArgumentNullException("method");
+			if (delegateType == null) throw new ArgumentNullException(nameof(delegateType));
+			if (method == null) throw new ArgumentNullException(nameof(method));
 
 			this.fn = DelegateUtils.CreateDelegate(delegateType, method, true);
 		}
@@ -56,22 +59,25 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public static Invoker TryCreate(MethodInfo method)
 		{
-			if (method == null) throw new ArgumentNullException("method");
+			if (method == null) throw new ArgumentNullException(nameof(method));
 
 			if (method.IsStatic)
 				return TryCreateStaticMethod(method);
-			else
-				return TryCreateInstanceMethod(method);
+
+			return TryCreateInstanceMethod(method);
 		}
 		private static Invoker TryCreateStaticMethod(MethodInfo method)
 		{
 			// try get from cache
 			var invoker = default(Invoker);
 			lock (StaticMethods)
+			{
 				if (StaticMethods.TryGetValue(method, out invoker))
 					return invoker;
+			}
 
 			var parameters = method.GetParameters();
+
 			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (parameters.Length)
 			{
@@ -245,13 +251,17 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			// try get from cache
 			var invoker = default(Invoker);
 			lock (InstanceMethods)
+			{
 				if (InstanceMethods.TryGetValue(method, out invoker))
 					return invoker;
+			}
 
 			var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
 			lock (InstanceMethodCreators)
-				if (InstanceMethodCreators.TryGetValue(method.DeclaringType, out creatorsByParamsCount) == false || creatorsByParamsCount == null)
+			{
+				if (!InstanceMethodCreators.TryGetValue(method.DeclaringType, out creatorsByParamsCount) || creatorsByParamsCount == null)
 					goto cacheAndReturn;
+			}
 
 			var methodCallSignature = new MethodCallSignature(method);
 			if (creatorsByParamsCount.Length < methodCallSignature.Count || creatorsByParamsCount[methodCallSignature.Count] == null)
@@ -260,12 +270,15 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var creatorsBySignature = creatorsByParamsCount[methodCallSignature.Count];
 			var creator = default(InvokeOperationCreator);
 			lock (creatorsBySignature)
-				if (creatorsBySignature.TryGetValue(methodCallSignature, out creator) == false || creator == null)
+			{
+				if (!creatorsBySignature.TryGetValue(methodCallSignature, out creator) || creator == null)
 					goto cacheAndReturn;
+			}
 
 			invoker = creator(method, method.GetParameters());
 
 			cacheAndReturn:
+
 			// cache it
 			lock (InstanceMethods)
 				InstanceMethods[method] = invoker;
@@ -279,8 +292,10 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 			var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
 			lock (InstanceMethodCreators)
-				if (InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount) == false)
+			{
+				if (!InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount))
 					InstanceMethodCreators[typeof(InstanceT)] = creatorsByParamsCount = new Dictionary<MethodCallSignature, InvokeOperationCreator>[4];
+			}
 
 			var creatorsBySignature = creatorsByParamsCount[PARAMS_INDEX];
 			if (creatorsBySignature == null)
@@ -296,8 +311,10 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 			var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
 			lock (InstanceMethodCreators)
-				if (InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount) == false)
+			{
+				if (!InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount))
 					InstanceMethodCreators[typeof(InstanceT)] = creatorsByParamsCount = new Dictionary<MethodCallSignature, InvokeOperationCreator>[4];
+			}
 
 			var creatorsBySignature = creatorsByParamsCount[PARAMS_INDEX];
 			if (creatorsBySignature == null)
@@ -313,8 +330,10 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 			var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
 			lock (InstanceMethodCreators)
-				if (InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount) == false)
+			{
+				if (!InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount))
 					InstanceMethodCreators[typeof(InstanceT)] = creatorsByParamsCount = new Dictionary<MethodCallSignature, InvokeOperationCreator>[4];
+			}
 
 			var creatorsBySignature = creatorsByParamsCount[PARAMS_INDEX];
 			if (creatorsBySignature == null)
@@ -330,8 +349,10 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 			var creatorsByParamsCount = default(Dictionary<MethodCallSignature, InvokeOperationCreator>[]);
 			lock (InstanceMethodCreators)
-				if (InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount) == false)
+			{
+				if (!InstanceMethodCreators.TryGetValue(typeof(InstanceT), out creatorsByParamsCount))
 					InstanceMethodCreators[typeof(InstanceT)] = creatorsByParamsCount = new Dictionary<MethodCallSignature, InvokeOperationCreator>[4];
+			}
 
 			var creatorsBySignature = creatorsByParamsCount[PARAMS_INDEX];
 			if (creatorsBySignature == null)
@@ -344,8 +365,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		private static Invoker TryCreate<ResultT>(MethodInfo method, ParameterInfo[] parameters)
 		{
-			if (method == null) throw new ArgumentNullException("method");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (method == null) throw new ArgumentNullException(nameof(method));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			if (parameters.Length != 0 || method.ReturnType != typeof(ResultT))
 				return null;
@@ -357,6 +378,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			if (parameters.Length == int.MaxValue)
 			{
 				wrapper.FuncInvoker<ResultT>(null, null);
+
 				// ReSharper disable once PossibleNullReferenceException
 				((Func<ResultT>)null).Invoke();
 			}
@@ -366,8 +388,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		}
 		private static Invoker TryCreate<Arg1T, ResultT>(MethodInfo method, ParameterInfo[] parameters)
 		{
-			if (method == null) throw new ArgumentNullException("method");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (method == null) throw new ArgumentNullException(nameof(method));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			if (parameters.Length != 1 || method.ReturnType != typeof(ResultT) || parameters[0].ParameterType != typeof(Arg1T))
 				return null;
@@ -379,8 +401,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			if (parameters.Length == int.MaxValue)
 			{
 				wrapper.FuncInvoker<Arg1T, ResultT>(null, null);
+
 				// ReSharper disable once PossibleNullReferenceException
-				((Func<Arg1T, ResultT>)null).Invoke(default(Arg1T));
+				((Func<Arg1T, ResultT>)null).Invoke(default);
 			}
 #pragma warning restore 1720
 
@@ -388,10 +411,12 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		}
 		private static Invoker TryCreate<Arg1T, Arg2T, ResultT>(MethodInfo method, ParameterInfo[] parameters)
 		{
-			if (method == null) throw new ArgumentNullException("method");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (method == null) throw new ArgumentNullException(nameof(method));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
-			if (parameters.Length != 2 || method.ReturnType != typeof(ResultT) || parameters[0].ParameterType != typeof(Arg1T) ||
+			if (parameters.Length != 2 ||
+				method.ReturnType != typeof(ResultT) ||
+				parameters[0].ParameterType != typeof(Arg1T) ||
 				parameters[1].ParameterType != typeof(Arg2T))
 				return null;
 
@@ -402,8 +427,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			if (parameters.Length == int.MaxValue)
 			{
 				wrapper.FuncInvoker<Arg1T, Arg2T, ResultT>(null, null);
+
 				// ReSharper disable once PossibleNullReferenceException
-				((Func<Arg1T, Arg2T, ResultT>)null).Invoke(default(Arg1T), default(Arg2T));
+				((Func<Arg1T, Arg2T, ResultT>)null).Invoke(default, default);
 			}
 #pragma warning restore 1720
 
@@ -411,11 +437,14 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		}
 		private static Invoker TryCreate<Arg1T, Arg2T, Arg3T, ResultT>(MethodInfo method, ParameterInfo[] parameters)
 		{
-			if (method == null) throw new ArgumentNullException("method");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (method == null) throw new ArgumentNullException(nameof(method));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
-			if (parameters.Length != 3 || method.ReturnType != typeof(ResultT) || parameters[0].ParameterType != typeof(Arg1T) ||
-				parameters[1].ParameterType != typeof(Arg2T) || parameters[2].ParameterType != typeof(Arg3T))
+			if (parameters.Length != 3 ||
+				method.ReturnType != typeof(ResultT) ||
+				parameters[0].ParameterType != typeof(Arg1T) ||
+				parameters[1].ParameterType != typeof(Arg2T) ||
+				parameters[2].ParameterType != typeof(Arg3T))
 				return null;
 
 			var wrapper = new FastCall(typeof(Func<Arg1T, Arg2T, Arg3T, ResultT>), method);
@@ -425,8 +454,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			if (parameters.Length == int.MaxValue)
 			{
 				wrapper.FuncInvoker<Arg1T, Arg2T, Arg3T, ResultT>(null, null);
+
 				// ReSharper disable once PossibleNullReferenceException
-				((Func<Arg1T, Arg2T, Arg3T, ResultT>)null).Invoke(default(Arg1T), default(Arg2T), default(Arg3T));
+				((Func<Arg1T, Arg2T, Arg3T, ResultT>)null).Invoke(default, default, default);
 			}
 #pragma warning restore 1720
 
@@ -434,11 +464,15 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		}
 		private static Invoker TryCreate<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(MethodInfo method, ParameterInfo[] parameters)
 		{
-			if (method == null) throw new ArgumentNullException("method");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (method == null) throw new ArgumentNullException(nameof(method));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
-			if (parameters.Length != 4 || method.ReturnType != typeof(ResultT) || parameters[0].ParameterType != typeof(Arg1T) ||
-				parameters[1].ParameterType != typeof(Arg2T) || parameters[2].ParameterType != typeof(Arg3T) || parameters[3].ParameterType != typeof(Arg4T))
+			if (parameters.Length != 4 ||
+				method.ReturnType != typeof(ResultT) ||
+				parameters[0].ParameterType != typeof(Arg1T) ||
+				parameters[1].ParameterType != typeof(Arg2T) ||
+				parameters[2].ParameterType != typeof(Arg3T) ||
+				parameters[3].ParameterType != typeof(Arg4T))
 				return null;
 
 			var wrapper = new FastCall(typeof(Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>), method);
@@ -448,8 +482,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			if (parameters.Length == int.MaxValue)
 			{
 				wrapper.FuncInvoker<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(null, null);
+
 				// ReSharper disable once PossibleNullReferenceException
-				((Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>)null).Invoke(default(Arg1T), default(Arg2T), default(Arg3T), default(Arg4T));
+				((Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>)null).Invoke(default, default, default, default);
 			}
 #pragma warning restore 1720
 

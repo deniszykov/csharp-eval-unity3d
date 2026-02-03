@@ -23,16 +23,16 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class IndexBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
 			boundExpression = null;
 			bindingError = null;
 
-			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
-			var arguments = node.GetArguments(throwOnError: true);
-			var targetNode = node.GetExpression(throwOnError: true);
-			var target = default(Expression);
-			if (AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
+			var useNullPropagation = node.GetUseNullPropagation(false);
+			var arguments = node.GetArguments(true);
+			var targetNode = node.GetExpression(true);
+			if (!AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out var target, out bindingError))
 				return false;
 
 			Debug.Assert(target != null, "target != null");
@@ -44,14 +44,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				var indexingExpressions = new Expression[arguments.Count];
 				for (var i = 0; i < indexingExpressions.Length; i++)
 				{
-					var argument = default(SyntaxTreeNode);
-					if (arguments.TryGetValue(i, out argument) == false)
+					if (!arguments.TryGetValue(i, out var argument))
 					{
 						bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_MISSINGMETHODPARAMETER, i), node);
 						return false;
 					}
 
-					if (AnyBinder.TryBindInNewScope(argument, bindingContext, indexType, out indexingExpressions[i], out bindingError) == false)
+					if (!AnyBinder.TryBindInNewScope(argument, bindingContext, indexType, out indexingExpressions[i], out bindingError))
 						return false;
 
 					Debug.Assert(indexingExpressions[i] != null, "indexingExpressions[i] != null");
@@ -75,9 +74,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				var selectedIndexerQuality = MemberDescription.QUALITY_INCOMPATIBLE;
 				foreach (var indexer in targetTypeDescription.Indexers)
 				{
-					var indexerQuality = MemberDescription.QUALITY_INCOMPATIBLE;
-					var indexerCall = default(Expression);
-					if (indexer.TryMakeCall(target, arguments, bindingContext, out indexerCall, out indexerQuality) == false)
+					if (!indexer.TryMakeCall(target, arguments, bindingContext, out var indexerCall, out var indexerQuality))
 						continue;
 					if (indexerQuality <= selectedIndexerQuality)
 						continue;
@@ -86,6 +83,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					selectedIndexerQuality = indexerQuality;
 				}
 			}
+
 			if (boundExpression == null)
 			{
 				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETOBINDINDEXER, target.Type), node);

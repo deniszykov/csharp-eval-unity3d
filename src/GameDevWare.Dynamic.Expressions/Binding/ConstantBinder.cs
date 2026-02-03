@@ -17,34 +17,33 @@
 using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class ConstantBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
 			boundExpression = null;
 			bindingError = null;
 
-			var valueObj = node.GetValue(throwOnError: true);
-			var typeName = node.GetTypeName(throwOnError: true);
-			var type = default(Type);
-			if (bindingContext.TryResolveType(typeName, out type) == false)
+			var valueObj = node.GetValue(true);
+			var typeName = node.GetTypeName(true);
+			if (!bindingContext.TryResolveType(typeName, out var type))
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
 				return false;
 			}
 
 			var typeDescription = TypeDescription.GetTypeDescription(type);
-			if (valueObj == null && (typeDescription.IsNullable || typeDescription.IsValueType == false))
-			{
+			if (valueObj == null && (typeDescription.IsNullable || !typeDescription.IsValueType))
 				boundExpression = Expression.Constant(null, type);
-			}
 			else
 			{
 				var value = ChangeType(valueObj, type);
@@ -56,12 +55,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public static object ChangeType(object value, Type toType)
 		{
-			if (toType == null) throw new ArgumentNullException("toType");
+			if (toType == null) throw new ArgumentNullException(nameof(toType));
 
 			if (toType.GetTypeInfo().IsEnum)
 				return Enum.Parse(toType, Convert.ToString(value, Constants.DefaultFormatProvider));
-			else
-				return Convert.ChangeType(value, toType, Constants.DefaultFormatProvider);
+
+			return Convert.ChangeType(value, toType, Constants.DefaultFormatProvider);
 		}
 	}
 }

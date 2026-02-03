@@ -14,16 +14,17 @@
 	https://unity3d.com/ru/legal/as_terms
 */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using GameDevWare.Dynamic.Expressions.CSharp;
 #if NETFRAMEWORK
 using TypeInfo = System.Type;
 #else
 using System.Reflection;
 #endif
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using GameDevWare.Dynamic.Expressions.CSharp;
 
 // ReSharper disable CheckForReferenceEqualityInstead.1
 
@@ -31,29 +32,106 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	internal static class TypeNameUtils
 	{
-		private static readonly string[] EmptyNames = new string[0];
+		public struct TypeNestingEnumerator : IEnumerator<TypeInfo>, IEnumerable<TypeInfo>
+		{
+			private readonly TypeInfo typeInfo;
+
+			public TypeNestingEnumerator(TypeInfo typeInfo)
+			{
+				this.typeInfo = typeInfo;
+				this.Current = null;
+			}
+
+			public bool MoveNext()
+			{
+				if (this.Current == null)
+				{
+					this.Reset();
+					return true;
+				}
+
+				if (this.Current.Equals(this.typeInfo)) return false;
+
+				var typeAboveCurrent = this.typeInfo;
+				while (typeAboveCurrent != null && !this.Current.Equals(GetDeclaringType(typeAboveCurrent)))
+				{
+					typeAboveCurrent = GetDeclaringType(typeAboveCurrent);
+				}
+
+				this.Current = typeAboveCurrent;
+				return typeAboveCurrent != null;
+			}
+			public void Reset()
+			{
+				this.Current = this.typeInfo;
+				while (GetDeclaringType(this.Current) != null)
+				{
+					this.Current = GetDeclaringType(this.Current);
+				}
+			}
+
+			private static TypeInfo GetDeclaringType(TypeInfo type)
+			{
+				if (type == null) throw new ArgumentNullException(nameof(type));
+
+				var declaringType = type.DeclaringType;
+
+				// ReSharper disable once ConditionIsAlwaysTrueOrFalse
+				if (declaringType == null) return null;
+
+				return declaringType.GetTypeInfo();
+			}
+
+			public TypeInfo Current { get; private set; }
+			object IEnumerator.Current => this.Current;
+
+			public TypeNestingEnumerator GetEnumerator()
+			{
+				return this;
+			}
+			IEnumerator<TypeInfo> IEnumerable<TypeInfo>.GetEnumerator()
+			{
+				return this;
+			}
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return this;
+			}
+
+			public void Dispose()
+			{
+			}
+		}
+
+		private static readonly string[] EmptyNames = Array.Empty<string>();
 
 		public static string[] GetTypeNames(this TypeInfo typeInfo)
 		{
-			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
+			if (typeInfo == null) throw new ArgumentNullException(nameof(typeInfo));
 
 			var name = typeInfo.Name;
 			if (string.IsNullOrEmpty(name))
 				return EmptyNames;
 
-			var alias = default(string);
 			if (typeInfo.Equals(typeof(Array)))
 				return new[] { name, name + "`1" };
-			else if (typeInfo.IsGenericType)
-				return new[] { GetCSharpName(typeInfo, options: TypeNameFormatOptions.None).ToString(), GetCSharpName(typeInfo, options: TypeNameFormatOptions.IncludeGenericSuffix).ToString() };
-			else if (CSharpTypeNameAlias.TryGetAlias(typeInfo, out alias))
-				return new[] { alias, GetCSharpName(typeInfo).ToString() };
-			else
-				return new[] { GetCSharpName(typeInfo).ToString() };
+
+			if (typeInfo.IsGenericType)
+			{
+				return new[] {
+					typeInfo.GetCSharpName(options: TypeNameFormatOptions.None).ToString(),
+					typeInfo.GetCSharpName(options: TypeNameFormatOptions.IncludeGenericSuffix).ToString()
+				};
+			}
+
+			if (CSharpTypeNameAlias.TryGetAlias(typeInfo, out var alias))
+				return new[] { alias, typeInfo.GetCSharpName().ToString() };
+
+			return new[] { typeInfo.GetCSharpName().ToString() };
 		}
 		public static string[] GetTypeFullNames(this TypeInfo typeInfo)
 		{
-			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
+			if (typeInfo == null) throw new ArgumentNullException(nameof(typeInfo));
 
 			var fullName = typeInfo.FullName;
 			if (string.IsNullOrEmpty(fullName))
@@ -61,73 +139,64 @@ namespace GameDevWare.Dynamic.Expressions
 
 			if (typeInfo.Equals(typeof(Array)))
 				return new[] { fullName, fullName + "`1" };
-			else if (typeInfo.IsGenericType)
-				return new[] { GetCSharpFullName(typeInfo, options: TypeNameFormatOptions.None).ToString(), GetCSharpFullName(typeInfo, options: TypeNameFormatOptions.IncludeGenericSuffix).ToString() };
-			else
-				return new[] { GetCSharpFullName(typeInfo).ToString() };
+
+			if (typeInfo.IsGenericType)
+			{
+				return new[] {
+					typeInfo.GetCSharpFullName(options: TypeNameFormatOptions.None).ToString(),
+					typeInfo.GetCSharpFullName(options: TypeNameFormatOptions.IncludeGenericSuffix).ToString()
+				};
+			}
+
+			return new[] { typeInfo.GetCSharpFullName().ToString() };
 		}
 
-		public static StringBuilder GetCSharpFullName(this TypeInfo typeInfo, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
+		public static StringBuilder GetCSharpFullName
+			(this TypeInfo typeInfo, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
 		{
-			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
+			if (typeInfo == null) throw new ArgumentNullException(nameof(typeInfo));
 
-			if (builder == null)
-			{
-				builder = new StringBuilder();
-			}
+			if (builder == null) builder = new StringBuilder();
 
 			var nameStartIndex = builder.Length;
 			WriteName(typeInfo, builder, options | TypeNameFormatOptions.IncludeNamespace);
 
-			if ((options & TypeNameFormatOptions.IncludeGenericSuffix) == 0)
-			{
-				RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
-			}
+			if ((options & TypeNameFormatOptions.IncludeGenericSuffix) == 0) RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
 
 			return builder;
 		}
-		public static StringBuilder GetCSharpName(this TypeInfo typeInfo, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
+		public static StringBuilder GetCSharpName
+			(this TypeInfo typeInfo, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
 		{
-			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
+			if (typeInfo == null) throw new ArgumentNullException(nameof(typeInfo));
 
-			if (builder == null)
-			{
-				builder = new StringBuilder();
-			}
+			if (builder == null) builder = new StringBuilder();
 
 			var nameStartIndex = builder.Length;
 			WriteName(typeInfo, builder, (options & ~TypeNameFormatOptions.IncludeNamespace) | TypeNameFormatOptions.IncludeDeclaringType);
 
-			if ((options & TypeNameFormatOptions.IncludeGenericSuffix) == 0)
-			{
-				RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
-			}
+			if ((options & TypeNameFormatOptions.IncludeGenericSuffix) == 0) RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
 
 			return builder;
 		}
-		public static StringBuilder GetCSharpNameOnly(this TypeInfo typeInfo, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
+		public static StringBuilder GetCSharpNameOnly
+			(this TypeInfo typeInfo, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
 		{
-			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
+			if (typeInfo == null) throw new ArgumentNullException(nameof(typeInfo));
 
-			if (builder == null)
-			{
-				builder = new StringBuilder();
-			}
+			if (builder == null) builder = new StringBuilder();
 
 			var nameStartIndex = builder.Length;
 			WriteName(typeInfo, builder, options & ~TypeNameFormatOptions.IncludeNamespace);
 
-			if ((options & TypeNameFormatOptions.IncludeGenericSuffix) == 0)
-			{
-				RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
-			}
+			if ((options & TypeNameFormatOptions.IncludeGenericSuffix) == 0) RemoveGenericSuffix(builder, nameStartIndex, builder.Length - nameStartIndex);
 
 			return builder;
 		}
 
 		public static string RemoveGenericSuffix(string name)
 		{
-			if (name == null) throw new ArgumentNullException("name");
+			if (name == null) throw new ArgumentNullException(nameof(name));
 
 			var markerIndex = name.IndexOf('`');
 			var offset = 0;
@@ -139,8 +208,11 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				builder.Append(name, offset, markerIndex - offset);
 				markerIndex++;
-				while (markerIndex < name.Length && Char.IsDigit(name[markerIndex]))
+				while (markerIndex < name.Length && char.IsDigit(name[markerIndex]))
+				{
 					markerIndex++;
+				}
+
 				offset = markerIndex;
 				markerIndex = name.IndexOf('`', offset);
 			}
@@ -153,9 +225,9 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		public static StringBuilder RemoveGenericSuffix(StringBuilder builder, int startIndex, int count)
 		{
-			if (builder == null) throw new ArgumentNullException("builder");
-			if (startIndex < 0 || startIndex > builder.Length) throw new ArgumentOutOfRangeException("startIndex");
-			if (count < 0 || startIndex + count > builder.Length) throw new ArgumentOutOfRangeException("count");
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+			if (startIndex < 0 || startIndex > builder.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
+			if (count < 0 || startIndex + count > builder.Length) throw new ArgumentOutOfRangeException(nameof(count));
 
 			if (count == 0 || startIndex == builder.Length) return builder;
 
@@ -166,7 +238,9 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				markerIndex++;
 				while (markerIndex < endIndex && char.IsDigit(builder[markerIndex]))
+				{
 					markerIndex++;
+				}
 
 				var cutLength = markerIndex - cutStartIndex;
 				builder.Remove(cutStartIndex, cutLength);
@@ -184,53 +258,13 @@ namespace GameDevWare.Dynamic.Expressions
 			return new TypeNestingEnumerator(typeInfo);
 		}
 
-#if !NETFRAMEWORK
-		public static string[] GetTypeFullNames(this Type type)
-		{
-			if (type == null) throw new ArgumentNullException("type");
-
-			return GetTypeFullNames(type.GetTypeInfo());
-		}
-		public static string[] GetTypeNames(this Type typeInfo)
-		{
-			if (typeInfo == null) throw new ArgumentNullException("type");
-
-			return GetTypeNames(typeInfo.GetTypeInfo());
-		}
-		public static StringBuilder GetCSharpNameOnly(this Type type, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
-		{
-			if (type == null) throw new ArgumentNullException("type");
-
-			return GetCSharpNameOnly(type.GetTypeInfo(), builder, options);
-		}
-		public static StringBuilder GetCSharpName(this Type type, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
-		{
-			if (type == null) throw new ArgumentNullException("type");
-
-			return GetCSharpName(type.GetTypeInfo(), builder, options);
-		}
-		public static TypeNestingEnumerator GetDeclaringTypes(this Type type)
-		{
-			if (type == null) throw new ArgumentNullException("type");
-
-			return GetDeclaringTypes(type.GetTypeInfo());
-		}
-		public static StringBuilder GetCSharpFullName(this Type type, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
-		{
-			if (type == null) throw new ArgumentNullException("type");
-
-			return GetCSharpFullName(type.GetTypeInfo(), builder, options);
-		}
-#endif
-
 		private static void WriteName(TypeInfo typeInfo, StringBuilder builder, TypeNameFormatOptions options)
 		{
-			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
-			if (builder == null) throw new ArgumentNullException("builder");
+			if (typeInfo == null) throw new ArgumentNullException(nameof(typeInfo));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
 
-			var alias = default(string);
 			if ((options & TypeNameFormatOptions.UseAliases) == TypeNameFormatOptions.UseAliases &&
-				CSharpTypeNameAlias.TryGetAlias(typeInfo, out alias))
+				CSharpTypeNameAlias.TryGetAlias(typeInfo, out var alias))
 			{
 				builder.Append(alias);
 				return;
@@ -239,7 +273,9 @@ namespace GameDevWare.Dynamic.Expressions
 			var arrayDepth = 0;
 			while (typeInfo.IsArray)
 			{
-				typeInfo = typeInfo.GetElementType().GetTypeInfo();
+				var elementType = typeInfo.GetElementType();
+				Debug.Assert(elementType != null, nameof(elementType) + " != null");
+				typeInfo = elementType.GetTypeInfo();
 				arrayDepth++;
 			}
 
@@ -247,7 +283,8 @@ namespace GameDevWare.Dynamic.Expressions
 			var namespaceWritten = (options & TypeNameFormatOptions.IncludeNamespace) != TypeNameFormatOptions.IncludeNamespace;
 			var writeDeclaringType = (options & TypeNameFormatOptions.IncludeDeclaringType) == TypeNameFormatOptions.IncludeDeclaringType;
 
-			var genericArguments = (typeInfo.IsGenericType && writeGenericArguments ? typeInfo.GetGenericArguments() : Type.EmptyTypes).ConvertAll(t => t.GetTypeInfo());
+			var genericArguments =
+				(typeInfo.IsGenericType && writeGenericArguments ? typeInfo.GetGenericArguments() : Type.EmptyTypes).ConvertAll(t => t.GetTypeInfo());
 			var genericArgumentOffset = 0;
 			foreach (var declaringTypeInfo in new TypeNestingEnumerator(typeInfo))
 			{
@@ -260,53 +297,50 @@ namespace GameDevWare.Dynamic.Expressions
 					namespaceWritten = true;
 				}
 
-				var genericArgumentsCount = (declaringTypeInfo.IsGenericType && writeGenericArguments ? declaringTypeInfo.GetGenericArguments().Length : 0) - genericArgumentOffset;
+				var genericArgumentsCount = (declaringTypeInfo.IsGenericType && writeGenericArguments ? declaringTypeInfo.GetGenericArguments().Length : 0) -
+					genericArgumentOffset;
 				var partialGenerics = new ArraySegment<TypeInfo>(genericArguments, genericArgumentOffset, genericArgumentsCount);
 
 				if (writeDeclaringType || declaringTypeInfo.Equals(typeInfo))
 				{
 					WriteNamePart(declaringTypeInfo, builder, partialGenerics, options);
 
-					if (declaringTypeInfo.Equals(typeInfo) == false)
+					if (!declaringTypeInfo.Equals(typeInfo))
 						builder.Append('.');
 				}
 
 				genericArgumentOffset += genericArgumentsCount;
 			}
 
-			for (var d = 0; d < arrayDepth; d++)
-			{
-				builder.Append("[]");
-			}
+			for (var d = 0; d < arrayDepth; d++) builder.Append("[]");
 		}
 		private static void WriteNamePart(TypeInfo type, StringBuilder builder, ArraySegment<TypeInfo> genericArguments, TypeNameFormatOptions options)
 		{
-			if (type == null) throw new ArgumentNullException("type");
-			if (builder == null) throw new ArgumentNullException("builder");
+			if (type == null) throw new ArgumentNullException(nameof(type));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
 
 			builder.Append(type.Name);
 
 			if (genericArguments.Count > 0)
 			{
-				builder.Append("<");
+				builder.Append('<');
 				for (var i = genericArguments.Offset; i < genericArguments.Offset + genericArguments.Count; i++)
 				{
 					// ReSharper disable once PossibleNullReferenceException
-					if (genericArguments.Array[i].IsGenericParameter == false)
-					{
-						WriteName(genericArguments.Array[i], builder, options);
-					}
+					if (!genericArguments.Array[i].IsGenericParameter) WriteName(genericArguments.Array[i], builder, options);
+
 					builder.Append(',');
 				}
+
 				builder.Length--;
-				builder.Append(">");
+				builder.Append('>');
 			}
 		}
 		private static int IndexOf(this StringBuilder builder, char character, int startIndex, int count)
 		{
-			if (builder == null) throw new ArgumentNullException("builder");
-			if (startIndex < 0 || startIndex > builder.Length) throw new ArgumentOutOfRangeException("startIndex");
-			if (count < 0 || startIndex + count > builder.Length) throw new ArgumentOutOfRangeException("count");
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+			if (startIndex < 0 || startIndex > builder.Length) throw new ArgumentOutOfRangeException(nameof(startIndex));
+			if (count < 0 || startIndex + count > builder.Length) throw new ArgumentOutOfRangeException(nameof(count));
 
 			if (count == 0 || startIndex == builder.Length) return -1;
 
@@ -315,79 +349,50 @@ namespace GameDevWare.Dynamic.Expressions
 				if (builder[i] == character)
 					return i;
 			}
+
 			return -1;
 		}
 
-		public struct TypeNestingEnumerator : IEnumerator<TypeInfo>, IEnumerable<TypeInfo>
+#if !NETFRAMEWORK
+		public static string[] GetTypeFullNames(this Type type)
 		{
-			private readonly TypeInfo typeInfo;
-			private TypeInfo current;
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
-			public TypeNestingEnumerator(TypeInfo typeInfo)
-			{
-				this.typeInfo = typeInfo;
-				this.current = null;
-			}
-
-			public bool MoveNext()
-			{
-				if (this.current == null)
-				{
-					this.Reset();
-					return true;
-				}
-				else if (this.current.Equals(this.typeInfo))
-				{
-					return false;
-				}
-
-				var typeAboveCurrent = this.typeInfo;
-				while (typeAboveCurrent != null && this.current.Equals(GetDeclaringType(typeAboveCurrent)) == false)
-					typeAboveCurrent = GetDeclaringType(typeAboveCurrent);
-
-				this.current = typeAboveCurrent;
-				return typeAboveCurrent != null;
-			}
-			public void Reset()
-			{
-				this.current = this.typeInfo;
-				while (GetDeclaringType(this.current) != null)
-					this.current = GetDeclaringType(this.current);
-			}
-
-			private static TypeInfo GetDeclaringType(TypeInfo type)
-			{
-				if (type == null) throw new ArgumentNullException("type");
-
-				var declaringType = type.DeclaringType;
-				// ReSharper disable once ConditionIsAlwaysTrueOrFalse
-				if (declaringType == null)
-				{
-					return null;
-				}
-				return declaringType.GetTypeInfo();
-			}
-
-			public TypeInfo Current { get { return this.current; } }
-			object IEnumerator.Current { get { return this.current; } }
-
-			public TypeNestingEnumerator GetEnumerator()
-			{
-				return this;
-			}
-			IEnumerator<TypeInfo> IEnumerable<TypeInfo>.GetEnumerator()
-			{
-				return this;
-			}
-			IEnumerator IEnumerable.GetEnumerator()
-			{
-				return this;
-			}
-
-			public void Dispose()
-			{
-
-			}
+			return type.GetTypeInfo().GetTypeFullNames();
 		}
+		public static string[] GetTypeNames(this Type typeInfo)
+		{
+			if (typeInfo == null) throw new ArgumentNullException(nameof(typeInfo));
+
+			return typeInfo.GetTypeInfo().GetTypeNames();
+		}
+		public static StringBuilder GetCSharpNameOnly
+			(this Type type, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
+		{
+			if (type == null) throw new ArgumentNullException(nameof(type));
+
+			return type.GetTypeInfo().GetCSharpNameOnly(builder, options);
+		}
+		public static StringBuilder GetCSharpName
+			(this Type type, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
+		{
+			if (type == null) throw new ArgumentNullException(nameof(type));
+
+			return type.GetTypeInfo().GetCSharpName(builder, options);
+		}
+		public static TypeNestingEnumerator GetDeclaringTypes(this Type type)
+		{
+			if (type == null) throw new ArgumentNullException(nameof(type));
+
+			return type.GetTypeInfo().GetDeclaringTypes();
+		}
+		public static StringBuilder GetCSharpFullName
+			(this Type type, StringBuilder builder = null, TypeNameFormatOptions options = TypeNameFormatOptions.IncludeGenericSuffix)
+		{
+			if (type == null) throw new ArgumentNullException(nameof(type));
+
+			return type.GetTypeInfo().GetCSharpFullName(builder, options);
+		}
+#endif
 	}
 }

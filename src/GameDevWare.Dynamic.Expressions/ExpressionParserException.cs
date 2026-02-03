@@ -19,26 +19,25 @@ using System;
 namespace GameDevWare.Dynamic.Expressions
 {
 	/// <summary>
-	/// Expression parsing exception.
+	///     Expression parsing exception.
 	/// </summary>
 	public sealed class ExpressionParserException : Exception, ILineInfo
 	{
 		/// <summary>
-		/// Line number related to exception.
+		///     Line number related to exception.
 		/// </summary>
 		public int LineNumber { get; set; }
 		/// <summary>
-		/// Column number related to exception.
+		///     Column number related to exception.
 		/// </summary>
 		public int ColumnNumber { get; set; }
 		/// <summary>
-		/// Length of token related to exception.
+		///     Length of token related to exception.
 		/// </summary>
 		public int TokenLength { get; set; }
 
 		internal ExpressionParserException()
 		{
-
 		}
 		internal ExpressionParserException(string message, int lineNumber = 0, int columnNumber = 0, int tokenLength = 0)
 			: base(message)
@@ -111,15 +110,15 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 
 		/// <summary>
-		/// Converts exception to string representation for debug purpose.
+		///     Converts exception to string representation for debug purpose.
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()
 		{
 			if (this.TokenLength != 0)
-				return string.Format("[{0},{1}+{2}]{3}", this.LineNumber.ToString(), this.ColumnNumber.ToString(), this.TokenLength.ToString(), base.ToString());
-			else
-				return base.ToString();
+				return $"[{this.LineNumber.ToString()},{this.ColumnNumber.ToString()}+{this.TokenLength.ToString()}]{base.ToString()}";
+
+			return base.ToString();
 		}
 	}
 }

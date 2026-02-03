@@ -10,9 +10,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public NewArrayBoundsNode(NewArrayExpression newArrayExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (newArrayExpression == null) throw new ArgumentNullException("newArrayExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (newArrayExpression == null) throw new ArgumentNullException(nameof(newArrayExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.newArrayExpression = newArrayExpression;
 
@@ -26,7 +26,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		{
 			var ranks = new int[this.rankNodes.Length];
 			for (var i = 0; i < this.rankNodes.Length; i++)
+			{
 				ranks[i] = closure.Unbox<int>(this.rankNodes[i].Run(closure));
+			}
 
 			// ReSharper disable once AssignNullToNotNullAttribute
 			var array = Array.CreateInstance(this.newArrayExpression.Type.GetElementType(), ranks);

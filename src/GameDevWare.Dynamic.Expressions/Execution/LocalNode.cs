@@ -11,7 +11,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public LocalNode(int localIndex)
 		{
-			if (localIndex < 0) throw new ArgumentOutOfRangeException("localIndex");
+			if (localIndex < 0) throw new ArgumentOutOfRangeException(nameof(localIndex));
 
 			this.localIndex = localIndex;
 		}

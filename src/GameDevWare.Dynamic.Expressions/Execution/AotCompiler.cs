@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Execution
 {
@@ -9,7 +10,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 	{
 		public static Func<ResultT> PrepareFunc<ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters = null)
 		{
-			if (body == null) throw new ArgumentNullException("body");
+			if (body == null) throw new ArgumentNullException(nameof(body));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -17,7 +18,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = Constants.EmptyParameters;
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return () =>
 			{
@@ -31,8 +32,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		}
 		public static Func<Arg1T, ResultT> PrepareFunc<Arg1T, ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
-			if (body == null) throw new ArgumentNullException("body");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (body == null) throw new ArgumentNullException(nameof(body));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -40,7 +41,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = parameters.ToArray();
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return arg1 =>
 			{
@@ -55,8 +56,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		}
 		public static Func<Arg1T, Arg2T, ResultT> PrepareFunc<Arg1T, Arg2T, ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
-			if (body == null) throw new ArgumentNullException("body");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (body == null) throw new ArgumentNullException(nameof(body));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -64,7 +65,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = parameters.ToArray();
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return (arg1, arg2) =>
 			{
@@ -76,10 +77,11 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				return result;
 			};
 		}
-		public static Func<Arg1T, Arg2T, Arg3T, ResultT> PrepareFunc<Arg1T, Arg2T, Arg3T, ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
+		public static Func<Arg1T, Arg2T, Arg3T, ResultT> PrepareFunc<Arg1T, Arg2T, Arg3T, ResultT>
+			(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
-			if (body == null) throw new ArgumentNullException("body");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (body == null) throw new ArgumentNullException(nameof(body));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -87,7 +89,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = parameters.ToArray();
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return (arg1, arg2, arg3) =>
 			{
@@ -99,10 +101,11 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				return result;
 			};
 		}
-		public static Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT> PrepareFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
+		public static Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT> PrepareFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>
+			(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
-			if (body == null) throw new ArgumentNullException("body");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (body == null) throw new ArgumentNullException(nameof(body));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -110,7 +113,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = parameters.ToArray();
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return (arg1, arg2, arg3, arg4) =>
 			{
@@ -125,7 +128,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public static Action PrepareAction(Expression body, ReadOnlyCollection<ParameterExpression> parameters = null)
 		{
-			if (body == null) throw new ArgumentNullException("body");
+			if (body == null) throw new ArgumentNullException(nameof(body));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -133,7 +136,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = Constants.EmptyParameters;
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return () =>
 			{
@@ -146,8 +149,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		}
 		public static Action<Arg1T> PrepareAction<Arg1T>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
-			if (body == null) throw new ArgumentNullException("body");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (body == null) throw new ArgumentNullException(nameof(body));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -155,7 +158,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = parameters.ToArray();
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return arg1 =>
 			{
@@ -168,8 +171,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		}
 		public static Action<Arg1T, Arg2T> PrepareAction<Arg1T, Arg2T>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
-			if (body == null) throw new ArgumentNullException("body");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (body == null) throw new ArgumentNullException(nameof(body));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -177,7 +180,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = parameters.ToArray();
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return (arg1, arg2) =>
 			{
@@ -190,8 +193,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		}
 		public static Action<Arg1T, Arg2T, Arg3T> PrepareAction<Arg1T, Arg2T, Arg3T>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
-			if (body == null) throw new ArgumentNullException("body");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (body == null) throw new ArgumentNullException(nameof(body));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -199,7 +202,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = parameters.ToArray();
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return (arg1, arg2, arg3) =>
 			{
@@ -210,10 +213,11 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				Array.Clear(locals, 0, locals.Length);
 			};
 		}
-		public static Action<Arg1T, Arg2T, Arg3T, Arg4T> PrepareAction<Arg1T, Arg2T, Arg3T, Arg4T>(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
+		public static Action<Arg1T, Arg2T, Arg3T, Arg4T> PrepareAction<Arg1T, Arg2T, Arg3T, Arg4T>
+			(Expression body, ReadOnlyCollection<ParameterExpression> parameters)
 		{
-			if (body == null) throw new ArgumentNullException("body");
-			if (parameters == null) throw new ArgumentNullException("parameters");
+			if (body == null) throw new ArgumentNullException(nameof(body));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
 			var collector = new ConstantsCollector();
 			collector.Visit(body);
@@ -221,7 +225,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			var constExpressions = collector.Constants.ToArray();
 			var parameterExpressions = parameters.ToArray();
 			var compiledBody = Compile(body, constExpressions, parameterExpressions);
-			var constants = ArrayUtils.ConvertAll(constExpressions, c => c.Value);
+			var constants = constExpressions.ConvertAll(c => c.Value);
 
 			return (arg1, arg2, arg3, arg4) =>
 			{
@@ -238,8 +242,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			if (expression == null)
 				return NullNode.Instance;
 
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 			switch (expression.NodeType)
@@ -331,7 +335,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					return new TypeIsNode((TypeBinaryExpression)expression, constExpressions, parameterExpressions);
 
 				default:
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_UNKNOWNEXPRTYPE, expression.Type));
+					throw new InvalidOperationException(string.Format(Resources.EXCEPTION_COMPIL_UNKNOWNEXPRTYPE, expression.Type));
 			}
 		}
 	}

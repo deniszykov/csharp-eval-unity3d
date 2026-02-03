@@ -8,12 +8,12 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 	{
 		public static Dictionary<string, object> Pack(ParameterExpression expression)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			return new Dictionary<string, object>(3) {
-				{Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_PARAMETER},
-				{Constants.TYPE_ATTRIBUTE, AnyPacker.Pack(expression.Type)},
-				{Constants.NAME_ATTRIBUTE, expression.Name},
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_PARAMETER },
+				{ Constants.TYPE_ATTRIBUTE, AnyPacker.Pack(expression.Type) },
+				{ Constants.NAME_ATTRIBUTE, expression.Name }
 			};
 		}
 	}

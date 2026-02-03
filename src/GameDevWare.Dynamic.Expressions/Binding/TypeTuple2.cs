@@ -18,7 +18,7 @@ using System;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
-	internal struct TypeTuple2 : IEquatable<TypeTuple2>
+	internal readonly struct TypeTuple2 : IEquatable<TypeTuple2>
 	{
 		private readonly int hashCode;
 
@@ -27,8 +27,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public TypeTuple2(Type type1, Type type2)
 		{
-			if (type1 == null) throw new ArgumentNullException("type1");
-			if (type2 == null) throw new ArgumentNullException("type2");
+			if (type1 == null) throw new ArgumentNullException(nameof(type1));
+			if (type2 == null) throw new ArgumentNullException(nameof(type2));
 
 			this.Type1 = type1;
 			this.Type2 = type2;
@@ -53,6 +53,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		{
 			if (obj is TypeTuple2)
 				return this.Equals((TypeTuple2)obj);
+
 			return false;
 		}
 
@@ -60,8 +61,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		{
 			if (this.Type1 != null && this.Type2 != null)
 				return this.Type1.Name + "/" + this.Type2.Name;
-			else
-				return "empty";
+
+			return "empty";
 		}
 	}
 }

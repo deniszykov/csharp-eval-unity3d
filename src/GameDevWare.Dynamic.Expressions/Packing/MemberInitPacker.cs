@@ -10,17 +10,17 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 	{
 		public static Dictionary<string, object> Pack(MemberInitExpression expression)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			return new Dictionary<string, object>(3) {
 				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_INIT },
 				{ Constants.NEW_ATTRIBUTE, AnyPacker.Pack(expression.NewExpression) },
-				{ Constants.BINDINGS_ATTRIBUTE, Pack(expression.Bindings) },
+				{ Constants.BINDINGS_ATTRIBUTE, Pack(expression.Bindings) }
 			};
 		}
 		public static Dictionary<string, object> Pack(ReadOnlyCollection<MemberBinding> expressionBindings)
 		{
-			if (expressionBindings == null) throw new ArgumentNullException("expressionBindings");
+			if (expressionBindings == null) throw new ArgumentNullException(nameof(expressionBindings));
 
 			var bindingList = new Dictionary<string, object>(expressionBindings.Count);
 			for (var i = 0; i < expressionBindings.Count; i++)
@@ -46,7 +46,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 		}
 		public static Dictionary<string, object> Pack(MemberListBinding memberListBinding)
 		{
-			if (memberListBinding == null) throw new ArgumentNullException("memberListBinding");
+			if (memberListBinding == null) throw new ArgumentNullException(nameof(memberListBinding));
 
 			return new Dictionary<string, object>(3) {
 				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_LIST_BINDING },
@@ -56,7 +56,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 		}
 		public static Dictionary<string, object> Pack(MemberMemberBinding memberMemberBinding)
 		{
-			if (memberMemberBinding == null) throw new ArgumentNullException("memberMemberBinding");
+			if (memberMemberBinding == null) throw new ArgumentNullException(nameof(memberMemberBinding));
 
 			return new Dictionary<string, object>(3) {
 				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_BINDING },
@@ -66,7 +66,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 		}
 		public static Dictionary<string, object> Pack(MemberAssignment memberAssignment)
 		{
-			if (memberAssignment == null) throw new ArgumentNullException("memberAssignment");
+			if (memberAssignment == null) throw new ArgumentNullException(nameof(memberAssignment));
 
 			return new Dictionary<string, object> {
 				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING },
@@ -76,7 +76,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 		}
 		public static Dictionary<string, object> Pack(ElementInit elementInit)
 		{
-			if (elementInit == null) throw new ArgumentNullException("elementInit");
+			if (elementInit == null) throw new ArgumentNullException(nameof(elementInit));
 
 			var arguments = elementInit.Arguments.ToArray();
 
@@ -89,7 +89,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 
 		internal static Dictionary<string, object> Pack(ReadOnlyCollection<ElementInit> elementInitializers)
 		{
-			if (elementInitializers == null) throw new ArgumentNullException("elementInitializers");
+			if (elementInitializers == null) throw new ArgumentNullException(nameof(elementInitializers));
 
 			var initializers = new Dictionary<string, object>();
 			for (var i = 0; i < elementInitializers.Count; i++)

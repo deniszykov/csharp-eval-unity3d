@@ -8,15 +8,14 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 	{
 		public static Dictionary<string, object> Pack(MemberExpression expression)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
-
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			if (expression.Expression != null)
 			{
 				var memberAccessExpression = new Dictionary<string, object>(3) {
 					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_RESOLVE },
 					{ Constants.NAME_ATTRIBUTE, expression.Member.Name },
-					{ Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(expression.Expression) },
+					{ Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(expression.Expression) }
 				};
 				return memberAccessExpression;
 			}

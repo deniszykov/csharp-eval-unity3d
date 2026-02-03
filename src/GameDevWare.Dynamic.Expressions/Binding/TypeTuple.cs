@@ -15,10 +15,11 @@
 */
 
 using System;
+using System.Text;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
-	internal struct TypeTuple : IEquatable<TypeTuple>
+	internal readonly struct TypeTuple : IEquatable<TypeTuple>
 	{
 		private readonly int hashCode;
 
@@ -26,7 +27,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public TypeTuple(params Type[] types)
 		{
-			if (types == null) throw new ArgumentNullException("types");
+			if (types == null) throw new ArgumentNullException(nameof(types));
 
 			this.Types = types;
 
@@ -35,7 +36,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				this.hashCode = 17;
 				foreach (var type in types)
 				{
-					if (type == null) throw new ArgumentException("One of array's element is null.", "types");
+					if (type == null) throw new ArgumentException("One of array's element is null.", nameof(types));
 
 					this.hashCode = this.hashCode * 23 + type.GetHashCode();
 				}
@@ -49,8 +50,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (this.Types.Length != other.Types.Length) return false;
 
 			for (var i = 0; i < this.Types.Length; i++)
+			{
 				if (this.Types[i] != other.Types[i])
 					return false;
+			}
+
 			return true;
 		}
 		public override int GetHashCode()
@@ -61,6 +65,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		{
 			if (obj is TypeTuple)
 				return this.Equals((TypeTuple)obj);
+
 			return false;
 		}
 
@@ -68,15 +73,18 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		{
 			if (this.Types != null)
 			{
-				var sb = new System.Text.StringBuilder();
+				var sb = new StringBuilder();
 				foreach (var type in this.Types)
+				{
 					sb.Append(type.Name).Append(", ");
+				}
+
 				if (sb.Length > 2)
 					sb.Length -= 2;
 				return sb.ToString();
 			}
-			else
-				return "empty";
+
+			return "empty";
 		}
 	}
 }

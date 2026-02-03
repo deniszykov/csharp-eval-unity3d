@@ -33,7 +33,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 		public static ExpressionPosition Parse(string positionString)
 		{
-			if (positionString == null) throw new ArgumentNullException("positionString");
+			if (positionString == null) throw new ArgumentNullException(nameof(positionString));
 
 			var colonIdx = positionString.IndexOf(':');
 			var plusIdx = positionString.IndexOf('+');
@@ -50,12 +50,12 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <inheritdoc />
 		public override bool Equals(object obj)
 		{
-			if (obj is ExpressionPosition)
-				return this.Equals((ExpressionPosition)obj);
-			else if (obj is ILineInfo)
-				return this.Equals((ILineInfo)obj);
-			else
-				return false;
+			if (obj is ExpressionPosition expressionPosition)
+				return this.Equals(expressionPosition);
+			if (obj is ILineInfo lineInfo)
+				return this.Equals(lineInfo);
+
+			return false;
 		}
 		/// <inheritdoc />
 		public bool Equals(ExpressionPosition other)
@@ -97,8 +97,8 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <inheritdoc />
 		public override string ToString()
 		{
-			return string.Format(Constants.DefaultFormatProvider, "{0}:{1}+{2}", this.LineNumber.ToString(), this.ColumnNumber.ToString(), this.TokenLength.ToString());
+			return string.Format(Constants.DefaultFormatProvider, "{0}:{1}+{2}", this.LineNumber.ToString(), this.ColumnNumber.ToString(),
+				this.TokenLength.ToString());
 		}
-
 	}
 }

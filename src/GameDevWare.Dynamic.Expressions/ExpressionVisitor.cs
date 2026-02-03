@@ -24,31 +24,33 @@ using System.Linq.Expressions;
 namespace GameDevWare.Dynamic.Expressions
 {
 	/// <summary>
-	/// Represents a visitor or rewriter for expression trees.
+	///     Represents a visitor or rewriter for expression trees.
 	/// </summary>
 	public abstract class ExpressionVisitor
 	{
 		// Methods
 		private Exception UnhandledBindingType(MemberBindingType memberBindingType)
 		{
-			throw new InvalidOperationException(string.Format("Unknown binding type '{0}'.", memberBindingType));
+			throw new InvalidOperationException($"Unknown binding type '{memberBindingType}'.");
 		}
 
 		private Exception UnhandledExpressionType(ExpressionType expressionType)
 		{
-			throw new InvalidOperationException(string.Format("Unknown expression type '{0}'.", expressionType));
+			throw new InvalidOperationException($"Unknown expression type '{expressionType}'.");
 		}
 
 		/// <summary>
-		/// Dispatches the expression to one of the more specialized visit methods in this class.
+		///     Dispatches the expression to one of the more specialized visit methods in this class.
 		/// </summary>
-		public Expression Visit(Expression exp)
+		public Expression Visit(Expression expression)
 		{
-			if (exp == null)
+			if (expression == null)
 			{
-				return exp;
+				return null;
 			}
-			switch (exp.NodeType)
+
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+			switch (expression.NodeType)
 			{
 				case ExpressionType.Add:
 				case ExpressionType.AddChecked:
@@ -74,7 +76,7 @@ namespace GameDevWare.Dynamic.Expressions
 				case ExpressionType.RightShift:
 				case ExpressionType.Subtract:
 				case ExpressionType.SubtractChecked:
-					return this.VisitBinary((BinaryExpression) exp);
+					return this.VisitBinary((BinaryExpression)expression);
 
 				case ExpressionType.ArrayLength:
 				case ExpressionType.Convert:
@@ -85,46 +87,47 @@ namespace GameDevWare.Dynamic.Expressions
 				case ExpressionType.Not:
 				case ExpressionType.Quote:
 				case ExpressionType.TypeAs:
-					return this.VisitUnary((UnaryExpression) exp);
+					return this.VisitUnary((UnaryExpression)expression);
 
 				case ExpressionType.Call:
-					return this.VisitMethodCall((MethodCallExpression) exp);
+					return this.VisitMethodCall((MethodCallExpression)expression);
 
 				case ExpressionType.Conditional:
-					return this.VisitConditional((ConditionalExpression) exp);
+					return this.VisitConditional((ConditionalExpression)expression);
 
 				case ExpressionType.Constant:
-					return this.VisitConstant((ConstantExpression) exp);
+					return this.VisitConstant((ConstantExpression)expression);
 
 				case ExpressionType.Invoke:
-					return this.VisitInvocation((InvocationExpression) exp);
+					return this.VisitInvocation((InvocationExpression)expression);
 
 				case ExpressionType.Lambda:
-					return this.VisitLambda((LambdaExpression) exp);
+					return this.VisitLambda((LambdaExpression)expression);
 
 				case ExpressionType.ListInit:
-					return this.VisitListInit((ListInitExpression) exp);
+					return this.VisitListInit((ListInitExpression)expression);
 
 				case ExpressionType.MemberAccess:
-					return this.VisitMemberAccess((MemberExpression) exp);
+					return this.VisitMemberAccess((MemberExpression)expression);
 
 				case ExpressionType.MemberInit:
-					return this.VisitMemberInit((MemberInitExpression) exp);
+					return this.VisitMemberInit((MemberInitExpression)expression);
 
 				case ExpressionType.New:
-					return this.VisitNew((NewExpression) exp);
+					return this.VisitNew((NewExpression)expression);
 
 				case ExpressionType.NewArrayInit:
 				case ExpressionType.NewArrayBounds:
-					return this.VisitNewArray((NewArrayExpression) exp);
+					return this.VisitNewArray((NewArrayExpression)expression);
 
 				case ExpressionType.Parameter:
-					return this.VisitParameter((ParameterExpression) exp);
+					return this.VisitParameter((ParameterExpression)expression);
 
 				case ExpressionType.TypeIs:
-					return this.VisitTypeIs((TypeBinaryExpression) exp);
+					return this.VisitTypeIs((TypeBinaryExpression)expression);
 			}
-			throw this.UnhandledExpressionType(exp.NodeType);
+
+			throw this.UnhandledExpressionType(expression.NodeType);
 		}
 
 		protected virtual Expression VisitBinary(BinaryExpression binaryExpression)
@@ -132,14 +135,11 @@ namespace GameDevWare.Dynamic.Expressions
 			var left = this.Visit(binaryExpression.Left);
 			var right = this.Visit(binaryExpression.Right);
 			var expression3 = this.Visit(binaryExpression.Conversion);
-			if (((left == binaryExpression.Left) && (right == binaryExpression.Right)) && (expression3 == binaryExpression.Conversion))
-			{
-				return binaryExpression;
-			}
-			if ((binaryExpression.NodeType == ExpressionType.Coalesce) && (binaryExpression.Conversion != null))
-			{
+			if (left == binaryExpression.Left && right == binaryExpression.Right && expression3 == binaryExpression.Conversion) return binaryExpression;
+
+			if (binaryExpression.NodeType == ExpressionType.Coalesce && binaryExpression.Conversion != null)
 				return Expression.Coalesce(left, right, expression3 as LambdaExpression);
-			}
+
 			return Expression.MakeBinary(binaryExpression.NodeType, left, right, binaryExpression.IsLiftedToNull, binaryExpression.Method);
 		}
 
@@ -148,15 +148,16 @@ namespace GameDevWare.Dynamic.Expressions
 			switch (binding.BindingType)
 			{
 				case MemberBindingType.Assignment:
-					return this.VisitMemberAssignment((MemberAssignment) binding);
+					return this.VisitMemberAssignment((MemberAssignment)binding);
 
 				case MemberBindingType.MemberBinding:
-					return this.VisitMemberMemberBinding((MemberMemberBinding) binding);
+					return this.VisitMemberMemberBinding((MemberMemberBinding)binding);
 
 				case MemberBindingType.ListBinding:
-					return this.VisitMemberListBinding((MemberListBinding) binding);
+					return this.VisitMemberListBinding((MemberListBinding)binding);
+				default:
+					throw this.UnhandledBindingType(binding.BindingType);
 			}
-			throw this.UnhandledBindingType(binding.BindingType);
 		}
 
 		protected virtual IEnumerable<MemberBinding> VisitBindingList(ReadOnlyCollection<MemberBinding> original)
@@ -168,24 +169,19 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				var item = this.VisitBinding(original[num]);
 				if (list != null)
-				{
 					list.Add(item);
-				}
 				else if (item != original[num])
 				{
 					list = new List<MemberBinding>(count);
-					for (var i = 0; i < num; i++)
-					{
-						list.Add(original[i]);
-					}
+					for (var i = 0; i < num; i++) list.Add(original[i]);
 					list.Add(item);
 				}
+
 				num++;
 			}
-			if (list != null)
-			{
-				return list;
-			}
+
+			if (list != null) return list;
+
 			return original;
 		}
 
@@ -194,10 +190,9 @@ namespace GameDevWare.Dynamic.Expressions
 			var test = this.Visit(conditionalExpression.Test);
 			var ifTrue = this.Visit(conditionalExpression.IfTrue);
 			var ifFalse = this.Visit(conditionalExpression.IfFalse);
-			if (((test == conditionalExpression.Test) && (ifTrue == conditionalExpression.IfTrue)) && (ifFalse == conditionalExpression.IfFalse))
-			{
+			if (test == conditionalExpression.Test && ifTrue == conditionalExpression.IfTrue && ifFalse == conditionalExpression.IfFalse)
 				return conditionalExpression;
-			}
+
 			return Expression.Condition(test, ifTrue, ifFalse);
 		}
 
@@ -209,10 +204,8 @@ namespace GameDevWare.Dynamic.Expressions
 		protected virtual ElementInit VisitElementInitializer(ElementInit initializer)
 		{
 			var arguments = this.VisitExpressionList(initializer.Arguments);
-			if (arguments != initializer.Arguments)
-			{
-				return Expression.ElementInit(initializer.AddMethod, arguments);
-			}
+			if (arguments != initializer.Arguments) return Expression.ElementInit(initializer.AddMethod, arguments);
+
 			return initializer;
 		}
 
@@ -225,24 +218,19 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				var item = this.VisitElementInitializer(original[num]);
 				if (list != null)
-				{
 					list.Add(item);
-				}
 				else if (item != original[num])
 				{
 					list = new List<ElementInit>(count);
-					for (var i = 0; i < num; i++)
-					{
-						list.Add(original[i]);
-					}
+					for (var i = 0; i < num; i++) list.Add(original[i]);
 					list.Add(item);
 				}
+
 				num++;
 			}
-			if (list != null)
-			{
-				return list;
-			}
+
+			if (list != null) return list;
+
 			return original;
 		}
 
@@ -255,24 +243,19 @@ namespace GameDevWare.Dynamic.Expressions
 			{
 				var item = this.Visit(original[num]);
 				if (list != null)
-				{
 					list.Add(item);
-				}
 				else if (item != original[num])
 				{
 					list = new List<Expression>(count);
-					for (var i = 0; i < num; i++)
-					{
-						list.Add(original[i]);
-					}
+					for (var i = 0; i < num; i++) list.Add(original[i]);
 					list.Add(item);
 				}
+
 				num++;
 			}
-			if (list != null)
-			{
-				return new ReadOnlyCollection<Expression>(list);
-			}
+
+			if (list != null) return new ReadOnlyCollection<Expression>(list);
+
 			return original;
 		}
 
@@ -280,20 +263,16 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			IEnumerable<Expression> arguments = this.VisitExpressionList(invocationExpression.Arguments);
 			var expression = this.Visit(invocationExpression.Expression);
-			if ((arguments == invocationExpression.Arguments) && (expression == invocationExpression.Expression))
-			{
-				return invocationExpression;
-			}
+			if (ReferenceEquals(arguments, invocationExpression.Arguments) && expression == invocationExpression.Expression) return invocationExpression;
+
 			return Expression.Invoke(expression, arguments);
 		}
 
 		protected virtual Expression VisitLambda(LambdaExpression lambda)
 		{
 			var body = this.Visit(lambda.Body);
-			if (body != lambda.Body)
-			{
-				return Expression.Lambda(lambda.Type, body, lambda.Parameters);
-			}
+			if (body != lambda.Body) return Expression.Lambda(lambda.Type, body, lambda.Parameters);
+
 			return lambda;
 		}
 
@@ -301,30 +280,24 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			var newExpression = this.VisitNew(listInitExpression.NewExpression);
 			var initializers = this.VisitElementInitializerList(listInitExpression.Initializers);
-			if ((newExpression == listInitExpression.NewExpression) && (initializers == listInitExpression.Initializers))
-			{
-				return listInitExpression;
-			}
+			if (newExpression == listInitExpression.NewExpression && ReferenceEquals(initializers, listInitExpression.Initializers)) return listInitExpression;
+
 			return Expression.ListInit(newExpression, initializers);
 		}
 
 		protected virtual Expression VisitMemberAccess(MemberExpression memberExpression)
 		{
 			var expression = this.Visit(memberExpression.Expression);
-			if (expression != memberExpression.Expression)
-			{
-				return Expression.MakeMemberAccess(expression, memberExpression.Member);
-			}
+			if (expression != memberExpression.Expression) return Expression.MakeMemberAccess(expression, memberExpression.Member);
+
 			return memberExpression;
 		}
 
 		protected virtual MemberAssignment VisitMemberAssignment(MemberAssignment assignment)
 		{
 			var expression = this.Visit(assignment.Expression);
-			if (expression != assignment.Expression)
-			{
-				return Expression.Bind(assignment.Member, expression);
-			}
+			if (expression != assignment.Expression) return Expression.Bind(assignment.Member, expression);
+
 			return assignment;
 		}
 
@@ -332,30 +305,24 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			var newExpression = this.VisitNew(memberInitExpression.NewExpression);
 			var bindings = this.VisitBindingList(memberInitExpression.Bindings);
-			if ((newExpression == memberInitExpression.NewExpression) && (bindings == memberInitExpression.Bindings))
-			{
-				return memberInitExpression;
-			}
+			if (newExpression == memberInitExpression.NewExpression && ReferenceEquals(bindings, memberInitExpression.Bindings)) return memberInitExpression;
+
 			return Expression.MemberInit(newExpression, bindings);
 		}
 
 		protected virtual MemberListBinding VisitMemberListBinding(MemberListBinding binding)
 		{
 			var initializers = this.VisitElementInitializerList(binding.Initializers);
-			if (initializers != binding.Initializers)
-			{
-				return Expression.ListBind(binding.Member, initializers);
-			}
+			if (!ReferenceEquals(initializers, binding.Initializers)) return Expression.ListBind(binding.Member, initializers);
+
 			return binding;
 		}
 
 		protected virtual MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding binding)
 		{
 			var bindings = this.VisitBindingList(binding.Bindings);
-			if (bindings != binding.Bindings)
-			{
-				return Expression.MemberBind(binding.Member, bindings);
-			}
+			if (!ReferenceEquals(bindings, binding.Bindings)) return Expression.MemberBind(binding.Member, bindings);
+
 			return binding;
 		}
 
@@ -363,39 +330,44 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			var instance = this.Visit(methodCallExpression.Object);
 			IEnumerable<Expression> arguments = this.VisitExpressionList(methodCallExpression.Arguments);
-			if ((instance == methodCallExpression.Object) && (arguments == methodCallExpression.Arguments))
-			{
-				return methodCallExpression;
-			}
+			if (instance == methodCallExpression.Object && ReferenceEquals(arguments, methodCallExpression.Arguments)) return methodCallExpression;
+
 			return Expression.Call(instance, methodCallExpression.Method, arguments);
 		}
 
 		protected virtual NewExpression VisitNew(NewExpression newExpression)
 		{
 			IEnumerable<Expression> arguments = this.VisitExpressionList(newExpression.Arguments);
-			if (arguments == newExpression.Arguments)
+			if (ReferenceEquals(arguments, newExpression.Arguments)) return newExpression;
+
+			if (newExpression.Constructor == null)
 			{
-				return newExpression;
+				return Expression.New(newExpression.Type);
 			}
-			if (newExpression.Members != null)
+			else
 			{
-				return Expression.New(newExpression.Constructor, arguments, newExpression.Members);
+				if (newExpression.Members != null)
+				{
+					return Expression.New(newExpression.Constructor, arguments, newExpression.Members);
+				}
+				else
+				{
+					return Expression.New(newExpression.Constructor, arguments);
+				}
 			}
-			return Expression.New(newExpression.Constructor, arguments);
 		}
 
 		protected virtual Expression VisitNewArray(NewArrayExpression newArrayExpression)
 		{
 			IEnumerable<Expression> initializers = this.VisitExpressionList(newArrayExpression.Expressions);
-			if (initializers == newArrayExpression.Expressions)
-			{
-				return newArrayExpression;
-			}
-			if (newArrayExpression.NodeType == ExpressionType.NewArrayInit)
-			{
-				return Expression.NewArrayInit(newArrayExpression.Type.GetElementType(), initializers);
-			}
-			return Expression.NewArrayBounds(newArrayExpression.Type.GetElementType(), initializers);
+			if (ReferenceEquals(initializers, newArrayExpression.Expressions)) return newArrayExpression;
+
+			var elementType = newArrayExpression.Type.GetElementType();
+			if (elementType == null) throw new ArgumentException(nameof(newArrayExpression));
+
+			if (newArrayExpression.NodeType == ExpressionType.NewArrayInit) return Expression.NewArrayInit(elementType, initializers);
+
+			return Expression.NewArrayBounds(elementType, initializers);
 		}
 
 		protected virtual Expression VisitParameter(ParameterExpression parameterExpression)
@@ -406,20 +378,16 @@ namespace GameDevWare.Dynamic.Expressions
 		protected virtual Expression VisitTypeIs(TypeBinaryExpression typeBinaryExpression)
 		{
 			var expression = this.Visit(typeBinaryExpression.Expression);
-			if (expression != typeBinaryExpression.Expression)
-			{
-				return Expression.TypeIs(expression, typeBinaryExpression.TypeOperand);
-			}
+			if (expression != typeBinaryExpression.Expression) return Expression.TypeIs(expression, typeBinaryExpression.TypeOperand);
+
 			return typeBinaryExpression;
 		}
 
 		protected virtual Expression VisitUnary(UnaryExpression unaryExpression)
 		{
 			var operand = this.Visit(unaryExpression.Operand);
-			if (operand != unaryExpression.Operand)
-			{
-				return Expression.MakeUnary(unaryExpression.NodeType, operand, unaryExpression.Type, unaryExpression.Method);
-			}
+			if (operand != unaryExpression.Operand) return Expression.MakeUnary(unaryExpression.NodeType, operand, unaryExpression.Type, unaryExpression.Method);
+
 			return unaryExpression;
 		}
 	}

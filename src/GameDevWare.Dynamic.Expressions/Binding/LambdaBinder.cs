@@ -25,69 +25,70 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class LambdaBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
 			boundExpression = null;
 			bindingError = null;
 
 			// try get type of lambda from node
-			var lambdaTypeName = node.GetTypeName(throwOnError: false);
-			var lambdaType = default(Type);
+			var lambdaTypeName = node.GetTypeName(false);
 			if (lambdaTypeName != null)
 			{
-				if (bindingContext.TryResolveType(lambdaTypeName, out lambdaType) == false)
+				if (!bindingContext.TryResolveType(lambdaTypeName, out var lambdaType))
 				{
-					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, lambdaTypeName), node);
+					bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, lambdaTypeName), node);
 					return false;
 				}
-				else
-				{
-					expectedType = TypeDescription.GetTypeDescription(lambdaType);
-				}
+
+				expectedType = TypeDescription.GetTypeDescription(lambdaType);
 			}
 
 			if (expectedType.HasGenericParameters || !expectedType.IsDelegate)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED, expectedType.ToString()));
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED,
+					expectedType));
 				return false;
 			}
 
-			var expressionType = node.GetExpressionType(throwOnError: true);
-			var bodyNode = node.GetExpression(throwOnError: true);
-			var argumentsTree = node.GetArguments(throwOnError: false);
+			var expressionType = node.GetExpressionType(true);
+			var bodyNode = node.GetExpression(true);
+			var argumentsTree = node.GetArguments(false);
 			var lambdaInvokeMethod = expectedType.GetMembers(Constants.DELEGATE_INVOKE_NAME).FirstOrDefault(m => m.IsMethod && !m.IsStatic);
 			if (lambdaInvokeMethod == null)
 			{
-				bindingError = new MissingMethodException(string.Format(Resources.EXCEPTION_BIND_MISSINGMETHOD, expectedType.ToString(), Constants.DELEGATE_INVOKE_NAME));
+				bindingError = new MissingMethodException(string.Format(Resources.EXCEPTION_BIND_MISSINGMETHOD, expectedType,
+					Constants.DELEGATE_INVOKE_NAME));
 				return false;
 			}
 
 			if (lambdaInvokeMethod.GetParametersCount() != argumentsTree.Count)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS, expectedType));
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS, expectedType));
 				return false;
 			}
 
 			var argumentNames = new string[argumentsTree.Count];
 			for (var i = 0; i < argumentNames.Length; i++)
 			{
-				var argumentNameTree = default(SyntaxTreeNode);
 				var argumentNameTreeType = default(string);
-				if (argumentsTree.TryGetValue(i, out argumentNameTree) == false ||
+				if (!argumentsTree.TryGetValue(i, out var argumentNameTree) ||
 					argumentNameTree == null ||
-					(argumentNameTreeType = argumentNameTree.GetExpressionType(throwOnError: true)) == null ||
-					(argumentNameTreeType == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD ||
-					 argumentNameTreeType == Constants.EXPRESSION_TYPE_MEMBER_RESOLVE ||
-					 argumentNameTreeType == Constants.EXPRESSION_TYPE_PARAMETER) == false)
+					(argumentNameTreeType = argumentNameTree.GetExpressionType(true)) == null ||
+					!(argumentNameTreeType == Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD ||
+						argumentNameTreeType == Constants.EXPRESSION_TYPE_MEMBER_RESOLVE ||
+						argumentNameTreeType == Constants.EXPRESSION_TYPE_PARAMETER))
 				{
-					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
+					bindingError = new ExpressionParserException(
+						string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, expressionType), node);
 					return false;
 				}
-				argumentNames[i] = argumentNameTree.GetMemberName(throwOnError: true);
+
+				argumentNames[i] = argumentNameTree.GetMemberName(true);
 			}
 
 			var lambdaParameters = new ParameterExpression[argumentsTree.Count];
@@ -96,16 +97,20 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			var currentParameters = bindingContext.Parameters;
 			var newParameters = new List<ParameterExpression>(lambdaParameters.Length + currentParameters.Count);
+
 			// add all lambda's parameters
 			newParameters.AddRange(lambdaParameters);
+
 			// add closure parameters
 			foreach (var parameterExpr in currentParameters)
+			{
 				if (Array.IndexOf(argumentNames, parameterExpr.Name) < 0)
 					newParameters.Add(parameterExpr);
+			}
 
 			var nestedBindingContext = bindingContext.CreateNestedContext(newParameters.AsReadOnly(), lambdaInvokeMethod.ResultType);
-			var body = default(Expression);
-			if (AnyBinder.TryBindInNewScope(bodyNode, nestedBindingContext, TypeDescription.GetTypeDescription(lambdaInvokeMethod.ResultType), out body, out bindingError) == false)
+			if (!AnyBinder.TryBindInNewScope(bodyNode, nestedBindingContext, TypeDescription.GetTypeDescription(lambdaInvokeMethod.ResultType), out var body,
+					out bindingError))
 				return false;
 
 			Debug.Assert(body != null, "body != null");
@@ -116,26 +121,29 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public static string[] ExtractArgumentNames(SyntaxTreeNode node)
 		{
-			var arguments = node.GetArguments(throwOnError: false);
+			var arguments = node.GetArguments(false);
 			var argumentNames = new string[arguments.Count];
 			for (var i = 0; i < argumentNames.Length; i++)
 			{
-				var argumentNameTree = default(SyntaxTreeNode);
-				if (arguments.TryGetValue(i, out argumentNameTree) == false || argumentNameTree == null)
+				if (!arguments.TryGetValue(i, out var argumentNameTree) || argumentNameTree == null)
 				{
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, Constants.EXPRESSION_TYPE_LAMBDA), node);
+					throw new ExpressionParserException(
+						string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ATTRIBUTE, Constants.EXPRESSION_TYPE_LAMBDA),
+						node);
 				}
 
-				var argumentNameType = argumentNameTree.GetExpressionType(throwOnError: true);
+				var argumentNameType = argumentNameTree.GetExpressionType(true);
 				if (argumentNameType != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD &&
 					argumentNameType != Constants.EXPRESSION_TYPE_MEMBER_RESOLVE &&
 					argumentNameType != Constants.EXPRESSION_TYPE_PARAMETER)
 				{
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE, argumentNameType, Constants.EXPRESSION_TYPE_PARAMETER), node);
+					throw new ExpressionParserException(
+						string.Format(Resources.EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE, argumentNameType, Constants.EXPRESSION_TYPE_PARAMETER), node);
 				}
 
-				argumentNames[i] = argumentNameTree.GetMemberName(throwOnError: true);
+				argumentNames[i] = argumentNameTree.GetMemberName(true);
 			}
+
 			return argumentNames;
 		}
 	}

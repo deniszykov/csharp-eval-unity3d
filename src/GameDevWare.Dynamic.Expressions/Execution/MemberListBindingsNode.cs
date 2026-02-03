@@ -3,13 +3,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class MemberListBindingsNode : ExecutionNode
 	{
-		public static readonly MemberListBindingsNode Empty = new MemberListBindingsNode(new ReadOnlyCollection<MemberBinding>(new MemberBinding[0]), new ConstantExpression[0], new ParameterExpression[0]);
-
 		internal struct PreparedListBinding
 		{
 			public readonly MemberInfo Member;
@@ -24,21 +23,24 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			}
 		}
 
+		public static readonly MemberListBindingsNode Empty = new MemberListBindingsNode(new ReadOnlyCollection<MemberBinding>(Array.Empty<MemberBinding>()), Array.Empty<ConstantExpression>(), Array.Empty<ParameterExpression>());
+
 		private readonly ILookup<MemberInfo, PreparedListBinding> bindingsByMember;
 
 		public MemberListBindingsNode(ReadOnlyCollection<MemberBinding> bindings, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (bindings == null) throw new ArgumentNullException("bindings");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (bindings == null) throw new ArgumentNullException(nameof(bindings));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			var listBindings = new PreparedListBinding[bindings.Sum(b => b is MemberListBinding ? ((MemberListBinding)b).Initializers.Count : 0)];
 			var i = 0;
 			foreach (var binding in bindings)
 			{
-				var memberListBinding = binding as MemberListBinding;
-				if (memberListBinding == null)
+				if (!(binding is MemberListBinding memberListBinding))
+				{
 					continue;
+				}
 
 				foreach (var elementInitializer in memberListBinding.Initializers)
 				{
@@ -69,21 +71,20 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 				if (fieldInfo != null)
 				{
-					if (fieldInfo.IsStatic == false && instance == null)
+					if (!fieldInfo.IsStatic && instance == null)
 						throw new NullReferenceException();
+
 					addTarget = fieldInfo.GetValue(instance);
 				}
 				else if (propertyInfo != null)
 				{
-					if (propertyInfo.IsStatic() == false && instance == null)
+					if (!propertyInfo.IsStatic() && instance == null)
 						throw new NullReferenceException();
 
 					addTarget = propertyInfo.GetValue(instance, null);
 				}
 				else
-				{
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION, member));
-				}
+					throw new InvalidOperationException(string.Format(Resources.EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION, member));
 
 				foreach (var bindGroup in bindings)
 				{
@@ -96,6 +97,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					addMethod.Invoke(addTarget, addArguments);
 				}
 			}
+
 			return instance;
 		}
 

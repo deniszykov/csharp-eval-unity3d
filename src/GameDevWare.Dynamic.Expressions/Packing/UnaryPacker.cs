@@ -8,9 +8,10 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 	{
 		public static Dictionary<string, object> Pack(UnaryExpression expression)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			var expressionType = string.Empty;
+
 			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (expression.NodeType)
 			{
@@ -30,13 +31,11 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			}
 
 			var node = new Dictionary<string, object>(3) {
-				{Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType},
-				{Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(expression.Operand)}
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType },
+				{ Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(expression.Operand) }
 			};
-			if (expression.Method != null)
-			{
-				node.Add(Constants.METHOD_ATTRIBUTE, AnyPacker.Pack(expression.Method));
-			}
+			if (expression.Method != null) node.Add(Constants.METHOD_ATTRIBUTE, AnyPacker.Pack(expression.Method));
+
 			return node;
 		}
 	}

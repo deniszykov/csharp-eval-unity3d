@@ -1,4 +1,3 @@
-
 /*
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
@@ -26,12 +25,26 @@
 
 // ReSharper disable All
 
+using System;
+using System.CodeDom.Compiler;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
+using GameDevWare.Dynamic.Expressions.Binding;
+using GameDevWare.Dynamic.Expressions.CSharp;
+using GameDevWare.Dynamic.Expressions.Execution;
+using GameDevWare.Dynamic.Expressions.Packing;
+using GameDevWare.Dynamic.Expressions.Properties;
+
 #pragma warning disable 1720, 0219, 0619
 #pragma warning disable 612,618,619
 
 namespace GameDevWare.Dynamic.Expressions
 {
-	[System.CodeDom.Compiler.GeneratedCode("T4", "custom")]
+	[GeneratedCode("T4", "custom")]
 	partial class AotCompilation
 	{
 		static partial void StaticConstructor()
@@ -40,1257 +53,1776 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				JitSupportDetector.IsDynamicCompilationAvailable();
-				System.Linq.Expressions.ExpressionExtensions.CompileAot(default(System.Linq.Expressions.Expression<System.Action>), default(System.Boolean));
-				GameDevWare.Dynamic.Expressions.AotCompilation.RegisterAction();
-				var field_33554435_67108865 = GameDevWare.Dynamic.Expressions.AotCompilation.IsAotRuntime;
-				default(GameDevWare.Dynamic.Expressions.ArgumentsTree).ContainsKey(default(System.String));
-				default(GameDevWare.Dynamic.Expressions.ArgumentsTree).ContainsKey(default(System.Int32));
-				var param_33554436_100663330_1 = default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode);
-				default(GameDevWare.Dynamic.Expressions.ArgumentsTree).TryGetValue(default(System.String), out param_33554436_100663330_1);
-				var param_33554436_100663331_1 = default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode);
-				default(GameDevWare.Dynamic.Expressions.ArgumentsTree).TryGetValue(default(System.Int32), out param_33554436_100663331_1);
-				default(GameDevWare.Dynamic.Expressions.ArgumentsTree).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.ArgumentsTree).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.ArgumentsTree).ToString();
-				var property_33554436_385875969 = default(GameDevWare.Dynamic.Expressions.ArgumentsTree).Keys;
-				var property_33554436_385875970 = default(GameDevWare.Dynamic.Expressions.ArgumentsTree).Values;
-				var property_33554436_385875973 = default(GameDevWare.Dynamic.Expressions.ArgumentsTree).Count;
-				var field_33554436_67108866 = GameDevWare.Dynamic.Expressions.ArgumentsTree.Empty;
-				default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).ContainsKey(default(System.String));
-				default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Add(default(System.String), default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode));
-				default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Remove(default(System.String));
-				var param_1943009103_100678066_1 = default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode);
-				default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).TryGetValue(default(System.String), out param_1943009103_100678066_1);
-				var property_1943009103_385878225 = default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Keys;
-				var property_1943009103_385878226 = default(System.Collections.Generic.IDictionary<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>).Values;
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Add(default(System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>));
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Clear();
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).CopyTo(default(System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>[]), default(System.Int32));
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Remove(default(System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>));
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Contains(default(System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>));
-				var property_60328375_385878222 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).Count;
-				var property_60328375_385878223 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).IsReadOnly;
-				default(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,GameDevWare.Dynamic.Expressions.SyntaxTreeNode>>).GetEnumerator();
-				default(System.Collections.IEnumerable).GetEnumerator();
-				var param_33554451_100663466_1 = default(System.Type);
-				default(GameDevWare.Dynamic.Expressions.ITypeResolver).TryGetType(default(GameDevWare.Dynamic.Expressions.TypeReference), out param_33554451_100663466_1);
-				default(GameDevWare.Dynamic.Expressions.ITypeResolver).IsKnownType(default(System.Type));
-				default(GameDevWare.Dynamic.Expressions.Binder).Bind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(System.Linq.Expressions.Expression));
-				default(GameDevWare.Dynamic.Expressions.Binder).ToString();
-				var property_33554439_385875975 = default(GameDevWare.Dynamic.Expressions.Binder).Parameters;
-				var property_33554439_385875976 = default(GameDevWare.Dynamic.Expressions.Binder).ResultType;
-				var field_33554439_67108868 = GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver;
-				GameDevWare.Dynamic.Expressions.Binder.DefaultTypeResolver = default(GameDevWare.Dynamic.Expressions.ITypeResolver);
-				GameDevWare.Dynamic.Expressions.Constants.GetIndexAsString(default(System.Int32));
-				var field_33554440_67108961 = GameDevWare.Dynamic.Expressions.Constants.TrueObject;
-				var field_33554440_67108962 = GameDevWare.Dynamic.Expressions.Constants.FalseObject;
-				var field_33554440_67108963 = GameDevWare.Dynamic.Expressions.Constants.DefaultFormatProvider;
-				var field_33554440_67108964 = GameDevWare.Dynamic.Expressions.Constants.EmptyParameters;
-				var field_33554440_67108965 = GameDevWare.Dynamic.Expressions.Constants.EmptyReadonlyParameters;
-				var field_33554440_67108873 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_LINE_NUMBER_OLD;
-				var field_33554440_67108874 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_COLUMN_NUMBER_OLD;
-				var field_33554440_67108875 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TOKEN_LENGTH_OLD;
-				var field_33554440_67108876 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_ORIGINAL_OLD;
-				var field_33554440_67108877 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_ORIGINAL_ALT;
-				var field_33554440_67108878 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_ORIGINAL_C_SHARP;
-				var field_33554440_67108879 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_POSITION;
-				var field_33554440_67108880 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_ATTRIBUTE;
-				var field_33554440_67108881 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_ATTRIBUTE;
-				var field_33554440_67108882 = GameDevWare.Dynamic.Expressions.Constants.ARGUMENTS_ATTRIBUTE;
-				var field_33554440_67108883 = GameDevWare.Dynamic.Expressions.Constants.INITIALIZERS_ATTRIBUTE;
-				var field_33554440_67108884 = GameDevWare.Dynamic.Expressions.Constants.MEMBER_ATTRIBUTE;
-				var field_33554440_67108885 = GameDevWare.Dynamic.Expressions.Constants.LEFT_ATTRIBUTE;
-				var field_33554440_67108886 = GameDevWare.Dynamic.Expressions.Constants.RIGHT_ATTRIBUTE;
-				var field_33554440_67108887 = GameDevWare.Dynamic.Expressions.Constants.TEST_ATTRIBUTE;
-				var field_33554440_67108888 = GameDevWare.Dynamic.Expressions.Constants.IF_TRUE_ATTRIBUTE;
-				var field_33554440_67108889 = GameDevWare.Dynamic.Expressions.Constants.IF_FALSE_ATTRIBUTE;
-				var field_33554440_67108890 = GameDevWare.Dynamic.Expressions.Constants.TYPE_ATTRIBUTE;
-				var field_33554440_67108891 = GameDevWare.Dynamic.Expressions.Constants.VALUE_ATTRIBUTE;
-				var field_33554440_67108892 = GameDevWare.Dynamic.Expressions.Constants.NEW_ATTRIBUTE;
-				var field_33554440_67108893 = GameDevWare.Dynamic.Expressions.Constants.BINDINGS_ATTRIBUTE;
-				var field_33554440_67108894 = GameDevWare.Dynamic.Expressions.Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE;
-				var field_33554440_67108895 = GameDevWare.Dynamic.Expressions.Constants.NAME_ATTRIBUTE;
-				var field_33554440_67108896 = GameDevWare.Dynamic.Expressions.Constants.USE_NULL_PROPAGATION_ATTRIBUTE;
-				var field_33554440_67108897 = GameDevWare.Dynamic.Expressions.Constants.METHOD_ATTRIBUTE;
-				var field_33554440_67108898 = GameDevWare.Dynamic.Expressions.Constants.CONVERSION_ATTRIBUTE;
-				var field_33554440_67108899 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_TYPE_REFERENCE;
-				var field_33554440_67108900 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_MEMBER_REFERENCE;
-				var field_33554440_67108901 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD;
-				var field_33554440_67108902 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_MEMBER_RESOLVE;
-				var field_33554440_67108903 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_CONSTANT;
-				var field_33554440_67108904 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_CONVERT;
-				var field_33554440_67108905 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_CONVERT_CHECKED;
-				var field_33554440_67108906 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_CALL;
-				var field_33554440_67108907 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_GROUP;
-				var field_33554440_67108908 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_INVOKE;
-				var field_33554440_67108909 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_LAMBDA;
-				var field_33554440_67108910 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_INDEX;
-				var field_33554440_67108911 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_UNCHECKED_SCOPE;
-				var field_33554440_67108912 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_CHECKED_SCOPE;
-				var field_33554440_67108913 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_TYPE_OF;
-				var field_33554440_67108914 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_DEFAULT;
-				var field_33554440_67108915 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_NEW;
-				var field_33554440_67108916 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_ARRAY_LENGTH;
-				var field_33554440_67108917 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_NEW_ARRAY_BOUNDS;
-				var field_33554440_67108918 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_NEW_ARRAY_INIT;
-				var field_33554440_67108919 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_MEMBER_INIT;
-				var field_33554440_67108920 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_LIST_INIT;
-				var field_33554440_67108921 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_ADD;
-				var field_33554440_67108922 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_ADD_CHECKED;
-				var field_33554440_67108923 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_SUBTRACT;
-				var field_33554440_67108924 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_SUBTRACT_CHECKED;
-				var field_33554440_67108925 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_LEFT_SHIFT;
-				var field_33554440_67108926 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_RIGHT_SHIFT;
-				var field_33554440_67108927 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_GREATER_THAN;
-				var field_33554440_67108928 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL;
-				var field_33554440_67108929 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_LESS_THAN;
-				var field_33554440_67108930 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_LESS_THAN_OR_EQUAL;
-				var field_33554440_67108931 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_QUOTE;
-				var field_33554440_67108932 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_NEGATE;
-				var field_33554440_67108933 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_NEGATE_CHECKED;
-				var field_33554440_67108934 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_POWER;
-				var field_33554440_67108935 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_COMPLEMENT;
-				var field_33554440_67108936 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_DIVIDE;
-				var field_33554440_67108937 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_MULTIPLY;
-				var field_33554440_67108938 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_MULTIPLY_CHECKED;
-				var field_33554440_67108939 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_MODULO;
-				var field_33554440_67108940 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_TYPE_IS;
-				var field_33554440_67108941 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_TYPE_AS;
-				var field_33554440_67108942 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_NOT;
-				var field_33554440_67108943 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_EQUAL;
-				var field_33554440_67108944 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_NOT_EQUAL;
-				var field_33554440_67108945 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_AND;
-				var field_33554440_67108946 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_OR;
-				var field_33554440_67108947 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_EXCLUSIVE_OR;
-				var field_33554440_67108948 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_AND_ALSO;
-				var field_33554440_67108949 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_OR_ELSE;
-				var field_33554440_67108950 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_COALESCE;
-				var field_33554440_67108951 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_CONDITION;
-				var field_33554440_67108952 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_PARAMETER;
-				var field_33554440_67108953 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_UNARY_PLUS;
-				var field_33554440_67108954 = GameDevWare.Dynamic.Expressions.Constants.EXPRESSION_TYPE_CHECKED_SUFFIX;
-				var field_33554440_67108955 = GameDevWare.Dynamic.Expressions.Constants.DELEGATE_INVOKE_NAME;
-				var field_33554440_67108956 = GameDevWare.Dynamic.Expressions.Constants.EXECUTE_PREPARE_NAME;
-				var field_33554440_67108957 = GameDevWare.Dynamic.Expressions.Constants.VALUE_TRUE_STRING;
-				var field_33554440_67108958 = GameDevWare.Dynamic.Expressions.Constants.VALUE_FALSE_STRING;
-				var field_33554440_67108959 = GameDevWare.Dynamic.Expressions.Constants.VALUE_NULL_STRING;
-				var field_33554440_67108960 = GameDevWare.Dynamic.Expressions.Constants.MAX_ARGUMENTS_COUNT;
-				GameDevWare.Dynamic.Expressions.DelegateUtils.CreateDelegate(default(System.Type), default(System.Reflection.MethodInfo), default(System.Boolean));
-				GameDevWare.Dynamic.Expressions.DelegateUtils.GetMethodInfo(default(System.Delegate));
-				var property_33554442_385875977 = default(GameDevWare.Dynamic.Expressions.ExpressionKnownTypeAttribute).Type;
-				GameDevWare.Dynamic.Expressions.ExpressionLookupVisitor.Lookup(default(System.Linq.Expressions.Expression), default(System.Collections.Generic.List<System.Linq.Expressions.Expression>));
-				GameDevWare.Dynamic.Expressions.ExpressionPacker.Pack(default(System.Linq.Expressions.Expression));
-				GameDevWare.Dynamic.Expressions.ExpressionPacker.Unpack(default(System.Collections.Generic.IDictionary<System.String,System.Object>), default(GameDevWare.Dynamic.Expressions.ITypeResolver), default(System.Linq.Expressions.Expression), default(System.Type));
-				GameDevWare.Dynamic.Expressions.ExpressionPacker.UnpackLambda(default(System.Type), default(System.Collections.Generic.IDictionary<System.String,System.Object>), default(GameDevWare.Dynamic.Expressions.ITypeResolver), default(System.Linq.Expressions.Expression));
+				ExpressionExtensions.CompileAot(default(Expression<Action>), default(Boolean));
+				RegisterAction();
+				var field_33554435_67108865 = IsAotRuntime;
+				default(Expressions.ArgumentsTree).ContainsKey(default(String));
+				default(Expressions.ArgumentsTree).ContainsKey(default(Int32));
+				var param_33554436_100663330_1 = default(Expressions.SyntaxTreeNode);
+				default(Expressions.ArgumentsTree).TryGetValue(default(String), out param_33554436_100663330_1);
+				var param_33554436_100663331_1 = default(Expressions.SyntaxTreeNode);
+				default(Expressions.ArgumentsTree).TryGetValue(default(Int32), out param_33554436_100663331_1);
+				default(Expressions.ArgumentsTree).Equals(default(Object));
+				default(Expressions.ArgumentsTree).GetHashCode();
+				default(Expressions.ArgumentsTree).ToString();
+				var property_33554436_385875969 = default(Expressions.ArgumentsTree).Keys;
+				var property_33554436_385875970 = default(Expressions.ArgumentsTree).Values;
+				var property_33554436_385875973 = default(Expressions.ArgumentsTree).Count;
+				var field_33554436_67108866 = ArgumentsTree.Empty;
+				default(IDictionary<String, Expressions.SyntaxTreeNode>).ContainsKey(default(String));
+				default(IDictionary<String, Expressions.SyntaxTreeNode>).Add(default(String),
+					default(Expressions.SyntaxTreeNode));
+				default(IDictionary<String, Expressions.SyntaxTreeNode>).Remove(default(String));
+				var param_1943009103_100678066_1 = default(Expressions.SyntaxTreeNode);
+				default(IDictionary<String, Expressions.SyntaxTreeNode>).TryGetValue(default(String),
+					out param_1943009103_100678066_1);
+				var property_1943009103_385878225 =
+					default(IDictionary<String, Expressions.SyntaxTreeNode>).Keys;
+				var property_1943009103_385878226 =
+					default(IDictionary<String, Expressions.SyntaxTreeNode>).Values;
+				default(ICollection<
+						KeyValuePair<String, Expressions.SyntaxTreeNode>>)
+					.Add(default(KeyValuePair<String, Expressions.SyntaxTreeNode>));
+				default(ICollection<
+					KeyValuePair<String, Expressions.SyntaxTreeNode>>).Clear();
+				default(ICollection<
+					KeyValuePair<String, Expressions.SyntaxTreeNode>>).CopyTo(
+					default(KeyValuePair<String, Expressions.SyntaxTreeNode>[]), default(Int32));
+				default(ICollection<
+						KeyValuePair<String, Expressions.SyntaxTreeNode>>)
+					.Remove(default(KeyValuePair<String, Expressions.SyntaxTreeNode>));
+				default(ICollection<
+						KeyValuePair<String, Expressions.SyntaxTreeNode>>)
+					.Contains(default(KeyValuePair<String, Expressions.SyntaxTreeNode>));
+				var property_60328375_385878222 =
+					default(ICollection<
+						KeyValuePair<String, Expressions.SyntaxTreeNode>>).Count;
+				var property_60328375_385878223 =
+					default(ICollection<
+						KeyValuePair<String, Expressions.SyntaxTreeNode>>).IsReadOnly;
+				default(IEnumerable<
+					KeyValuePair<String, Expressions.SyntaxTreeNode>>).GetEnumerator();
+				default(IEnumerable).GetEnumerator();
+				var param_33554451_100663466_1 = default(Type);
+				default(Expressions.ITypeResolver).TryGetType(default(Expressions.TypeReference),
+					out param_33554451_100663466_1);
+				default(Expressions.ITypeResolver).IsKnownType(default(Type));
+				default(Expressions.Binder).Bind(default(Expressions.SyntaxTreeNode),
+					default(Expression));
+				default(Expressions.Binder).ToString();
+				var property_33554439_385875975 = default(Expressions.Binder).Parameters;
+				var property_33554439_385875976 = default(Expressions.Binder).ResultType;
+				var field_33554439_67108868 = Binder.DefaultTypeResolver;
+				Binder.DefaultTypeResolver = default(Expressions.ITypeResolver);
+				Constants.GetIndexAsString(default(Int32));
+				var field_33554440_67108961 = Constants.TrueObject;
+				var field_33554440_67108962 = Constants.FalseObject;
+				var field_33554440_67108963 = Constants.DefaultFormatProvider;
+				var field_33554440_67108964 = Constants.EmptyParameters;
+				var field_33554440_67108965 = Constants.EmptyReadonlyParameters;
+				var field_33554440_67108873 = Constants.EXPRESSION_LINE_NUMBER_OLD;
+				var field_33554440_67108874 = Constants.EXPRESSION_COLUMN_NUMBER_OLD;
+				var field_33554440_67108875 = Constants.EXPRESSION_TOKEN_LENGTH_OLD;
+				var field_33554440_67108876 = Constants.EXPRESSION_ORIGINAL_OLD;
+				var field_33554440_67108877 = Constants.EXPRESSION_ORIGINAL_ALT;
+				var field_33554440_67108878 = Constants.EXPRESSION_ORIGINAL_C_SHARP;
+				var field_33554440_67108879 = Constants.EXPRESSION_POSITION;
+				var field_33554440_67108880 = Constants.EXPRESSION_TYPE_ATTRIBUTE;
+				var field_33554440_67108881 = Constants.EXPRESSION_ATTRIBUTE;
+				var field_33554440_67108882 = Constants.ARGUMENTS_ATTRIBUTE;
+				var field_33554440_67108883 = Constants.INITIALIZERS_ATTRIBUTE;
+				var field_33554440_67108884 = Constants.MEMBER_ATTRIBUTE;
+				var field_33554440_67108885 = Constants.LEFT_ATTRIBUTE;
+				var field_33554440_67108886 = Constants.RIGHT_ATTRIBUTE;
+				var field_33554440_67108887 = Constants.TEST_ATTRIBUTE;
+				var field_33554440_67108888 = Constants.IF_TRUE_ATTRIBUTE;
+				var field_33554440_67108889 = Constants.IF_FALSE_ATTRIBUTE;
+				var field_33554440_67108890 = Constants.TYPE_ATTRIBUTE;
+				var field_33554440_67108891 = Constants.VALUE_ATTRIBUTE;
+				var field_33554440_67108892 = Constants.NEW_ATTRIBUTE;
+				var field_33554440_67108893 = Constants.BINDINGS_ATTRIBUTE;
+				var field_33554440_67108894 = Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE;
+				var field_33554440_67108895 = Constants.NAME_ATTRIBUTE;
+				var field_33554440_67108896 = Constants.USE_NULL_PROPAGATION_ATTRIBUTE;
+				var field_33554440_67108897 = Constants.METHOD_ATTRIBUTE;
+				var field_33554440_67108898 = Constants.CONVERSION_ATTRIBUTE;
+				var field_33554440_67108899 = Constants.EXPRESSION_TYPE_TYPE_REFERENCE;
+				var field_33554440_67108900 = Constants.EXPRESSION_TYPE_MEMBER_REFERENCE;
+				var field_33554440_67108901 = Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD;
+				var field_33554440_67108902 = Constants.EXPRESSION_TYPE_MEMBER_RESOLVE;
+				var field_33554440_67108903 = Constants.EXPRESSION_TYPE_CONSTANT;
+				var field_33554440_67108904 = Constants.EXPRESSION_TYPE_CONVERT;
+				var field_33554440_67108905 = Constants.EXPRESSION_TYPE_CONVERT_CHECKED;
+				var field_33554440_67108906 = Constants.EXPRESSION_TYPE_CALL;
+				var field_33554440_67108907 = Constants.EXPRESSION_TYPE_GROUP;
+				var field_33554440_67108908 = Constants.EXPRESSION_TYPE_INVOKE;
+				var field_33554440_67108909 = Constants.EXPRESSION_TYPE_LAMBDA;
+				var field_33554440_67108910 = Constants.EXPRESSION_TYPE_INDEX;
+				var field_33554440_67108911 = Constants.EXPRESSION_TYPE_UNCHECKED_SCOPE;
+				var field_33554440_67108912 = Constants.EXPRESSION_TYPE_CHECKED_SCOPE;
+				var field_33554440_67108913 = Constants.EXPRESSION_TYPE_TYPE_OF;
+				var field_33554440_67108914 = Constants.EXPRESSION_TYPE_DEFAULT;
+				var field_33554440_67108915 = Constants.EXPRESSION_TYPE_NEW;
+				var field_33554440_67108916 = Constants.EXPRESSION_TYPE_ARRAY_LENGTH;
+				var field_33554440_67108917 = Constants.EXPRESSION_TYPE_NEW_ARRAY_BOUNDS;
+				var field_33554440_67108918 = Constants.EXPRESSION_TYPE_NEW_ARRAY_INIT;
+				var field_33554440_67108919 = Constants.EXPRESSION_TYPE_MEMBER_INIT;
+				var field_33554440_67108920 = Constants.EXPRESSION_TYPE_LIST_INIT;
+				var field_33554440_67108921 = Constants.EXPRESSION_TYPE_ADD;
+				var field_33554440_67108922 = Constants.EXPRESSION_TYPE_ADD_CHECKED;
+				var field_33554440_67108923 = Constants.EXPRESSION_TYPE_SUBTRACT;
+				var field_33554440_67108924 = Constants.EXPRESSION_TYPE_SUBTRACT_CHECKED;
+				var field_33554440_67108925 = Constants.EXPRESSION_TYPE_LEFT_SHIFT;
+				var field_33554440_67108926 = Constants.EXPRESSION_TYPE_RIGHT_SHIFT;
+				var field_33554440_67108927 = Constants.EXPRESSION_TYPE_GREATER_THAN;
+				var field_33554440_67108928 = Constants.EXPRESSION_TYPE_GREATER_THAN_OR_EQUAL;
+				var field_33554440_67108929 = Constants.EXPRESSION_TYPE_LESS_THAN;
+				var field_33554440_67108930 = Constants.EXPRESSION_TYPE_LESS_THAN_OR_EQUAL;
+				var field_33554440_67108931 = Constants.EXPRESSION_TYPE_QUOTE;
+				var field_33554440_67108932 = Constants.EXPRESSION_TYPE_NEGATE;
+				var field_33554440_67108933 = Constants.EXPRESSION_TYPE_NEGATE_CHECKED;
+				var field_33554440_67108934 = Constants.EXPRESSION_TYPE_POWER;
+				var field_33554440_67108935 = Constants.EXPRESSION_TYPE_COMPLEMENT;
+				var field_33554440_67108936 = Constants.EXPRESSION_TYPE_DIVIDE;
+				var field_33554440_67108937 = Constants.EXPRESSION_TYPE_MULTIPLY;
+				var field_33554440_67108938 = Constants.EXPRESSION_TYPE_MULTIPLY_CHECKED;
+				var field_33554440_67108939 = Constants.EXPRESSION_TYPE_MODULO;
+				var field_33554440_67108940 = Constants.EXPRESSION_TYPE_TYPE_IS;
+				var field_33554440_67108941 = Constants.EXPRESSION_TYPE_TYPE_AS;
+				var field_33554440_67108942 = Constants.EXPRESSION_TYPE_NOT;
+				var field_33554440_67108943 = Constants.EXPRESSION_TYPE_EQUAL;
+				var field_33554440_67108944 = Constants.EXPRESSION_TYPE_NOT_EQUAL;
+				var field_33554440_67108945 = Constants.EXPRESSION_TYPE_AND;
+				var field_33554440_67108946 = Constants.EXPRESSION_TYPE_OR;
+				var field_33554440_67108947 = Constants.EXPRESSION_TYPE_EXCLUSIVE_OR;
+				var field_33554440_67108948 = Constants.EXPRESSION_TYPE_AND_ALSO;
+				var field_33554440_67108949 = Constants.EXPRESSION_TYPE_OR_ELSE;
+				var field_33554440_67108950 = Constants.EXPRESSION_TYPE_COALESCE;
+				var field_33554440_67108951 = Constants.EXPRESSION_TYPE_CONDITION;
+				var field_33554440_67108952 = Constants.EXPRESSION_TYPE_PARAMETER;
+				var field_33554440_67108953 = Constants.EXPRESSION_TYPE_UNARY_PLUS;
+				var field_33554440_67108954 = Constants.EXPRESSION_TYPE_CHECKED_SUFFIX;
+				var field_33554440_67108955 = Constants.DELEGATE_INVOKE_NAME;
+				var field_33554440_67108956 = Constants.EXECUTE_PREPARE_NAME;
+				var field_33554440_67108957 = Constants.VALUE_TRUE_STRING;
+				var field_33554440_67108958 = Constants.VALUE_FALSE_STRING;
+				var field_33554440_67108959 = Constants.VALUE_NULL_STRING;
+				var field_33554440_67108960 = Constants.MAX_ARGUMENTS_COUNT;
+				DelegateUtils.CreateDelegate(default(Type), default(MethodInfo), default(Boolean));
+				DelegateUtils.GetMethodInfo(default(Delegate));
+				var property_33554442_385875977 = default(Expressions.ExpressionKnownTypeAttribute).Type;
+				ExpressionLookupVisitor.Lookup(default(Expression),
+					default(List<Expression>));
+				ExpressionPacker.Pack(default(Expression));
+				ExpressionPacker.Unpack(default(IDictionary<String, Object>),
+					default(Expressions.ITypeResolver), default(Expression), default(Type));
+				ExpressionPacker.UnpackLambda(default(Type),
+					default(IDictionary<String, Object>), default(Expressions.ITypeResolver),
+					default(Expression));
 #if !NETSTANDARD
 				default(GameDevWare.Dynamic.Expressions.ExpressionParserException).GetObjectData(default(System.Runtime.Serialization.SerializationInfo), default(System.Runtime.Serialization.StreamingContext));
 #endif
-				default(GameDevWare.Dynamic.Expressions.ExpressionParserException).ToString();
-				var property_33554445_385875978 = default(GameDevWare.Dynamic.Expressions.ExpressionParserException).LineNumber;
-				var property_33554445_385875979 = default(GameDevWare.Dynamic.Expressions.ExpressionParserException).ColumnNumber;
-				var property_33554445_385875980 = default(GameDevWare.Dynamic.Expressions.ExpressionParserException).TokenLength;
+				default(Expressions.ExpressionParserException).ToString();
+				var property_33554445_385875978 = default(Expressions.ExpressionParserException).LineNumber;
+				var property_33554445_385875979 = default(Expressions.ExpressionParserException).ColumnNumber;
+				var property_33554445_385875980 = default(Expressions.ExpressionParserException).TokenLength;
 #if !NETSTANDARD
 				default(System.Runtime.Serialization.ISerializable).GetObjectData(default(System.Runtime.Serialization.SerializationInfo), default(System.Runtime.Serialization.StreamingContext));
 #endif
-				default(GameDevWare.Dynamic.Expressions.ILineInfo).GetLineNumber();
-				default(GameDevWare.Dynamic.Expressions.ILineInfo).GetColumnNumber();
-				default(GameDevWare.Dynamic.Expressions.ILineInfo).GetTokenLength();
-				GameDevWare.Dynamic.Expressions.ExpressionPosition.Parse(default(System.String));
-				default(GameDevWare.Dynamic.Expressions.ExpressionPosition).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.ExpressionPosition).Equals(default(GameDevWare.Dynamic.Expressions.ExpressionPosition));
-				default(GameDevWare.Dynamic.Expressions.ExpressionPosition).Equals(default(GameDevWare.Dynamic.Expressions.ILineInfo));
-				default(GameDevWare.Dynamic.Expressions.ExpressionPosition).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.ExpressionPosition).ToString();
-				var field_33554446_67108973 = default(GameDevWare.Dynamic.Expressions.ExpressionPosition).LineNumber;
-				var field_33554446_67108974 = default(GameDevWare.Dynamic.Expressions.ExpressionPosition).ColumnNumber;
-				var field_33554446_67108975 = default(GameDevWare.Dynamic.Expressions.ExpressionPosition).TokenLength;
-				default(System.IEquatable<GameDevWare.Dynamic.Expressions.ExpressionPosition>).Equals(default(GameDevWare.Dynamic.Expressions.ExpressionPosition));
-				default(System.IEquatable<GameDevWare.Dynamic.Expressions.ILineInfo>).Equals(default(GameDevWare.Dynamic.Expressions.ILineInfo));
-				GameDevWare.Dynamic.Expressions.ExpressionSubstitutor.Visit(default(System.Linq.Expressions.Expression), default(System.Collections.Generic.Dictionary<System.Linq.Expressions.Expression,System.Linq.Expressions.Expression>));
-				var param_33554448_100663421_0 = default(System.Linq.Expressions.Expression);
-				var param_33554448_100663421_1 = default(System.Linq.Expressions.Expression);
-				var param_33554448_100663421_3 = default(System.Linq.Expressions.Expression);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryPromoteBinaryOperation(ref param_33554448_100663421_0, ref param_33554448_100663421_1, default(System.Linq.Expressions.ExpressionType), out param_33554448_100663421_3);
-				var param_33554448_100663424_0 = default(System.Linq.Expressions.Expression);
-				var param_33554448_100663424_2 = default(System.Linq.Expressions.Expression);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryPromoteUnaryOperation(ref param_33554448_100663424_0, default(System.Linq.Expressions.ExpressionType), out param_33554448_100663424_2);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.IsNull(default(System.Linq.Expressions.Expression), default(System.Boolean));
-				var param_33554448_100663426_0 = default(System.Linq.Expressions.Expression);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.CoerceType(ref param_33554448_100663426_0, default(System.Type));
-				var param_33554448_100663427_0 = default(System.Linq.Expressions.Expression);
-				var param_33554448_100663427_2 = default(System.Single);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.TryCoerceType(ref param_33554448_100663427_0, default(System.Type), out param_33554448_100663427_2);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.MakeNullPropagationExpression(default(System.Collections.Generic.List<System.Linq.Expressions.Expression>), default(System.Linq.Expressions.Expression));
-				var param_33554448_100663432_1 = default(System.Collections.Generic.List<System.Linq.Expressions.Expression>);
-				var param_33554448_100663432_2 = default(System.Linq.Expressions.Expression);
-				GameDevWare.Dynamic.Expressions.ExpressionUtils.ExtractNullPropagationExpression(default(System.Linq.Expressions.ConditionalExpression), out param_33554448_100663432_1, out param_33554448_100663432_2);
-				var field_33554448_67108977 = GameDevWare.Dynamic.Expressions.ExpressionUtils.NullConstant;
-				var field_33554448_67108978 = GameDevWare.Dynamic.Expressions.ExpressionUtils.TrueConstant;
-				var field_33554448_67108979 = GameDevWare.Dynamic.Expressions.ExpressionUtils.FalseConstant;
-				var field_33554448_67108980 = GameDevWare.Dynamic.Expressions.ExpressionUtils.NegativeSingle;
-				var field_33554448_67108981 = GameDevWare.Dynamic.Expressions.ExpressionUtils.NegativeDouble;
-				default(GameDevWare.Dynamic.Expressions.ExpressionVisitor).Visit(default(System.Linq.Expressions.Expression));
-				var param_33554452_100663473_1 = default(System.Type);
-				default(GameDevWare.Dynamic.Expressions.KnownTypeResolver).TryGetType(default(GameDevWare.Dynamic.Expressions.TypeReference), out param_33554452_100663473_1);
-				default(GameDevWare.Dynamic.Expressions.KnownTypeResolver).IsKnownType(default(System.Type));
-				default(GameDevWare.Dynamic.Expressions.KnownTypeResolver).ToString();
-				var field_33554452_67108982 = GameDevWare.Dynamic.Expressions.KnownTypeResolver.Default;
-				default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.MethodCallSignature).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.MethodCallSignature).ToString();
-				var field_33554453_67108991 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Parameter1Type;
-				var field_33554453_67108992 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Parameter2Type;
-				var field_33554453_67108993 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Parameter3Type;
-				var field_33554453_67108994 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Parameter4Type;
-				var field_33554453_67108995 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Parameter1Name;
-				var field_33554453_67108996 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Parameter2Name;
-				var field_33554453_67108997 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Parameter3Name;
-				var field_33554453_67108998 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Parameter4Name;
-				var field_33554453_67108999 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).ReturnType;
-				var field_33554453_67109000 = default(GameDevWare.Dynamic.Expressions.MethodCallSignature).Count;
-				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).ContainsKey(default(System.String));
-				var param_33554455_100663544_1 = default(System.Object);
-				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).TryGetValue(default(System.String), out param_33554455_100663544_1);
-				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).ToString();
-				var property_33554455_385875981 = default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).Keys;
-				var property_33554455_385875982 = default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).Values;
-				var property_33554455_385875984 = default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode).Count;
-				default(System.Collections.Generic.IDictionary<System.String,System.Object>).Add(default(System.String), default(System.Object));
-				var param_1400937435_100678066_1 = default(System.Object);
-				default(System.Collections.Generic.IDictionary<System.String,System.Object>).TryGetValue(default(System.String), out param_1400937435_100678066_1);
-				default(System.Collections.Generic.IDictionary<System.String,System.Object>).ContainsKey(default(System.String));
-				default(System.Collections.Generic.IDictionary<System.String,System.Object>).Remove(default(System.String));
-				var property_1400937435_385878225 = default(System.Collections.Generic.IDictionary<System.String,System.Object>).Keys;
-				var property_1400937435_385878226 = default(System.Collections.Generic.IDictionary<System.String,System.Object>).Values;
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Add(default(System.Collections.Generic.KeyValuePair<System.String,System.Object>));
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Clear();
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).CopyTo(default(System.Collections.Generic.KeyValuePair<System.String,System.Object>[]), default(System.Int32));
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Remove(default(System.Collections.Generic.KeyValuePair<System.String,System.Object>));
-				default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Contains(default(System.Collections.Generic.KeyValuePair<System.String,System.Object>));
-				var property_2133121867_385878222 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).Count;
-				var property_2133121867_385878223 = default(System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).IsReadOnly;
-				default(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.String,System.Object>>).GetEnumerator();
-				var field_33554456_67109003 = GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions.Default;
-				var field_33554456_67109004 = GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions.Interfaces;
-				var field_33554456_67109005 = GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions.GenericArguments;
-				var field_33554456_67109006 = GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions.KnownTypes;
-				var field_33554456_67109007 = GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions.DeclaringTypes;
-				var field_33554456_67109008 = GameDevWare.Dynamic.Expressions.TypeDiscoveryOptions.All;
-				default(System.IComparable).CompareTo(default(System.Object));
-				default(System.IFormattable).ToString(default(System.String), default(System.IFormatProvider));
-				default(System.IConvertible).ToBoolean(default(System.IFormatProvider));
-				default(System.IConvertible).ToInt32(default(System.IFormatProvider));
-				default(System.IConvertible).ToUInt32(default(System.IFormatProvider));
-				default(System.IConvertible).ToDouble(default(System.IFormatProvider));
-				default(System.IConvertible).ToUInt64(default(System.IFormatProvider));
-				default(System.IConvertible).GetTypeCode();
-				default(System.IConvertible).ToChar(default(System.IFormatProvider));
-				default(System.IConvertible).ToSByte(default(System.IFormatProvider));
-				default(System.IConvertible).ToByte(default(System.IFormatProvider));
-				default(System.IConvertible).ToInt16(default(System.IFormatProvider));
-				default(System.IConvertible).ToUInt16(default(System.IFormatProvider));
-				default(System.IConvertible).ToInt64(default(System.IFormatProvider));
-				default(System.IConvertible).ToSingle(default(System.IFormatProvider));
-				default(System.IConvertible).ToDecimal(default(System.IFormatProvider));
-				default(System.IConvertible).ToDateTime(default(System.IFormatProvider));
-				default(System.IConvertible).ToString(default(System.IFormatProvider));
-				default(System.IConvertible).ToType(default(System.Type), default(System.IFormatProvider));
-				var field_33554457_67109010 = GameDevWare.Dynamic.Expressions.TypeNameFormatOptions.None;
-				var field_33554457_67109011 = GameDevWare.Dynamic.Expressions.TypeNameFormatOptions.IncludeDeclaringType;
-				var field_33554457_67109012 = GameDevWare.Dynamic.Expressions.TypeNameFormatOptions.IncludeNamespace;
-				var field_33554457_67109013 = GameDevWare.Dynamic.Expressions.TypeNameFormatOptions.IncludeGenericArguments;
-				var field_33554457_67109014 = GameDevWare.Dynamic.Expressions.TypeNameFormatOptions.IncludeGenericSuffix;
-				var field_33554457_67109015 = GameDevWare.Dynamic.Expressions.TypeNameFormatOptions.UseAliases;
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetTypeNames(default(System.Type));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetTypeFullNames(default(System.Type));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetCSharpFullName(default(System.Type), default(System.Text.StringBuilder), default(GameDevWare.Dynamic.Expressions.TypeNameFormatOptions));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetCSharpName(default(System.Type), default(System.Text.StringBuilder), default(GameDevWare.Dynamic.Expressions.TypeNameFormatOptions));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetCSharpNameOnly(default(System.Type), default(System.Text.StringBuilder), default(GameDevWare.Dynamic.Expressions.TypeNameFormatOptions));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.RemoveGenericSuffix(default(System.String));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.RemoveGenericSuffix(default(System.Text.StringBuilder));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.RemoveGenericSuffix(default(System.Text.StringBuilder), default(System.Int32), default(System.Int32));
-				GameDevWare.Dynamic.Expressions.TypeNameUtils.GetDeclaringTypes(default(System.Type));
-				default(GameDevWare.Dynamic.Expressions.TypeReference).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.TypeReference).Equals(default(GameDevWare.Dynamic.Expressions.TypeReference));
-				default(GameDevWare.Dynamic.Expressions.TypeReference).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.TypeReference).ToString();
-				var property_33554459_385875986 = default(GameDevWare.Dynamic.Expressions.TypeReference).FullName;
-				var property_33554459_385875987 = default(GameDevWare.Dynamic.Expressions.TypeReference).Name;
-				var property_33554459_385875988 = default(GameDevWare.Dynamic.Expressions.TypeReference).Namespace;
-				var property_33554459_385875989 = default(GameDevWare.Dynamic.Expressions.TypeReference).TypeArguments;
-				var property_33554459_385875990 = default(GameDevWare.Dynamic.Expressions.TypeReference).IsGenericType;
-				var field_33554459_67109017 = GameDevWare.Dynamic.Expressions.TypeReference.Empty;
-				var field_33554459_67109018 = GameDevWare.Dynamic.Expressions.TypeReference.EmptyTypeArguments;
-				default(System.IEquatable<GameDevWare.Dynamic.Expressions.TypeReference>).Equals(default(GameDevWare.Dynamic.Expressions.TypeReference));
-				default(GameDevWare.Dynamic.Expressions.UnboundExpression).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.UnboundExpression).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.UnboundExpression).ToString();
-				var property_33554460_385875991 = default(GameDevWare.Dynamic.Expressions.UnboundExpression).SyntaxTree;
-				var property_33554461_385875992 = GameDevWare.Dynamic.Expressions.Properties.Resources.SupportedLanguages;
-				var property_33554461_385875993 = GameDevWare.Dynamic.Expressions.Properties.Resources.CurrentLanguage;
-				var property_33554461_385875994 = GameDevWare.Dynamic.Expressions.Properties.Resources.All;
-				var property_33554461_385875995 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETOBINDINDEXER;
-				var property_33554461_385875996 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED;
-				var property_33554461_385875997 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE;
-				var property_33554461_385875998 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_MISSINGMETHOD;
-				var property_33554461_385875999 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETOINVOKENONDELEG;
-				var property_33554461_385876000 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED;
-				var property_33554461_385876001 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_OPREQUIRESOPERAND;
-				var property_33554461_385876002 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME;
-				var property_33554461_385876003 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT;
-				var property_33554461_385876004 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BOUNDEXPR_CANTCONVERTARG;
-				var property_33554461_385876005 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS;
-				var property_33554461_385876006 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE;
-				var property_33554461_385876007 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_BINARYOPREQOPERAND;
-				var property_33554461_385876008 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_COMPIL_UNKNOWNEXPRTYPE;
-				var property_33554461_385876009 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR;
-				var property_33554461_385876010 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE;
-				var property_33554461_385876011 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE;
-				var property_33554461_385876012 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND;
-				var property_33554461_385876013 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE;
-				var property_33554461_385876014 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED;
-				var property_33554461_385876015 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETOBINDDELEG;
-				var property_33554461_385876016 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_COMPIL_NOBINARYOPONTYPE;
-				var property_33554461_385876017 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE;
-				var property_33554461_385876018 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_FAILEDTOBINDGENERICARGUMENTSTOTYPE;
-				var property_33554461_385876019 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_TOKENIZER_INVALIDCHARLITERAL;
-				var property_33554461_385876020 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_TYPENAMEEXPECTED;
-				var property_33554461_385876021 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_RENDERFAILED;
-				var property_33554461_385876022 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPEMULTIPLE;
-				var property_33554461_385876023 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE;
-				var property_33554461_385876024 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL;
-				var property_33554461_385876025 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE;
-				var property_33554461_385876026 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED;
-				var property_33554461_385876027 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT;
-				var property_33554461_385876028 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKEN;
-				var property_33554461_385876029 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE;
-				var property_33554461_385876030 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES;
-				var property_33554461_385876031 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION;
-				var property_33554461_385876032 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_LIST_LISTISEMPTY;
-				var property_33554461_385876033 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_CALLMEMBERISNOTMETHOD;
-				var property_33554461_385876034 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS;
-				var property_33554461_385876035 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETOBINDMETHOD;
-				var property_33554461_385876036 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME;
-				var property_33554461_385876037 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_COLONISEXPRECTED;
-				var property_33554461_385876038 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCALL;
-				var property_33554461_385876039 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETOCREATEEXPRWITHPARAMS;
-				var property_33554461_385876040 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE;
-				var property_33554461_385876041 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION;
-				var property_33554461_385876042 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_FAILEDTOBIND;
-				var property_33554461_385876043 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETOBINDMEMBER;
-				var property_33554461_385876044 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_MISSINGMETHODPARAMETER;
-				var property_33554461_385876045 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT;
-				var property_33554461_385876046 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_MEMBERISNOTMETHOD;
-				var property_33554461_385876047 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE;
-				var property_33554461_385876048 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_EXECUTION_CANTDONULLVALUE;
-				var property_33554461_385876049 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ;
-				var property_33554461_385876050 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_MISSING_OPERATOR;
-				var property_33554461_385876051 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDABODYTYPE;
-				var property_33554461_385876052 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS;
-				var property_33554461_385876053 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_INVALIDCHARLITERAL;
-				var property_33554461_385876054 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_EXPRESSIONISEMPTY;
-				var property_33554461_385876055 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH;
-				var property_33554461_385876056 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE;
-				var property_33554461_385876057 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES;
-				var property_33554461_385876058 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE;
-				var property_33554461_385876059 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF;
-				var property_33554461_385876060 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_UNARYOPREQOPERAND;
-				var property_33554461_385876061 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS;
-				var property_33554461_385876062 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE;
-				var property_33554461_385876063 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS;
-				var property_33554461_385876064 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_PARSER_TERNARYOPREQOPERAND;
-				var property_33554461_385876065 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_COMPIL_NOUNARYOPONTYPE;
-				var property_33554461_385876066 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION;
-				var property_33554461_385876067 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_BIND_TOOMANYARGUMENTS;
-				var property_33554461_385876068 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED;
-				var property_33554461_385876069 = GameDevWare.Dynamic.Expressions.Properties.Resources.EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION;
-				GameDevWare.Dynamic.Expressions.Packing.AnyPacker.Pack(default(System.Linq.Expressions.Expression));
-				GameDevWare.Dynamic.Expressions.Packing.ArrayIndexPacker.Pack(default(System.Linq.Expressions.Expression));
-				GameDevWare.Dynamic.Expressions.Packing.ArrayLengthPacker.Pack(default(System.Linq.Expressions.UnaryExpression));
-				GameDevWare.Dynamic.Expressions.Packing.BinaryPacker.Pack(default(System.Linq.Expressions.BinaryExpression));
-				GameDevWare.Dynamic.Expressions.Packing.CallPacker.Pack(default(System.Linq.Expressions.MethodCallExpression));
-				GameDevWare.Dynamic.Expressions.Packing.ConditionPacker.Pack(default(System.Linq.Expressions.ConditionalExpression));
-				GameDevWare.Dynamic.Expressions.Packing.ConstantPacker.Pack(default(System.Linq.Expressions.ConstantExpression));
-				GameDevWare.Dynamic.Expressions.Packing.ConvertPacker.Pack(default(System.Linq.Expressions.UnaryExpression));
-				GameDevWare.Dynamic.Expressions.Packing.InvokePacker.Pack(default(System.Linq.Expressions.InvocationExpression));
-				GameDevWare.Dynamic.Expressions.Packing.LambdaPacker.Pack(default(System.Linq.Expressions.LambdaExpression));
-				GameDevWare.Dynamic.Expressions.Packing.ListInitPacker.Pack(default(System.Linq.Expressions.ListInitExpression));
-				GameDevWare.Dynamic.Expressions.Packing.MemberAccessPacker.Pack(default(System.Linq.Expressions.MemberExpression));
-				GameDevWare.Dynamic.Expressions.Packing.MemberInitPacker.Pack(default(System.Linq.Expressions.MemberInitExpression));
-				GameDevWare.Dynamic.Expressions.Packing.MemberInitPacker.Pack(default(System.Collections.ObjectModel.ReadOnlyCollection<System.Linq.Expressions.MemberBinding>));
-				GameDevWare.Dynamic.Expressions.Packing.MemberInitPacker.Pack(default(System.Linq.Expressions.MemberListBinding));
-				GameDevWare.Dynamic.Expressions.Packing.MemberInitPacker.Pack(default(System.Linq.Expressions.MemberMemberBinding));
-				GameDevWare.Dynamic.Expressions.Packing.MemberInitPacker.Pack(default(System.Linq.Expressions.MemberAssignment));
-				GameDevWare.Dynamic.Expressions.Packing.MemberInitPacker.Pack(default(System.Linq.Expressions.ElementInit));
-				GameDevWare.Dynamic.Expressions.Packing.NewArrayPacker.Pack(default(System.Linq.Expressions.NewArrayExpression));
-				GameDevWare.Dynamic.Expressions.Packing.NewPacker.Pack(default(System.Linq.Expressions.NewExpression));
-				GameDevWare.Dynamic.Expressions.Packing.ParameterPacker.Pack(default(System.Linq.Expressions.ParameterExpression));
-				GameDevWare.Dynamic.Expressions.Packing.QuotePacker.Pack(default(System.Linq.Expressions.UnaryExpression));
-				GameDevWare.Dynamic.Expressions.Packing.TypeAsPacker.Pack(default(System.Linq.Expressions.UnaryExpression));
-				GameDevWare.Dynamic.Expressions.Packing.TypeIsPacker.Pack(default(System.Linq.Expressions.TypeBinaryExpression));
-				GameDevWare.Dynamic.Expressions.Packing.UnaryPacker.Pack(default(System.Linq.Expressions.UnaryExpression));
-				GameDevWare.Dynamic.Expressions.Execution.AotCompiler.PrepareAction(default(System.Linq.Expressions.Expression), default(System.Collections.ObjectModel.ReadOnlyCollection<System.Linq.Expressions.ParameterExpression>));
-				GameDevWare.Dynamic.Expressions.Execution.AotCompiler.Compile(default(System.Linq.Expressions.Expression), default(System.Linq.Expressions.ConstantExpression[]), default(System.Linq.Expressions.ParameterExpression[]));
-				default(GameDevWare.Dynamic.Expressions.Execution.ArrayIndexNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.ArrayIndexNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.ArrayLengthNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.ArrayLengthNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.BinaryNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.BinaryNode.Create(default(System.Linq.Expressions.BinaryExpression), default(System.Linq.Expressions.ConstantExpression[]), default(System.Linq.Expressions.ParameterExpression[]));
-				default(GameDevWare.Dynamic.Expressions.Execution.BinaryNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.CallNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.CallNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.Closure).GetType(default(System.Object));
-				var field_33554487_67109044 = default(GameDevWare.Dynamic.Expressions.Execution.Closure).Constants;
-				var field_33554487_67109045 = default(GameDevWare.Dynamic.Expressions.Execution.Closure).Locals;
-				default(GameDevWare.Dynamic.Expressions.Execution.CoalesceNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.CoalesceNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.ConditionalNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.ConditionalNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.ConstantNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.ConstantNode).ToString();
-				var field_33554491_67109055 = default(GameDevWare.Dynamic.Expressions.Execution.ConstantsCollector).Constants;
-				default(GameDevWare.Dynamic.Expressions.Execution.ConvertNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.ConvertNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.ExecutionNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				var field_33554493_67109063 = GameDevWare.Dynamic.Expressions.Execution.ExecutionNode.LOCAL_OPERAND1;
-				var field_33554493_67109064 = GameDevWare.Dynamic.Expressions.Execution.ExecutionNode.LOCAL_OPERAND2;
-				var field_33554493_67109065 = GameDevWare.Dynamic.Expressions.Execution.ExecutionNode.LOCAL_SLOT1;
-				var field_33554493_67109066 = GameDevWare.Dynamic.Expressions.Execution.ExecutionNode.LOCAL_FIRST_PARAMETER;
-				GameDevWare.Dynamic.Expressions.Execution.FastCall.TryCreate(default(System.Reflection.MethodInfo));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.InvokeBinaryOperation(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object), default(System.Linq.Expressions.ExpressionType), default(GameDevWare.Dynamic.Expressions.Execution.Intrinsic.BinaryOperation));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.InvokeUnaryOperation(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Linq.Expressions.ExpressionType), default(GameDevWare.Dynamic.Expressions.Execution.Intrinsic.UnaryOperation));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.InvokeConversion(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Type), default(System.Linq.Expressions.ExpressionType), default(GameDevWare.Dynamic.Expressions.Execution.Intrinsic.UnaryOperation));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.CreateUnaryOperationFn(default(System.Reflection.MethodInfo));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.CreateBinaryOperationFn(default(System.Reflection.MethodInfo));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.WrapUnaryOperation(default(System.Type), default(System.String));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.WrapUnaryOperation(default(System.Reflection.MethodInfo));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.WrapBinaryOperation(default(System.Type), default(System.String));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.WrapBinaryOperation(default(System.Reflection.MethodInfo));
-				default(GameDevWare.Dynamic.Expressions.Execution.InvocationNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.InvocationNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.LambdaNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.LambdaNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.ListInitNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.ListInitNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.LocalNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.LocalNode).ToString();
-				var field_33554499_67109084 = GameDevWare.Dynamic.Expressions.Execution.LocalNode.Operand1;
-				var field_33554499_67109085 = GameDevWare.Dynamic.Expressions.Execution.LocalNode.Operand2;
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberAccessNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberAccessNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberAssignmentsNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberAssignmentsNode).ToString();
-				var field_33554501_67109092 = GameDevWare.Dynamic.Expressions.Execution.MemberAssignmentsNode.Empty;
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberInitNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberInitNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode).ToString();
-				var field_33554503_67109099 = GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.Empty;
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode).ToString();
-				var field_33554504_67109101 = GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.Empty;
-				default(GameDevWare.Dynamic.Expressions.Execution.NewArrayBoundsNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.NewArrayBoundsNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.NewArrayInitNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.NewArrayInitNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.NewNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.NewNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.NullNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.NullNode).ToString();
-				var field_33554508_67109112 = GameDevWare.Dynamic.Expressions.Execution.NullNode.Instance;
-				default(GameDevWare.Dynamic.Expressions.Execution.ParameterNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.ParameterNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.QuoteNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.QuoteNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.TypeAsNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.TypeAsNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.TypeIsNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				default(GameDevWare.Dynamic.Expressions.Execution.TypeIsNode).ToString();
-				default(GameDevWare.Dynamic.Expressions.Execution.UnaryNode).Run(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.UnaryNode.Create(default(System.Linq.Expressions.UnaryExpression), default(System.Linq.Expressions.ConstantExpression[]), default(System.Linq.Expressions.ParameterExpression[]));
-				default(GameDevWare.Dynamic.Expressions.Execution.UnaryNode).ToString();
-				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Execute(default(System.String), default(GameDevWare.Dynamic.Expressions.ITypeResolver), default(System.Linq.Expressions.Expression));
-				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ParseAction(default(System.String), default(GameDevWare.Dynamic.Expressions.ITypeResolver));
-				GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.Format(default(System.Linq.Expressions.Expression), default(System.Boolean));
-				var field_33554514_67109127 = GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.DEFAULT_CHECKED_SCOPE;
-				var field_33554514_67109128 = GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG1_DEFAULT_NAME;
-				var field_33554514_67109129 = GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG2_DEFAULT_NAME;
-				var field_33554514_67109130 = GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG3_DEFAULT_NAME;
-				var field_33554514_67109131 = GameDevWare.Dynamic.Expressions.CSharp.CSharpExpression.ARG4_DEFAULT_NAME;
+				default(Expressions.ILineInfo).GetLineNumber();
+				default(Expressions.ILineInfo).GetColumnNumber();
+				default(Expressions.ILineInfo).GetTokenLength();
+				ExpressionPosition.Parse(default(String));
+				default(Expressions.ExpressionPosition).Equals(default(Object));
+				default(Expressions.ExpressionPosition).Equals(default(Expressions.ExpressionPosition));
+				default(Expressions.ExpressionPosition).Equals(default(Expressions.ILineInfo));
+				default(Expressions.ExpressionPosition).GetHashCode();
+				default(Expressions.ExpressionPosition).ToString();
+				var field_33554446_67108973 = default(Expressions.ExpressionPosition).LineNumber;
+				var field_33554446_67108974 = default(Expressions.ExpressionPosition).ColumnNumber;
+				var field_33554446_67108975 = default(Expressions.ExpressionPosition).TokenLength;
+				default(IEquatable<Expressions.ExpressionPosition>).Equals(default(Expressions.ExpressionPosition));
+				default(IEquatable<Expressions.ILineInfo>).Equals(default(Expressions.ILineInfo));
+				ExpressionSubstitutor.Visit(default(Expression),
+					default(Dictionary<Expression, Expression>));
+				var param_33554448_100663421_0 = default(Expression);
+				var param_33554448_100663421_1 = default(Expression);
+				var param_33554448_100663421_3 = default(Expression);
+				ExpressionUtils.TryPromoteBinaryOperation(ref param_33554448_100663421_0, ref param_33554448_100663421_1,
+					default(ExpressionType), out param_33554448_100663421_3);
+				var param_33554448_100663424_0 = default(Expression);
+				var param_33554448_100663424_2 = default(Expression);
+				ExpressionUtils.TryPromoteUnaryOperation(ref param_33554448_100663424_0,
+					default(ExpressionType), out param_33554448_100663424_2);
+				ExpressionUtils.IsNull(default(Expression), default(Boolean));
+				var param_33554448_100663426_0 = default(Expression);
+				ExpressionUtils.CoerceType(ref param_33554448_100663426_0, default(Type));
+				var param_33554448_100663427_0 = default(Expression);
+				var param_33554448_100663427_2 = default(Single);
+				ExpressionUtils.TryCoerceType(ref param_33554448_100663427_0, default(Type), out param_33554448_100663427_2);
+				ExpressionUtils.MakeNullPropagationExpression(
+					default(List<Expression>), default(Expression));
+				var param_33554448_100663432_1 = default(List<Expression>);
+				var param_33554448_100663432_2 = default(Expression);
+				ExpressionUtils.ExtractNullPropagationExpression(default(ConditionalExpression),
+					out param_33554448_100663432_1, out param_33554448_100663432_2);
+				var field_33554448_67108977 = ExpressionUtils.NullConstant;
+				var field_33554448_67108978 = ExpressionUtils.TrueConstant;
+				var field_33554448_67108979 = ExpressionUtils.FalseConstant;
+				var field_33554448_67108980 = ExpressionUtils.NegativeSingle;
+				var field_33554448_67108981 = ExpressionUtils.NegativeDouble;
+				default(Expressions.ExpressionVisitor).Visit(default(Expression));
+				var param_33554452_100663473_1 = default(Type);
+				default(Expressions.KnownTypeResolver).TryGetType(default(Expressions.TypeReference),
+					out param_33554452_100663473_1);
+				default(Expressions.KnownTypeResolver).IsKnownType(default(Type));
+				default(Expressions.KnownTypeResolver).ToString();
+				var field_33554452_67108982 = KnownTypeResolver.Default;
+				default(Expressions.MethodCallSignature).Equals(default(Object));
+				default(Expressions.MethodCallSignature).GetHashCode();
+				default(Expressions.MethodCallSignature).ToString();
+				var field_33554453_67108991 = default(Expressions.MethodCallSignature).Parameter1Type;
+				var field_33554453_67108992 = default(Expressions.MethodCallSignature).Parameter2Type;
+				var field_33554453_67108993 = default(Expressions.MethodCallSignature).Parameter3Type;
+				var field_33554453_67108994 = default(Expressions.MethodCallSignature).Parameter4Type;
+				var field_33554453_67108995 = default(Expressions.MethodCallSignature).Parameter1Name;
+				var field_33554453_67108996 = default(Expressions.MethodCallSignature).Parameter2Name;
+				var field_33554453_67108997 = default(Expressions.MethodCallSignature).Parameter3Name;
+				var field_33554453_67108998 = default(Expressions.MethodCallSignature).Parameter4Name;
+				var field_33554453_67108999 = default(Expressions.MethodCallSignature).ReturnType;
+				var field_33554453_67109000 = default(Expressions.MethodCallSignature).Count;
+				default(Expressions.SyntaxTreeNode).ContainsKey(default(String));
+				var param_33554455_100663544_1 = default(Object);
+				default(Expressions.SyntaxTreeNode).TryGetValue(default(String), out param_33554455_100663544_1);
+				default(Expressions.SyntaxTreeNode).Equals(default(Object));
+				default(Expressions.SyntaxTreeNode).GetHashCode();
+				default(Expressions.SyntaxTreeNode).ToString();
+				var property_33554455_385875981 = default(Expressions.SyntaxTreeNode).Keys;
+				var property_33554455_385875982 = default(Expressions.SyntaxTreeNode).Values;
+				var property_33554455_385875984 = default(Expressions.SyntaxTreeNode).Count;
+				default(IDictionary<String, Object>).Add(default(String), default(Object));
+				var param_1400937435_100678066_1 = default(Object);
+				default(IDictionary<String, Object>).TryGetValue(default(String), out param_1400937435_100678066_1);
+				default(IDictionary<String, Object>).ContainsKey(default(String));
+				default(IDictionary<String, Object>).Remove(default(String));
+				var property_1400937435_385878225 = default(IDictionary<String, Object>).Keys;
+				var property_1400937435_385878226 = default(IDictionary<String, Object>).Values;
+				default(ICollection<KeyValuePair<String, Object>>).Add(
+					default(KeyValuePair<String, Object>));
+				default(ICollection<KeyValuePair<String, Object>>).Clear();
+				default(ICollection<KeyValuePair<String, Object>>).CopyTo(
+					default(KeyValuePair<String, Object>[]), default(Int32));
+				default(ICollection<KeyValuePair<String, Object>>).Remove(
+					default(KeyValuePair<String, Object>));
+				default(ICollection<KeyValuePair<String, Object>>).Contains(
+					default(KeyValuePair<String, Object>));
+				var property_2133121867_385878222 =
+					default(ICollection<KeyValuePair<String, Object>>).Count;
+				var property_2133121867_385878223 =
+					default(ICollection<KeyValuePair<String, Object>>).IsReadOnly;
+				default(IEnumerable<KeyValuePair<String, Object>>).GetEnumerator();
+				var field_33554456_67109003 = TypeDiscoveryOptions.Default;
+				var field_33554456_67109004 = TypeDiscoveryOptions.Interfaces;
+				var field_33554456_67109005 = TypeDiscoveryOptions.GenericArguments;
+				var field_33554456_67109006 = TypeDiscoveryOptions.KnownTypes;
+				var field_33554456_67109007 = TypeDiscoveryOptions.DeclaringTypes;
+				var field_33554456_67109008 = TypeDiscoveryOptions.All;
+				default(IComparable).CompareTo(default(Object));
+				default(IFormattable).ToString(default(String), default(IFormatProvider));
+				default(IConvertible).ToBoolean(default(IFormatProvider));
+				default(IConvertible).ToInt32(default(IFormatProvider));
+				default(IConvertible).ToUInt32(default(IFormatProvider));
+				default(IConvertible).ToDouble(default(IFormatProvider));
+				default(IConvertible).ToUInt64(default(IFormatProvider));
+				default(IConvertible).GetTypeCode();
+				default(IConvertible).ToChar(default(IFormatProvider));
+				default(IConvertible).ToSByte(default(IFormatProvider));
+				default(IConvertible).ToByte(default(IFormatProvider));
+				default(IConvertible).ToInt16(default(IFormatProvider));
+				default(IConvertible).ToUInt16(default(IFormatProvider));
+				default(IConvertible).ToInt64(default(IFormatProvider));
+				default(IConvertible).ToSingle(default(IFormatProvider));
+				default(IConvertible).ToDecimal(default(IFormatProvider));
+				default(IConvertible).ToDateTime(default(IFormatProvider));
+				default(IConvertible).ToString(default(IFormatProvider));
+				default(IConvertible).ToType(default(Type), default(IFormatProvider));
+				var field_33554457_67109010 = TypeNameFormatOptions.None;
+				var field_33554457_67109011 = TypeNameFormatOptions.IncludeDeclaringType;
+				var field_33554457_67109012 = TypeNameFormatOptions.IncludeNamespace;
+				var field_33554457_67109013 = TypeNameFormatOptions.IncludeGenericArguments;
+				var field_33554457_67109014 = TypeNameFormatOptions.IncludeGenericSuffix;
+				var field_33554457_67109015 = TypeNameFormatOptions.UseAliases;
+				TypeNameUtils.GetTypeNames(default(Type));
+				TypeNameUtils.GetTypeFullNames(default(Type));
+				TypeNameUtils.GetCSharpFullName(default(Type), default(StringBuilder),
+					default(Expressions.TypeNameFormatOptions));
+				TypeNameUtils.GetCSharpName(default(Type), default(StringBuilder),
+					default(Expressions.TypeNameFormatOptions));
+				TypeNameUtils.GetCSharpNameOnly(default(Type), default(StringBuilder),
+					default(Expressions.TypeNameFormatOptions));
+				TypeNameUtils.RemoveGenericSuffix(default(String));
+				TypeNameUtils.RemoveGenericSuffix(default(StringBuilder));
+				TypeNameUtils.RemoveGenericSuffix(default(StringBuilder), default(Int32), default(Int32));
+				TypeNameUtils.GetDeclaringTypes(default(Type));
+				default(Expressions.TypeReference).Equals(default(Object));
+				default(Expressions.TypeReference).Equals(default(Expressions.TypeReference));
+				default(Expressions.TypeReference).GetHashCode();
+				default(Expressions.TypeReference).ToString();
+				var property_33554459_385875986 = default(Expressions.TypeReference).FullName;
+				var property_33554459_385875987 = default(Expressions.TypeReference).Name;
+				var property_33554459_385875988 = default(Expressions.TypeReference).Namespace;
+				var property_33554459_385875989 = default(Expressions.TypeReference).TypeArguments;
+				var property_33554459_385875990 = default(Expressions.TypeReference).IsGenericType;
+				var field_33554459_67109017 = TypeReference.Empty;
+				var field_33554459_67109018 = TypeReference.EmptyTypeArguments;
+				default(IEquatable<Expressions.TypeReference>).Equals(default(Expressions.TypeReference));
+				default(Expressions.UnboundExpression).Equals(default(Object));
+				default(Expressions.UnboundExpression).GetHashCode();
+				default(Expressions.UnboundExpression).ToString();
+				var property_33554460_385875991 = default(Expressions.UnboundExpression).SyntaxTree;
+				var property_33554461_385875992 = Resources.SupportedLanguages;
+				var property_33554461_385875993 = Resources.CurrentLanguage;
+				var property_33554461_385875994 = Resources.All;
+				var property_33554461_385875995 = Resources.EXCEPTION_BIND_UNABLETOBINDINDEXER;
+				var property_33554461_385875996 = Resources.EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED;
+				var property_33554461_385875997 = Resources.EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE;
+				var property_33554461_385875998 = Resources.EXCEPTION_BIND_MISSINGMETHOD;
+				var property_33554461_385875999 = Resources.EXCEPTION_BIND_UNABLETOINVOKENONDELEG;
+				var property_33554461_385876000 = Resources.EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED;
+				var property_33554461_385876001 = Resources.EXCEPTION_PARSER_OPREQUIRESOPERAND;
+				var property_33554461_385876002 = Resources.EXCEPTION_BIND_UNABLETORESOLVENAME;
+				var property_33554461_385876003 = Resources.EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT;
+				var property_33554461_385876004 = Resources.EXCEPTION_BOUNDEXPR_CANTCONVERTARG;
+				var property_33554461_385876005 = Resources.EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS;
+				var property_33554461_385876006 = Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE;
+				var property_33554461_385876007 = Resources.EXCEPTION_PARSER_BINARYOPREQOPERAND;
+				var property_33554461_385876008 = Resources.EXCEPTION_COMPIL_UNKNOWNEXPRTYPE;
+				var property_33554461_385876009 = Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR;
+				var property_33554461_385876010 = Resources.EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE;
+				var property_33554461_385876011 = Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE;
+				var property_33554461_385876012 = Resources.EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND;
+				var property_33554461_385876013 = Resources.EXCEPTION_BIND_MISSINGATTRONNODE;
+				var property_33554461_385876014 = Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED;
+				var property_33554461_385876015 = Resources.EXCEPTION_BIND_UNABLETOBINDDELEG;
+				var property_33554461_385876016 = Resources.EXCEPTION_COMPIL_NOBINARYOPONTYPE;
+				var property_33554461_385876017 = Resources.EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE;
+				var property_33554461_385876018 = Resources.EXCEPTION_BIND_FAILEDTOBINDGENERICARGUMENTSTOTYPE;
+				var property_33554461_385876019 = Resources.EXCEPTION_TOKENIZER_INVALIDCHARLITERAL;
+				var property_33554461_385876020 = Resources.EXCEPTION_PARSER_TYPENAMEEXPECTED;
+				var property_33554461_385876021 = Resources.EXCEPTION_BIND_RENDERFAILED;
+				var property_33554461_385876022 = Resources.EXCEPTION_BIND_UNABLETORESOLVETYPEMULTIPLE;
+				var property_33554461_385876023 = Resources.EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE;
+				var property_33554461_385876024 = Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL;
+				var property_33554461_385876025 = Resources.EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE;
+				var property_33554461_385876026 = Resources.EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED;
+				var property_33554461_385876027 = Resources.EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT;
+				var property_33554461_385876028 = Resources.EXCEPTION_PARSER_UNEXPECTEDTOKEN;
+				var property_33554461_385876029 = Resources.EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE;
+				var property_33554461_385876030 = Resources.EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES;
+				var property_33554461_385876031 = Resources.EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION;
+				var property_33554461_385876032 = Resources.EXCEPTION_LIST_LISTISEMPTY;
+				var property_33554461_385876033 = Resources.EXCEPTION_BIND_CALLMEMBERISNOTMETHOD;
+				var property_33554461_385876034 = Resources.EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS;
+				var property_33554461_385876035 = Resources.EXCEPTION_BIND_UNABLETOBINDMETHOD;
+				var property_33554461_385876036 = Resources.EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME;
+				var property_33554461_385876037 = Resources.EXCEPTION_PARSER_COLONISEXPRECTED;
+				var property_33554461_385876038 = Resources.EXCEPTION_BIND_UNABLETOBINDCALL;
+				var property_33554461_385876039 = Resources.EXCEPTION_BIND_UNABLETOCREATEEXPRWITHPARAMS;
+				var property_33554461_385876040 = Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE;
+				var property_33554461_385876041 = Resources.EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION;
+				var property_33554461_385876042 = Resources.EXCEPTION_BIND_FAILEDTOBIND;
+				var property_33554461_385876043 = Resources.EXCEPTION_BIND_UNABLETOBINDMEMBER;
+				var property_33554461_385876044 = Resources.EXCEPTION_BIND_MISSINGMETHODPARAMETER;
+				var property_33554461_385876045 = Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT;
+				var property_33554461_385876046 = Resources.EXCEPTION_BIND_MEMBERISNOTMETHOD;
+				var property_33554461_385876047 = Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE;
+				var property_33554461_385876048 = Resources.EXCEPTION_EXECUTION_CANTDONULLVALUE;
+				var property_33554461_385876049 = Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ;
+				var property_33554461_385876050 = Resources.EXCEPTION_PARSER_MISSING_OPERATOR;
+				var property_33554461_385876051 = Resources.EXCEPTION_BIND_INVALIDLAMBDABODYTYPE;
+				var property_33554461_385876052 = Resources.EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS;
+				var property_33554461_385876053 = Resources.EXCEPTION_BIND_INVALIDCHARLITERAL;
+				var property_33554461_385876054 = Resources.EXCEPTION_PARSER_EXPRESSIONISEMPTY;
+				var property_33554461_385876055 = Resources.EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH;
+				var property_33554461_385876056 = Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE;
+				var property_33554461_385876057 = Resources.EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES;
+				var property_33554461_385876058 = Resources.EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE;
+				var property_33554461_385876059 = Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF;
+				var property_33554461_385876060 = Resources.EXCEPTION_PARSER_UNARYOPREQOPERAND;
+				var property_33554461_385876061 = Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS;
+				var property_33554461_385876062 = Resources.EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE;
+				var property_33554461_385876063 = Resources.EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS;
+				var property_33554461_385876064 = Resources.EXCEPTION_PARSER_TERNARYOPREQOPERAND;
+				var property_33554461_385876065 = Resources.EXCEPTION_COMPIL_NOUNARYOPONTYPE;
+				var property_33554461_385876066 = Resources.EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION;
+				var property_33554461_385876067 = Resources.EXCEPTION_BIND_TOOMANYARGUMENTS;
+				var property_33554461_385876068 = Resources.EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED;
+				var property_33554461_385876069 = Resources.EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION;
+				AnyPacker.Pack(default(Expression));
+				ArrayIndexPacker.Pack(default(Expression));
+				ArrayLengthPacker.Pack(default(UnaryExpression));
+				BinaryPacker.Pack(default(BinaryExpression));
+				CallPacker.Pack(default(MethodCallExpression));
+				ConditionPacker.Pack(default(ConditionalExpression));
+				ConstantPacker.Pack(default(ConstantExpression));
+				ConvertPacker.Pack(default(UnaryExpression));
+				InvokePacker.Pack(default(InvocationExpression));
+				LambdaPacker.Pack(default(LambdaExpression));
+				ListInitPacker.Pack(default(ListInitExpression));
+				MemberAccessPacker.Pack(default(MemberExpression));
+				MemberInitPacker.Pack(default(MemberInitExpression));
+				MemberInitPacker.Pack(
+					default(ReadOnlyCollection<MemberBinding>));
+				MemberInitPacker.Pack(default(MemberListBinding));
+				MemberInitPacker.Pack(default(MemberMemberBinding));
+				MemberInitPacker.Pack(default(MemberAssignment));
+				MemberInitPacker.Pack(default(ElementInit));
+				NewArrayPacker.Pack(default(NewArrayExpression));
+				NewPacker.Pack(default(NewExpression));
+				ParameterPacker.Pack(default(ParameterExpression));
+				QuotePacker.Pack(default(UnaryExpression));
+				TypeAsPacker.Pack(default(UnaryExpression));
+				TypeIsPacker.Pack(default(TypeBinaryExpression));
+				UnaryPacker.Pack(default(UnaryExpression));
+				AotCompiler.PrepareAction(default(Expression),
+					default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.Compile(default(Expression),
+					default(ConstantExpression[]), default(ParameterExpression[]));
+				default(ArrayIndexNode).Run(default(Closure));
+				default(ArrayIndexNode).ToString();
+				default(ArrayLengthNode).Run(default(Closure));
+				default(ArrayLengthNode).ToString();
+				default(BinaryNode).Run(default(Closure));
+				BinaryNode.Create(default(BinaryExpression),
+					default(ConstantExpression[]), default(ParameterExpression[]));
+				default(BinaryNode).ToString();
+				default(CallNode).Run(default(Closure));
+				default(CallNode).ToString();
+				default(Closure).GetType(default(Object));
+				var field_33554487_67109044 = default(Closure).Constants;
+				var field_33554487_67109045 = default(Closure).Locals;
+				default(CoalesceNode).Run(default(Closure));
+				default(CoalesceNode).ToString();
+				default(ConditionalNode).Run(default(Closure));
+				default(ConditionalNode).ToString();
+				default(ConstantNode).Run(default(Closure));
+				default(ConstantNode).ToString();
+				var field_33554491_67109055 = default(ConstantsCollector).Constants;
+				default(ConvertNode).Run(default(Closure));
+				default(ConvertNode).ToString();
+				default(ExecutionNode).Run(default(Closure));
+				var field_33554493_67109063 = ExecutionNode.LOCAL_OPERAND1;
+				var field_33554493_67109064 = ExecutionNode.LOCAL_OPERAND2;
+				var field_33554493_67109065 = ExecutionNode.LOCAL_SLOT1;
+				var field_33554493_67109066 = ExecutionNode.LOCAL_FIRST_PARAMETER;
+				FastCall.TryCreate(default(MethodInfo));
+				Intrinsic.InvokeBinaryOperation(default(Closure),
+					default(Object), default(Object), default(ExpressionType),
+					default(Intrinsic.BinaryOperation));
+				Intrinsic.InvokeUnaryOperation(default(Closure),
+					default(Object), default(ExpressionType),
+					default(Intrinsic.UnaryOperation));
+				Intrinsic.InvokeConversion(default(Closure),
+					default(Object), default(Type), default(ExpressionType),
+					default(Intrinsic.UnaryOperation));
+				Intrinsic.CreateUnaryOperationFn(default(MethodInfo));
+				Intrinsic.CreateBinaryOperationFn(default(MethodInfo));
+				Intrinsic.WrapUnaryOperation(default(Type), default(String));
+				Intrinsic.WrapUnaryOperation(default(MethodInfo));
+				Intrinsic.WrapBinaryOperation(default(Type), default(String));
+				Intrinsic.WrapBinaryOperation(default(MethodInfo));
+				default(InvocationNode).Run(default(Closure));
+				default(InvocationNode).ToString();
+				default(LambdaNode).Run(default(Closure));
+				default(LambdaNode).ToString();
+				default(ListInitNode).Run(default(Closure));
+				default(ListInitNode).ToString();
+				default(LocalNode).Run(default(Closure));
+				default(LocalNode).ToString();
+				var field_33554499_67109084 = LocalNode.Operand1;
+				var field_33554499_67109085 = LocalNode.Operand2;
+				default(MemberAccessNode).Run(default(Closure));
+				default(MemberAccessNode).ToString();
+				default(MemberAssignmentsNode).Run(default(Closure));
+				default(MemberAssignmentsNode).ToString();
+				var field_33554501_67109092 = MemberAssignmentsNode.Empty;
+				default(MemberInitNode).Run(default(Closure));
+				default(MemberInitNode).ToString();
+				default(MemberListBindingsNode).Run(default(Closure));
+				default(MemberListBindingsNode).ToString();
+				var field_33554503_67109099 = MemberListBindingsNode.Empty;
+				default(MemberMemberBindingsNode).Run(default(Closure));
+				default(MemberMemberBindingsNode).ToString();
+				var field_33554504_67109101 = MemberMemberBindingsNode.Empty;
+				default(NewArrayBoundsNode).Run(default(Closure));
+				default(NewArrayBoundsNode).ToString();
+				default(NewArrayInitNode).Run(default(Closure));
+				default(NewArrayInitNode).ToString();
+				default(NewNode).Run(default(Closure));
+				default(NewNode).ToString();
+				default(NullNode).Run(default(Closure));
+				default(NullNode).ToString();
+				var field_33554508_67109112 = NullNode.Instance;
+				default(ParameterNode).Run(default(Closure));
+				default(ParameterNode).ToString();
+				default(QuoteNode).Run(default(Closure));
+				default(QuoteNode).ToString();
+				default(TypeAsNode).Run(default(Closure));
+				default(TypeAsNode).ToString();
+				default(TypeIsNode).Run(default(Closure));
+				default(TypeIsNode).ToString();
+				default(UnaryNode).Run(default(Closure));
+				UnaryNode.Create(default(UnaryExpression),
+					default(ConstantExpression[]), default(ParameterExpression[]));
+				default(UnaryNode).ToString();
+				CSharpExpression.Execute(default(String), default(Expressions.ITypeResolver),
+					default(Expression));
+				CSharpExpression.ParseAction(default(String), default(Expressions.ITypeResolver));
+				CSharpExpression.Format(default(Expression), default(Boolean));
+				var field_33554514_67109127 = CSharpExpression.DEFAULT_CHECKED_SCOPE;
+				var field_33554514_67109128 = CSharpExpression.ARG1_DEFAULT_NAME;
+				var field_33554514_67109129 = CSharpExpression.ARG2_DEFAULT_NAME;
+				var field_33554514_67109130 = CSharpExpression.ARG3_DEFAULT_NAME;
+				var field_33554514_67109131 = CSharpExpression.ARG4_DEFAULT_NAME;
+
 				//GameDevWare.Dynamic.Expressions.CSharp.CSharpExpressionFormatter.Render(default(System.Linq.Expressions.Expression), default(System.Boolean));
 				//GameDevWare.Dynamic.Expressions.CSharp.CSharpSyntaxTreeFormatter.Render(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(System.Boolean));
-				var param_33554517_100663917_1 = default(System.String);
-				GameDevWare.Dynamic.Expressions.CSharp.CSharpTypeNameAlias.TryGetTypeName(default(System.String), out param_33554517_100663917_1);
-				var param_33554517_100663918_1 = default(System.String);
-				GameDevWare.Dynamic.Expressions.CSharp.CSharpTypeNameAlias.TryGetAlias(default(System.String), out param_33554517_100663918_1);
-				var param_33554517_100663919_1 = default(System.String);
+				var param_33554517_100663917_1 = default(String);
+				CSharpTypeNameAlias.TryGetTypeName(default(String), out param_33554517_100663917_1);
+				var param_33554517_100663918_1 = default(String);
+				CSharpTypeNameAlias.TryGetAlias(default(String), out param_33554517_100663918_1);
+				var param_33554517_100663919_1 = default(String);
+
 				//GameDevWare.Dynamic.Expressions.CSharp.CSharpTypeNameAlias.TryGetAlias(default(System.Type), out param_33554517_100663919_1);
-				GameDevWare.Dynamic.Expressions.CSharp.Parser.Parse(default(System.Collections.Generic.IEnumerable<GameDevWare.Dynamic.Expressions.CSharp.Token>));
-				default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode).ToString();
-				var property_33554520_385876071 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode).Count;
-				var field_33554520_67109144 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode).Type;
-				var field_33554520_67109145 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode).Token;
-				var field_33554520_67109146 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode).Value;
-				default(System.Collections.Generic.IEnumerable<GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode>).GetEnumerator();
-				GameDevWare.Dynamic.Expressions.CSharp.StringUtils.UnescapeAndUnquote(default(System.String));
-				GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.ToSyntaxTree(default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode), default(System.Boolean), default(System.String));
-				default(GameDevWare.Dynamic.Expressions.CSharp.Token).ToString();
-				var property_33554523_385876072 = default(GameDevWare.Dynamic.Expressions.CSharp.Token).IsValid;
-				var property_33554523_385876073 = default(GameDevWare.Dynamic.Expressions.CSharp.Token).Position;
-				var field_33554523_67109148 = default(GameDevWare.Dynamic.Expressions.CSharp.Token).Type;
-				var field_33554523_67109149 = default(GameDevWare.Dynamic.Expressions.CSharp.Token).Value;
-				var field_33554523_67109150 = default(GameDevWare.Dynamic.Expressions.CSharp.Token).LineNumber;
-				var field_33554523_67109151 = default(GameDevWare.Dynamic.Expressions.CSharp.Token).ColumnNumber;
-				var field_33554523_67109152 = default(GameDevWare.Dynamic.Expressions.CSharp.Token).TokenLength;
-				var property_33554524_385876074 = default(GameDevWare.Dynamic.Expressions.CSharp.TokenAttribute).Value;
-				GameDevWare.Dynamic.Expressions.CSharp.Tokenizer.Tokenize(default(System.String));
-				var field_33554526_67109159 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.None;
-				var field_33554526_67109160 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Number;
-				var field_33554526_67109161 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Literal;
-				var field_33554526_67109162 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Identifier;
-				var field_33554526_67109163 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Add;
-				var field_33554526_67109164 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Plus;
-				var field_33554526_67109165 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Subtract;
-				var field_33554526_67109166 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Minus;
-				var field_33554526_67109167 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Division;
-				var field_33554526_67109168 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Multiplication;
-				var field_33554526_67109169 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Power;
-				var field_33554526_67109170 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Modulo;
-				var field_33554526_67109171 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.And;
-				var field_33554526_67109172 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Or;
-				var field_33554526_67109173 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Xor;
-				var field_33554526_67109174 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Complement;
-				var field_33554526_67109175 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.LeftShift;
-				var field_33554526_67109176 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.RightShift;
-				var field_33554526_67109177 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.AndAlso;
-				var field_33554526_67109178 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.OrElse;
-				var field_33554526_67109179 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Not;
-				var field_33554526_67109180 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.GreaterThan;
-				var field_33554526_67109181 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.GreaterThanOrEquals;
-				var field_33554526_67109182 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.LesserThan;
-				var field_33554526_67109183 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.LesserThanOrEquals;
-				var field_33554526_67109184 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.EqualsTo;
-				var field_33554526_67109185 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.NotEqualsTo;
-				var field_33554526_67109186 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Conditional;
-				var field_33554526_67109187 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Is;
-				var field_33554526_67109188 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.As;
-				var field_33554526_67109189 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Colon;
-				var field_33554526_67109190 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Comma;
-				var field_33554526_67109191 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Coalesce;
-				var field_33554526_67109192 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.New;
-				var field_33554526_67109193 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Resolve;
-				var field_33554526_67109194 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.NullResolve;
-				var field_33554526_67109195 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.LeftParentheses;
-				var field_33554526_67109196 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.RightParentheses;
-				var field_33554526_67109197 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.LeftBracket;
-				var field_33554526_67109198 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.NullIndex;
-				var field_33554526_67109199 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.RightBracket;
-				var field_33554526_67109200 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Lambda;
-				var field_33554526_67109201 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Call;
-				var field_33554526_67109202 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Arguments;
-				var field_33554526_67109203 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Convert;
-				var field_33554526_67109204 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Typeof;
-				var field_33554526_67109205 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Default;
-				var field_33554526_67109206 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.Group;
-				var field_33554526_67109207 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.CheckedScope;
-				var field_33554526_67109208 = GameDevWare.Dynamic.Expressions.CSharp.TokenType.UncheckedScope;
-				var param_33554527_100663987_3 = default(System.Linq.Expressions.Expression);
-				var param_33554527_100663987_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.AnyBinder.TryBindInNewScope(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554527_100663987_3, out param_33554527_100663987_4);
-				var param_33554527_100663988_3 = default(System.Linq.Expressions.Expression);
-				var param_33554527_100663988_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.AnyBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554527_100663988_3, out param_33554527_100663988_4);
-				var param_33554528_100663989_3 = default(System.Linq.Expressions.Expression);
-				var param_33554528_100663989_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.BinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554528_100663989_3, out param_33554528_100663989_4);
-				var param_33554529_100663995_1 = default(System.Type);
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).TryResolveType(default(System.Object), out param_33554529_100663995_1);
-				var param_33554529_100663996_1 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription);
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).TryResolveMember(default(System.Object), out param_33554529_100663996_1);
-				var param_33554529_100663997_1 = default(System.Linq.Expressions.Expression);
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).TryGetParameter(default(System.String), out param_33554529_100663997_1);
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).IsKnownType(default(System.Type));
-				var param_33554529_100663999_1 = default(GameDevWare.Dynamic.Expressions.TypeReference);
-				GameDevWare.Dynamic.Expressions.Binding.BindingContext.TryGetTypeReference(default(System.Object), out param_33554529_100663999_1);
-				var param_33554529_100664000_1 = default(GameDevWare.Dynamic.Expressions.TypeReference);
-				GameDevWare.Dynamic.Expressions.Binding.BindingContext.TryGetMethodReference(default(System.Object), out param_33554529_100664000_1);
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).CreateNestedContext();
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).CreateNestedContext(default(System.Collections.ObjectModel.ReadOnlyCollection<System.Linq.Expressions.ParameterExpression>), default(System.Type));
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).RegisterNullPropagationTarget(default(System.Linq.Expressions.Expression));
-				var param_33554529_100664004_0 = default(System.Linq.Expressions.Expression);
-				default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).CompleteNullPropagation(ref param_33554529_100664004_0);
-				var property_33554529_385876075 = default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).Parameters;
-				var property_33554529_385876076 = default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).ResultType;
-				var property_33554529_385876077 = default(GameDevWare.Dynamic.Expressions.Binding.BindingContext).Global;
-				var param_33554530_100664006_3 = default(System.Linq.Expressions.Expression);
-				var param_33554530_100664006_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.CallBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554530_100664006_3, out param_33554530_100664006_4);
-				var param_33554531_100664008_3 = default(System.Linq.Expressions.Expression);
-				var param_33554531_100664008_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.ConditionBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554531_100664008_3, out param_33554531_100664008_4);
-				var param_33554532_100664009_3 = default(System.Linq.Expressions.Expression);
-				var param_33554532_100664009_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.ConstantBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554532_100664009_3, out param_33554532_100664009_4);
-				GameDevWare.Dynamic.Expressions.Binding.ConstantBinder.ChangeType(default(System.Object), default(System.Type));
-				var param_33554533_100664011_3 = default(System.Linq.Expressions.Expression);
-				var param_33554533_100664011_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.DefaultBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554533_100664011_3, out param_33554533_100664011_4);
-				var param_33554534_100664012_3 = default(System.Linq.Expressions.Expression);
-				var param_33554534_100664012_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.GroupBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554534_100664012_3, out param_33554534_100664012_4);
-				var param_33554535_100664013_3 = default(System.Linq.Expressions.Expression);
-				var param_33554535_100664013_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.IndexBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554535_100664013_3, out param_33554535_100664013_4);
-				var param_33554536_100664014_3 = default(System.Linq.Expressions.Expression);
-				var param_33554536_100664014_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.InvokeBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554536_100664014_3, out param_33554536_100664014_4);
-				var param_33554536_100664015_3 = default(System.Linq.Expressions.Expression);
-				var param_33554536_100664015_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.InvokeBinder.TryBindMethodCall(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554536_100664015_3, out param_33554536_100664015_4);
-				var param_33554537_100664016_3 = default(System.Linq.Expressions.Expression);
-				var param_33554537_100664016_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.LambdaBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554537_100664016_3, out param_33554537_100664016_4);
-				GameDevWare.Dynamic.Expressions.Binding.LambdaBinder.ExtractArgumentNames(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode));
-				var param_33554538_100664018_3 = default(System.Linq.Expressions.Expression);
-				var param_33554538_100664018_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.ListInitBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554538_100664018_3, out param_33554538_100664018_4);
-				var param_33554539_100664021_3 = default(System.Linq.Expressions.Expression);
-				var param_33554539_100664021_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.MemberBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554539_100664021_3, out param_33554539_100664021_4);
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetParameter(default(System.Int32));
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetParameterType(default(System.Int32));
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetParameterName(default(System.Int32));
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetParametersCount();
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).MakeGenericMethod(default(System.Type[]));
-				var param_33554540_100664031_1 = default(System.Linq.Expressions.Expression);
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).TryMakeAccessor(default(System.Linq.Expressions.Expression), out param_33554540_100664031_1);
-				var param_33554540_100664032_1 = default(System.Linq.Expressions.Expression);
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).TryMakeConversion(default(System.Linq.Expressions.Expression), out param_33554540_100664032_1, default(System.Boolean));
-				var param_33554540_100664033_3 = default(System.Linq.Expressions.Expression);
-				var param_33554540_100664033_4 = default(System.Single);
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).TryMakeCall(default(System.Linq.Expressions.Expression), default(GameDevWare.Dynamic.Expressions.ArgumentsTree), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), out param_33554540_100664033_3, out param_33554540_100664033_4);
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).Equals(default(System.Reflection.MemberInfo));
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).Equals(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).CompareTo(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-				default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).ToString();
-				var field_33554540_67109224 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).Name;
-				var field_33554540_67109225 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).ResultType;
-				var field_33554540_67109226 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).DeclaringType;
-				var field_33554540_67109227 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).IsMethod;
-				var field_33554540_67109228 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).IsConstructor;
-				var field_33554540_67109229 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).IsPropertyOrField;
-				var field_33554540_67109230 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).IsStatic;
-				var field_33554540_67109231 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).IsImplicitOperator;
-				var field_33554540_67109232 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GenericArguments;
-				var field_33554540_67109233 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GenericArgumentsCount;
-				var field_33554540_67109234 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).ConstantValueExpression;
-				var field_33554540_67109235 = default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription).GetAccessor;
-				var field_33554540_67109215 = GameDevWare.Dynamic.Expressions.Binding.MemberDescription.QUALITY_EXACT_MATCH;
-				var field_33554540_67109216 = GameDevWare.Dynamic.Expressions.Binding.MemberDescription.QUALITY_INCOMPATIBLE;
-				default(System.IEquatable<GameDevWare.Dynamic.Expressions.Binding.MemberDescription>).Equals(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-				default(System.IEquatable<System.Reflection.MemberInfo>).Equals(default(System.Reflection.MemberInfo));
-				default(System.IComparable<GameDevWare.Dynamic.Expressions.Binding.MemberDescription>).CompareTo(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-				var param_33554541_100664046_3 = default(System.Linq.Expressions.Expression);
-				var param_33554541_100664046_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.MemberInitBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554541_100664046_3, out param_33554541_100664046_4);
-				var param_33554542_100664049_3 = default(System.Linq.Expressions.Expression);
-				var param_33554542_100664049_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.NewArrayBoundsBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554542_100664049_3, out param_33554542_100664049_4);
-				var param_33554543_100664050_3 = default(System.Linq.Expressions.Expression);
-				var param_33554543_100664050_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.NewArrayInitBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554543_100664050_3, out param_33554543_100664050_4);
-				var param_33554544_100664051_3 = default(System.Linq.Expressions.Expression);
-				var param_33554544_100664051_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.NewBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554544_100664051_3, out param_33554544_100664051_4);
-				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsNumber(default(System.Type));
-				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsNumber(default(System.TypeCode));
-				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsSignedInteger(default(System.Type));
-				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsSignedInteger(default(System.TypeCode));
-				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsUnsignedInteger(default(System.Type));
-				GameDevWare.Dynamic.Expressions.Binding.NumberUtils.IsUnsignedInteger(default(System.TypeCode));
-				var param_33554546_100664061_3 = default(System.Linq.Expressions.Expression);
-				var param_33554546_100664061_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.ParameterBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554546_100664061_3, out param_33554546_100664061_4);
-				var param_33554547_100664062_3 = default(System.Linq.Expressions.Expression);
-				var param_33554547_100664062_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.QuoteBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554547_100664062_3, out param_33554547_100664062_4);
-				var param_33554548_100664063_3 = default(System.Linq.Expressions.Expression);
-				var param_33554548_100664063_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.TypeBinaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554548_100664063_3, out param_33554548_100664063_4);
-				var param_33554549_100664066_1 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription);
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).TryGetValue(default(System.Type), out param_33554549_100664066_1);
-				var param_33554549_100664067_1 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription);
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).TryAdd(default(System.Type), ref param_33554549_100664067_1);
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).Add(default(System.Type), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).GetOrCreateTypeDescription(default(System.Type));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).Merge(default(GameDevWare.Dynamic.Expressions.Binding.TypeCache));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).ToString();
-				var property_33554549_385876078 = default(GameDevWare.Dynamic.Expressions.Binding.TypeCache).Values;
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).Expand(default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription), default(GameDevWare.Dynamic.Expressions.Binding.MemberDescription));
-				var param_33554550_100664075_2 = default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion);
-				GameDevWare.Dynamic.Expressions.Binding.TypeConversion.TryGetTypeConversion(default(System.Type), default(System.Type), out param_33554550_100664075_2);
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).ToString();
-				var field_33554550_67109250 = default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).Quality;
-				var field_33554550_67109251 = default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).IsNatural;
-				var field_33554550_67109252 = default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).Implicit;
-				var field_33554550_67109253 = default(GameDevWare.Dynamic.Expressions.Binding.TypeConversion).Explicit;
-				var field_33554550_67109241 = GameDevWare.Dynamic.Expressions.Binding.TypeConversion.QUALITY_SAME_TYPE;
-				var field_33554550_67109242 = GameDevWare.Dynamic.Expressions.Binding.TypeConversion.QUALITY_INHERITANCE_HIERARCHY;
-				var field_33554550_67109243 = GameDevWare.Dynamic.Expressions.Binding.TypeConversion.QUALITY_IN_PLACE_CONVERSION;
-				var field_33554550_67109244 = GameDevWare.Dynamic.Expressions.Binding.TypeConversion.QUALITY_IMPLICIT_CONVERSION;
-				var field_33554550_67109245 = GameDevWare.Dynamic.Expressions.Binding.TypeConversion.QUALITY_NUMBER_EXPANSION;
-				var field_33554550_67109246 = GameDevWare.Dynamic.Expressions.Binding.TypeConversion.QUALITY_PRECISION_CONVERSION;
-				var field_33554550_67109247 = GameDevWare.Dynamic.Expressions.Binding.TypeConversion.QUALITY_EXPLICIT_CONVERSION;
-				var field_33554550_67109248 = GameDevWare.Dynamic.Expressions.Binding.TypeConversion.QUALITY_NO_CONVERSION;
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).GetMembers(default(System.String));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).GetNullableType();
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsAssignableFrom(default(System.Type));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).CompareTo(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).CompareTo(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Equals(default(System.Type));
-				GameDevWare.Dynamic.Expressions.Binding.TypeDescription.GetTypeDescription(default(System.Type));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).ToString();
-				var field_33554551_67109262 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).MembersByName;
-				var field_33554551_67109263 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).ImplicitConvertTo;
-				var field_33554551_67109264 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).ImplicitConvertFrom;
-				var field_33554551_67109265 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).ExplicitConvertTo;
-				var field_33554551_67109266 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).ExplicitConvertFrom;
-				var field_33554551_67109267 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Conversions;
-				var field_33554551_67109268 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Addition;
-				var field_33554551_67109269 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Division;
-				var field_33554551_67109270 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Equality;
-				var field_33554551_67109271 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).GreaterThan;
-				var field_33554551_67109272 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).GreaterThanOrEqual;
-				var field_33554551_67109273 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Inequality;
-				var field_33554551_67109274 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).LessThan;
-				var field_33554551_67109275 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).LessThanOrEqual;
-				var field_33554551_67109276 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Modulus;
-				var field_33554551_67109277 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Multiply;
-				var field_33554551_67109278 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Subtraction;
-				var field_33554551_67109279 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).UnaryNegation;
-				var field_33554551_67109280 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).UnaryPlus;
-				var field_33554551_67109281 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).BitwiseAnd;
-				var field_33554551_67109282 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).BitwiseOr;
-				var field_33554551_67109283 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Indexers;
-				var field_33554551_67109284 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Constructors;
-				var field_33554551_67109285 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Name;
-				var field_33554551_67109286 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).TypeCode;
-				var field_33554551_67109287 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).DefaultExpression;
-				var field_33554551_67109288 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsNullable;
-				var field_33554551_67109289 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).CanBeNull;
-				var field_33554551_67109290 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsEnum;
-				var field_33554551_67109291 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsVoid;
-				var field_33554551_67109292 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsNumber;
-				var field_33554551_67109293 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsDelegate;
-				var field_33554551_67109294 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsInterface;
-				var field_33554551_67109295 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).IsValueType;
-				var field_33554551_67109296 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).HasGenericParameters;
-				var field_33554551_67109297 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).BaseType;
-				var field_33554551_67109298 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).UnderlyingType;
-				var field_33554551_67109299 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).BaseTypes;
-				var field_33554551_67109300 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).Interfaces;
-				var field_33554551_67109301 = default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription).GenericArguments;
-				var field_33554551_67109255 = GameDevWare.Dynamic.Expressions.Binding.TypeDescription.EmptyMembers;
-				var field_33554551_67109256 = GameDevWare.Dynamic.Expressions.Binding.TypeDescription.EmptyTypes;
-				var field_33554551_67109257 = GameDevWare.Dynamic.Expressions.Binding.TypeDescription.ObjectType;
-				var field_33554551_67109258 = GameDevWare.Dynamic.Expressions.Binding.TypeDescription.Int32Type;
-				default(System.IComparable<GameDevWare.Dynamic.Expressions.Binding.TypeDescription>).CompareTo(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-				default(System.IEquatable<GameDevWare.Dynamic.Expressions.Binding.TypeDescription>).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription));
-				default(System.IEquatable<System.Type>).Equals(default(System.Type));
-				var param_33554552_100664106_3 = default(System.Linq.Expressions.Expression);
-				var param_33554552_100664106_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.TypeOfBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554552_100664106_3, out param_33554552_100664106_4);
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).ToString();
-				var field_33554553_67109303 = default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple).Types;
-				default(System.IEquatable<GameDevWare.Dynamic.Expressions.Binding.TypeTuple>).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).GetHashCode();
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Equals(default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).ToString();
-				var field_33554554_67109305 = default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Type1;
-				var field_33554554_67109306 = default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2).Type2;
-				default(System.IEquatable<GameDevWare.Dynamic.Expressions.Binding.TypeTuple2>).Equals(default(GameDevWare.Dynamic.Expressions.Binding.TypeTuple2));
-				var param_33554555_100664117_3 = default(System.Linq.Expressions.Expression);
-				var param_33554555_100664117_4 = default(System.Exception);
-				GameDevWare.Dynamic.Expressions.Binding.UnaryBinder.TryBind(default(GameDevWare.Dynamic.Expressions.SyntaxTreeNode), default(GameDevWare.Dynamic.Expressions.Binding.BindingContext), default(GameDevWare.Dynamic.Expressions.Binding.TypeDescription), out param_33554555_100664117_3, out param_33554555_100664117_4);
-				default(System.Collections.Generic.IEnumerable<System.Type>).GetEnumerator();
-				var property_570034569_385878227 = default(System.Collections.Generic.IEnumerator<System.Type>).Current;
-				default(System.IDisposable).Dispose();
-				default(System.Collections.IEnumerator).MoveNext();
-				default(System.Collections.IEnumerator).Reset();
-				var property_33555570_385878112 = default(System.Collections.IEnumerator).Current;
-				default(GameDevWare.Dynamic.Expressions.TypeNameUtils.TypeNestingEnumerator).MoveNext();
-				default(GameDevWare.Dynamic.Expressions.TypeNameUtils.TypeNestingEnumerator).Reset();
-				default(GameDevWare.Dynamic.Expressions.TypeNameUtils.TypeNestingEnumerator).GetEnumerator();
-				default(GameDevWare.Dynamic.Expressions.TypeNameUtils.TypeNestingEnumerator).Dispose();
-				var property_33554561_385876081 = default(GameDevWare.Dynamic.Expressions.TypeNameUtils.TypeNestingEnumerator).Current;
-				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.Invoker).Invoke(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(GameDevWare.Dynamic.Expressions.Execution.ExecutionNode[]));
-				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.Invoker).BeginInvoke(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(GameDevWare.Dynamic.Expressions.Execution.ExecutionNode[]), default(System.AsyncCallback), default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.Invoker).EndInvoke(default(System.IAsyncResult));
+				Parser.Parse(default(IEnumerable<Token>));
+				default(ParseTreeNode).ToString();
+				var property_33554520_385876071 = default(ParseTreeNode).Count;
+				var field_33554520_67109144 = default(ParseTreeNode).Type;
+				var field_33554520_67109145 = default(ParseTreeNode).Token;
+				var field_33554520_67109146 = default(ParseTreeNode).Value;
+				default(IEnumerable<ParseTreeNode>).GetEnumerator();
+				StringUtils.UnescapeAndUnquote(default(String));
+				SyntaxTreeBuilder.ToSyntaxTree(default(ParseTreeNode),
+					default(Boolean), default(String));
+				default(Token).ToString();
+				var property_33554523_385876072 = default(Token).IsValid;
+				var property_33554523_385876073 = default(Token).Position;
+				var field_33554523_67109148 = default(Token).Type;
+				var field_33554523_67109149 = default(Token).Value;
+				var field_33554523_67109150 = default(Token).LineNumber;
+				var field_33554523_67109151 = default(Token).ColumnNumber;
+				var field_33554523_67109152 = default(Token).TokenLength;
+				var property_33554524_385876074 = default(TokenAttribute).Value;
+				Tokenizer.Tokenize(default(String));
+				var field_33554526_67109159 = TokenType.None;
+				var field_33554526_67109160 = TokenType.Number;
+				var field_33554526_67109161 = TokenType.Literal;
+				var field_33554526_67109162 = TokenType.Identifier;
+				var field_33554526_67109163 = TokenType.Add;
+				var field_33554526_67109164 = TokenType.Plus;
+				var field_33554526_67109165 = TokenType.Subtract;
+				var field_33554526_67109166 = TokenType.Minus;
+				var field_33554526_67109167 = TokenType.Division;
+				var field_33554526_67109168 = TokenType.Multiplication;
+				var field_33554526_67109169 = TokenType.Power;
+				var field_33554526_67109170 = TokenType.Modulo;
+				var field_33554526_67109171 = TokenType.And;
+				var field_33554526_67109172 = TokenType.Or;
+				var field_33554526_67109173 = TokenType.Xor;
+				var field_33554526_67109174 = TokenType.Complement;
+				var field_33554526_67109175 = TokenType.LeftShift;
+				var field_33554526_67109176 = TokenType.RightShift;
+				var field_33554526_67109177 = TokenType.AndAlso;
+				var field_33554526_67109178 = TokenType.OrElse;
+				var field_33554526_67109179 = TokenType.Not;
+				var field_33554526_67109180 = TokenType.GreaterThan;
+				var field_33554526_67109181 = TokenType.GreaterThanOrEquals;
+				var field_33554526_67109182 = TokenType.LesserThan;
+				var field_33554526_67109183 = TokenType.LesserThanOrEquals;
+				var field_33554526_67109184 = TokenType.EqualsTo;
+				var field_33554526_67109185 = TokenType.NotEqualsTo;
+				var field_33554526_67109186 = TokenType.Conditional;
+				var field_33554526_67109187 = TokenType.Is;
+				var field_33554526_67109188 = TokenType.As;
+				var field_33554526_67109189 = TokenType.Colon;
+				var field_33554526_67109190 = TokenType.Comma;
+				var field_33554526_67109191 = TokenType.Coalesce;
+				var field_33554526_67109192 = TokenType.New;
+				var field_33554526_67109193 = TokenType.Resolve;
+				var field_33554526_67109194 = TokenType.NullResolve;
+				var field_33554526_67109195 = TokenType.LeftParentheses;
+				var field_33554526_67109196 = TokenType.RightParentheses;
+				var field_33554526_67109197 = TokenType.LeftBracket;
+				var field_33554526_67109198 = TokenType.NullIndex;
+				var field_33554526_67109199 = TokenType.RightBracket;
+				var field_33554526_67109200 = TokenType.Lambda;
+				var field_33554526_67109201 = TokenType.Call;
+				var field_33554526_67109202 = TokenType.Arguments;
+				var field_33554526_67109203 = TokenType.Convert;
+				var field_33554526_67109204 = TokenType.Typeof;
+				var field_33554526_67109205 = TokenType.Default;
+				var field_33554526_67109206 = TokenType.Group;
+				var field_33554526_67109207 = TokenType.CheckedScope;
+				var field_33554526_67109208 = TokenType.UncheckedScope;
+				var param_33554527_100663987_3 = default(Expression);
+				var param_33554527_100663987_4 = default(Exception);
+				AnyBinder.TryBindInNewScope(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554527_100663987_3, out param_33554527_100663987_4);
+				var param_33554527_100663988_3 = default(Expression);
+				var param_33554527_100663988_4 = default(Exception);
+				AnyBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554527_100663988_3, out param_33554527_100663988_4);
+				var param_33554528_100663989_3 = default(Expression);
+				var param_33554528_100663989_4 = default(Exception);
+				BinaryBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554528_100663989_3, out param_33554528_100663989_4);
+				var param_33554529_100663995_1 = default(Type);
+				default(BindingContext).TryResolveType(default(Object), out param_33554529_100663995_1);
+				var param_33554529_100663996_1 = default(MemberDescription);
+				default(BindingContext).TryResolveMember(default(Object), out param_33554529_100663996_1);
+				var param_33554529_100663997_1 = default(Expression);
+				default(BindingContext).TryGetParameter(default(String), out param_33554529_100663997_1);
+				default(BindingContext).IsKnownType(default(Type));
+				var param_33554529_100663999_1 = default(Expressions.TypeReference);
+				BindingContext.TryGetTypeReference(default(Object), out param_33554529_100663999_1);
+				var param_33554529_100664000_1 = default(Expressions.TypeReference);
+				BindingContext.TryGetMethodReference(default(Object), out param_33554529_100664000_1);
+				default(BindingContext).CreateNestedContext();
+				default(BindingContext).CreateNestedContext(
+					default(ReadOnlyCollection<ParameterExpression>), default(Type));
+				default(BindingContext).RegisterNullPropagationTarget(default(Expression));
+				var param_33554529_100664004_0 = default(Expression);
+				default(BindingContext).CompleteNullPropagation(ref param_33554529_100664004_0);
+				var property_33554529_385876075 = default(BindingContext).Parameters;
+				var property_33554529_385876076 = default(BindingContext).ResultType;
+				var property_33554529_385876077 = default(BindingContext).Global;
+				var param_33554530_100664006_3 = default(Expression);
+				var param_33554530_100664006_4 = default(Exception);
+				CallBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554530_100664006_3, out param_33554530_100664006_4);
+				var param_33554531_100664008_3 = default(Expression);
+				var param_33554531_100664008_4 = default(Exception);
+				ConditionBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554531_100664008_3, out param_33554531_100664008_4);
+				var param_33554532_100664009_3 = default(Expression);
+				var param_33554532_100664009_4 = default(Exception);
+				ConstantBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554532_100664009_3, out param_33554532_100664009_4);
+				ConstantBinder.ChangeType(default(Object), default(Type));
+				var param_33554533_100664011_3 = default(Expression);
+				var param_33554533_100664011_4 = default(Exception);
+				DefaultBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554533_100664011_3, out param_33554533_100664011_4);
+				var param_33554534_100664012_3 = default(Expression);
+				var param_33554534_100664012_4 = default(Exception);
+				GroupBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554534_100664012_3, out param_33554534_100664012_4);
+				var param_33554535_100664013_3 = default(Expression);
+				var param_33554535_100664013_4 = default(Exception);
+				IndexBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554535_100664013_3, out param_33554535_100664013_4);
+				var param_33554536_100664014_3 = default(Expression);
+				var param_33554536_100664014_4 = default(Exception);
+				InvokeBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554536_100664014_3, out param_33554536_100664014_4);
+				var param_33554536_100664015_3 = default(Expression);
+				var param_33554536_100664015_4 = default(Exception);
+				InvokeBinder.TryBindMethodCall(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554536_100664015_3, out param_33554536_100664015_4);
+				var param_33554537_100664016_3 = default(Expression);
+				var param_33554537_100664016_4 = default(Exception);
+				LambdaBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554537_100664016_3, out param_33554537_100664016_4);
+				LambdaBinder.ExtractArgumentNames(default(Expressions.SyntaxTreeNode));
+				var param_33554538_100664018_3 = default(Expression);
+				var param_33554538_100664018_4 = default(Exception);
+				ListInitBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554538_100664018_3, out param_33554538_100664018_4);
+				var param_33554539_100664021_3 = default(Expression);
+				var param_33554539_100664021_4 = default(Exception);
+				MemberBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554539_100664021_3, out param_33554539_100664021_4);
+				default(MemberDescription).GetParameter(default(Int32));
+				default(MemberDescription).GetParameterType(default(Int32));
+				default(MemberDescription).GetParameterName(default(Int32));
+				default(MemberDescription).GetParametersCount();
+				default(MemberDescription).MakeGenericMethod(default(Type[]));
+				var param_33554540_100664031_1 = default(Expression);
+				default(MemberDescription).TryMakeAccessor(default(Expression),
+					out param_33554540_100664031_1);
+				var param_33554540_100664032_1 = default(Expression);
+				default(MemberDescription).TryMakeConversion(default(Expression),
+					out param_33554540_100664032_1, default(Boolean));
+				var param_33554540_100664033_3 = default(Expression);
+				var param_33554540_100664033_4 = default(Single);
+				default(MemberDescription).TryMakeCall(default(Expression),
+					default(Expressions.ArgumentsTree), default(BindingContext),
+					out param_33554540_100664033_3, out param_33554540_100664033_4);
+				default(MemberDescription).Equals(default(Object));
+				default(MemberDescription).GetHashCode();
+				default(MemberDescription).Equals(default(MemberInfo));
+				default(MemberDescription).Equals(default(MemberDescription));
+				default(MemberDescription).CompareTo(default(MemberDescription));
+				default(MemberDescription).ToString();
+				var field_33554540_67109224 = default(MemberDescription).Name;
+				var field_33554540_67109225 = default(MemberDescription).ResultType;
+				var field_33554540_67109226 = default(MemberDescription).DeclaringType;
+				var field_33554540_67109227 = default(MemberDescription).IsMethod;
+				var field_33554540_67109228 = default(MemberDescription).IsConstructor;
+				var field_33554540_67109229 = default(MemberDescription).IsPropertyOrField;
+				var field_33554540_67109230 = default(MemberDescription).IsStatic;
+				var field_33554540_67109231 = default(MemberDescription).IsImplicitOperator;
+				var field_33554540_67109232 = default(MemberDescription).GenericArguments;
+				var field_33554540_67109233 = default(MemberDescription).GenericArgumentsCount;
+				var field_33554540_67109234 = default(MemberDescription).ConstantValueExpression;
+				var field_33554540_67109235 = default(MemberDescription).GetAccessor;
+				var field_33554540_67109215 = MemberDescription.QUALITY_EXACT_MATCH;
+				var field_33554540_67109216 = MemberDescription.QUALITY_INCOMPATIBLE;
+				default(IEquatable<MemberDescription>).Equals(
+					default(MemberDescription));
+				default(IEquatable<MemberInfo>).Equals(default(MemberInfo));
+				default(IComparable<MemberDescription>).CompareTo(
+					default(MemberDescription));
+				var param_33554541_100664046_3 = default(Expression);
+				var param_33554541_100664046_4 = default(Exception);
+				MemberInitBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554541_100664046_3, out param_33554541_100664046_4);
+				var param_33554542_100664049_3 = default(Expression);
+				var param_33554542_100664049_4 = default(Exception);
+				NewArrayBoundsBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554542_100664049_3, out param_33554542_100664049_4);
+				var param_33554543_100664050_3 = default(Expression);
+				var param_33554543_100664050_4 = default(Exception);
+				NewArrayInitBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554543_100664050_3, out param_33554543_100664050_4);
+				var param_33554544_100664051_3 = default(Expression);
+				var param_33554544_100664051_4 = default(Exception);
+				NewBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554544_100664051_3, out param_33554544_100664051_4);
+				NumberUtils.IsNumber(default(Type));
+				NumberUtils.IsNumber(default(TypeCode));
+				NumberUtils.IsSignedInteger(default(Type));
+				NumberUtils.IsSignedInteger(default(TypeCode));
+				NumberUtils.IsUnsignedInteger(default(Type));
+				NumberUtils.IsUnsignedInteger(default(TypeCode));
+				var param_33554546_100664061_3 = default(Expression);
+				var param_33554546_100664061_4 = default(Exception);
+				ParameterBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554546_100664061_3, out param_33554546_100664061_4);
+				var param_33554547_100664062_3 = default(Expression);
+				var param_33554547_100664062_4 = default(Exception);
+				QuoteBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554547_100664062_3, out param_33554547_100664062_4);
+				var param_33554548_100664063_3 = default(Expression);
+				var param_33554548_100664063_4 = default(Exception);
+				TypeBinaryBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554548_100664063_3, out param_33554548_100664063_4);
+				var param_33554549_100664066_1 = default(TypeDescription);
+				default(TypeCache).TryGetValue(default(Type), out param_33554549_100664066_1);
+				var param_33554549_100664067_1 = default(TypeDescription);
+				default(TypeCache).TryAdd(default(Type), ref param_33554549_100664067_1);
+				default(TypeCache).Add(default(Type),
+					default(TypeDescription));
+				default(TypeCache).GetOrCreateTypeDescription(default(Type));
+				default(TypeCache).Merge(default(TypeCache));
+				default(TypeCache).ToString();
+				var property_33554549_385876078 = default(TypeCache).Values;
+				default(TypeConversion).Expand(default(MemberDescription),
+					default(MemberDescription));
+				var param_33554550_100664075_2 = default(TypeConversion);
+				TypeConversion.TryGetTypeConversion(default(Type), default(Type),
+					out param_33554550_100664075_2);
+				default(TypeConversion).ToString();
+				var field_33554550_67109250 = default(TypeConversion).Quality;
+				var field_33554550_67109251 = default(TypeConversion).IsNatural;
+				var field_33554550_67109252 = default(TypeConversion).Implicit;
+				var field_33554550_67109253 = default(TypeConversion).Explicit;
+				var field_33554550_67109241 = TypeConversion.QUALITY_SAME_TYPE;
+				var field_33554550_67109242 = TypeConversion.QUALITY_INHERITANCE_HIERARCHY;
+				var field_33554550_67109243 = TypeConversion.QUALITY_IN_PLACE_CONVERSION;
+				var field_33554550_67109244 = TypeConversion.QUALITY_IMPLICIT_CONVERSION;
+				var field_33554550_67109245 = TypeConversion.QUALITY_NUMBER_EXPANSION;
+				var field_33554550_67109246 = TypeConversion.QUALITY_PRECISION_CONVERSION;
+				var field_33554550_67109247 = TypeConversion.QUALITY_EXPLICIT_CONVERSION;
+				var field_33554550_67109248 = TypeConversion.QUALITY_NO_CONVERSION;
+				default(TypeDescription).GetMembers(default(String));
+				default(TypeDescription).GetNullableType();
+				default(TypeDescription).IsAssignableFrom(default(Type));
+				default(TypeDescription).Equals(default(Object));
+				default(TypeDescription).GetHashCode();
+				default(TypeDescription).CompareTo(default(TypeDescription));
+				default(TypeDescription).CompareTo(default(Object));
+				default(TypeDescription).Equals(default(TypeDescription));
+				default(TypeDescription).Equals(default(Type));
+				TypeDescription.GetTypeDescription(default(Type));
+				default(TypeDescription).ToString();
+				var field_33554551_67109262 = default(TypeDescription).MembersByName;
+				var field_33554551_67109263 = default(TypeDescription).ImplicitConvertTo;
+				var field_33554551_67109264 = default(TypeDescription).ImplicitConvertFrom;
+				var field_33554551_67109265 = default(TypeDescription).ExplicitConvertTo;
+				var field_33554551_67109266 = default(TypeDescription).ExplicitConvertFrom;
+				var field_33554551_67109267 = default(TypeDescription).Conversions;
+				var field_33554551_67109268 = default(TypeDescription).Addition;
+				var field_33554551_67109269 = default(TypeDescription).Division;
+				var field_33554551_67109270 = default(TypeDescription).Equality;
+				var field_33554551_67109271 = default(TypeDescription).GreaterThan;
+				var field_33554551_67109272 = default(TypeDescription).GreaterThanOrEqual;
+				var field_33554551_67109273 = default(TypeDescription).Inequality;
+				var field_33554551_67109274 = default(TypeDescription).LessThan;
+				var field_33554551_67109275 = default(TypeDescription).LessThanOrEqual;
+				var field_33554551_67109276 = default(TypeDescription).Modulus;
+				var field_33554551_67109277 = default(TypeDescription).Multiply;
+				var field_33554551_67109278 = default(TypeDescription).Subtraction;
+				var field_33554551_67109279 = default(TypeDescription).UnaryNegation;
+				var field_33554551_67109280 = default(TypeDescription).UnaryPlus;
+				var field_33554551_67109281 = default(TypeDescription).BitwiseAnd;
+				var field_33554551_67109282 = default(TypeDescription).BitwiseOr;
+				var field_33554551_67109283 = default(TypeDescription).Indexers;
+				var field_33554551_67109284 = default(TypeDescription).Constructors;
+				var field_33554551_67109285 = default(TypeDescription).Name;
+				var field_33554551_67109286 = default(TypeDescription).TypeCode;
+				var field_33554551_67109287 = default(TypeDescription).DefaultExpression;
+				var field_33554551_67109288 = default(TypeDescription).IsNullable;
+				var field_33554551_67109289 = default(TypeDescription).CanBeNull;
+				var field_33554551_67109290 = default(TypeDescription).IsEnum;
+				var field_33554551_67109291 = default(TypeDescription).IsVoid;
+				var field_33554551_67109292 = default(TypeDescription).IsNumber;
+				var field_33554551_67109293 = default(TypeDescription).IsDelegate;
+				var field_33554551_67109294 = default(TypeDescription).IsInterface;
+				var field_33554551_67109295 = default(TypeDescription).IsValueType;
+				var field_33554551_67109296 = default(TypeDescription).HasGenericParameters;
+				var field_33554551_67109297 = default(TypeDescription).BaseType;
+				var field_33554551_67109298 = default(TypeDescription).UnderlyingType;
+				var field_33554551_67109299 = default(TypeDescription).BaseTypes;
+				var field_33554551_67109300 = default(TypeDescription).Interfaces;
+				var field_33554551_67109301 = default(TypeDescription).GenericArguments;
+				var field_33554551_67109255 = TypeDescription.EmptyMembers;
+				var field_33554551_67109256 = TypeDescription.EmptyTypes;
+				var field_33554551_67109257 = TypeDescription.ObjectType;
+				var field_33554551_67109258 = TypeDescription.Int32Type;
+				default(IComparable<TypeDescription>).CompareTo(
+					default(TypeDescription));
+				default(IEquatable<TypeDescription>).Equals(
+					default(TypeDescription));
+				default(IEquatable<Type>).Equals(default(Type));
+				var param_33554552_100664106_3 = default(Expression);
+				var param_33554552_100664106_4 = default(Exception);
+				TypeOfBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554552_100664106_3, out param_33554552_100664106_4);
+				default(TypeTuple).Equals(default(TypeTuple));
+				default(TypeTuple).GetHashCode();
+				default(TypeTuple).Equals(default(Object));
+				default(TypeTuple).ToString();
+				var field_33554553_67109303 = default(TypeTuple).Types;
+				default(IEquatable<TypeTuple>).Equals(default(TypeTuple));
+				default(TypeTuple2).Equals(default(TypeTuple2));
+				default(TypeTuple2).GetHashCode();
+				default(TypeTuple2).Equals(default(Object));
+				default(TypeTuple2).ToString();
+				var field_33554554_67109305 = default(TypeTuple2).Type1;
+				var field_33554554_67109306 = default(TypeTuple2).Type2;
+				default(IEquatable<TypeTuple2>).Equals(default(TypeTuple2));
+				var param_33554555_100664117_3 = default(Expression);
+				var param_33554555_100664117_4 = default(Exception);
+				UnaryBinder.TryBind(default(Expressions.SyntaxTreeNode),
+					default(BindingContext), default(TypeDescription),
+					out param_33554555_100664117_3, out param_33554555_100664117_4);
+				default(IEnumerable<Type>).GetEnumerator();
+				var property_570034569_385878227 = default(IEnumerator<Type>).Current;
+				default(IDisposable).Dispose();
+				default(IEnumerator).MoveNext();
+				default(IEnumerator).Reset();
+				var property_33555570_385878112 = default(IEnumerator).Current;
+				default(TypeNameUtils.TypeNestingEnumerator).MoveNext();
+				default(TypeNameUtils.TypeNestingEnumerator).Reset();
+				default(TypeNameUtils.TypeNestingEnumerator).GetEnumerator();
+				default(TypeNameUtils.TypeNestingEnumerator).Dispose();
+				var property_33554561_385876081 = default(TypeNameUtils.TypeNestingEnumerator).Current;
+				default(FastCall.Invoker).Invoke(default(Closure),
+					default(ExecutionNode[]));
+				default(FastCall.Invoker).BeginInvoke(default(Closure),
+					default(ExecutionNode[]), default(AsyncCallback), default(Object));
+				default(FastCall.Invoker).EndInvoke(default(IAsyncResult));
 #if !NETSTANDARD
 				default(System.ICloneable).Clone();
 #endif
-				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.InvokeOperationCreator).Invoke(default(System.Reflection.MethodInfo), default(System.Reflection.ParameterInfo[]));
-				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.InvokeOperationCreator).BeginInvoke(default(System.Reflection.MethodInfo), default(System.Reflection.ParameterInfo[]), default(System.AsyncCallback), default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Execution.FastCall.InvokeOperationCreator).EndInvoke(default(System.IAsyncResult));
-				default(GameDevWare.Dynamic.Expressions.Execution.Intrinsic.BinaryOperation).Invoke(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Execution.Intrinsic.BinaryOperation).BeginInvoke(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object), default(System.AsyncCallback), default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Execution.Intrinsic.BinaryOperation).EndInvoke(default(System.IAsyncResult));
-				default(GameDevWare.Dynamic.Expressions.Execution.Intrinsic.UnaryOperation).Invoke(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Execution.Intrinsic.UnaryOperation).BeginInvoke(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.AsyncCallback), default(System.Object));
-				default(GameDevWare.Dynamic.Expressions.Execution.Intrinsic.UnaryOperation).EndInvoke(default(System.IAsyncResult));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToBoolean(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Object.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.Not(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.Or(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.And(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.AndAlso(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.OrElse(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Boolean.ToBoolean(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Not(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.And(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.LeftShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.RightShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Or(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Byte.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Not(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.And(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.LeftShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.RightShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Or(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_SByte.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Not(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.And(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.LeftShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.RightShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Or(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int16.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Not(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.And(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.LeftShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.RightShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Or(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt16.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Not(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.And(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.LeftShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.RightShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Or(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int32.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Not(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.And(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.LeftShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.RightShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Or(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt32.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Not(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.And(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.LeftShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.RightShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Or(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Int64.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Not(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.And(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ExclusiveOr(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.LeftShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.RightShift(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Or(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_UInt64.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Single.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Double.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.Default(default(GameDevWare.Dynamic.Expressions.Execution.Closure));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.Negate(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.NegateChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.UnaryPlus(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.Add(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.AddChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.Divide(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.Equal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.GreaterThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.GreaterThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.Power(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.LessThan(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.LessThanOrEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.Modulo(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.Multiply(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.MultiplyChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.NotEqual(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.Subtract(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.SubtractChecked(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToObject(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToSByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToByte(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToUInt16(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToUInt32(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToUInt64(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToSingle(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToDouble(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				GameDevWare.Dynamic.Expressions.Execution.Intrinsic.op_Decimal.ToDecimal(default(GameDevWare.Dynamic.Expressions.Execution.Closure), default(System.Object), default(System.Object));
-				var field_33554606_67109383 = default(GameDevWare.Dynamic.Expressions.Execution.MemberAssignmentsNode.PreparedMemberAssignment).Member;
-				var field_33554606_67109384 = default(GameDevWare.Dynamic.Expressions.Execution.MemberAssignmentsNode.PreparedMemberAssignment).ValueNode;
-				var field_33554609_67109392 = default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.PreparedListBinding).Member;
-				var field_33554609_67109393 = default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.PreparedListBinding).AddMethod;
-				var field_33554609_67109394 = default(GameDevWare.Dynamic.Expressions.Execution.MemberListBindingsNode.PreparedListBinding).AddMethodArguments;
-				var field_33554611_67109399 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).Member;
-				var field_33554611_67109400 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).MemberAssignments;
-				var field_33554611_67109401 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).MemberListBindings;
-				var field_33554611_67109402 = default(GameDevWare.Dynamic.Expressions.Execution.MemberMemberBindingsNode.PreparedMemberBinding).MemberMemberBindings;
-				var param_33554616_100664686_0 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes);
-				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Add(ref param_33554616_100664686_0, default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
-				var param_33554616_100664687_0 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes);
-				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Insert(ref param_33554616_100664687_0, default(System.Int32), default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
-				var param_33554616_100664688_0 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes);
-				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.RemoveAt(ref param_33554616_100664688_0, default(System.Int32));
-				var param_33554616_100664689_0 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes);
-				GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes.Remove(ref param_33554616_100664689_0, default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode));
-				default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes).ToString();
-				var field_33554616_67109414 = default(GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode.ParseTreeNodes).Count;
-				var property_33449497_385878227 = default(System.Collections.Generic.IEnumerator<GameDevWare.Dynamic.Expressions.CSharp.ParseTreeNode>).Current;
-				var field_33554618_67109424 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.None;
-				var field_33554618_67109425 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.Aliases;
-				var field_33554618_67109426 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.ShortNames;
-				var field_33554618_67109427 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.Arrays;
-				var field_33554618_67109428 = GameDevWare.Dynamic.Expressions.CSharp.SyntaxTreeBuilder.TypeNameOptions.All;
-				default(System.Collections.Generic.IEnumerable<GameDevWare.Dynamic.Expressions.CSharp.Token>).GetEnumerator();
-				var property_67217372_385878227 = default(System.Collections.Generic.IEnumerator<GameDevWare.Dynamic.Expressions.CSharp.Token>).Current;
+				default(FastCall.InvokeOperationCreator).Invoke(default(MethodInfo),
+					default(ParameterInfo[]));
+				default(FastCall.InvokeOperationCreator).BeginInvoke(default(MethodInfo),
+					default(ParameterInfo[]), default(AsyncCallback), default(Object));
+				default(FastCall.InvokeOperationCreator).EndInvoke(default(IAsyncResult));
+				default(Intrinsic.BinaryOperation).Invoke(default(Closure),
+					default(Object), default(Object));
+				default(Intrinsic.BinaryOperation).BeginInvoke(default(Closure),
+					default(Object), default(Object), default(AsyncCallback), default(Object));
+				default(Intrinsic.BinaryOperation).EndInvoke(default(IAsyncResult));
+				default(Intrinsic.UnaryOperation).Invoke(default(Closure),
+					default(Object));
+				default(Intrinsic.UnaryOperation).BeginInvoke(default(Closure),
+					default(Object), default(AsyncCallback), default(Object));
+				default(Intrinsic.UnaryOperation).EndInvoke(default(IAsyncResult));
+				Intrinsic.op_Object.Default(default(Closure));
+				Intrinsic.op_Object.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToBoolean(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Object.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Boolean.Default(default(Closure));
+				Intrinsic.op_Boolean.Not(default(Closure),
+					default(Object));
+				Intrinsic.op_Boolean.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Boolean.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Boolean.Or(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Boolean.And(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Boolean.ExclusiveOr(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Boolean.AndAlso(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Boolean.OrElse(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Boolean.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Boolean.ToBoolean(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.Default(default(Closure));
+				Intrinsic.op_Byte.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_Byte.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_Byte.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_Byte.Not(default(Closure), default(Object));
+				Intrinsic.op_Byte.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Byte.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.And(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Byte.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.Equal(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Byte.ExclusiveOr(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.LeftShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.Power(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Byte.RightShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.Or(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Byte.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Byte.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.Default(default(Closure));
+				Intrinsic.op_SByte.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_SByte.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_SByte.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_SByte.Not(default(Closure), default(Object));
+				Intrinsic.op_SByte.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_SByte.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.And(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_SByte.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ExclusiveOr(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.LeftShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.RightShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.Or(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_SByte.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_SByte.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.Default(default(Closure));
+				Intrinsic.op_Int16.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_Int16.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_Int16.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_Int16.Not(default(Closure), default(Object));
+				Intrinsic.op_Int16.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Int16.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.And(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Int16.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ExclusiveOr(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.LeftShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.RightShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.Or(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Int16.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int16.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.Default(default(Closure));
+				Intrinsic.op_UInt16.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt16.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt16.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt16.Not(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt16.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_UInt16.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.And(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_UInt16.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ExclusiveOr(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.LeftShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.RightShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.Or(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_UInt16.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt16.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.Default(default(Closure));
+				Intrinsic.op_Int32.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_Int32.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_Int32.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_Int32.Not(default(Closure), default(Object));
+				Intrinsic.op_Int32.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Int32.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.And(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Int32.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ExclusiveOr(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.LeftShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.RightShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.Or(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Int32.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int32.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.Default(default(Closure));
+				Intrinsic.op_UInt32.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt32.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt32.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt32.Not(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt32.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_UInt32.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.And(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_UInt32.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ExclusiveOr(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.LeftShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.RightShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.Or(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_UInt32.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt32.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.Default(default(Closure));
+				Intrinsic.op_Int64.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_Int64.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_Int64.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_Int64.Not(default(Closure), default(Object));
+				Intrinsic.op_Int64.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Int64.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.And(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Int64.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ExclusiveOr(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.LeftShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.RightShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.Or(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Int64.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Int64.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.Default(default(Closure));
+				Intrinsic.op_UInt64.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt64.Not(default(Closure),
+					default(Object));
+				Intrinsic.op_UInt64.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_UInt64.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.And(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_UInt64.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ExclusiveOr(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.LeftShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.RightShift(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.Or(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_UInt64.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_UInt64.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.Default(default(Closure));
+				Intrinsic.op_Single.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_Single.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_Single.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_Single.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Single.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Single.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.Default(default(Closure));
+				Intrinsic.op_Double.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_Double.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_Double.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_Double.Add(default(Closure), default(Object),
+					default(Object));
+				Intrinsic.op_Double.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Double.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.Default(default(Closure));
+				Intrinsic.op_Decimal.Negate(default(Closure),
+					default(Object));
+				Intrinsic.op_Decimal.NegateChecked(default(Closure),
+					default(Object));
+				Intrinsic.op_Decimal.UnaryPlus(default(Closure),
+					default(Object));
+				Intrinsic.op_Decimal.Add(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.AddChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.Divide(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.Equal(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.GreaterThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.GreaterThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.Power(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.LessThan(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.LessThanOrEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.Modulo(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.Multiply(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.MultiplyChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.NotEqual(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.Subtract(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.SubtractChecked(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToObject(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToSByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToByte(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToUInt16(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToUInt32(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToUInt64(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToSingle(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToDouble(default(Closure),
+					default(Object), default(Object));
+				Intrinsic.op_Decimal.ToDecimal(default(Closure),
+					default(Object), default(Object));
+				var field_33554606_67109383 = default(MemberAssignmentsNode.PreparedMemberAssignment).Member;
+				var field_33554606_67109384 = default(MemberAssignmentsNode.PreparedMemberAssignment).ValueNode;
+				var field_33554609_67109392 = default(MemberListBindingsNode.PreparedListBinding).Member;
+				var field_33554609_67109393 = default(MemberListBindingsNode.PreparedListBinding).AddMethod;
+				var field_33554609_67109394 = default(MemberListBindingsNode.PreparedListBinding).AddMethodArguments;
+				var field_33554611_67109399 = default(MemberMemberBindingsNode.PreparedMemberBinding).Member;
+				var field_33554611_67109400 = default(MemberMemberBindingsNode.PreparedMemberBinding).MemberAssignments;
+				var field_33554611_67109401 = default(MemberMemberBindingsNode.PreparedMemberBinding).MemberListBindings;
+				var field_33554611_67109402 = default(MemberMemberBindingsNode.PreparedMemberBinding).MemberMemberBindings;
+				var param_33554616_100664686_0 = default(ParseTreeNode.ParseTreeNodes);
+				ParseTreeNode.ParseTreeNodes.Add(ref param_33554616_100664686_0,
+					default(ParseTreeNode));
+				var param_33554616_100664687_0 = default(ParseTreeNode.ParseTreeNodes);
+				ParseTreeNode.ParseTreeNodes.Insert(ref param_33554616_100664687_0, default(Int32),
+					default(ParseTreeNode));
+				var param_33554616_100664688_0 = default(ParseTreeNode.ParseTreeNodes);
+				ParseTreeNode.ParseTreeNodes.RemoveAt(ref param_33554616_100664688_0, default(Int32));
+				var param_33554616_100664689_0 = default(ParseTreeNode.ParseTreeNodes);
+				ParseTreeNode.ParseTreeNodes.Remove(ref param_33554616_100664689_0,
+					default(ParseTreeNode));
+				default(ParseTreeNode.ParseTreeNodes).ToString();
+				var field_33554616_67109414 = default(ParseTreeNode.ParseTreeNodes).Count;
+				var property_33449497_385878227 = default(IEnumerator<ParseTreeNode>).Current;
+				var field_33554618_67109424 = SyntaxTreeBuilder.TypeNameOptions.None;
+				var field_33554618_67109425 = SyntaxTreeBuilder.TypeNameOptions.Aliases;
+				var field_33554618_67109426 = SyntaxTreeBuilder.TypeNameOptions.ShortNames;
+				var field_33554618_67109427 = SyntaxTreeBuilder.TypeNameOptions.Arrays;
+				var field_33554618_67109428 = SyntaxTreeBuilder.TypeNameOptions.All;
+				default(IEnumerable<Token>).GetEnumerator();
+				var property_67217372_385878227 = default(IEnumerator<Token>).Current;
 			}
 		}
 	}

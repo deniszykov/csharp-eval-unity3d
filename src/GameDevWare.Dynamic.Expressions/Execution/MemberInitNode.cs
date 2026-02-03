@@ -6,17 +6,17 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class MemberInitNode : ExecutionNode
 	{
-		private readonly MemberInitExpression memberInitExpression;
-		private readonly NewNode newNode;
-		private readonly MemberAssignmentsNode memberAssignmentNode;
 		private readonly MemberListBindingsNode listBindingNode;
+		private readonly MemberAssignmentsNode memberAssignmentNode;
+		private readonly MemberInitExpression memberInitExpression;
 		private readonly MemberMemberBindingsNode memberMemberBindingNode;
+		private readonly NewNode newNode;
 
 		public MemberInitNode(MemberInitExpression memberInitExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (memberInitExpression == null) throw new ArgumentNullException("memberInitExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (memberInitExpression == null) throw new ArgumentNullException(nameof(memberInitExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.memberInitExpression = memberInitExpression;
 
@@ -39,19 +39,19 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		{
 			var instance = closure.Unbox<object>(this.newNode.Run(closure));
 
-			if (ReferenceEquals(this.memberAssignmentNode, MemberAssignmentsNode.Empty) == false)
+			if (!ReferenceEquals(this.memberAssignmentNode, MemberAssignmentsNode.Empty))
 			{
 				closure.Locals[LOCAL_OPERAND1] = instance;
 				this.memberAssignmentNode.Run(closure);
 			}
 
-			if (ReferenceEquals(this.listBindingNode, MemberListBindingsNode.Empty) == false)
+			if (!ReferenceEquals(this.listBindingNode, MemberListBindingsNode.Empty))
 			{
 				closure.Locals[LOCAL_OPERAND1] = instance;
 				this.listBindingNode.Run(closure);
 			}
 
-			if (ReferenceEquals(this.memberMemberBindingNode, MemberMemberBindingsNode.Empty) == false)
+			if (!ReferenceEquals(this.memberMemberBindingNode, MemberMemberBindingsNode.Empty))
 			{
 				closure.Locals[LOCAL_OPERAND1] = instance;
 				this.memberMemberBindingNode.Run(closure);

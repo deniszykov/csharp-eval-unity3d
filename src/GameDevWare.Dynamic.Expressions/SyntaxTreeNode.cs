@@ -19,18 +19,44 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using GameDevWare.Dynamic.Expressions.CSharp;
+using GameDevWare.Dynamic.Expressions.Properties;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace GameDevWare.Dynamic.Expressions
 {
 	/// <summary>
-	/// Abstract syntax tree of expression
+	///     Abstract syntax tree of expression
 	/// </summary>
 	public class SyntaxTreeNode : IDictionary<string, object>, ILineInfo
 	{
 		private readonly Dictionary<string, object> innerDictionary;
 
 		/// <summary>
-		/// Creates new syntax tree from existing dictionary.
+		///     Returns collection of names of contained nodes.
+		/// </summary>
+		public ICollection<string> Keys => this.innerDictionary.Keys;
+
+		/// <summary>
+		///     Returns collection of contained nodes.
+		/// </summary>
+		public ICollection<object> Values => this.innerDictionary.Values;
+
+		/// <summary>
+		///     Returns contained node by its name;
+		/// </summary>
+		/// <param name="key">Name of contained node. Can't be null.</param>
+		/// <returns></returns>
+		public object this[string key] { get => this.innerDictionary[key]; set => throw new NotSupportedException(); }
+
+		/// <summary>
+		///     Returns count of contained nodes.
+		/// </summary>
+		public int Count => this.innerDictionary.Count;
+
+		bool ICollection<KeyValuePair<string, object>>.IsReadOnly => ((ICollection<KeyValuePair<string, object>>)this.innerDictionary).IsReadOnly;
+
+		/// <summary>
+		///     Creates new syntax tree from existing dictionary.
 		/// </summary>
 		/// <param name="node">Dictionary containing a valid syntax tree.</param>
 		public SyntaxTreeNode(IDictionary<string, object> node)
@@ -43,71 +69,88 @@ namespace GameDevWare.Dynamic.Expressions
 			var newNode = new Dictionary<string, object>(node.Count);
 			foreach (var kv in node)
 			{
-				if (kv.Value is IDictionary<string, object> && kv.Value is SyntaxTreeNode == false)
-					newNode[kv.Key] = new SyntaxTreeNode((IDictionary<string, object>)kv.Value);
+				if (kv.Value is IDictionary<string, object> syntaxNodeObj && !(syntaxNodeObj is SyntaxTreeNode))
+				{
+					newNode[kv.Key] = new SyntaxTreeNode(syntaxNodeObj);
+				}
 				else
+				{
 					newNode[kv.Key] = kv.Value;
+				}
 			}
+
 			return newNode;
 		}
 
 		/// <summary>
-		/// Tries to retrieve contained node by its name and covert it to <typeparamref name="T"/>.
+		///     Tries to retrieve contained node by its name and covert it to <typeparamref name="T" />.
 		/// </summary>
 		/// <typeparam name="T">Type of expected value.</typeparam>
 		/// <param name="key">Node name.</param>
-		/// <param name="defaultValue">Default value node node with <paramref name="key"/> doesn't exists or value can't be casted to <typeparamref name="T"/>.</param>
-		/// <returns>True is node exists and value successfully casted to <typeparamref name="T"/>, overwise false.</returns>
-		public T GetValueOrDefault<T>(string key, T defaultValue = default(T))
+		/// <param name="defaultValue">
+		///     Default value node node with <paramref name="key" /> doesn't exists or value can't be casted
+		///     to <typeparamref name="T" />.
+		/// </param>
+		/// <returns>True is node exists and value successfully casted to <typeparamref name="T" />, overwise false.</returns>
+		public T GetValueOrDefault<T>(string key, T defaultValue = default)
 		{
-			var valueObj = default(object);
 			var value = default(T);
-			if (this.TryGetValue(key, out valueObj) == false || valueObj is T == false)
+			if (!this.TryGetValue(key, out var valueObj) || !(valueObj is T typedObject))
+			{
 				value = defaultValue;
+			}
 			else
-				value = (T)valueObj;
+			{
+				value = typedObject;
+			}
 			return value;
 		}
 
 		internal string GetExpressionType(bool throwOnError)
 		{
-			var expressionTypeObj = default(object);
-			if (this.TryGetValue(Constants.EXPRESSION_TYPE_ATTRIBUTE, out expressionTypeObj) == false || expressionTypeObj is string == false)
+			if (this.TryGetValue(Constants.EXPRESSION_TYPE_ATTRIBUTE, out var expressionTypeObj) && expressionTypeObj is string expressionType)
 			{
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE, "<null>"), this);
-				else
-					return null;
+				return expressionType;
 			}
 
-			var expressionType = (string)expressionTypeObj;
-			return expressionType;
+			if (throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TYPE_ATTRIBUTE, "<null>"), this);
+			}
+
+			return null;
+
 		}
 		internal object GetTypeName(bool throwOnError)
 		{
-			var typeNameObj = default(object);
-			if (this.TryGetValue(Constants.TYPE_ATTRIBUTE, out typeNameObj) == false || (typeNameObj is string == false && typeNameObj is SyntaxTreeNode == false))
+			if (!this.TryGetValue(Constants.TYPE_ATTRIBUTE, out var typeNameObj) || (!(typeNameObj is string) && !(typeNameObj is SyntaxTreeNode)))
 			{
 				if (throwOnError)
+				{
 					throw new ExpressionParserException(
-						string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.TYPE_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
-				else
-					return null;
+						string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.TYPE_ATTRIBUTE,
+							this.GetExpressionType(false) ?? "<null>"), this);
+				}
+
+				return null;
 			}
 
 			return typeNameObj;
 		}
 		internal object GetValue(bool throwOnError)
 		{
-			var valueObj = default(object);
-			if (this.TryGetValue(Constants.VALUE_ATTRIBUTE, out valueObj) == false)
+			if (!this.TryGetValue(Constants.VALUE_ATTRIBUTE, out var valueObj))
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.VALUE_ATTRIBUTE,
-						this.GetExpressionType(throwOnError: false) ?? "<null>", this));
-				else
-					return null;
+				{
+					throw new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.VALUE_ATTRIBUTE,
+						this.GetExpressionType(false) ?? "<null>", this));
+				}
+
+				return null;
 			}
+
 			return valueObj;
 		}
 		internal SyntaxTreeNode GetExpression(bool throwOnError)
@@ -136,69 +179,84 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		internal ArgumentsTree GetArguments(bool throwOnError)
 		{
-			var argumentsObj = default(object);
-			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is SyntaxTreeNode == false)
+			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out var argumentsObj) && argumentsObj is SyntaxTreeNode syntaxTreeNode)
 			{
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
-				else
-					return ArgumentsTree.Empty;
+				var arguments = new Dictionary<string, SyntaxTreeNode>(syntaxTreeNode.Count);
+				foreach (var kv in syntaxTreeNode)
+				{
+					if (!(kv.Value is SyntaxTreeNode argument))
+					{
+						throw new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT, kv.Key), this);
+					}
+
+					arguments.Add(kv.Key, argument);
+				}
+
+				if (arguments.Count > Constants.MAX_ARGUMENTS_COUNT)
+				{
+					throw new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_TOOMANYARGUMENTS, Constants.MAX_ARGUMENTS_COUNT.ToString()),
+						this);
+				}
+
+				return new ArgumentsTree(arguments);
 			}
 
-			var arguments = new Dictionary<string, SyntaxTreeNode>(((SyntaxTreeNode)argumentsObj).Count);
-			foreach (var kv in (SyntaxTreeNode)argumentsObj)
+			if (throwOnError)
 			{
-				var argument = kv.Value as SyntaxTreeNode;
-				if (argument == null)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT, kv.Key), this);
-				arguments.Add(kv.Key, argument);
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE,
+						this.GetExpressionType(false) ?? "<null>"), this);
 			}
 
-			if (arguments.Count > Constants.MAX_ARGUMENTS_COUNT)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_TOOMANYARGUMENTS, Constants.MAX_ARGUMENTS_COUNT.ToString()), this);
-
-			return new ArgumentsTree(arguments);
+			return ArgumentsTree.Empty;
 		}
 		internal Dictionary<string, string> GetArgumentNames(bool throwOnError)
 		{
-			var argumentsObj = default(object);
-			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out argumentsObj) == false || argumentsObj == null || argumentsObj is SyntaxTreeNode == false)
+			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out var argumentsObj) && argumentsObj is SyntaxTreeNode syntaxTreeNode)
 			{
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
-				else
-					return null;
+				var arguments = new Dictionary<string, string>(syntaxTreeNode.Count);
+				foreach (var kv in syntaxTreeNode)
+				{
+					if (!(kv.Value is string argument))
+					{
+						throw new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT, kv.Key), this);
+					}
+
+					arguments.Add(kv.Key, argument);
+				}
+
+				if (arguments.Count > Constants.MAX_ARGUMENTS_COUNT)
+				{
+					throw new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_TOOMANYARGUMENTS, Constants.MAX_ARGUMENTS_COUNT.ToString()),
+						this);
+				}
+
+				return arguments;
 			}
 
-			var arguments = new Dictionary<string, string>(((SyntaxTreeNode)argumentsObj).Count);
-			foreach (var kv in (SyntaxTreeNode)argumentsObj)
+			if (throwOnError)
 			{
-				var argument = kv.Value as string;
-				if (argument == null)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT, kv.Key), this);
-				arguments.Add(kv.Key, argument);
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE,
+						this.GetExpressionType(false) ?? "<null>"), this);
 			}
 
-			if (arguments.Count > Constants.MAX_ARGUMENTS_COUNT)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_TOOMANYARGUMENTS, Constants.MAX_ARGUMENTS_COUNT.ToString()), this);
-
-			return arguments;
+			return null;
 		}
 		internal string GetMemberName(bool throwOnError)
 		{
-			var memberNameObj = default(object);
-			if ((this.TryGetValue(Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out memberNameObj) ||
-				this.TryGetValue(Constants.NAME_ATTRIBUTE, out memberNameObj)) == false ||
-				memberNameObj is string == false)
+			if (!(this.TryGetValue(Constants.PROPERTY_OR_FIELD_NAME_ATTRIBUTE, out var memberNameObj) ||
+					this.TryGetValue(Constants.NAME_ATTRIBUTE, out memberNameObj)) ||
+				!(memberNameObj is string))
 			{
 				if (throwOnError)
 				{
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
+					throw new ExpressionParserException(
+						string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.NAME_ATTRIBUTE,
+							this.GetExpressionType(false) ?? "<null>"), this);
 				}
-				else
-				{
-					return null;
-				}
+
+				return null;
 			}
 
 			var memberName = (string)memberNameObj;
@@ -206,40 +264,45 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		internal object GetName(bool throwOnError)
 		{
-			var nameObj = default(object);
-			if (this.TryGetValue(Constants.NAME_ATTRIBUTE, out nameObj) == false)
+			if (this.TryGetValue(Constants.NAME_ATTRIBUTE, out var nameObj))
 			{
-				if (throwOnError)
-				{
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.NAME_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
-				}
-				else
-				{
-					return null;
-				}
+				return nameObj;
 			}
-			return nameObj;
+
+			if (throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.NAME_ATTRIBUTE,
+						this.GetExpressionType(false) ?? "<null>"), this);
+			}
+
+			return null;
+
 		}
 		internal object GetMethodName(bool throwOnError)
 		{
-			var methodNameObj = default(object);
-			if (this.TryGetValue(Constants.METHOD_ATTRIBUTE, out methodNameObj) == false || methodNameObj == null)
+			if (this.TryGetValue(Constants.METHOD_ATTRIBUTE, out var methodNameObj) && methodNameObj != null)
 			{
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.METHOD_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
-				else
-					return null;
+				return methodNameObj;
 			}
 
-			return methodNameObj;
+			if (throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.METHOD_ATTRIBUTE,
+						this.GetExpressionType(false) ?? "<null>"), this);
+			}
+
+			return null;
+
 		}
 		internal SyntaxTreeNode GetConversion(bool throwOnError)
 		{
 			return this.GetExpression(Constants.CONVERSION_ATTRIBUTE, throwOnError);
 		}
-		internal SyntaxTreeNode GetBindings(bool throwOnError)
+		internal IEnumerable<SyntaxTreeNode> EnumerateBindings(bool throwOnError)
 		{
-			return this.GetExpression(Constants.BINDINGS_ATTRIBUTE, throwOnError);
+			return this.EnumerateOrderedSyntaxNodes(Constants.BINDINGS_ATTRIBUTE, throwOnError);
 		}
 		internal SyntaxTreeNode GetMember(bool throwOnError)
 		{
@@ -249,144 +312,246 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			return this.GetExpression(Constants.NEW_ATTRIBUTE, throwOnError);
 		}
-		internal SyntaxTreeNode GetInitializers(bool throwOnError)
+
+		internal IEnumerable<SyntaxTreeNode> EnumerateInitializers(bool throwOnError)
 		{
-			return this.GetExpression(Constants.INITIALIZERS_ATTRIBUTE, throwOnError);
+			if (this.ContainsKey(Constants.ARGUMENTS_ATTRIBUTE)) // old style initializers
+			{
+				return this.EnumerateOrderedSyntaxNodes(Constants.ARGUMENTS_ATTRIBUTE, throwOnError);
+			}
+
+			return this.EnumerateOrderedSyntaxNodes(Constants.INITIALIZERS_ATTRIBUTE, throwOnError);
 		}
+
 		internal SyntaxTreeNode GetTypeArguments(bool throwOnError)
 		{
 			return this.GetExpression(Constants.ARGUMENTS_ATTRIBUTE, throwOnError);
 		}
 		internal bool GetUseNullPropagation(bool throwOnError)
 		{
-			var useNullPropagationObj = default(object);
-			if (this.TryGetValue(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, out useNullPropagationObj) == false || useNullPropagationObj == null)
+			if (!this.TryGetValue(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, out var useNullPropagationObj) || useNullPropagationObj == null)
 			{
 				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.USE_NULL_PROPAGATION_ATTRIBUTE, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
-				else
-					return false;
+				{
+					throw new ExpressionParserException(
+						string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.USE_NULL_PROPAGATION_ATTRIBUTE,
+							this.GetExpressionType(false) ?? "<null>"), this);
+				}
+
+				return false;
 			}
+
 			var useNullPropagation = Convert.ToBoolean(useNullPropagationObj, Constants.DefaultFormatProvider);
 			return useNullPropagation;
 		}
 		private SyntaxTreeNode GetExpression(string attributeName, bool throwOnError)
 		{
-			var expressionObj = default(object);
-			if (this.TryGetValue(attributeName, out expressionObj) == false || expressionObj == null || expressionObj is SyntaxTreeNode == false)
+			if (this.TryGetValue(attributeName, out var expressionObj) && expressionObj is SyntaxTreeNode syntaxTreeNode)
 			{
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, attributeName, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
-				else
-					return null;
+				return syntaxTreeNode;
 			}
 
-			var expression = (SyntaxTreeNode)expressionObj;
-			return expression;
+			if (throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, attributeName, this.GetExpressionType(false) ?? "<null>"),
+					this);
+			}
+
+			return null;
+
+		}
+
+		internal IEnumerable<SyntaxTreeNode> EnumerateOrderedSyntaxNodes(string propertyName, bool throwOnError)
+		{
+			if (propertyName == null) throw new ArgumentNullException(nameof(propertyName));
+
+			if (this.TryGetValue(propertyName, out var initializersObj))
+			{
+				switch (initializersObj)
+				{
+					case List<object> listOfSyntaxNodes:
+					{
+						foreach (var syntaxNodeObj in listOfSyntaxNodes)
+						{
+							yield return syntaxNodeObj as SyntaxTreeNode;
+						}
+
+						yield break;
+					}
+					case IDictionary<string, object> initializersDic:
+					{
+						for (var index = 0; index < initializersDic.Count; index++)
+						{
+							initializersDic.TryGetValue(Constants.GetIndexAsString(index), out var initializerObj);
+							yield return initializerObj as SyntaxTreeNode;
+						}
+
+						yield break;
+					}
+				}
+			}
+
+			if (throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.INITIALIZERS_ATTRIBUTE, this.GetExpressionType(false) ?? "<null>"),
+					this);
+			}
 		}
 
 		internal int GetLineNumber(bool throwOnError)
 		{
-			var valueObj = default(object);
-			var value = default(int);
-			if (this.TryGetValue(Constants.EXPRESSION_LINE_NUMBER_OLD, out valueObj) == false)
-				return this.GetExpressionPosition(throwOnError).LineNumber;
+			if (!this.TryGetValue(Constants.EXPRESSION_LINE_NUMBER_OLD, out var valueObj))
+				return this.GetExpressionPositionOrDefault(throwOnError).LineNumber;
 
-			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_LINE_NUMBER_OLD, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
+			if (!int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out var value) && throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_LINE_NUMBER_OLD,
+						this.GetExpressionType(false) ?? "<null>"), this);
+			}
 
 			return value;
 		}
 		internal int GetColumnNumber(bool throwOnError)
 		{
-			var valueObj = default(object);
-			var value = default(int);
-			if (this.TryGetValue(Constants.EXPRESSION_COLUMN_NUMBER_OLD, out valueObj) == false)
-				return this.GetExpressionPosition(throwOnError).ColumnNumber;
+			if (!this.TryGetValue(Constants.EXPRESSION_COLUMN_NUMBER_OLD, out var valueObj))
+				return this.GetExpressionPositionOrDefault(throwOnError).ColumnNumber;
 
-			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_COLUMN_NUMBER_OLD, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
+			if (!int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out var value) && throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_COLUMN_NUMBER_OLD,
+						this.GetExpressionType(false) ?? "<null>"), this);
+			}
 
 			return value;
 		}
 		internal int GetTokenLength(bool throwOnError)
 		{
-			var valueObj = default(object);
-			var value = default(int);
-			if (this.TryGetValue(Constants.EXPRESSION_TOKEN_LENGTH_OLD, out valueObj) == false)
-				return this.GetExpressionPosition(throwOnError).TokenLength;
+			if (!this.TryGetValue(Constants.EXPRESSION_TOKEN_LENGTH_OLD, out var valueObj))
+				return this.GetExpressionPositionOrDefault(throwOnError).TokenLength;
 
-			if (int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out value) == false && throwOnError)
-				throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TOKEN_LENGTH_OLD, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
+			if (!int.TryParse(Convert.ToString(valueObj, Constants.DefaultFormatProvider), out var value) && throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_TOKEN_LENGTH_OLD,
+						this.GetExpressionType(false) ?? "<null>"), this);
+			}
 
 			return value;
 		}
-		internal string GetPosition(bool throwOnError)
+		internal string GetPositionOrDefault(bool throwOnError)
 		{
-			return this.GetExpressionPosition(throwOnError).ToString();
+			return this.GetExpressionPositionOrDefault(throwOnError).ToString();
 		}
-		internal ExpressionPosition GetExpressionPosition(bool throwOnError)
+		internal ExpressionPosition GetExpressionPositionOrDefault(bool throwOnError)
 		{
-			var valueObj = default(object);
-			if (this.TryGetValue(Constants.EXPRESSION_POSITION, out valueObj) == false || (valueObj is string == false && valueObj is ILineInfo == false))
+			if (this.TryGetValue(Constants.EXPRESSION_POSITION, out var valueObj) && (valueObj is string || valueObj is ILineInfo))
 			{
-				if (this.ContainsKey(Constants.EXPRESSION_LINE_NUMBER_OLD) &&
-					this.ContainsKey(Constants.EXPRESSION_COLUMN_NUMBER_OLD) &&
-					this.ContainsKey(Constants.EXPRESSION_TOKEN_LENGTH_OLD))
+				var positionString = valueObj as string;
+				if (valueObj is ILineInfo lineInfo)
 				{
-					valueObj = string.Format(
-						Constants.DefaultFormatProvider, "{0}:{1}+{2}",
-						this.GetValueOrDefault(Constants.EXPRESSION_LINE_NUMBER_OLD, "0"),
-						this.GetValueOrDefault(Constants.EXPRESSION_COLUMN_NUMBER_OLD, "0"),
-						this.GetValueOrDefault(Constants.EXPRESSION_TOKEN_LENGTH_OLD, "0")
-					);
+					return new ExpressionPosition(lineInfo.GetLineNumber(), lineInfo.GetColumnNumber(), lineInfo.GetTokenLength());
 				}
 
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_POSITION, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
-				else
-					return default(ExpressionPosition);
-			}
-
-			var lineInfo = valueObj as ILineInfo;
-			var positionString = valueObj as string;
-			if (lineInfo != null)
-				return new ExpressionPosition(lineInfo.GetLineNumber(), lineInfo.GetColumnNumber(), lineInfo.GetTokenLength());
-			else
 				return ExpressionPosition.Parse(positionString);
-		}
-		internal string GetCSharpExpression(bool throwOnError)
-		{
-			var valueObj = default(object);
-			var value = default(string);
-			if (this.TryGetValue(Constants.EXPRESSION_ORIGINAL_C_SHARP, out valueObj) == false &&
-				this.TryGetValue(Constants.EXPRESSION_ORIGINAL_ALT, out valueObj) == false &&
-				this.TryGetValue(Constants.EXPRESSION_ORIGINAL_OLD, out valueObj) == false)
-			{
-				if (throwOnError)
-					throw new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ORIGINAL_C_SHARP, this.GetExpressionType(throwOnError: false) ?? "<null>"), this);
-				else
-					// ReSharper disable once ExpressionIsAlwaysNull
-					return value;
 			}
 
-			return Convert.ToString(valueObj, Constants.DefaultFormatProvider);
+			if (this.ContainsKey(Constants.EXPRESSION_LINE_NUMBER_OLD) &&
+				this.ContainsKey(Constants.EXPRESSION_COLUMN_NUMBER_OLD) &&
+				this.ContainsKey(Constants.EXPRESSION_TOKEN_LENGTH_OLD))
+			{
+				valueObj = string.Format(
+					Constants.DefaultFormatProvider, "{0}:{1}+{2}",
+					this.GetValueOrDefault(Constants.EXPRESSION_LINE_NUMBER_OLD, "0"),
+					this.GetValueOrDefault(Constants.EXPRESSION_COLUMN_NUMBER_OLD, "0"),
+					this.GetValueOrDefault(Constants.EXPRESSION_TOKEN_LENGTH_OLD, "0")
+				);
+			}
+
+			if (throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_POSITION,
+						this.GetExpressionType(false) ?? "<null>"), this);
+			}
+
+			return default;
+		}
+		internal string GetCSharpExpressionOrNull(bool throwOnError)
+		{
+			if (this.TryGetValue(Constants.EXPRESSION_ORIGINAL_C_SHARP, out var valueObj) ||
+				this.TryGetValue(Constants.EXPRESSION_ORIGINAL_ALT, out valueObj) ||
+				this.TryGetValue(Constants.EXPRESSION_ORIGINAL_OLD, out valueObj))
+			{
+				return Convert.ToString(valueObj, Constants.DefaultFormatProvider);
+			}
+
+			if (throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.EXPRESSION_ORIGINAL_C_SHARP,
+						this.GetExpressionType(false) ?? "<null>"), this);
+			}
+
+			// ReSharper disable once ExpressionIsAlwaysNull
+			return null;
+
 		}
 
-		int ILineInfo.GetLineNumber()
+		/// <summary>
+		///     Compares two syntax tree by reference.
+		/// </summary>
+		public override bool Equals(object obj)
 		{
-			return this.GetLineNumber(throwOnError: false);
+			return this.innerDictionary.Equals(obj);
 		}
-		int ILineInfo.GetColumnNumber()
+		/// <summary>
+		///     Get hash code of syntax tree.
+		/// </summary>
+		public override int GetHashCode()
 		{
-			return this.GetColumnNumber(throwOnError: false);
-		}
-		int ILineInfo.GetTokenLength()
-		{
-			return this.GetTokenLength(throwOnError: false);
+			return this.innerDictionary.GetHashCode();
 		}
 
-		#region IDictionary<string,object> Members
+		/// <summary>
+		///     Format syntax tree as a C# expression. Throw exceptions if exception could not be formed.
+		/// </summary>
+		/// <returns>C# Expression.</returns>
+		public string ToCSharpExpression()
+		{
+			var expression = this.GetCSharpExpressionOrNull(false);
+			if (string.IsNullOrEmpty(expression))
+			{
+				expression = CSharpExpression.Format(this);
+			}
+			return expression;
+		}
+
+		/// <summary>
+		///     Format syntax tree as C# expression.
+		/// </summary>
+		public override string ToString()
+		{
+			try
+			{
+				return this.ToCSharpExpression();
+			}
+			catch
+			{
+				var sb = new StringBuilder();
+				sb.Append("{ ");
+				foreach (var kv in this)
+				{
+					sb.Append(kv.Key).Append(": ").Append('\'').Append(kv.Value).Append("', ");
+				}
+
+				sb.Append('}');
+				return sb.ToString();
+			}
+		}
 
 		void IDictionary<string, object>.Add(string key, object value)
 		{
@@ -394,20 +559,12 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 
 		/// <summary>
-		/// Check if syntax tree contain node with specified <paramref name="key"/>.
+		///     Check if syntax tree contain node with specified <paramref name="key" />.
 		/// </summary>
 		/// <param name="key">Name of contained node. Can't be null.</param>
 		public bool ContainsKey(string key)
 		{
 			return this.innerDictionary.ContainsKey(key);
-		}
-
-		/// <summary>
-		/// Returns collection of names of contained nodes.
-		/// </summary>
-		public ICollection<string> Keys
-		{
-			get { return this.innerDictionary.Keys; }
 		}
 
 		bool IDictionary<string, object>.Remove(string key)
@@ -416,36 +573,13 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 
 		/// <summary>
-		/// Tries to retrieve node of syntax tree by its name.
+		///     Tries to retrieve node of syntax tree by its name.
 		/// </summary>
 		/// <returns>True is node exists, overwise false.</returns>
 		public bool TryGetValue(string key, out object value)
 		{
 			return this.innerDictionary.TryGetValue(key, out value);
 		}
-
-		/// <summary>
-		/// Returns collection of contained nodes.
-		/// </summary>
-		public ICollection<object> Values
-		{
-			get { return this.innerDictionary.Values; }
-		}
-
-		/// <summary>
-		/// Returns contained node by its name;
-		/// </summary>
-		/// <param name="key">Name of contained node. Can't be null.</param>
-		/// <returns></returns>
-		public object this[string key]
-		{
-			get { return this.innerDictionary[key]; }
-			set { throw new NotSupportedException(); }
-		}
-
-		#endregion
-
-		#region ICollection<KeyValuePair<string,object>> Members
 
 		void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
 		{
@@ -467,91 +601,32 @@ namespace GameDevWare.Dynamic.Expressions
 			((ICollection<KeyValuePair<string, object>>)this.innerDictionary).CopyTo(array, arrayIndex);
 		}
 
-		/// <summary>
-		/// Returns count of contained nodes.
-		/// </summary>
-		public int Count
-		{
-			get { return this.innerDictionary.Count; }
-		}
-
-		bool ICollection<KeyValuePair<string, object>>.IsReadOnly
-		{
-			get { return ((ICollection<KeyValuePair<string, object>>)this.innerDictionary).IsReadOnly; }
-		}
-
 		bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
 		{
 			return ((ICollection<KeyValuePair<string, object>>)this.innerDictionary).Remove(item);
 		}
-
-		#endregion
-
-		#region IEnumerable<KeyValuePair<string,object>> Members
 
 		IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
 		{
 			return ((ICollection<KeyValuePair<string, object>>)this.innerDictionary).GetEnumerator();
 		}
 
-		#endregion
-
-		#region IEnumerable Members
-
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return ((IEnumerable)this.innerDictionary).GetEnumerator();
 		}
 
-		#endregion
-
-		/// <summary>
-		/// Compares two syntax tree by reference.
-		/// </summary>
-		public override bool Equals(object obj)
+		int ILineInfo.GetLineNumber()
 		{
-			return this.innerDictionary.Equals(obj);
+			return this.GetLineNumber(false);
 		}
-		/// <summary>
-		/// Get hash code of syntax tree.
-		/// </summary>
-		public override int GetHashCode()
+		int ILineInfo.GetColumnNumber()
 		{
-			return this.innerDictionary.GetHashCode();
+			return this.GetColumnNumber(false);
 		}
-
-		/// <summary>
-		/// Format syntax tree as a C# expression. Throw exceptions if exception could not be formed.
-		/// </summary>
-		/// <returns>C# Expression.</returns>
-		public string ToCSharpExpression()
+		int ILineInfo.GetTokenLength()
 		{
-			var expression = this.GetCSharpExpression(throwOnError: false);
-			if (string.IsNullOrEmpty(expression))
-				expression = CSharpExpression.Format(this);
-			return expression;
-		}
-
-		/// <summary>
-		/// Format syntax tree as C# expression.
-		/// </summary>
-		public override string ToString()
-		{
-			try
-			{
-				return this.ToCSharpExpression();
-			}
-			catch
-			{
-				var sb = new StringBuilder();
-				sb.Append("{ ");
-				foreach (var kv in this)
-				{
-					sb.Append(kv.Key).Append(": ").Append("'").Append(kv.Value).Append("', ");
-				}
-				sb.Append("}");
-				return sb.ToString();
-			}
+			return this.GetTokenLength(false);
 		}
 	}
 }

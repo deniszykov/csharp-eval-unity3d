@@ -15,19 +15,18 @@
 */
 
 using System;
-using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using GameDevWare.Dynamic.Expressions.Execution;
 
 namespace GameDevWare.Dynamic.Expressions
 {
 	/// <summary>
-	/// Helper class for Ahead-of-Time(AOT) compiled environments.
+	///     Helper class for Ahead-of-Time(AOT) compiled environments.
 	/// </summary>
 	public static partial class AotCompilation
 	{
 		/// <summary>
-		/// Is current runtime is AOT compiled.
+		///     Is current runtime is AOT compiled.
 		/// </summary>
 		public static bool IsAotRuntime;
 
@@ -43,7 +42,7 @@ namespace GameDevWare.Dynamic.Expressions
 		static partial void StaticConstructor();
 
 		/// <summary>
-		/// Prepares method with specified signature for fast execution in AOT compiled environment.
+		///     Prepares method with specified signature for fast execution in AOT compiled environment.
 		/// </summary>
 		/// <typeparam name="InstanceT">Type of instance which method belongs.</typeparam>
 		/// <typeparam name="Arg1T">Method's first argument type.</typeparam>
@@ -55,7 +54,7 @@ namespace GameDevWare.Dynamic.Expressions
 			FastCall.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, Arg3T, ResultT>();
 		}
 		/// <summary>
-		/// Prepares method with specified signature for fast execution in AOT compiled environment.
+		///     Prepares method with specified signature for fast execution in AOT compiled environment.
 		/// </summary>
 		/// <typeparam name="InstanceT">Type of instance which method belongs.</typeparam>
 		/// <typeparam name="Arg1T">Method's first argument type.</typeparam>
@@ -66,7 +65,7 @@ namespace GameDevWare.Dynamic.Expressions
 			FastCall.RegisterInstanceMethod<InstanceT, Arg1T, Arg2T, ResultT>();
 		}
 		/// <summary>
-		/// Prepares method with specified signature for fast execution in AOT compiled environment.
+		///     Prepares method with specified signature for fast execution in AOT compiled environment.
 		/// </summary>
 		/// <typeparam name="InstanceT">Type of instance which method belongs.</typeparam>
 		/// <typeparam name="Arg1T">Method's first argument type.</typeparam>
@@ -76,7 +75,7 @@ namespace GameDevWare.Dynamic.Expressions
 			FastCall.RegisterInstanceMethod<InstanceT, Arg1T, ResultT>();
 		}
 		/// <summary>
-		/// Prepares method with specified signature for fast execution in AOT compiled environment.
+		///     Prepares method with specified signature for fast execution in AOT compiled environment.
 		/// </summary>
 		/// <typeparam name="InstanceT">Type of instance which method belongs.</typeparam>
 		/// <typeparam name="ResultT">Method's return type.</typeparam>
@@ -86,7 +85,8 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 
 		/// <summary>
-		/// Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,Arg4T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,Arg4T,ResultT}" /> with specified signature for
+		///     execution in AOT compiled environment.
 		/// </summary>
 		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
 		/// <typeparam name="Arg2T">Function's second argument.</typeparam>
@@ -98,14 +98,15 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
-				fn.Invoke(default(Arg1T), default(Arg2T), default(Arg3T), default(Arg4T));
+				var fn = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>>(default, default(ParameterExpression[])).CompileAot();
+				fn.Invoke(default, default, default, default);
 				fn.DynamicInvoke(default(Arg1T), default(Arg2T), default(Arg3T), default(Arg4T));
-				AotCompiler.PrepareFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.PrepareFunc<Arg1T, Arg2T, Arg3T, Arg4T, ResultT>(default, default);
 			}
 		}
 		/// <summary>
-		/// Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,ResultT}" /> with specified signature for execution in
+		///     AOT compiled environment.
 		/// </summary>
 		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
 		/// <typeparam name="Arg2T">Function's second argument.</typeparam>
@@ -116,14 +117,15 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
-				fn.Invoke(default(Arg1T), default(Arg2T), default(Arg3T));
+				var fn = Expression.Lambda<Func<Arg1T, Arg2T, Arg3T, ResultT>>(default, default(ParameterExpression[])).CompileAot();
+				fn.Invoke(default, default, default);
 				fn.DynamicInvoke(default(Arg1T), default(Arg2T), default(Arg3T));
-				AotCompiler.PrepareFunc<Arg1T, Arg2T, Arg3T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.PrepareFunc<Arg1T, Arg2T, Arg3T, ResultT>(default, default);
 			}
 		}
 		/// <summary>
-		/// Prepares function <see cref="System.Func{Arg1T,Arg2T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{Arg1T,Arg2T,ResultT}" /> with specified signature for execution in AOT
+		///     compiled environment.
 		/// </summary>
 		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
 		/// <typeparam name="Arg2T">Function's second argument.</typeparam>
@@ -133,14 +135,15 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Func<Arg1T, Arg2T, ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
-				fn.Invoke(default(Arg1T), default(Arg2T));
+				var fn = Expression.Lambda<Func<Arg1T, Arg2T, ResultT>>(default, default(ParameterExpression[])).CompileAot();
+				fn.Invoke(default, default);
 				fn.DynamicInvoke(default(Arg1T), default(Arg2T));
-				AotCompiler.PrepareFunc<Arg1T, Arg2T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.PrepareFunc<Arg1T, Arg2T, ResultT>(default, default);
 			}
 		}
 		/// <summary>
-		/// Prepares function <see cref="System.Func{Arg1T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{Arg1T,ResultT}" /> with specified signature for execution in AOT compiled
+		///     environment.
 		/// </summary>
 		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
 		/// <typeparam name="ResultT">Function result type.</typeparam>
@@ -149,14 +152,15 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Func<Arg1T, ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
-				fn.Invoke(default(Arg1T));
+				var fn = Expression.Lambda<Func<Arg1T, ResultT>>(default, default(ParameterExpression[])).CompileAot();
+				fn.Invoke(default);
 				fn.DynamicInvoke(default(Arg1T));
-				AotCompiler.PrepareFunc<Arg1T, ResultT>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.PrepareFunc<Arg1T, ResultT>(default, default);
 			}
 		}
 		/// <summary>
-		/// Prepares function <see cref="System.Func{ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{ResultT}" /> with specified signature for execution in AOT compiled
+		///     environment.
 		/// </summary>
 		/// <typeparam name="ResultT">Function result type.</typeparam>
 		public static void RegisterFunc<ResultT>()
@@ -164,15 +168,16 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Func<ResultT>>(default(Expression), default(ParameterExpression[])).CompileAot();
+				var fn = Expression.Lambda<Func<ResultT>>(default, default(ParameterExpression[])).CompileAot();
 				fn.Invoke();
 				fn.DynamicInvoke();
-				AotCompiler.PrepareFunc<ResultT>(default(Expression));
+				AotCompiler.PrepareFunc<ResultT>(default);
 			}
 		}
 
 		/// <summary>
-		/// Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,Arg4T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,Arg4T,ResultT}" /> with specified signature for
+		///     execution in AOT compiled environment.
 		/// </summary>
 		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
 		/// <typeparam name="Arg2T">Function's second argument.</typeparam>
@@ -183,14 +188,15 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Action<Arg1T, Arg2T, Arg3T, Arg4T>>(default(Expression), default(ParameterExpression[])).CompileAot();
-				fn.Invoke(default(Arg1T), default(Arg2T), default(Arg3T), default(Arg4T));
+				var fn = Expression.Lambda<Action<Arg1T, Arg2T, Arg3T, Arg4T>>(default, default(ParameterExpression[])).CompileAot();
+				fn.Invoke(default, default, default, default);
 				fn.DynamicInvoke(default(Arg1T), default(Arg2T), default(Arg3T), default(Arg4T));
-				AotCompiler.PrepareAction<Arg1T, Arg2T, Arg3T, Arg4T>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.PrepareAction<Arg1T, Arg2T, Arg3T, Arg4T>(default, default);
 			}
 		}
 		/// <summary>
-		/// Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{Arg1T,Arg2T,Arg3T,ResultT}" /> with specified signature for execution in
+		///     AOT compiled environment.
 		/// </summary>
 		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
 		/// <typeparam name="Arg2T">Function's second argument.</typeparam>
@@ -200,14 +206,15 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Action<Arg1T, Arg2T, Arg3T>>(default(Expression), default(ParameterExpression[])).CompileAot();
-				fn.Invoke(default(Arg1T), default(Arg2T), default(Arg3T));
+				var fn = Expression.Lambda<Action<Arg1T, Arg2T, Arg3T>>(default, default(ParameterExpression[])).CompileAot();
+				fn.Invoke(default, default, default);
 				fn.DynamicInvoke(default(Arg1T), default(Arg2T), default(Arg3T));
-				AotCompiler.PrepareAction<Arg1T, Arg2T, Arg3T>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.PrepareAction<Arg1T, Arg2T, Arg3T>(default, default);
 			}
 		}
 		/// <summary>
-		/// Prepares function <see cref="System.Func{Arg1T,Arg2T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{Arg1T,Arg2T,ResultT}" /> with specified signature for execution in AOT
+		///     compiled environment.
 		/// </summary>
 		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
 		/// <typeparam name="Arg2T">Function's second argument.</typeparam>
@@ -216,14 +223,15 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Action<Arg1T, Arg2T>>(default(Expression), default(ParameterExpression[])).CompileAot();
-				fn.Invoke(default(Arg1T), default(Arg2T));
+				var fn = Expression.Lambda<Action<Arg1T, Arg2T>>(default, default(ParameterExpression[])).CompileAot();
+				fn.Invoke(default, default);
 				fn.DynamicInvoke(default(Arg1T), default(Arg2T));
-				AotCompiler.PrepareAction<Arg1T, Arg2T>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.PrepareAction<Arg1T, Arg2T>(default, default);
 			}
 		}
 		/// <summary>
-		/// Prepares function <see cref="System.Func{Arg1T,ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{Arg1T,ResultT}" /> with specified signature for execution in AOT compiled
+		///     environment.
 		/// </summary>
 		/// <typeparam name="Arg1T">Function's first argument.</typeparam>
 		public static void RegisterAction<Arg1T>()
@@ -231,24 +239,25 @@ namespace GameDevWare.Dynamic.Expressions
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Action<Arg1T>>(default(Expression), default(ParameterExpression[])).CompileAot();
-				fn.Invoke(default(Arg1T));
+				var fn = Expression.Lambda<Action<Arg1T>>(default, default(ParameterExpression[])).CompileAot();
+				fn.Invoke(default);
 				fn.DynamicInvoke(default(Arg1T));
-				AotCompiler.PrepareAction<Arg1T>(default(Expression), default(ReadOnlyCollection<ParameterExpression>));
+				AotCompiler.PrepareAction<Arg1T>(default, default);
 			}
 		}
 		/// <summary>
-		/// Prepares function <see cref="System.Func{ResultT}"/> with specified signature for execution in AOT compiled environment.
+		///     Prepares function <see cref="System.Func{ResultT}" /> with specified signature for execution in AOT compiled
+		///     environment.
 		/// </summary>
 		public static void RegisterAction()
 		{
 			if (typeof(AotCompilation).Name == string.Empty)
 			{
 				// ReSharper disable once AssignNullToNotNullAttribute
-				var fn = Expression.Lambda<Action>(default(Expression), default(ParameterExpression[])).CompileAot();
+				var fn = Expression.Lambda<Action>(default, default(ParameterExpression[])).CompileAot();
 				fn.Invoke();
 				fn.DynamicInvoke();
-				AotCompiler.PrepareAction(default(Expression));
+				AotCompiler.PrepareAction(default);
 			}
 		}
 	}

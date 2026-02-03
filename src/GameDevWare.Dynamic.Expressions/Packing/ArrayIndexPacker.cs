@@ -9,7 +9,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 	{
 		public static Dictionary<string, object> Pack(Expression expression)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			var binaryExpression = expression as BinaryExpression;
 			var methodCall = expression as MethodCallExpression;
@@ -20,7 +20,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			{
 				arguments = methodCall.Arguments.ToArray();
 				operand = methodCall.Object;
-				argumentNames = ArrayUtils.ConvertAll(methodCall.Method.GetParameters(), p => p.Name);
+				argumentNames = methodCall.Method.GetParameters().ConvertAll(p => p.Name);
 			}
 			else if (binaryExpression != null)
 			{
@@ -28,14 +28,12 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				operand = binaryExpression.Left;
 			}
 			else
-			{
 				throw new InvalidOperationException("Invalid expression type for this packer.");
-			}
 
 			return new Dictionary<string, object>(4) {
-				{Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_INDEX},
-				{Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(operand)},
-				{Constants.ARGUMENTS_ATTRIBUTE, AnyPacker.Pack(arguments, argumentNames)}
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_INDEX },
+				{ Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(operand) },
+				{ Constants.ARGUMENTS_ATTRIBUTE, AnyPacker.Pack(arguments, argumentNames) }
 			};
 		}
 	}

@@ -1,30 +1,32 @@
 using System;
 using System.Linq.Expressions;
-using System.Reflection;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class NewNode : ExecutionNode
 	{
-		private static readonly object[] EmptyArguments = new object[0];
+		private static readonly object[] EmptyArguments = Array.Empty<object>();
+		private readonly int constructorParametersCount;
+		private readonly ExecutionNode[] initializationValueNodes;
+		private readonly bool isNullableType;
 
 		private readonly NewExpression newExpression;
-		private readonly ExecutionNode[] initializationValueNodes;
-		private readonly int constructorParametersCount;
-		private readonly bool isNullableType;
 
 		public NewNode(NewExpression newExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (newExpression == null) throw new ArgumentNullException("newExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (newExpression == null) throw new ArgumentNullException(nameof(newExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.newExpression = newExpression;
 
 			this.initializationValueNodes = new ExecutionNode[newExpression.Arguments.Count];
 			for (var i = 0; i < this.initializationValueNodes.Length; i++)
+			{
 				this.initializationValueNodes[i] = AotCompiler.Compile(newExpression.Arguments[i], constExpressions, parameterExpressions);
-			this.constructorParametersCount = newExpression.Constructor.GetParameters().Length;
+			}
+			this.constructorParametersCount = newExpression.Constructor?.GetParameters().Length ?? 0;
 			this.isNullableType = IsNullable(newExpression.Type);
 		}
 
@@ -44,7 +46,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 			var newInstance = this.isNullableType ? null : Activator.CreateInstance(this.newExpression.Type, constructorArguments);
 			if (newInstance == null)
-				throw new NullReferenceException(string.Format(Properties.Resources.EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT, this.newExpression));
+				throw new NullReferenceException(string.Format(Resources.EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT, this.newExpression));
 
 			return newInstance;
 		}

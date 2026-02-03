@@ -17,42 +17,44 @@
 using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class NewArrayBoundsBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
 			boundExpression = null;
 			bindingError = null;
 
-			var typeName = node.GetTypeName(throwOnError: true);
-			var type = default(Type);
-			if (bindingContext.TryResolveType(typeName, out type) == false)
+			var typeName = node.GetTypeName(true);
+			if (!bindingContext.TryResolveType(typeName, out var type))
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
 				return false;
 			}
 
 			var indexTypeDescription = TypeDescription.Int32Type;
-			var arguments = node.GetArguments(throwOnError: true);
+			var arguments = node.GetArguments(true);
 			var argumentExpressions = new Expression[arguments.Count];
 			for (var i = 0; i < arguments.Count; i++)
 			{
-				var argument = default(SyntaxTreeNode);
-				if (arguments.TryGetValue(i, out argument) == false)
+				if (!arguments.TryGetValue(i, out var argument))
 				{
-					bindingError = new ExpressionParserException(Properties.Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS, node);
+					bindingError = new ExpressionParserException(Resources.EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS, node);
 					return false;
 				}
 
-				if (AnyBinder.TryBindInNewScope(argument, bindingContext, indexTypeDescription, out argumentExpressions[i], out bindingError) == false)
+				if (!AnyBinder.TryBindInNewScope(argument, bindingContext, indexTypeDescription, out argumentExpressions[i], out bindingError))
+				{
 					return false;
+				}
 
 				Debug.Assert(argumentExpressions[i] != null, "argumentExpressions[i] != null");
 			}

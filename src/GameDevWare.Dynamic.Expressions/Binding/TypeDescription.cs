@@ -24,81 +24,80 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal sealed class TypeDescription : IComparable<TypeDescription>, IComparable, IEquatable<TypeDescription>, IEquatable<Type>
 	{
-		private static readonly TypeCache Types;
 		public static readonly MemberDescription[] EmptyMembers;
 		public static readonly TypeDescription[] EmptyTypes;
-		public static readonly TypeDescription ObjectType;
 		public static readonly TypeDescription Int32Type;
-		public static readonly Expression NullObjectDefaultExpression = Expression.Constant(null, typeof(object));
-
-		private readonly Type type;
-		private readonly int hashCode;
-		private TypeDescription nullableType;
-		private Expression defaultExpression;
-
-		public readonly Dictionary<string, MemberDescription[]> MembersByName;
-		public readonly MemberDescription[] ImplicitConvertTo;
-		public readonly MemberDescription[] ImplicitConvertFrom;
-		public readonly MemberDescription[] ExplicitConvertTo;
-		public readonly MemberDescription[] ExplicitConvertFrom;
-		public readonly MemberDescription[] Conversions;
+		private static readonly Expression NullObjectDefaultExpression = Expression.Constant(null, typeof(object));
+		public static readonly TypeDescription ObjectType;
+		private static readonly TypeCache Types;
 		public readonly MemberDescription[] Addition;
-		public readonly MemberDescription[] Division;
-		public readonly MemberDescription[] Equality;
-		public readonly MemberDescription[] GreaterThan;
-		public readonly MemberDescription[] GreaterThanOrEqual;
-		public readonly MemberDescription[] Inequality;
-		public readonly MemberDescription[] LessThan;
-		public readonly MemberDescription[] LessThanOrEqual;
-		public readonly MemberDescription[] Modulus;
-		public readonly MemberDescription[] Multiply;
-		public readonly MemberDescription[] Subtraction;
-		public readonly MemberDescription[] UnaryNegation;
-		public readonly MemberDescription[] UnaryPlus;
+		public readonly TypeDescription BaseType;
+		public readonly TypeDescription[] BaseTypes;
 		public readonly MemberDescription[] BitwiseAnd;
 		public readonly MemberDescription[] BitwiseOr;
-		public readonly MemberDescription[] Indexers;
+		public readonly bool CanBeNull;
 		public readonly MemberDescription[] Constructors;
+		public readonly MemberDescription[] Conversions;
+		public readonly MemberDescription[] Division;
+		public readonly MemberDescription[] Equality;
+		public readonly MemberDescription[] ExplicitConvertFrom;
+		public readonly MemberDescription[] ExplicitConvertTo;
+		public readonly TypeDescription[] GenericArguments;
+		public readonly MemberDescription[] GreaterThan;
+		public readonly MemberDescription[] GreaterThanOrEqual;
+		public readonly bool HasGenericParameters;
+		private readonly int hashCode;
+		public readonly MemberDescription[] ImplicitConvertFrom;
+		public readonly MemberDescription[] ImplicitConvertTo;
+		public readonly MemberDescription[] Indexers;
+		public readonly MemberDescription[] Inequality;
+		public readonly TypeDescription[] Interfaces;
+		public readonly bool IsByRefLike;
+		public readonly bool IsDelegate;
+		public readonly bool IsEnum;
+		public readonly bool IsInterface;
+		public readonly bool IsNullable;
+		public readonly bool IsNumber;
+		public readonly bool IsValueType;
+		public readonly bool IsVoid;
+		public readonly MemberDescription[] LessThan;
+		public readonly MemberDescription[] LessThanOrEqual;
+
+		public readonly Dictionary<string, MemberDescription[]> MembersByName;
+		public readonly MemberDescription[] Modulus;
+		public readonly MemberDescription[] Multiply;
 
 		public readonly string Name;
+		public readonly MemberDescription[] Subtraction;
+
+		private readonly Type type;
 		public readonly TypeCode TypeCode;
-		public Expression DefaultExpression { get { return this.GetOrCreateDefaultExpression(); } }
-		public readonly bool IsNullable;
-		public readonly bool CanBeNull;
-		public readonly bool IsEnum;
-		public readonly bool IsVoid;
-		public readonly bool IsNumber;
-		public readonly bool IsDelegate;
-		public readonly bool IsInterface;
-		public readonly bool IsByRefLike;
-		public readonly bool IsValueType;
-		public readonly bool HasGenericParameters;
-		public readonly TypeDescription BaseType;
+		public readonly MemberDescription[] UnaryNegation;
+		public readonly MemberDescription[] UnaryPlus;
 		public readonly TypeDescription UnderlyingType;
-		public readonly TypeDescription[] BaseTypes;
-		public readonly TypeDescription[] Interfaces;
-		public readonly TypeDescription[] GenericArguments;
+		private Expression defaultExpression;
+		private TypeDescription nullableType;
+		public Expression DefaultExpression => this.GetOrCreateDefaultExpression();
 
 		static TypeDescription()
 		{
 			Types = new TypeCache();
-			EmptyMembers = new MemberDescription[0];
-			EmptyTypes = new TypeDescription[0];
+			EmptyMembers = Array.Empty<MemberDescription>();
+			EmptyTypes = Array.Empty<TypeDescription>();
 			ObjectType = GetTypeDescription(typeof(object));
 			Int32Type = GetTypeDescription(typeof(int));
 
 			// create type descriptors for build-in types
-			ArrayUtils.ConvertAll(new[]
-			{
+			new[] {
 				typeof(char?), typeof(string), typeof(float?), typeof(double?), typeof(decimal?),
 				typeof(byte?), typeof(sbyte?), typeof(short?), typeof(ushort?), typeof(int?), typeof(uint?),
 				typeof(long?), typeof(ulong?), typeof(Enum), typeof(MulticastDelegate)
-			}, GetTypeDescription);
+			}.ConvertAll(GetTypeDescription);
 		}
 		public TypeDescription(Type type, TypeCache cache)
 		{
-			if (type == null) throw new ArgumentNullException("type");
-			if (cache == null) throw new ArgumentNullException("cache");
+			if (type == null) throw new ArgumentNullException(nameof(type));
+			if (cache == null) throw new ArgumentNullException(nameof(cache));
 
 			this.type = type;
 			this.hashCode = type.GetHashCode();
@@ -119,13 +118,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.UnderlyingType = underlyingType != null ? cache.GetOrCreateTypeDescription(underlyingType) : null;
 			this.BaseTypes = GetBaseTypes(this, 0);
 			this.Interfaces = typeInfo.GetImplementedInterfaces().Select(cache.GetOrCreateTypeDescription).ToArray();
-			this.GenericArguments = typeInfo.IsGenericType ? ArrayUtils.ConvertAll(typeInfo.GetGenericArguments(), cache.GetOrCreateTypeDescription) : EmptyTypes;
+			this.GenericArguments = typeInfo.IsGenericType ? typeInfo.GetGenericArguments().ConvertAll(cache.GetOrCreateTypeDescription) : EmptyTypes;
 
 			this.IsInterface = typeInfo.IsInterface;
 			this.IsValueType = typeInfo.IsValueType;
 			this.IsNullable = Nullable.GetUnderlyingType(type) != null;
 			this.IsNumber = NumberUtils.IsNumber(type);
-			this.CanBeNull = this.IsNullable || typeInfo.IsValueType == false;
+			this.CanBeNull = this.IsNullable || !typeInfo.IsValueType;
 			this.IsEnum = typeInfo.IsEnum;
 			this.IsVoid = type == typeof(void);
 			this.IsDelegate = typeof(Delegate).GetTypeInfo().IsAssignableFrom(typeInfo) && type != typeof(Delegate) && type != typeof(MulticastDelegate);
@@ -162,6 +161,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			this.UnaryPlus = this.GetOperators(methods, methodsDescriptions, "op_UnaryPlus");
 			this.BitwiseAnd = this.GetOperators(methods, methodsDescriptions, "op_BitwiseAnd");
 			this.BitwiseOr = this.GetOperators(methods, methodsDescriptions, "op_BitwiseOr");
+
 			// ReSharper restore LocalizableElement
 			this.Conversions = Combine(this.ImplicitConvertTo, this.ImplicitConvertFrom, this.ExplicitConvertTo, this.ExplicitConvertFrom);
 			this.Constructors = type.GetTypeInfo().GetPublicInstanceConstructors()
@@ -175,36 +175,26 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				this.UnderlyingType.nullableType = this;
 		}
 
-		private MemberDescription[] GetOperators(List<MethodInfo> methods, MemberDescription[] methodsDescriptions, string operatorName, int? compareParameterIndex = null)
+		private MemberDescription[] GetOperators
+			(List<MethodInfo> methods, MemberDescription[] methodsDescriptions, string operatorName, int? compareParameterIndex = null)
 		{
-			if (methods == null) throw new ArgumentNullException("methods");
-			if (methodsDescriptions == null) throw new ArgumentNullException("methodsDescriptions");
-			if (operatorName == null) throw new ArgumentNullException("operatorName");
+			if (methods == null) throw new ArgumentNullException(nameof(methods));
+			if (methodsDescriptions == null) throw new ArgumentNullException(nameof(methodsDescriptions));
+			if (operatorName == null) throw new ArgumentNullException(nameof(operatorName));
 
 			var operators = default(List<MemberDescription>);
 			for (var i = 0; i < methods.Count; i++)
 			{
 				var method = methods[i];
-				if (method.Name != operatorName || method.IsGenericMethod)
-				{
-					continue;
-				}
+				if (method.Name != operatorName || method.IsGenericMethod) continue;
 
-				if (methodsDescriptions[i] == null)
-				{
-					methodsDescriptions[i] = new MemberDescription(this, method);
-				}
+				if (methodsDescriptions[i] == null) methodsDescriptions[i] = new MemberDescription(this, method);
 
 				var methodDescription = methodsDescriptions[i];
-				if (compareParameterIndex.HasValue && methodDescription.GetParameterType(compareParameterIndex.Value) != this.type)
-				{
-					continue;
-				}
+				if (compareParameterIndex.HasValue && methodDescription.GetParameterType(compareParameterIndex.Value) != this.type) continue;
 
-				if (operators == null)
-				{
-					operators = new List<MemberDescription>();
-				}
+				if (operators == null) operators = new List<MemberDescription>();
+
 				operators.Add(methodDescription);
 			}
 
@@ -212,31 +202,30 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		}
 		private Expression GetOrCreateDefaultExpression()
 		{
-			if (this.defaultExpression != null)
-			{
-				return this.defaultExpression;
-			}
+			if (this.defaultExpression != null) return this.defaultExpression;
+
 			if (this.IsVoid || this.IsByRefLike || this.type.IsPointer)
-			{
 				this.defaultExpression = NullObjectDefaultExpression;
-			}
 			else
 			{
 				try
 				{
-					this.defaultExpression = Expression.Constant(this.IsValueType && this.IsNullable == false ? Activator.CreateInstance(this.type) : null, this.type);
+					this.defaultExpression =
+						Expression.Constant(this.IsValueType && !this.IsNullable ? Activator.CreateInstance(this.type) : null, this.type);
 				}
 				catch
 				{
 					this.defaultExpression = Expression.Constant(null, this.type);
 				}
 			}
+
 			return this.defaultExpression;
 		}
 		private Dictionary<string, MemberDescription[]> GetMembersByName(ref MemberDescription[] indexers)
 		{
 			var declaredMembers = GetDeclaredMembers(this.type);
-			var memberSetsByName = new Dictionary<string, HashSet<MemberDescription>>((this.BaseType != null ? this.BaseType.MembersByName.Count : 0) + declaredMembers.Count);
+			var memberSetsByName =
+				new Dictionary<string, HashSet<MemberDescription>>((this.BaseType != null ? this.BaseType.MembersByName.Count : 0) + declaredMembers.Count);
 			foreach (var member in declaredMembers)
 			{
 				var memberDescription = default(MemberDescription);
@@ -246,25 +235,16 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				if (property != null)
 				{
 					memberDescription = new MemberDescription(this, property);
-					if (memberDescription.GetParametersCount() != 0)
-					{
-						Add(ref indexers, memberDescription);
-					}
+					if (memberDescription.GetParametersCount() != 0) Add(ref indexers, memberDescription);
 				}
 				else if (field != null)
-				{
 					memberDescription = new MemberDescription(this, field);
-				}
-				else if (method != null && method.IsSpecialName == false)
-				{
-					memberDescription = new MemberDescription(this, method);
-				}
+				else if (method != null && !method.IsSpecialName) memberDescription = new MemberDescription(this, method);
 
 				if (memberDescription == null)
 					continue;
 
-				var members = default(HashSet<MemberDescription>);
-				if (memberSetsByName.TryGetValue(memberDescription.Name, out members) == false)
+				if (!memberSetsByName.TryGetValue(memberDescription.Name, out var members))
 					memberSetsByName[memberDescription.Name] = members = new HashSet<MemberDescription>();
 				members.Add(memberDescription);
 			}
@@ -276,12 +256,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					var memberName = kv.Key;
 					var memberList = kv.Value;
 
-					var members = default(HashSet<MemberDescription>);
-					if (memberSetsByName.TryGetValue(memberName, out members) == false)
+					if (!memberSetsByName.TryGetValue(memberName, out var members))
 						memberSetsByName[memberName] = members = new HashSet<MemberDescription>();
 
 					foreach (var member in memberList)
+					{
 						members.Add(member);
+					}
 				}
 			}
 
@@ -292,6 +273,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				Array.Sort(membersArray);
 				membersByName.Add(kv.Key, membersArray);
 			}
+
 			return membersByName;
 		}
 		private static List<MemberInfo> GetDeclaredMembers(Type type)
@@ -306,6 +288,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					declaredMembers.AddRange(interfaceTypeInfo.GetDeclaredMembers());
 				}
 			}
+
 			return declaredMembers;
 		}
 		private static TypeDescription[] GetBaseTypes(TypeDescription type, int depth)
@@ -321,12 +304,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		}
 		private static void Add<T>(ref T[] array, T element) where T : class
 		{
-			if (element == null) throw new ArgumentNullException("element");
+			if (element == null) throw new ArgumentNullException(nameof(element));
 
 			if (array == null)
-			{
-				array = new T[] { element };
-			}
+				array = new[] { element };
 			else
 			{
 				Array.Resize(ref array, array.Length + 1);
@@ -337,7 +318,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		{
 			var totalLength = 0;
 			foreach (var array in arrays)
+			{
 				totalLength += array.Length;
+			}
 
 			if (arrays.Length == 0)
 				return arrays[0];
@@ -349,20 +332,20 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				array.CopyTo(newArray, offset);
 				offset += array.Length;
 			}
+
 			return newArray;
 		}
 
 		public static bool HasByRefLikeAttribute(ParameterInfo parameterInfo)
 		{
-			if (parameterInfo.Member.Name == "ToString" && parameterInfo.Position == -1 /* return value */)
-			{
-				return false; // fix for https://github.com/mono/mono/issues/17192
-			}
-			return parameterInfo.GetCustomAttributes(inherit: true).Any(attribute => IsByRefLikeAttributeType(attribute.GetType()));
+			if (parameterInfo.Member.Name == "ToString" && parameterInfo.Position == -1 /* return value */
+				) return false; // fix for https://github.com/mono/mono/issues/17192
+
+			return parameterInfo.GetCustomAttributes(true).Any(attribute => IsByRefLikeAttributeType(attribute.GetType()));
 		}
 		public static bool HasByRefLikeAttribute(Type type)
 		{
-			return type.GetTypeInfo().GetCustomAttributes(inherit: true).Any(attribute => IsByRefLikeAttributeType(attribute.GetType()));
+			return type.GetTypeInfo().GetCustomAttributes(true).Any(attribute => IsByRefLikeAttributeType(attribute.GetType()));
 		}
 
 		private static bool IsByRefLikeAttributeType(Type attributeType)
@@ -372,25 +355,26 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public MemberDescription[] GetMembers(string memberName)
 		{
-			if (memberName == null) throw new ArgumentNullException("memberName");
+			if (memberName == null) throw new ArgumentNullException(nameof(memberName));
 
-			var members = default(MemberDescription[]);
-			if (this.MembersByName.TryGetValue(memberName, out members))
+			if (this.MembersByName.TryGetValue(memberName, out var members))
 				return members;
-			else
-				return EmptyMembers;
+
+			return EmptyMembers;
 		}
 
 		public TypeDescription GetNullableType()
 		{
 			if (this.IsNullable)
 				return this;
-			else if (this.IsValueType == false)
+
+			if (!this.IsValueType)
 				throw new InvalidOperationException();
-			else if (this.nullableType != null)
+
+			if (this.nullableType != null)
 				return this.nullableType;
-			else
-				return this.nullableType = GetTypeDescription(typeof(Nullable<>).MakeGenericType(this.type));
+
+			return this.nullableType = GetTypeDescription(typeof(Nullable<>).MakeGenericType(this.type));
 		}
 
 		public bool IsAssignableFrom(Type operandType)
@@ -405,30 +389,6 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public override int GetHashCode()
 		{
 			return this.hashCode;
-		}
-		public int CompareTo(TypeDescription other)
-		{
-			if (other == null) return 1;
-
-			return this.hashCode.CompareTo(other.hashCode);
-		}
-		public int CompareTo(object obj)
-		{
-			return this.CompareTo(obj as TypeDescription);
-		}
-		public bool Equals(TypeDescription other)
-		{
-			if (other == null) return false;
-			if (ReferenceEquals(this, other)) return true;
-
-			return this.type == other.type;
-		}
-		public bool Equals(Type other)
-		{
-			if (other == null) return false;
-			if (ReferenceEquals(this.type, other)) return true;
-
-			return this.type == other;
 		}
 
 		public static bool operator ==(TypeDescription type1, TypeDescription type2)
@@ -468,20 +428,21 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public static implicit operator Type(TypeDescription typeDescription)
 		{
 			if (typeDescription == null) return null;
+
 			return typeDescription.type;
 		}
 
 		public static TypeDescription GetTypeDescription(Type type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			lock (Types)
 			{
-				var typeDescription = default(TypeDescription);
-				if (Types.TryGetValue(type, out typeDescription))
+				if (Types.TryGetValue(type, out var typeDescription))
 					return typeDescription;
 			}
 
+			// ReSharper disable once InconsistentlySynchronizedField
 			var localCache = new TypeCache(Types);
 			var newTypeDescription = localCache.GetOrCreateTypeDescription(type);
 
@@ -496,6 +457,30 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public override string ToString()
 		{
 			return this.type.ToString();
+		}
+		public int CompareTo(object obj)
+		{
+			return this.CompareTo(obj as TypeDescription);
+		}
+		public int CompareTo(TypeDescription other)
+		{
+			if (other == null) return 1;
+
+			return this.hashCode.CompareTo(other.hashCode);
+		}
+		public bool Equals(Type other)
+		{
+			if (other == null) return false;
+			if (ReferenceEquals(this.type, other)) return true;
+
+			return this.type == other;
+		}
+		public bool Equals(TypeDescription other)
+		{
+			if (other == null) return false;
+			if (ReferenceEquals(this, other)) return true;
+
+			return this.type == other.type;
 		}
 	}
 }

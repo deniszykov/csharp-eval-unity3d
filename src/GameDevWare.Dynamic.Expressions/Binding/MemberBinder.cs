@@ -18,39 +18,37 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class MemberBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
 			boundExpression = null;
 			bindingError = null;
 
 			var target = default(Expression);
-			var targetNode = node.GetExpression(throwOnError: false);
-			var memberNode = node.GetMember(throwOnError: false);
-			var member = default(MemberDescription);
-			if (memberNode != null && bindingContext.TryResolveMember(memberNode, out member))
+			var targetNode = node.GetExpression(false);
+			var memberNode = node.GetMember(false);
+			if (memberNode != null && bindingContext.TryResolveMember(memberNode, out var member))
 			{
-				if (targetNode != null && AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
-				{
-					return false;
-				}
+				if (targetNode != null && !AnyBinder.TryBind(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError)) return false;
+
 				boundExpression = Expression.MakeMemberAccess(target, member);
 				return true;
 			}
 
 			var isStatic = false;
-			var targetType = default(Type);
-			var propertyOrFieldName = node.GetMemberName(throwOnError: true);
-			var useNullPropagation = node.GetUseNullPropagation(throwOnError: false);
-			if (bindingContext.TryResolveType(targetNode, out targetType))
+			var propertyOrFieldName = node.GetMemberName(true);
+			var useNullPropagation = node.GetUseNullPropagation(false);
+			if (bindingContext.TryResolveType(targetNode, out var targetType))
 			{
 				target = null;
 				isStatic = true;
@@ -75,6 +73,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					default:
 						if (bindingContext.TryGetParameter(propertyOrFieldName, out boundExpression))
 							return true;
+
 						break;
 				}
 			}
@@ -94,7 +93,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (target == null && targetType == null)
 			{
 				if (bindingError == null)
-					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, propertyOrFieldName), node);
+					bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETORESOLVENAME, propertyOrFieldName), node);
 				return false;
 			}
 
@@ -107,9 +106,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				var fieldMemberDescription = targetTypeDescription.GetMembers(propertyOrFieldName).FirstOrDefault(m => m.IsStatic);
 				if (fieldMemberDescription == null)
 				{
-					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, targetType), node);
+					bindingError = new ExpressionParserException(
+						string.Format(Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, targetType), node);
 					return false;
 				}
+
 				boundExpression = fieldMemberDescription.ConstantValueExpression;
 			}
 			else
@@ -121,7 +122,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 					foundMember = foundMember ?? declaredMember;
 
-					if (declaredMember.IsPropertyOrField == false)
+					if (!declaredMember.IsPropertyOrField)
 						continue;
 
 					if (declaredMember.TryMakeAccessor(target, out boundExpression))
@@ -132,15 +133,23 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (boundExpression == null)
 			{
 				if (foundMember != null)
-					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDMEMBER, propertyOrFieldName, targetType), node);
+				{
+					bindingError = new ExpressionParserException(
+						string.Format(Resources.EXCEPTION_BIND_UNABLETOBINDMEMBER, propertyOrFieldName, targetType), node);
+				}
 				else
-					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, targetType), node);
+				{
+					bindingError = new ExpressionParserException(
+						string.Format(Resources.EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE, propertyOrFieldName, targetType), node);
+				}
+
 				return false;
 			}
 
 			if (useNullPropagation && isStatic)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF, targetType));
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF,
+					targetType));
 				return false;
 			}
 
@@ -148,10 +157,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				bindingContext.RegisterNullPropagationTarget(target);
 
 			if (targetTypeDescription.IsAssignableFrom(typeof(Type)) &&
-				bindingContext.IsKnownType(typeof(Type)) == false &&
-				bindingContext.IsKnownType(targetType) == false)
+				!bindingContext.IsKnownType(typeof(Type)) &&
+				!bindingContext.IsKnownType(targetType))
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION, propertyOrFieldName, targetType, typeof(ITypeResolver)), node);
+				bindingError = new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION, propertyOrFieldName, targetType, typeof(ITypeResolver)), node);
 				return false;
 			}
 

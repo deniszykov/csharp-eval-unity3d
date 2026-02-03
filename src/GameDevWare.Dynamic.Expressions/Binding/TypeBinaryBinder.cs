@@ -17,33 +17,35 @@
 using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class TypeBinaryBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
 			boundExpression = null;
 			bindingError = null;
 
-			var expressionType = node.GetExpressionType(throwOnError: true);
-			var targetNode = node.GetExpression(throwOnError: true);
-			var typeName = node.GetTypeName(throwOnError: true);
-			var type = default(Type);
-			if (bindingContext.TryResolveType(typeName, out type) == false)
+			var expressionType = node.GetExpressionType(true);
+			var targetNode = node.GetExpression(true);
+			var typeName = node.GetTypeName(true);
+			if (!bindingContext.TryResolveType(typeName, out var type))
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
 				return false;
 			}
 
-			var target = default(Expression);
-			if (AnyBinder.TryBindInNewScope(targetNode, bindingContext, TypeDescription.ObjectType, out target, out bindingError) == false)
+			if (!AnyBinder.TryBindInNewScope(targetNode, bindingContext, TypeDescription.ObjectType, out var target, out bindingError))
+			{
 				return false;
+			}
 
 			Debug.Assert(target != null, "target != null");
 
@@ -63,9 +65,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					break;
 				default:
 					boundExpression = null;
-					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);
+					bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);
 					return false;
 			}
+
 			return true;
 		}
 	}

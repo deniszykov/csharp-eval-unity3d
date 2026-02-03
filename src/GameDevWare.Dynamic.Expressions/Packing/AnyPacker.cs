@@ -9,8 +9,9 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 	{
 		public static Dictionary<string, object> Pack(Expression expression)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 			switch (expression.NodeType)
 			{
 				case ExpressionType.Not:
@@ -85,7 +86,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 
 		internal static object Pack(Type type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			if (type.IsArray)
 			{
@@ -97,7 +98,8 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				};
 				return methodNameTree;
 			}
-			else if (type.GetTypeInfo().IsGenericType)
+
+			if (type.GetTypeInfo().IsGenericType)
 			{
 				var typeArguments = type.GetTypeInfo().GetGenericArguments();
 				var methodNameTree = new Dictionary<string, object>(3) {
@@ -107,10 +109,8 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				};
 				return methodNameTree;
 			}
-			else
-			{
-				return type.GetCSharpFullName().ToString();
-			}
+
+			return type.GetCSharpFullName().ToString();
 		}
 		internal static object Pack(MemberInfo member)
 		{
@@ -118,9 +118,8 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				return null;
 
 			var memberName = (object)TypeNameUtils.RemoveGenericSuffix(member.Name);
-			if (member is MethodBase)
+			if (member is MethodBase methodBase)
 			{
-				var methodBase = (MethodBase)member;
 				if (methodBase.IsGenericMethod)
 				{
 					var typeArguments = methodBase.GetGenericArguments();
@@ -148,31 +147,30 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 					{ Constants.ARGUMENTS_ATTRIBUTE, arguments }
 				};
 			}
-			else
-			{
-				return new Dictionary<string, object>(3) {
-					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_REFERENCE },
-					{ Constants.TYPE_ATTRIBUTE, Pack(member.DeclaringType) },
-					{ Constants.NAME_ATTRIBUTE, memberName },
-				};
-			}
+
+			return new Dictionary<string, object>(3) {
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_MEMBER_REFERENCE },
+				{ Constants.TYPE_ATTRIBUTE, Pack(member.DeclaringType) },
+				{ Constants.NAME_ATTRIBUTE, memberName }
+			};
 		}
 		internal static object Pack(Expression[] arguments, string[] names)
 		{
-			if (arguments == null) throw new ArgumentNullException("arguments");
-			if (names != null && names.Length != arguments.Length) throw new ArgumentOutOfRangeException("names");
+			if (arguments == null) throw new ArgumentNullException(nameof(arguments));
+			if (names != null && names.Length != arguments.Length) throw new ArgumentOutOfRangeException(nameof(names));
 
 			var argumentsNode = new Dictionary<string, object>(arguments.Length);
 			for (var i = 0; i < arguments.Length; i++)
 			{
-				var name = (names != null ? names[i] : null) ?? Constants.GetIndexAsString(i);
+				var name = names?[i] ?? Constants.GetIndexAsString(i);
 				argumentsNode[name] = Pack(arguments[i]);
 			}
+
 			return argumentsNode;
 		}
 		private static object Pack(Type[] typeArguments)
 		{
-			if (typeArguments == null) throw new ArgumentNullException("typeArguments");
+			if (typeArguments == null) throw new ArgumentNullException(nameof(typeArguments));
 
 			var argumentsNode = new Dictionary<string, object>(typeArguments.Length);
 			for (var i = 0; i < typeArguments.Length; i++)
@@ -180,6 +178,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 				var key = Constants.GetIndexAsString(i);
 				argumentsNode[key] = Pack(typeArguments[i]);
 			}
+
 			return argumentsNode;
 		}
 	}

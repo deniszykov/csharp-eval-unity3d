@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using GameDevWare.Dynamic.Expressions.Binding;
 
 namespace GameDevWare.Dynamic.Expressions
@@ -11,7 +10,7 @@ namespace GameDevWare.Dynamic.Expressions
 	{
 		public static bool IsStatic(this MemberInfo memberInfo)
 		{
-			if (memberInfo == null) throw new ArgumentNullException("memberInfo");
+			if (memberInfo == null) throw new ArgumentNullException(nameof(memberInfo));
 
 			var propertyInfo = memberInfo as PropertyInfo;
 			var fieldInfo = memberInfo as FieldInfo;
@@ -21,40 +20,35 @@ namespace GameDevWare.Dynamic.Expressions
 			if (propertyInfo != null)
 			{
 #if NETSTANDARD
-				var accessor = (propertyInfo.GetMethod ?? propertyInfo.SetMethod);
+				var accessor = propertyInfo.GetMethod ?? propertyInfo.SetMethod;
 #else
 				var accessor = (propertyInfo.GetGetMethod(nonPublic: true) ?? propertyInfo.GetSetMethod(nonPublic: true));
 #endif
 				return accessor != null && accessor.IsStatic;
 			}
-			else if (fieldInfo != null)
-			{
-				return fieldInfo.IsStatic;
-			}
-			else if (eventInfo != null)
+
+			if (fieldInfo != null) return fieldInfo.IsStatic;
+
+			if (eventInfo != null)
 			{
 #if NETSTANDARD
-				var accessor = (eventInfo.AddMethod ?? eventInfo.RemoveMethod);
+				var accessor = eventInfo.AddMethod ?? eventInfo.RemoveMethod;
 #else
 				var accessor = (eventInfo.GetAddMethod(nonPublic: true) ?? eventInfo.GetRemoveMethod(nonPublic: true));
 #endif
 				return accessor != null && accessor.IsStatic;
 			}
-			else if (methodInfo != null)
-			{
-				return methodInfo.IsStatic;
-			}
-			else
-			{
-				return false;
-			}
+
+			if (methodInfo != null) return methodInfo.IsStatic;
+
+			return false;
 		}
 		public static bool IsStatic(this PropertyInfo propertyInfo)
 		{
-			if (propertyInfo == null) throw new ArgumentNullException("propertyInfo");
+			if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
 
 #if NETSTANDARD
-			var accessor = (propertyInfo.GetMethod ?? propertyInfo.SetMethod);
+			var accessor = propertyInfo.GetMethod ?? propertyInfo.SetMethod;
 #else
 			var accessor = (propertyInfo.GetGetMethod(nonPublic: true) ?? propertyInfo.GetSetMethod(nonPublic: true));
 #endif
@@ -73,7 +67,7 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 #if NETSTANDARD
 			var accessor = propertyInfo.GetMethod;
-			if (accessor.IsPublic == false)
+			if (accessor == null || !accessor.IsPublic)
 				return null;
 #else
 			var accessor = propertyInfo.GetGetMethod(nonPublic: false);
@@ -84,7 +78,7 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 #if NETSTANDARD
 			var accessor = propertyInfo.SetMethod;
-			if (accessor.IsPublic == false)
+			if (accessor == null || !accessor.IsPublic)
 				return null;
 #else
 			var accessor = propertyInfo.GetSetMethod(nonPublic: false);
@@ -102,25 +96,22 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		public static bool IsIndexer(this MethodInfo methodInfo)
 		{
-			if (methodInfo == null) throw new ArgumentNullException("methodInfo");
+			if (methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
 
 			var type = methodInfo.DeclaringType;
 			while (type != null && type != typeof(object))
 			{
-				var properties = methodInfo
-					.DeclaringType
+				var properties = methodInfo.DeclaringType?
 #if NETSTANDARD
 					.GetTypeInfo()
 #endif
-					.GetDeclaredProperties();
+					.GetDeclaredProperties() ?? Array.Empty<PropertyInfo>();
 
 				foreach (var property in properties)
 				{
 					if (property.GetAnyGetter() == methodInfo ||
 						property.GetAnySetter() == methodInfo)
-					{
 						return true;
-					}
 				}
 
 				type = type
@@ -136,37 +127,37 @@ namespace GameDevWare.Dynamic.Expressions
 #if NETSTANDARD
 		public static IEnumerable<FieldInfo> GetDeclaredFields(this TypeInfo type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			return type.DeclaredFields;
 		}
 		public static IEnumerable<PropertyInfo> GetDeclaredProperties(this TypeInfo type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			return type.DeclaredProperties;
 		}
 		public static IEnumerable<ConstructorInfo> GetPublicInstanceConstructors(this TypeInfo type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
-			return type.DeclaredConstructors.Where(c => c.IsPublic && c.IsStatic == false);
+			return type.DeclaredConstructors.Where(c => c.IsPublic && !c.IsStatic);
 		}
 		public static IEnumerable<Type> GetImplementedInterfaces(this TypeInfo type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			return type.ImplementedInterfaces;
 		}
 		public static IEnumerable<MethodInfo> GetDeclaredMethods(this TypeInfo type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			return type.DeclaredMethods;
 		}
 		public static IEnumerable<MethodInfo> GetAllMethods(this TypeInfo type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			do
 			{
@@ -174,12 +165,13 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					yield return method;
 				}
+
 				type = type.BaseType == null || type.BaseType == typeof(object) ? null : type.BaseType.GetTypeInfo();
 			} while (type != null);
 		}
 		public static IEnumerable<TypeInfo> GetAllNestedTypes(this TypeInfo type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			do
 			{
@@ -187,19 +179,20 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					yield return nestedType;
 				}
+
 				type = type.BaseType == null || type.BaseType == typeof(object) ? null : type.BaseType.GetTypeInfo();
 			} while (type != null);
 		}
 		public static IEnumerable<MemberInfo> GetDeclaredMembers(this TypeInfo type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			return type.DeclaredMembers;
 		}
 
 		public static Type[] GetGenericArguments(this TypeInfo type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			return type.GenericTypeArguments;
 		}
@@ -207,10 +200,7 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			if (type == null) return TypeCode.Empty;
 
-			if (type.GetTypeInfo().IsEnum)
-			{
-				type = Enum.GetUnderlyingType(type);
-			}
+			if (type.GetTypeInfo().IsEnum) type = Enum.GetUnderlyingType(type);
 
 			if (type == typeof(bool)) return TypeCode.Boolean;
 			if (type == typeof(char)) return TypeCode.Char;
@@ -227,6 +217,7 @@ namespace GameDevWare.Dynamic.Expressions
 			if (type == typeof(decimal)) return TypeCode.Decimal;
 			if (type == typeof(DateTime)) return TypeCode.DateTime;
 			if (type == typeof(string)) return TypeCode.String;
+
 			return TypeCode.Object;
 		}
 #else
@@ -300,9 +291,9 @@ namespace GameDevWare.Dynamic.Expressions
 #endif
 		public static MethodInfo FindConversion(this MemberDescription[] conversionOperators, Type fromType, Type toType)
 		{
-			if (conversionOperators == null) throw new ArgumentNullException("conversionOperators");
-			if (fromType == null) throw new ArgumentNullException("fromType");
-			if (toType == null) throw new ArgumentNullException("toType");
+			if (conversionOperators == null) throw new ArgumentNullException(nameof(conversionOperators));
+			if (fromType == null) throw new ArgumentNullException(nameof(fromType));
+			if (toType == null) throw new ArgumentNullException(nameof(toType));
 
 			foreach (var conversionOperator in conversionOperators)
 			{
@@ -311,7 +302,7 @@ namespace GameDevWare.Dynamic.Expressions
 				if (conversionOperator.GetParametersCount() != 1 || conversionOperator.GetParameterType(0) != fromType)
 					continue;
 
-				return (MethodInfo)conversionOperator;
+				return conversionOperator;
 			}
 
 			return null;

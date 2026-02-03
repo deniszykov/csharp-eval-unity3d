@@ -21,10 +21,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal sealed class TypeCache
 	{
-		private readonly Dictionary<Type, TypeDescription> types;
 		private readonly TypeCache parentCache;
+		private readonly Dictionary<Type, TypeDescription> types;
 
-		public Dictionary<Type, TypeDescription>.ValueCollection Values { get { return this.types.Values; } }
+		public Dictionary<Type, TypeDescription>.ValueCollection Values => this.types.Values;
 
 		public TypeCache(TypeCache parentCache = null)
 		{
@@ -34,7 +34,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public bool TryGetValue(Type type, out TypeDescription typeDescription)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			if (this.types.TryGetValue(type, out typeDescription))
 				return true;
@@ -47,11 +47,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		}
 		public bool TryAdd(Type type, ref TypeDescription typeDescription)
 		{
-			if (type == null) throw new ArgumentNullException("type");
-			if (typeDescription == null) throw new ArgumentNullException("typeDescription");
+			if (type == null) throw new ArgumentNullException(nameof(type));
+			if (typeDescription == null) throw new ArgumentNullException(nameof(typeDescription));
 
-			var existingValue = default(TypeDescription);
-			if (this.TryGetValue(type, out existingValue))
+			if (this.TryGetValue(type, out var existingValue))
 			{
 				typeDescription = existingValue;
 				return false;
@@ -62,18 +61,17 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		}
 		public void Add(Type type, TypeDescription typeDescription)
 		{
-			if (type == null) throw new ArgumentNullException("type");
-			if (typeDescription == null) throw new ArgumentNullException("typeDescription");
+			if (type == null) throw new ArgumentNullException(nameof(type));
+			if (typeDescription == null) throw new ArgumentNullException(nameof(typeDescription));
 
-			if (this.TryAdd(type, ref typeDescription) == false)
-				throw new ArgumentException(string.Format("TypeDescription for types '{0}' is already exists in cache.", typeDescription), "type");
+			if (!this.TryAdd(type, ref typeDescription))
+				throw new ArgumentException($"TypeDescription for types '{typeDescription}' is already exists in cache.", nameof(type));
 		}
 		public TypeDescription GetOrCreateTypeDescription(Type type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
-			var typeDescription = default(TypeDescription);
-			if (this.TryGetValue(type, out typeDescription))
+			if (this.TryGetValue(type, out var typeDescription))
 				return typeDescription;
 
 			typeDescription = new TypeDescription(type, this);
@@ -82,10 +80,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 		public void Merge(TypeCache otherCache)
 		{
-			if (otherCache == null) throw new ArgumentNullException("otherCache");
+			if (otherCache == null) throw new ArgumentNullException(nameof(otherCache));
 
 			foreach (var kv in otherCache.types)
+			{
 				this.types[kv.Key] = kv.Value;
+			}
 		}
 
 		public override string ToString()

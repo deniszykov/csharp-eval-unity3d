@@ -1,7 +1,6 @@
-namespace GameDevWare.Dynamic.Expressions.Tests
+namespace GameDevWare.Dynamic.Expressions.Tests;
+
+public struct TestStruct
 {
-	public struct TestStruct
-	{
-		public int IntField;
-	}
+	public int IntField;
 }

@@ -19,23 +19,24 @@ using System;
 namespace GameDevWare.Dynamic.Expressions
 {
 	/// <summary>
-	/// Marker for <see cref="KnownTypeResolver"/> to discover additional types with specified type (on which attribute is placed).
+	///     Marker for <see cref="KnownTypeResolver" /> to discover additional types with specified type (on which attribute is
+	///     placed).
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class)]
 	public sealed class ExpressionKnownTypeAttribute : Attribute
 	{
 		/// <summary>
-		/// Additional type to discover.
+		///     Additional type to discover.
 		/// </summary>
 		public Type Type { get; private set; }
 
 		/// <summary>
-		/// Creates new <see cref="ExpressionKnownTypeAttribute"/> with specified type.
+		///     Creates new <see cref="ExpressionKnownTypeAttribute" /> with specified type.
 		/// </summary>
 		/// <param name="type">Additional type to discover. Not null. </param>
 		public ExpressionKnownTypeAttribute(Type type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			this.Type = type;
 		}

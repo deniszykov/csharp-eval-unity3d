@@ -17,17 +17,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+// ReSharper disable MemberCanBePrivate.Global
 
 namespace GameDevWare.Dynamic.Expressions
 {
 	internal sealed class ExpressionLookupVisitor : ExpressionVisitor
 	{
 		private readonly List<Expression> lookupList;
-		private int found = 0;
+		private int found;
 
 		public ExpressionLookupVisitor(List<Expression> lookupList)
 		{
-			if (lookupList == null) throw new ArgumentNullException("lookupList");
+			if (lookupList == null) throw new ArgumentNullException(nameof(lookupList));
 
 			this.lookupList = lookupList;
 		}
@@ -73,7 +74,6 @@ namespace GameDevWare.Dynamic.Expressions
 				this.found++;
 
 			return base.VisitListInit(listInitExpression);
-
 		}
 		protected override Expression VisitMemberAccess(MemberExpression memberExpression)
 		{

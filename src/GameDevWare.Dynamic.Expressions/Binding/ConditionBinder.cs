@@ -22,43 +22,43 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class ConditionBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
 			bindingError = null;
 			boundExpression = null;
 
-			var test = node.GetTestExpression(throwOnError: true);
-			var ifTrue = node.GetIfTrueExpression(throwOnError: true);
-			var ifFalse = node.GetIfFalseExpression(throwOnError: true);
-			var testExpression = default(Expression);
-			var ifTrueBranch = default(Expression);
-			var ifFalseBranch = default(Expression);
+			var test = node.GetTestExpression(true);
+			var ifTrue = node.GetIfTrueExpression(true);
+			var ifFalse = node.GetIfFalseExpression(true);
 
-			if (AnyBinder.TryBindInNewScope(test, bindingContext, TypeDescription.GetTypeDescription(typeof(bool)), out testExpression, out bindingError) == false)
+			if (!AnyBinder.TryBindInNewScope(test, bindingContext, TypeDescription.GetTypeDescription(typeof(bool)), out var testExpression, out bindingError))
 				return false;
-			if (AnyBinder.TryBindInNewScope(ifTrue, bindingContext, TypeDescription.ObjectType, out ifTrueBranch, out bindingError) == false)
+			if (!AnyBinder.TryBindInNewScope(ifTrue, bindingContext, TypeDescription.ObjectType, out var ifTrueBranch, out bindingError))
 				return false;
-			if (AnyBinder.TryBindInNewScope(ifFalse, bindingContext, TypeDescription.ObjectType, out ifFalseBranch, out bindingError) == false)
+			if (!AnyBinder.TryBindInNewScope(ifFalse, bindingContext, TypeDescription.ObjectType, out var ifFalseBranch, out bindingError))
 				return false;
 
 			Debug.Assert(testExpression != null, "testExpression != null");
 			Debug.Assert(ifTrueBranch != null, "ifTrueBranch != null");
 			Debug.Assert(ifFalseBranch != null, "ifFalseBranch != null");
 
-			if (ExpressionUtils.TryPromoteBinaryOperation(ref ifTrueBranch, ref ifFalseBranch, ExpressionType.Conditional, out boundExpression) == false)
+			if (ExpressionUtils.TryPromoteBinaryOperation(ref ifTrueBranch, ref ifFalseBranch, ExpressionType.Conditional, out boundExpression))
 			{
-				if (ifTrueBranch.Type != ifFalseBranch.Type)
-				{
-					float quality;
-					ExpressionUtils.TryCoerceType(ref ifTrueBranch, ifFalseBranch.Type, out quality);
-				}
-
-				boundExpression = Expression.Condition(testExpression, ifTrueBranch, ifFalseBranch);
+				return true;
 			}
+
+			if (ifTrueBranch.Type != ifFalseBranch.Type)
+			{
+				ExpressionUtils.TryCoerceType(ref ifTrueBranch, ifFalseBranch.Type, out _);
+			}
+
+			boundExpression = Expression.Condition(testExpression, ifTrueBranch, ifFalseBranch);
+
 			return true;
 		}
 	}

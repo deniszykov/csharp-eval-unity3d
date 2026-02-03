@@ -18,7 +18,7 @@
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
 	/// <summary>
-	/// Types of tokens
+	///     Types of tokens
 	/// </summary>
 	public enum TokenType
 	{

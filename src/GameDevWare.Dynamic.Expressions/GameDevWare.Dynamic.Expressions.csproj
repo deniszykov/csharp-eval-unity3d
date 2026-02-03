@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net35;net45;netstandard1.3;netcoreapp2.0</TargetFrameworks>
+		<TargetFramework>net10.0</TargetFramework>
 		<Authors>Denis Zykov</Authors>
 		<Version>2.3.0</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions</PackageId>
 		<Product>GameDevWare.Dynamic.Expressions</Product>
-		<Description>C# expression parsing and execution library. 
-Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
-		<Company />
-		<ApplicationIcon />
+		<Description>C# expression parsing and execution library.
+			Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).
+		</Description>
+		<Company/>
+		<LangVersion>7.3</LangVersion>
+		<ApplicationIcon/>
 		<OutputType>Library</OutputType>
 		<OutputTypeEx>library</OutputTypeEx>
-		<StartupObject />		
+		<StartupObject/>
 		<SignAssembly>true</SignAssembly>
 		<PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
 		<AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
-	    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>	
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\GameDevWare.Dynamic.Expressions.xml</DocumentationFile>
 		<PackageProjectUrl>https://github.com/deniszykov/csharp-eval-unity3d</PackageProjectUrl>
 		<PackageLicenseUrl>https://raw.githubusercontent.com/deniszykov/csharp-eval-unity3d/master/License.md</PackageLicenseUrl>
 		<Copyright>(c) Denis Zykov, GameDevWare 2018</Copyright>
@@ -25,7 +27,7 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>eval parser compiler expressions unity3d aot</PackageTags>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<PackageReleaseNotes />
+		<PackageReleaseNotes/>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 		<Optimize>False</Optimize>
@@ -37,7 +39,7 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
 		<DefineConstants>$(DefineConstants);NETSTANDARD;</DefineConstants>
 	</PropertyGroup>
-	<PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+	<PropertyGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
 		<DefineConstants>$(DefineConstants);NETSTANDARD;</DefineConstants>
 	</PropertyGroup>
 	<PropertyGroup Condition=" '$(TargetFramework)' == 'net35' ">
@@ -47,19 +49,16 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 		<DefineConstants>$(DefineConstants);NET45</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Compile Remove="Temp\**" />
-	  <EmbeddedResource Remove="Temp\**" />
-	  <None Remove="Temp\**" />
+		<Compile Remove="Temp\**"/>
+		<EmbeddedResource Remove="Temp\**"/>
+		<None Remove="Temp\**"/>
 	</ItemGroup>
 	<ItemGroup>
-	  <None Include="..\..\Readme.md" Link="Readme.md" />
-	  <None Include="..\..\ReleaseNotes.txt" Link="ReleaseNotes.txt" />
+		<None Include="..\..\Readme.md" Link="Readme.md"/>
+		<None Include="..\..\ReleaseNotes.txt" Link="ReleaseNotes.txt"/>
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="Properties\Resources.resx" />
-	</ItemGroup>
-	<ItemGroup>
-		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}"/>
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="Aot.cs">
@@ -69,7 +68,7 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 		</Compile>
 		<Compile Update="UnityResources.cs">
 			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen> 
+			<AutoGen>True</AutoGen>
 			<DependentUpon>UnityResources.tt</DependentUpon>
 		</Compile>
 	</ItemGroup>
@@ -79,13 +78,13 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 			<LastGenOutput>Aot.cs</LastGenOutput>
 		</None>
 		<None Update="TypeScriptResources.ts">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>TypeScriptResources.tt</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>TypeScriptResources.tt</DependentUpon>
 		</None>
 		<None Update="TypeScriptResources.tt">
-		  <Generator>TextTemplatingFileGenerator</Generator>
-		  <LastGenOutput>TypeScriptResources.ts</LastGenOutput>
+			<Generator>TextTemplatingFileGenerator</Generator>
+			<LastGenOutput>TypeScriptResources.ts</LastGenOutput>
 		</None>
 		<None Update="UnityResources.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
@@ -95,26 +94,26 @@ Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>
 
 	<Target Name="ReadPackageMetadataromFile" BeforeTargets="GenerateNuspec">
 		<ItemGroup>
-			<ReleaseNotesFile Include="..\..\ReleaseNotes.txt" />
+			<ReleaseNotesFile Include="..\..\ReleaseNotes.txt"/>
 		</ItemGroup>
 		<ReadLinesFromFile File="@(ReleaseNotesFile)">
-			<Output TaskParameter="Lines" ItemName="PackageReleaseNotesLines" />
+			<Output TaskParameter="Lines" ItemName="PackageReleaseNotesLines"/>
 		</ReadLinesFromFile>
 		<CreateProperty Value="@(PackageReleaseNotesLines->'%(Identity)', '%0D%0A')">
-			<Output PropertyName="PackageReleaseNotes" TaskParameter="Value" />
+			<Output PropertyName="PackageReleaseNotes" TaskParameter="Value"/>
 		</CreateProperty>
 	</Target>
 
 	<Target Name="CopyDll" AfterTargets="PostBuildEvent" Condition=" '$(TargetFramework)' == 'net35' ">
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.3.4/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.3.4/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.3.4/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.3.4/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.5.4/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.5.4/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2017/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2017/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.5.4/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.5.4/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2017/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2017/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
+		<Copy SourceFiles="$(ProjectDir)$(DocumentationFile)" DestinationFolder="$(ProjectDir)../GameDevWare.Dynamic.Expressions.Unity.2021/Assets/Plugins/GameDevWare.Dynamic.Expressions/" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 </Project>

@@ -1,63 +1,65 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal class ListInitBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
 			boundExpression = null;
 			bindingError = null;
 
-			var newNode = node.GetNewExpression(throwOnError: true);
-			var newExpression = default(Expression);
-			if (AnyBinder.TryBind(newNode, bindingContext, TypeDescription.ObjectType, out newExpression, out bindingError) == false ||
-				newExpression is NewExpression == false)
+			var newNode = node.GetNewExpression(true);
+			if (AnyBinder.TryBind(newNode, bindingContext, TypeDescription.ObjectType, out var newExpressionObj, out bindingError) &&
+				newExpressionObj is NewExpression newExpression)
 			{
-				if (bindingError == null)
-					bindingError = new ExpressionParserException(Properties.Resources.EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION, node);
-				return false;
+				if (!TryGetListInitializers(newExpression.Type, node, bindingContext, out var initializers, out bindingError))
+				{
+					if (bindingError == null)
+						bindingError = new ExpressionParserException(Resources.EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS, node);
+					return false;
+				}
+
+				boundExpression = Expression.ListInit(newExpression, initializers);
+				return true;
 			}
 
-			var initializers = default(ElementInit[]);
-			if (TryGetListInitializers(newExpression.Type, node, bindingContext, out initializers, out bindingError) == false)
-			{
-				if (bindingError == null)
-					bindingError = new ExpressionParserException(Properties.Resources.EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS, node);
-				return false;
-			}
-
-			boundExpression = Expression.ListInit((NewExpression)newExpression, initializers);
-			return true;
+			if (bindingError == null)
+				bindingError = new ExpressionParserException(Resources.EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION, node);
+			return false;
 		}
 
-		internal static bool TryGetListInitializers(Type newExpressionType, SyntaxTreeNode listNode, BindingContext bindingContext, out ElementInit[] initializers, out Exception bindingError)
+		internal static bool TryGetListInitializers
+			(Type newExpressionType, SyntaxTreeNode listNode, BindingContext bindingContext, out ElementInit[] initializers, out Exception bindingError)
 		{
-			if (listNode == null) throw new ArgumentNullException("listNode");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
+			if (listNode == null) throw new ArgumentNullException(nameof(listNode));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
 
 			bindingError = null;
-			var initializerNodes = listNode.EnumerateInitializers(throwOnError: true).ToList();
+			var initializerNodes = listNode.EnumerateInitializers(true).ToList();
 			initializers = new ElementInit[initializerNodes.Count];
 			var index = 0;
 			foreach (var initializerNode in initializerNodes)
 			{
-				if (initializerNode == null)
+				if (initializerNode == null) return false; // failed to get initializer #i
+
+				if (!TryCreateElementInitNode(newExpressionType, initializerNode, bindingContext, ref bindingError, out var elemInit))
 				{
-					return false; // failed to get initializer #i
+					return false;
 				}
 
-				var elemInit = default(ElementInit);
-				if (!TryCreateElementInitNode(newExpressionType, initializerNode, bindingContext, ref bindingError, out elemInit)) return false;
-				initializers[index] = elemInit;;
+				initializers[index] = elemInit;
 				index++;
 			}
+
 			return true;
 		}
 		private static bool TryCreateElementInitNode
@@ -68,9 +70,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			ref Exception bindingError,
 			out ElementInit elemInit)
 		{
-			var initializers = initializerNode.EnumerateInitializers(throwOnError: true).ToList();
+			var initializers = initializerNode.EnumerateInitializers(true).ToList();
 			var addMethod = default(MemberDescription);
-			var addMethodNameObj = initializerNode.GetMethodName(throwOnError: false);
+			var addMethodNameObj = initializerNode.GetMethodName(false);
 			if (addMethodNameObj != null)
 			{
 				bindingContext.TryResolveMember(addMethodNameObj, out addMethod);
@@ -86,7 +88,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			if (addMethod == null)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDMEMBER, addMethodNameObj, newExpressionType), initializerNode);
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETOBINDMEMBER, addMethodNameObj, newExpressionType),
+					initializerNode);
 				elemInit = null;
 				return false;
 			}
@@ -101,10 +104,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					elemInit = null;
 					return false;
 				}
+
 				var parameter = addMethod.GetParameter(index);
 				var parameterType = TypeDescription.GetTypeDescription(parameter.ParameterType);
 
-				if (AnyBinder.TryBindInNewScope(initializerValueNode, bindingContext, parameterType, out arguments[index], out bindingError) == false)
+				if (!AnyBinder.TryBindInNewScope(initializerValueNode, bindingContext, parameterType, out arguments[index], out bindingError))
 				{
 					elemInit = null;
 					return false;

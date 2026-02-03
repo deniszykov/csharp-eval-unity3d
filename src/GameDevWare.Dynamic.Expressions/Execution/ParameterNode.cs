@@ -10,14 +10,14 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public ParameterNode(ParameterExpression parameterExpression, ParameterExpression[] parameterExpressions)
 		{
-			if (parameterExpression == null) throw new ArgumentNullException("parameterExpression");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (parameterExpression == null) throw new ArgumentNullException(nameof(parameterExpression));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.parameterExpression = parameterExpression;
 			this.parameterIndex = Array.IndexOf(parameterExpressions, parameterExpression);
 
 			if (this.parameterIndex < 0)
-				throw new ArgumentException("Parameter expression is not found in passed parameter list.", "parameterExpression");
+				throw new ArgumentException("Parameter expression is not found in passed parameter list.", nameof(parameterExpression));
 		}
 		/// <inheritdoc />
 		public override object Run(Closure closure)

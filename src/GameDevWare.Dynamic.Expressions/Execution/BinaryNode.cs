@@ -12,15 +12,16 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		private readonly Intrinsic.BinaryOperation operation;
 		private readonly object shortcutLeftValue;
 
-		private BinaryNode(
+		private BinaryNode
+		(
 			BinaryExpression binaryExpression,
 			ConstantExpression[] constExpressions,
 			ParameterExpression[] parameterExpressions,
 			string binaryOperationMethodName)
 		{
-			if (binaryExpression == null) throw new ArgumentNullException("binaryExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (binaryExpression == null) throw new ArgumentNullException(nameof(binaryExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.binaryExpression = binaryExpression;
 			this.leftNode = AotCompiler.Compile(binaryExpression.Left, constExpressions, parameterExpressions);
@@ -57,14 +58,17 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					case ExpressionType.GreaterThanOrEqual:
 					case ExpressionType.LessThan:
 					case ExpressionType.LessThanOrEqual: return Constants.FalseObject;
+
 					// C# Specs -> 7.11.4 Nullable boolean logical operators
 					case ExpressionType.And:
 						if (Equals(left, Constants.FalseObject) || Equals(right, Constants.FalseObject))
 							return Constants.FalseObject;
+
 						goto default;
 					case ExpressionType.Or:
 						if (Equals(left, Constants.TrueObject) || Equals(right, Constants.TrueObject))
 							return Constants.TrueObject;
+
 						goto default;
 					default:
 						return null;
@@ -76,24 +80,23 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public static ExecutionNode Create(BinaryExpression unaryExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (unaryExpression == null) throw new ArgumentNullException("unaryExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (unaryExpression == null) throw new ArgumentNullException(nameof(unaryExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			const string NO_OPERATION = null;
 
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 			switch (unaryExpression.NodeType)
 			{
 				case ExpressionType.Add:
 				case ExpressionType.AddChecked: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_Addition");
 				case ExpressionType.And: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_BitwiseAnd");
-				case ExpressionType.AndAlso: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, NO_OPERATION);
 				case ExpressionType.Divide: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_Division");
 				case ExpressionType.Equal: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_Equality");
 				case ExpressionType.ExclusiveOr: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_ExclusiveOr");
 				case ExpressionType.GreaterThan: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_GreaterThan");
 				case ExpressionType.GreaterThanOrEqual: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_GreaterThanOrEqual");
-				case ExpressionType.LeftShift: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, NO_OPERATION);
 				case ExpressionType.LessThan: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_LessThan");
 				case ExpressionType.LessThanOrEqual: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_LessThanOrEqual");
 				case ExpressionType.Modulo: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_Modulus");
@@ -101,11 +104,13 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				case ExpressionType.MultiplyChecked: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_Multiply");
 				case ExpressionType.NotEqual: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_Inequality");
 				case ExpressionType.Or: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_BitwiseOr");
-				case ExpressionType.OrElse: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, NO_OPERATION);
-				case ExpressionType.Power: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, NO_OPERATION);
-				case ExpressionType.RightShift: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, NO_OPERATION);
 				case ExpressionType.Subtract:
 				case ExpressionType.SubtractChecked: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, "op_Subtraction");
+				case ExpressionType.AndAlso:
+				case ExpressionType.LeftShift:
+				case ExpressionType.OrElse:
+				case ExpressionType.Power:
+				case ExpressionType.RightShift: return new BinaryNode(unaryExpression, constExpressions, parameterExpressions, NO_OPERATION);
 				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_COMPIL_UNKNOWNEXPRTYPE, unaryExpression.Type));
 			}
 		}

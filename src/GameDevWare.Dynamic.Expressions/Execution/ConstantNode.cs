@@ -10,14 +10,14 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public ConstantNode(ConstantExpression constantExpression, ConstantExpression[] constExpressions)
 		{
-			if (constantExpression == null) throw new ArgumentNullException("constantExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
+			if (constantExpression == null) throw new ArgumentNullException(nameof(constantExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
 
 			this.constantExpression = constantExpression;
 			this.constantIndex = Array.IndexOf(constExpressions, constantExpression);
 
 			if (this.constantIndex < 0)
-				throw new ArgumentException("Constant expression is not found in passed constant list.", "constantExpression");
+				throw new ArgumentException("Constant expression is not found in passed constant list.", nameof(constantExpression));
 		}
 
 		/// <inheritdoc />

@@ -23,16 +23,16 @@ namespace GameDevWare.Dynamic.Expressions
 {
 	internal static class ExpressionUtils
 	{
+		public static readonly Expression FalseConstant = Expression.Constant(false);
+		public static readonly Expression NegativeDouble = Expression.Constant(-1.0d);
+		public static readonly Expression NegativeSingle = Expression.Constant(-1.0f);
 		public static readonly Expression NullConstant = Expression.Constant(null, typeof(object));
 		public static readonly Expression TrueConstant = Expression.Constant(true);
-		public static readonly Expression FalseConstant = Expression.Constant(false);
-		public static readonly Expression NegativeSingle = Expression.Constant(-1.0f);
-		public static readonly Expression NegativeDouble = Expression.Constant(-1.0d);
 
 		public static bool TryPromoteBinaryOperation(ref Expression leftOperand, ref Expression rightOperand, ExpressionType type, out Expression operation)
 		{
-			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
-			if (rightOperand == null) throw new ArgumentNullException("rightOperand");
+			if (leftOperand == null) throw new ArgumentNullException(nameof(leftOperand));
+			if (rightOperand == null) throw new ArgumentNullException(nameof(rightOperand));
 
 			operation = null;
 
@@ -44,26 +44,26 @@ namespace GameDevWare.Dynamic.Expressions
 
 			// enum + enum
 			if (leftTypeUnwrap.IsEnum || rightTypeUnwrap.IsEnum)
-			{
 				return TryPromoteEnumBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType, type, out operation);
-			}
+
 			// number + number
-			else if (leftTypeUnwrap.IsNumber && rightTypeUnwrap.IsNumber)
-			{
+			if (leftTypeUnwrap.IsNumber && rightTypeUnwrap.IsNumber)
 				return TryPromoteNumberBinaryOperation(ref leftOperand, leftType, ref rightOperand, rightType, type, out operation);
-			}
+
 			// null + nullable
-			else if (IsNull(leftOperand) && rightType.CanBeNull)
+			if (IsNull(leftOperand) && rightType.CanBeNull)
 			{
 				leftType = rightType;
 				leftOperand = rightType.DefaultExpression;
 			}
+
 			// nullable + null
 			else if (IsNull(rightOperand) && leftType.CanBeNull)
 			{
 				rightType = leftType;
 				rightOperand = leftType.DefaultExpression;
 			}
+
 			// [not]nullable + [not]nullable
 			else if (leftType.IsNullable != rightType.IsNullable)
 			{
@@ -74,12 +74,19 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return false;
 		}
-		private static bool TryPromoteNumberBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType, ExpressionType type, out Expression operation)
+		private static bool TryPromoteNumberBinaryOperation
+		(
+			ref Expression leftOperand,
+			TypeDescription leftType,
+			ref Expression rightOperand,
+			TypeDescription rightType,
+			ExpressionType type,
+			out Expression operation)
 		{
-			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
-			if (leftType == null) throw new ArgumentNullException("leftType");
-			if (rightOperand == null) throw new ArgumentNullException("rightOperand");
-			if (rightType == null) throw new ArgumentNullException("rightType");
+			if (leftOperand == null) throw new ArgumentNullException(nameof(leftOperand));
+			if (leftType == null) throw new ArgumentNullException(nameof(leftType));
+			if (rightOperand == null) throw new ArgumentNullException(nameof(rightOperand));
+			if (rightType == null) throw new ArgumentNullException(nameof(rightType));
 
 			operation = null;
 
@@ -96,7 +103,8 @@ namespace GameDevWare.Dynamic.Expressions
 				{
 					// expand smaller integers to int32
 					leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
-					rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
+					rightOperand = Expression.Convert(rightOperand,
+						promoteRightToNullable ? TypeDescription.Int32Type.GetNullableType() : TypeDescription.Int32Type);
 					return false;
 				}
 			}
@@ -126,10 +134,9 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			else if (leftTypeCode == TypeCode.UInt64)
 			{
-				var quality = 0.0f;
 				var rightOperandTmp = rightOperand;
 				var expectedRightType = promoteRightToNullable ? typeof(ulong?) : typeof(ulong);
-				if (NumberUtils.IsSignedInteger(rightTypeCode) && TryCoerceType(ref rightOperandTmp, expectedRightType, out quality) == false)
+				if (NumberUtils.IsSignedInteger(rightTypeCode) && !TryCoerceType(ref rightOperandTmp, expectedRightType, out _))
 					return false; // will throw exception
 
 				rightOperand = rightOperandTmp;
@@ -137,10 +144,9 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 			else if (rightTypeCode == TypeCode.UInt64)
 			{
-				var quality = 0.0f;
 				var leftOperandTmp = leftOperand;
 				var expectedLeftType = promoteLeftToNullable ? typeof(ulong?) : typeof(ulong);
-				if (NumberUtils.IsSignedInteger(leftTypeCode) && TryCoerceType(ref leftOperandTmp, expectedLeftType, out quality) == false)
+				if (NumberUtils.IsSignedInteger(leftTypeCode) && !TryCoerceType(ref leftOperandTmp, expectedLeftType, out _))
 					return false; // will throw exception
 
 				leftOperand = leftOperandTmp;
@@ -154,7 +160,7 @@ namespace GameDevWare.Dynamic.Expressions
 					leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(long?) : typeof(long));
 			}
 			else if ((leftTypeCode == TypeCode.UInt32 && NumberUtils.IsSignedInteger(rightTypeCode)) ||
-				(rightTypeCode == TypeCode.UInt32 && NumberUtils.IsSignedInteger(leftTypeCode)))
+					(rightTypeCode == TypeCode.UInt32 && NumberUtils.IsSignedInteger(leftTypeCode)))
 			{
 				rightOperand = Expression.Convert(rightOperand, promoteRightToNullable ? typeof(long?) : typeof(long));
 				leftOperand = Expression.Convert(leftOperand, promoteLeftToNullable ? typeof(long?) : typeof(long));
@@ -177,12 +183,19 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return false;
 		}
-		private static bool TryPromoteEnumBinaryOperation(ref Expression leftOperand, TypeDescription leftType, ref Expression rightOperand, TypeDescription rightType, ExpressionType type, out Expression operation)
+		private static bool TryPromoteEnumBinaryOperation
+		(
+			ref Expression leftOperand,
+			TypeDescription leftType,
+			ref Expression rightOperand,
+			TypeDescription rightType,
+			ExpressionType type,
+			out Expression operation)
 		{
-			if (leftOperand == null) throw new ArgumentNullException("leftOperand");
-			if (leftType == null) throw new ArgumentNullException("leftType");
-			if (rightOperand == null) throw new ArgumentNullException("rightOperand");
-			if (rightType == null) throw new ArgumentNullException("rightType");
+			if (leftOperand == null) throw new ArgumentNullException(nameof(leftOperand));
+			if (leftType == null) throw new ArgumentNullException(nameof(leftType));
+			if (rightOperand == null) throw new ArgumentNullException(nameof(rightOperand));
+			if (rightType == null) throw new ArgumentNullException(nameof(rightType));
 
 			operation = null;
 
@@ -191,7 +204,9 @@ namespace GameDevWare.Dynamic.Expressions
 			var promoteToNullable = leftType.IsNullable != rightType.IsNullable;
 
 			// enum + number
-			if (leftTypeUnwrap.IsEnum && rightTypeUnwrap.IsNumber && (type == ExpressionType.Add || type == ExpressionType.AddChecked || type == ExpressionType.Subtract || type == ExpressionType.SubtractChecked))
+			if (leftTypeUnwrap.IsEnum &&
+				rightTypeUnwrap.IsNumber &&
+				(type == ExpressionType.Add || type == ExpressionType.AddChecked || type == ExpressionType.Subtract || type == ExpressionType.SubtractChecked))
 			{
 				var integerType = leftTypeUnwrap.UnderlyingType;
 				leftOperand = Expression.Convert(leftOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
@@ -211,8 +226,12 @@ namespace GameDevWare.Dynamic.Expressions
 				operation = Expression.Convert(operation, promoteToNullable ? leftTypeUnwrap.GetNullableType() : leftTypeUnwrap);
 				return true;
 			}
+
 			// number + enum
-			else if (rightTypeUnwrap.IsEnum && leftTypeUnwrap.IsNumber && (type == ExpressionType.Add || type == ExpressionType.AddChecked || type == ExpressionType.Subtract || type == ExpressionType.SubtractChecked))
+
+			if (rightTypeUnwrap.IsEnum &&
+				leftTypeUnwrap.IsNumber &&
+				(type == ExpressionType.Add || type == ExpressionType.AddChecked || type == ExpressionType.Subtract || type == ExpressionType.SubtractChecked))
 			{
 				var integerType = rightTypeUnwrap.UnderlyingType;
 				rightOperand = Expression.ConvertChecked(rightOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
@@ -223,22 +242,31 @@ namespace GameDevWare.Dynamic.Expressions
 				operation = Expression.Convert(operation, promoteToNullable ? rightTypeUnwrap.GetNullableType() : rightTypeUnwrap);
 				return true;
 			}
+
 			// null + nullable-enum
-			else if (IsNull(leftOperand) && rightType.CanBeNull)
+
+			if (IsNull(leftOperand) && rightType.CanBeNull)
 			{
 				leftType = rightType;
 				leftOperand = rightType.DefaultExpression;
 			}
+
 			// nullable-enum + null
 			else if (IsNull(rightOperand) && leftType.CanBeNull)
 			{
 				rightType = leftType;
 				rightOperand = leftType.DefaultExpression;
 			}
+
 			// enum OP enum
-			else if (rightTypeUnwrap == leftTypeUnwrap && (type == ExpressionType.And || type == ExpressionType.Or || type == ExpressionType.ExclusiveOr ||
-				type == ExpressionType.GreaterThan || type == ExpressionType.GreaterThanOrEqual ||
-				type == ExpressionType.LessThan || type == ExpressionType.LessThanOrEqual))
+			else if (rightTypeUnwrap == leftTypeUnwrap &&
+					(type == ExpressionType.And ||
+						type == ExpressionType.Or ||
+						type == ExpressionType.ExclusiveOr ||
+						type == ExpressionType.GreaterThan ||
+						type == ExpressionType.GreaterThanOrEqual ||
+						type == ExpressionType.LessThan ||
+						type == ExpressionType.LessThanOrEqual))
 			{
 				var integerType = rightTypeUnwrap.UnderlyingType;
 				rightOperand = Expression.ConvertChecked(rightOperand, promoteToNullable ? integerType.GetNullableType() : integerType);
@@ -247,6 +275,7 @@ namespace GameDevWare.Dynamic.Expressions
 				operation = Expression.MakeBinary(type, leftOperand, rightOperand);
 				return true;
 			}
+
 			// [not]nullable + [not]nullable
 			else if (promoteToNullable)
 			{
@@ -259,7 +288,7 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		public static bool TryPromoteUnaryOperation(ref Expression operand, ExpressionType type, out Expression operation)
 		{
-			if (operand == null) throw new ArgumentNullException("operand");
+			if (operand == null) throw new ArgumentNullException(nameof(operand));
 
 			operation = null;
 			var operandType = TypeDescription.GetTypeDescription(operand.Type);
@@ -278,13 +307,12 @@ namespace GameDevWare.Dynamic.Expressions
 
 		public static bool IsNull(Expression expression, bool unwrapConversions = true)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			if (ReferenceEquals(expression, NullConstant))
 				return true;
 
-			var constantExpression = default(ConstantExpression);
-			if (TryExposeConstant(expression, out constantExpression) == false)
+			if (!TryExposeConstant(expression, out var constantExpression))
 				return false;
 
 			if (ReferenceEquals(constantExpression, NullConstant))
@@ -294,17 +322,16 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		public static void CoerceType(ref Expression expression, Type toType)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
-			if (toType == null) throw new ArgumentNullException("toType");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
+			if (toType == null) throw new ArgumentNullException(nameof(toType));
 
-			var quality = 0.0f;
-			if (TryCoerceType(ref expression, toType, out quality) == false || quality <= TypeConversion.QUALITY_NO_CONVERSION)
-				throw new InvalidOperationException(string.Format("Failed to change type of expression '{0}' to '{1}'.", expression, toType));
+			if (!TryCoerceType(ref expression, toType, out var quality) || quality <= TypeConversion.QUALITY_NO_CONVERSION)
+				throw new InvalidOperationException($"Failed to change type of expression '{expression}' to '{toType}'.");
 		}
 		public static bool TryCoerceType(ref Expression expression, Type toType, out float quality)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
-			if (toType == null) throw new ArgumentNullException("toType");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
+			if (toType == null) throw new ArgumentNullException(nameof(toType));
 
 			if (expression.Type == toType)
 			{
@@ -315,19 +342,16 @@ namespace GameDevWare.Dynamic.Expressions
 			var actualType = TypeDescription.GetTypeDescription(expression.Type);
 			var targetType = TypeDescription.GetTypeDescription(toType);
 
-			if (TryConvertInPlace(ref expression, targetType, out quality) || TryFindConversion(ref expression, actualType, targetType, out quality))
-			{
-				return true;
-			}
+			if (TryConvertInPlace(ref expression, targetType, out quality) || TryFindConversion(ref expression, actualType, targetType, out quality)) return true;
 
 			quality = TypeConversion.QUALITY_NO_CONVERSION;
 			return false;
 		}
 		private static bool TryFindConversion(ref Expression expression, TypeDescription actualType, TypeDescription targetType, out float quality)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
-			if (actualType == null) throw new ArgumentNullException("actualType");
-			if (targetType == null) throw new ArgumentNullException("targetType");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
+			if (actualType == null) throw new ArgumentNullException(nameof(actualType));
+			if (targetType == null) throw new ArgumentNullException(nameof(targetType));
 
 			quality = TypeConversion.QUALITY_NO_CONVERSION;
 
@@ -350,12 +374,12 @@ namespace GameDevWare.Dynamic.Expressions
 				return true;
 			}
 
-			var conversion = default(TypeConversion);
-			if (TypeConversion.TryGetTypeConversion(actualTypeUnwrap, targetTypeUnwrap, out conversion) == false || conversion.Quality <= TypeConversion.QUALITY_NO_CONVERSION)
+			if (!TypeConversion.TryGetTypeConversion(actualTypeUnwrap, targetTypeUnwrap, out var conversion) ||
+				conversion.Quality <= TypeConversion.QUALITY_NO_CONVERSION)
 				return false;
 
 			// implicit convertion on expectedType
-			if (conversion.Implicit != null && conversion.Implicit.TryMakeConversion(expression, out expression, checkedConversion: true))
+			if (conversion.Implicit != null && conversion.Implicit.TryMakeConversion(expression, out expression, true))
 			{
 				quality = TypeConversion.QUALITY_IMPLICIT_CONVERSION;
 				return true;
@@ -367,14 +391,14 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		private static bool TryConvertInPlace(ref Expression expression, TypeDescription targetType, out float quality)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
-			if (targetType == null) throw new ArgumentNullException("targetType");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
+			if (targetType == null) throw new ArgumentNullException(nameof(targetType));
 
 			quality = TypeConversion.QUALITY_NO_CONVERSION;
 			var targetTypeUnwrap = targetType.IsNullable ? targetType.UnderlyingType : targetType;
+
 			// try to convert value of constant
-			var constantExpression = default(ConstantExpression);
-			if (TryExposeConstant(expression, out constantExpression) == false)
+			if (!TryExposeConstant(expression, out var constantExpression))
 				return false;
 
 			var constantValue = constantExpression.Value;
@@ -386,13 +410,12 @@ namespace GameDevWare.Dynamic.Expressions
 				expression = Expression.Constant(null, targetType);
 				return true;
 			}
-			else if (constantValue == null)
-			{
-				return false;
-			}
+
+			if (constantValue == null) return false;
 
 			var constantTypeCode = constantTypeUnwrap.TypeCode;
-			var convertibleToExpectedType = default(bool);
+			var convertibleToExpectedType = false;
+
 			// ReSharper disable RedundantCast
 			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (targetTypeUnwrap.TypeCode)
@@ -408,9 +431,11 @@ namespace GameDevWare.Dynamic.Expressions
 				case TypeCode.Int64: convertibleToExpectedType = IsInRange(constantValue, constantTypeCode, long.MinValue, long.MaxValue); break;
 				case TypeCode.Double:
 				case TypeCode.Decimal:
-				case TypeCode.Single: convertibleToExpectedType = NumberUtils.IsSignedInteger(constantTypeCode) || NumberUtils.IsUnsignedInteger(constantTypeCode); break;
+				case TypeCode.Single:
+					convertibleToExpectedType = NumberUtils.IsSignedInteger(constantTypeCode) || NumberUtils.IsUnsignedInteger(constantTypeCode); break;
 				default: convertibleToExpectedType = false; break;
 			}
+
 			// ReSharper restore RedundantCast
 
 			if (!convertibleToExpectedType)
@@ -423,20 +448,22 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		private static Expression ConvertToNullable(Expression notNullableExpression, TypeDescription typeDescription)
 		{
-			if (notNullableExpression == null) throw new ArgumentNullException("notNullableExpression");
-			if (typeDescription != null && notNullableExpression.Type != typeDescription) throw new ArgumentException("Wrong type description.", "typeDescription");
+			if (notNullableExpression == null) throw new ArgumentNullException(nameof(notNullableExpression));
+			if (typeDescription != null && notNullableExpression.Type != typeDescription)
+				throw new ArgumentException("Wrong type description.", nameof(typeDescription));
+
 			if (typeDescription == null) typeDescription = TypeDescription.GetTypeDescription(notNullableExpression.Type);
 
-			if (typeDescription.CanBeNull == false)
+			if (!typeDescription.CanBeNull)
 				return Expression.Convert(notNullableExpression, typeDescription.GetNullableType());
-			else
-				return notNullableExpression;
+
+			return notNullableExpression;
 		}
 
 		public static Expression MakeNullPropagationExpression(List<Expression> nullTestExpressions, Expression ifNotNullExpression)
 		{
-			if (nullTestExpressions == null) throw new ArgumentNullException("nullTestExpressions");
-			if (ifNotNullExpression == null) throw new ArgumentNullException("ifNotNullExpression");
+			if (nullTestExpressions == null) throw new ArgumentNullException(nameof(nullTestExpressions));
+			if (ifNotNullExpression == null) throw new ArgumentNullException(nameof(ifNotNullExpression));
 
 			var notNullTestTreeExpression = default(Expression);
 			foreach (var nullTestExpression in nullTestExpressions)
@@ -448,39 +475,43 @@ namespace GameDevWare.Dynamic.Expressions
 				else
 					notNullTestTreeExpression = Expression.AndAlso(notNullTestTreeExpression, notEqualDefault);
 			}
+
 			if (notNullTestTreeExpression == null)
 				notNullTestTreeExpression = TrueConstant;
 
 			var ifNotNullTypeDescription = TypeDescription.GetTypeDescription(ifNotNullExpression.Type);
-			var resultType = ifNotNullTypeDescription.CanBeNull == false ? TypeDescription.GetTypeDescription(typeof(Nullable<>).MakeGenericType(ifNotNullExpression.Type)) : ifNotNullTypeDescription;
+			var resultType = !ifNotNullTypeDescription.CanBeNull ?
+				TypeDescription.GetTypeDescription(typeof(Nullable<>).MakeGenericType(ifNotNullExpression.Type)) : ifNotNullTypeDescription;
 			if (resultType != ifNotNullExpression.Type)
 				ifNotNullExpression = Expression.Convert(ifNotNullExpression, resultType);
 
 			return Expression.Condition
 			(
-				test: notNullTestTreeExpression,
-				ifTrue: ifNotNullExpression,
-				ifFalse: resultType.DefaultExpression
+				notNullTestTreeExpression,
+				ifNotNullExpression,
+				resultType.DefaultExpression
 			);
 		}
-		public static bool ExtractNullPropagationExpression(ConditionalExpression conditionalExpression, out List<Expression> nullTestExpressions, out Expression ifNotNullExpression)
+		public static bool ExtractNullPropagationExpression
+			(ConditionalExpression conditionalExpression, out List<Expression> nullTestExpressions, out Expression ifNotNullExpression)
 		{
-			if (conditionalExpression == null) throw new ArgumentNullException("conditionalExpression");
+			if (conditionalExpression == null) throw new ArgumentNullException(nameof(conditionalExpression));
 
 			nullTestExpressions = null;
 			ifNotNullExpression = null;
 
-			if (TryExtractTestTargets(conditionalExpression.Test, ref nullTestExpressions) == false)
+			if (!TryExtractTestTargets(conditionalExpression.Test, ref nullTestExpressions))
 				return false;
 
 			if (nullTestExpressions == null || nullTestExpressions.Count == 0)
 				return false;
 
 			var ifFalseConst = conditionalExpression.IfFalse as ConstantExpression;
-			var ifTrueUnwrapped = conditionalExpression.IfTrue.NodeType == ExpressionType.Convert ? ((UnaryExpression)conditionalExpression.IfTrue).Operand : conditionalExpression.IfTrue;
+			var ifTrueUnwrapped = conditionalExpression.IfTrue.NodeType == ExpressionType.Convert ? ((UnaryExpression)conditionalExpression.IfTrue).Operand :
+				conditionalExpression.IfTrue;
 
 			// try to detect null-propagation operation
-			if (ifFalseConst == null || ifFalseConst.Value != null || ExpressionLookupVisitor.Lookup(conditionalExpression.IfTrue, nullTestExpressions) == false)
+			if (ifFalseConst == null || ifFalseConst.Value != null || !ExpressionLookupVisitor.Lookup(conditionalExpression.IfTrue, nullTestExpressions))
 				return false;
 
 			ifNotNullExpression = ifTrueUnwrapped;
@@ -488,13 +519,13 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		private static bool TryExtractTestTargets(Expression testExpression, ref List<Expression> nullTestExpressions)
 		{
-			if (testExpression == null) throw new ArgumentNullException("testExpression");
+			if (testExpression == null) throw new ArgumentNullException(nameof(testExpression));
 
 			if (testExpression.NodeType == ExpressionType.NotEqual)
 			{
 				var notEqual = (BinaryExpression)testExpression;
 				var rightConst = notEqual.Right as ConstantExpression;
-				var rightConstValue = rightConst != null ? rightConst.Value : null;
+				var rightConstValue = rightConst?.Value;
 				if (notEqual.Left.Type != notEqual.Right.Type || rightConst == null || rightConstValue != null)
 					return false;
 
@@ -502,23 +533,23 @@ namespace GameDevWare.Dynamic.Expressions
 				nullTestExpressions.Add(notEqual.Left);
 				return true;
 			}
-			else if (testExpression.NodeType == ExpressionType.AndAlso)
+
+			if (testExpression.NodeType == ExpressionType.AndAlso)
 			{
 				var andAlsoExpression = (BinaryExpression)testExpression;
 				return TryExtractTestTargets(andAlsoExpression.Left, ref nullTestExpressions) &&
 					TryExtractTestTargets(andAlsoExpression.Right, ref nullTestExpressions);
 			}
-			else
-			{
-				return false;
-			}
+
+			return false;
 		}
 
 		private static bool TryExposeConstant(Expression expression, out ConstantExpression constantExpression)
 		{
 			// unwrap conversions
 			var convertExpression = expression as UnaryExpression;
-			while (convertExpression != null && (convertExpression.NodeType == ExpressionType.Convert || convertExpression.NodeType == ExpressionType.ConvertChecked))
+			while (convertExpression != null &&
+					(convertExpression.NodeType == ExpressionType.Convert || convertExpression.NodeType == ExpressionType.ConvertChecked))
 			{
 				expression = convertExpression.Operand;
 				convertExpression = expression as UnaryExpression;
@@ -542,8 +573,8 @@ namespace GameDevWare.Dynamic.Expressions
 				if (unsignedValue <= maxValue)
 					return true;
 			}
+
 			return false;
 		}
-
 	}
 }

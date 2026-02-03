@@ -21,22 +21,26 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
 	/// <summary>
-	/// Type extension class for <see cref="Expression"/>. Add expression formatting methods for <see cref="Expression"/>.
+	///     Type extension class for <see cref="Expression" />. Add expression formatting methods for <see cref="Expression" />
+	///     .
 	/// </summary>
 	public static class CSharpExpressionFormatter
 	{
-
 		/// <summary>
-		/// Renders syntax tree into string representation.
+		///     Renders syntax tree into string representation.
 		/// </summary>
 		/// <param name="expression">Syntax tree.</param>
-		/// <param name="checkedScope">True to assume all arithmetic and conversion operation is checked for overflows. Overwise false.</param>
+		/// <param name="checkedScope">
+		///     True to assume all arithmetic and conversion operation is checked for overflows. Overwise
+		///     false.
+		/// </param>
 		/// <returns>Rendered expression.</returns>
-		[Obsolete("Use CSharpExpression.Format() instead. Will be removed in next releases.", error: true)]
+		[Obsolete("Use CSharpExpression.Format() instead. Will be removed in next releases.", true)]
 		public static string Render(this Expression expression, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
 		{
 			return Format(expression, checkedScope);
@@ -44,7 +48,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		internal static string Format(this Expression expression, bool checkedScope = CSharpExpression.DEFAULT_CHECKED_SCOPE)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			var builder = new StringBuilder();
 			Render(expression, builder, true, checkedScope);
@@ -54,9 +58,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		private static void Render(Expression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
-			if (builder == null) throw new ArgumentNullException("builder");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
 
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 			switch (expression.NodeType)
 			{
 				case ExpressionType.And:
@@ -110,9 +115,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				case ExpressionType.Invoke:
 					var invocationExpression = (InvocationExpression)expression;
 					Render(invocationExpression.Expression, builder, false, checkedScope);
-					builder.Append("(");
+					builder.Append('(');
 					RenderArguments(invocationExpression.Arguments, builder, checkedScope);
-					builder.Append(")");
+					builder.Append(')');
 					break;
 				case ExpressionType.Constant:
 					RenderConstant((ConstantExpression)expression, builder);
@@ -140,7 +145,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					RenderType(typeIsExpression.TypeOperand, builder);
 					break;
 				case ExpressionType.Lambda:
-					RenderLambda((LambdaExpression)expression, builder, wrapped, checkedScope);
+					RenderLambda((LambdaExpression)expression, builder, checkedScope);
 					break;
 				case ExpressionType.New:
 					RenderNew((NewExpression)expression, builder, checkedScope);
@@ -155,20 +160,17 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				case ExpressionType.NewArrayBounds:
 					RenderNewArray((NewArrayExpression)expression, builder, checkedScope);
 					break;
-				default: throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.NodeType));
+				default: throw new InvalidOperationException(string.Format(Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.NodeType));
 			}
 		}
 
 		private static void RenderCondition(ConditionalExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
-			if (!wrapped) builder.Append("(");
-			var nullTestExpressions = default(List<Expression>);
-			var continuationExpression = default(Expression);
+			if (!wrapped) builder.Append('(');
+
 			// try to detect null-propagation operation
-			if (ExpressionUtils.ExtractNullPropagationExpression(expression, out nullTestExpressions, out continuationExpression))
-			{
+			if (ExpressionUtils.ExtractNullPropagationExpression(expression, out var nullTestExpressions, out var continuationExpression))
 				RenderNullPropagationExpression(continuationExpression, builder, nullTestExpressions, checkedScope);
-			}
 			else
 			{
 				var cond = expression;
@@ -178,13 +180,15 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				builder.Append(" : ");
 				Render(cond.IfFalse, builder, true, checkedScope);
 			}
-			if (!wrapped) builder.Append(")");
+
+			if (!wrapped) builder.Append(')');
 		}
-		private static void RenderNullPropagationExpression(Expression expression, StringBuilder builder, List<Expression> nullPropagationExpressions, bool checkedScope)
+		private static void RenderNullPropagationExpression
+			(Expression expression, StringBuilder builder, List<Expression> nullPropagationExpressions, bool checkedScope)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
-			if (builder == null) throw new ArgumentNullException("builder");
-			if (nullPropagationExpressions == null) throw new ArgumentNullException("nullPropagationExpressions");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+			if (nullPropagationExpressions == null) throw new ArgumentNullException(nameof(nullPropagationExpressions));
 
 			var callExpression = expression as MethodCallExpression;
 			var memberExpression = expression as MemberExpression;
@@ -199,7 +203,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					var methodType = memberExpression.Member.DeclaringType;
 					if (methodType != null)
 						RenderType(methodType, builder);
-					builder.Append(".");
+					builder.Append('.');
 				}
 				else
 				{
@@ -216,7 +220,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					var methodType = callExpression.Method.DeclaringType;
 					if (methodType != null)
 						RenderType(methodType, builder);
-					builder.Append(".");
+					builder.Append('.');
 				}
 				else
 				{
@@ -225,9 +229,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				}
 
 				builder.Append(callExpression.Method.Name);
-				builder.Append("(");
+				builder.Append('(');
 				RenderArguments(callExpression.Arguments, builder, checkedScope);
-				builder.Append(")");
+				builder.Append(')');
 			}
 			else if (callExpression != null)
 			{
@@ -235,7 +239,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 				builder.Append(nullPropagationExpressions.Contains(callExpression.Object) ? "?[" : "[");
 				RenderArguments(callExpression.Arguments, builder, checkedScope);
-				builder.Append("]");
+				builder.Append(']');
 			}
 			else if (indexExpression != null)
 			{
@@ -243,16 +247,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 				builder.Append(nullPropagationExpressions.Contains(indexExpression.Left) ? "?[" : "[");
 				Render(indexExpression.Right, builder, false, checkedScope);
-				builder.Append("]");
+				builder.Append(']');
 			}
 			else
-			{
 				Render(expression, builder, false, checkedScope);
-			}
 		}
 		private static void RenderConvert(UnaryExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
-			if (expression.Type.GetTypeInfo().IsInterface == false && expression.Type.GetTypeInfo().IsAssignableFrom(expression.Operand.Type.GetTypeInfo()))
+			if (!expression.Type.GetTypeInfo().IsInterface && expression.Type.GetTypeInfo().IsAssignableFrom(expression.Operand.Type.GetTypeInfo()))
 			{
 				// implicit convertion is not rendered
 				Render(expression.Operand, builder, true, checkedScope);
@@ -275,17 +277,17 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			else if (!wrapped)
 			{
-				builder.Append("(");
+				builder.Append('(');
 				closeParent = true;
 			}
 
-			builder.Append("(");
+			builder.Append('(');
 			RenderType(expression.Type, builder);
-			builder.Append(")");
+			builder.Append(')');
 			Render(expression.Operand, builder, false, checkedScope);
 
 			if (closeParent)
-				builder.Append(")");
+				builder.Append(')');
 		}
 		private static void RenderNewArray(NewArrayExpression expression, StringBuilder builder, bool checkedScope)
 		{
@@ -296,15 +298,16 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			{
 				builder.Append("new ");
 				RenderType(expression.Type.GetElementType(), builder);
-				builder.Append("[");
+				builder.Append('[');
 				var isFirstArgument = true;
 				foreach (var argument in expression.Expressions)
 				{
-					if (isFirstArgument == false) builder.Append(", ");
+					if (!isFirstArgument) builder.Append(", ");
 					Render(argument, builder, false, checkedScope);
 					isFirstArgument = false;
 				}
-				builder.Append("]");
+
+				builder.Append(']');
 			}
 			else
 			{
@@ -314,10 +317,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				var isFirstInitializer = true;
 				foreach (var initializer in expression.Expressions)
 				{
-					if (isFirstInitializer == false) builder.Append(", ");
+					if (!isFirstInitializer) builder.Append(", ");
 					Render(initializer, builder, false, checkedScope);
 					isFirstInitializer = false;
 				}
+
 				builder.Append(" }");
 			}
 		}
@@ -333,12 +337,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				var isFirstBinder = true;
 				foreach (var memberBinding in expression.Bindings)
 				{
-					if (isFirstBinder == false) builder.Append(", ");
+					if (!isFirstBinder) builder.Append(", ");
 
 					RenderMemberBinding(memberBinding, builder, checkedScope);
 
 					isFirstBinder = false;
 				}
+
 				builder.Append(" }");
 			}
 		}
@@ -354,16 +359,17 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				var isFirstInitializer = true;
 				foreach (var initializer in expression.Initializers)
 				{
-					if (isFirstInitializer == false) builder.Append(", ");
+					if (!isFirstInitializer) builder.Append(", ");
 
 					RenderListInitializer(initializer, builder, checkedScope);
 
 					isFirstInitializer = false;
 				}
+
 				builder.Append(" }");
 			}
 		}
-		private static void RenderLambda(LambdaExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
+		private static void RenderLambda(LambdaExpression expression, StringBuilder builder, bool checkedScope)
 		{
 			if (expression == null) throw new ArgumentException("expression");
 			if (builder == null) throw new ArgumentException("builder");
@@ -372,20 +378,21 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			RenderType(expression.Type, builder);
 			builder.Append(" (");
 
-			if (expression.Parameters.Count != 1) builder.Append("(");
+			if (expression.Parameters.Count != 1) builder.Append('(');
 			var firstParam = true;
 			foreach (var param in expression.Parameters)
 			{
-				if (firstParam == false) builder.Append(", ");
+				if (!firstParam) builder.Append(", ");
 				builder.Append(param.Name);
 				firstParam = false;
 			}
-			if (expression.Parameters.Count != 1) builder.Append(")");
+
+			if (expression.Parameters.Count != 1) builder.Append(')');
 
 			builder.Append(" => ");
 			Render(expression.Body, builder, false, checkedScope);
 
-			builder.Append(")");
+			builder.Append(')');
 		}
 		private static void RenderNew(NewExpression expression, StringBuilder builder, bool checkedScope)
 		{
@@ -394,13 +401,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var constructorArguments = expression.Arguments;
 			if (expression.Members != null && expression.Members.Count > 0)
-				constructorArguments = constructorArguments.Take(expression.Constructor.GetParameters().Length).ToList().AsReadOnly();
+				constructorArguments = constructorArguments.Take(expression.Constructor?.GetParameters().Length ?? 0).ToList().AsReadOnly();
 
 			builder.Append("new ");
-			RenderType(expression.Constructor.DeclaringType, builder);
-			builder.Append("(");
+			RenderType(expression.Constructor?.DeclaringType ?? typeof(object), builder);
+			builder.Append('(');
 			RenderArguments(constructorArguments, builder, checkedScope);
-			builder.Append(")");
+			builder.Append(')');
 
 			if (expression.Members != null && expression.Members.Count > 0)
 			{
@@ -409,7 +416,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				builder.Append(" { ");
 				foreach (var memberInit in expression.Members)
 				{
-					if (isFirstMember == false) builder.Append(", ");
+					if (!isFirstMember) builder.Append(", ");
 
 					builder.Append(memberInit.Name).Append(" = ");
 					Render(expression.Arguments[memberIdx], builder, true, checkedScope);
@@ -417,6 +424,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					isFirstMember = false;
 					memberIdx++;
 				}
+
 				builder.Append(" }");
 			}
 		}
@@ -432,13 +440,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (expression.Expression != null)
 			{
 				Render(expression.Expression, builder, false, checkedScope);
-				builder.Append(".");
+				builder.Append('.');
 			}
 			else if (isStatic && declType != null)
 			{
 				RenderType(declType, builder);
-				builder.Append(".");
+				builder.Append('.');
 			}
+
 			builder.Append(expression.Member.Name);
 		}
 		private static void RenderCall(MethodCallExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
@@ -453,78 +462,67 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					expression.Method.Name == "Concat" &&
 					expression.Arguments.All(a => a.Type == typeof(string) || a.Type == typeof(object)))
 				{
-					if (wrapped)
-					{
-						builder.Append("(");
-					}
+					if (wrapped) builder.Append('(');
 					for (var i = 0; i < expression.Arguments.Count; i++)
 					{
 						Render(expression.Arguments[i], builder, true, checkedScope);
 						if (i != expression.Arguments.Count - 1)
 							builder.Append(" + ");
 					}
-					if (wrapped)
-					{
-						builder.Append(")");
-					}
+
+					if (wrapped) builder.Append(')');
 					return;
 				}
-				else
-				{
-					var methodType = expression.Method.DeclaringType;
-					if (methodType != null)
-						RenderType(methodType, builder);
-				}
+
+				var methodType = expression.Method.DeclaringType;
+				if (methodType != null)
+					RenderType(methodType, builder);
 			}
 			else
-			{
 				Render(expression.Object, builder, false, checkedScope);
-			}
 
 			if (isIndex)
 			{
-				builder.Append("[");
+				builder.Append('[');
 				RenderArguments(expression.Arguments, builder, checkedScope);
-				builder.Append("]");
+				builder.Append(']');
 			}
 			else
 			{
 				var method = expression.Method;
-				builder.Append(".");
+				builder.Append('.');
 				builder.Append(method.Name);
 				if (method.IsGenericMethod)
 				{
-					builder.Append("<");
+					builder.Append('<');
 					foreach (var genericArgument in method.GetGenericArguments())
 					{
 						RenderType(genericArgument, builder);
 						builder.Append(',');
 					}
-					builder.Length--;
-					builder.Append(">");
-				}
-				builder.Append("(");
-				RenderArguments(expression.Arguments, builder, checkedScope);
-				builder.Append(")");
-			}
 
+					builder.Length--;
+					builder.Append('>');
+				}
+
+				builder.Append('(');
+				RenderArguments(expression.Arguments, builder, checkedScope);
+				builder.Append(')');
+			}
 		}
 		private static void RenderArrayIndex(Expression expression, StringBuilder builder, bool checkedScope)
 		{
 			if (expression == null) throw new ArgumentException("expression");
 			if (builder == null) throw new ArgumentException("builder");
 
-			var binaryExpression = expression as BinaryExpression;
-			var methodCallExpression = expression as MethodCallExpression;
-
-			if (binaryExpression != null)
+			if (expression is BinaryExpression binaryExpression)
 			{
 				Render(binaryExpression.Left, builder, false, checkedScope);
-				builder.Append("[");
+				builder.Append('[');
 				Render(binaryExpression.Right, builder, false, checkedScope);
-				builder.Append("]");
+				builder.Append(']');
 			}
-			else if (methodCallExpression != null)
+			else if (expression is MethodCallExpression methodCallExpression)
 			{
 				if (methodCallExpression.Method.IsStatic)
 				{
@@ -532,21 +530,18 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					if (methodType != null)
 					{
 						RenderType(methodType, builder);
-						builder.Append(".");
+						builder.Append('.');
 					}
 				}
 				else
-				{
 					Render(methodCallExpression.Object, builder, false, checkedScope);
-				}
-				builder.Append("[");
+
+				builder.Append('[');
 				RenderArguments(methodCallExpression.Arguments, builder, checkedScope);
-				builder.Append("]");
+				builder.Append(']');
 			}
 			else
-			{
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION, expression.NodeType));
-			}
+				throw new InvalidOperationException(string.Format(Resources.EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION, expression.NodeType));
 		}
 		private static void RenderConstant(ConstantExpression expression, StringBuilder builder)
 		{
@@ -560,32 +555,30 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					builder.Append("null");
 					return;
 				}
-				else
-				{
-					builder.Append("default(");
-					RenderType(expression.Type, builder);
-					builder.Append(")");
-					return;
-				}
+
+				builder.Append("default(");
+				RenderType(expression.Type, builder);
+				builder.Append(')');
+				return;
 			}
 
 			var strValue = Convert.ToString(expression.Value, Constants.DefaultFormatProvider) ?? string.Empty;
 			if (expression.Type == typeof(string))
-				CSharpSyntaxTreeFormatter.RenderTextLiteral(strValue, builder, isChar: false);
+				CSharpSyntaxTreeFormatter.RenderTextLiteral(strValue, builder, false);
 			else if (expression.Type == typeof(char))
-				CSharpSyntaxTreeFormatter.RenderTextLiteral(strValue, builder, isChar: true);
+				CSharpSyntaxTreeFormatter.RenderTextLiteral(strValue, builder, true);
 			else if (expression.Type == typeof(Type))
 			{
 				builder.Append("typeof(");
 				RenderType((Type)expression.Value, builder);
-				builder.Append(")");
+				builder.Append(')');
 			}
 			else if (expression.Type == typeof(ushort) || expression.Type == typeof(uint))
-				builder.Append(strValue).Append("u");
+				builder.Append(strValue).Append('u');
 			else if (expression.Type == typeof(ulong))
 				builder.Append(strValue).Append("ul");
 			else if (expression.Type == typeof(long))
-				builder.Append(strValue).Append("l");
+				builder.Append(strValue).Append('l');
 			else if (expression.Type == typeof(float) || expression.Type == typeof(double))
 			{
 				var is32Bit = expression.Type == typeof(float);
@@ -602,21 +595,20 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				builder.Append(is32Bit ? "f" : "d");
 			}
 			else if (expression.Type == typeof(decimal))
-				builder.Append(strValue).Append("m");
+				builder.Append(strValue).Append('m');
 			else if (expression.Type == typeof(bool))
 				builder.Append(strValue.ToLowerInvariant());
 			else if (expression.Type == typeof(byte) || expression.Type == typeof(sbyte) || expression.Type == typeof(short) || expression.Type == typeof(int))
 				builder.Append(strValue);
 			else
-				throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION, expression.Type));
+				throw new InvalidOperationException(string.Format(Resources.EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION, expression.Type));
 		}
 		private static void RenderUnary(UnaryExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (expression == null) throw new ArgumentException("expression");
 			if (builder == null) throw new ArgumentException("builder");
 
-			var checkedOperation = expression.NodeType == ExpressionType.NegateChecked ? true :
-						expression.NodeType == ExpressionType.Negate ? false : checkedScope;
+			var checkedOperation = expression.NodeType == ExpressionType.NegateChecked || expression.NodeType != ExpressionType.Negate && checkedScope;
 			var closeParent = false;
 			if (checkedOperation && !checkedScope)
 			{
@@ -632,20 +624,22 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			else if (!wrapped)
 			{
-				builder.Append("(");
+				builder.Append('(');
 				closeParent = true;
 			}
 
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 			switch (expression.NodeType)
 			{
 				case ExpressionType.NegateChecked:
 				case ExpressionType.Negate:
-					builder.Append("-");
+					builder.Append('-');
 					break;
 				case ExpressionType.UnaryPlus:
-					builder.Append("+");
+					builder.Append('+');
 					break;
 				case ExpressionType.Not:
+					// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 					switch (ReflectionUtils.GetTypeCode(expression.Operand.Type))
 					{
 						case TypeCode.Char:
@@ -660,28 +654,33 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						case TypeCode.Single:
 						case TypeCode.Double:
 						case TypeCode.Decimal:
-							builder.Append("~");
-							break;
 						default:
-							builder.Append("~");
+							builder.Append('~');
 							break;
 					}
+
 					break;
 				default:
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.NodeType));
+					throw new InvalidOperationException(string.Format(Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.NodeType));
 			}
+
 			Render(expression.Operand, builder, false, checkedScope);
 
 			if (closeParent)
-				builder.Append(")");
+				builder.Append(')');
 		}
 		private static void RenderBinary(BinaryExpression expression, StringBuilder builder, bool wrapped, bool checkedScope)
 		{
 			if (expression == null) throw new ArgumentException("expression");
 			if (builder == null) throw new ArgumentException("builder");
 
-			var checkedOperation = expression.NodeType == ExpressionType.AddChecked || expression.NodeType == ExpressionType.MultiplyChecked || expression.NodeType == ExpressionType.SubtractChecked ? true :
-									expression.NodeType == ExpressionType.Add || expression.NodeType == ExpressionType.Multiply || expression.NodeType == ExpressionType.Subtract ? false : checkedScope;
+			var checkedOperation = expression.NodeType == ExpressionType.AddChecked ||
+				expression.NodeType == ExpressionType.MultiplyChecked ||
+				expression.NodeType == ExpressionType.SubtractChecked ||
+				(expression.NodeType != ExpressionType.Add &&
+					expression.NodeType != ExpressionType.Multiply &&
+					expression.NodeType != ExpressionType.Subtract &&
+					checkedScope);
 
 			var closeParent = false;
 			if (checkedOperation && !checkedScope)
@@ -698,11 +697,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 			else if (!wrapped)
 			{
-				builder.Append("(");
+				builder.Append('(');
 				closeParent = true;
 			}
 
 			Render(expression.Left, builder, false, checkedScope);
+
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
 			switch (expression.NodeType)
 			{
 				case ExpressionType.And:
@@ -769,17 +770,18 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					builder.Append(" ** ");
 					break;
 				default:
-					throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.NodeType));
+					throw new InvalidOperationException(string.Format(Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expression.NodeType));
 			}
+
 			Render(expression.Right, builder, false, checkedScope);
 
 			if (closeParent)
-				builder.Append(")");
+				builder.Append(')');
 		}
 		private static void RenderArguments(ReadOnlyCollection<Expression> arguments, StringBuilder builder, bool checkedScope)
 		{
-			if (arguments == null) throw new ArgumentNullException("arguments");
-			if (builder == null) throw new ArgumentNullException("builder");
+			if (arguments == null) throw new ArgumentNullException(nameof(arguments));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
 
 			var firstArgument = true;
 			foreach (var argument in arguments)
@@ -808,10 +810,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					var isFirstBinder = true;
 					foreach (var subMemberBinding in ((MemberMemberBinding)memberBinding).Bindings)
 					{
-						if (isFirstBinder == false) builder.Append(", ");
+						if (!isFirstBinder) builder.Append(", ");
 						RenderMemberBinding(subMemberBinding, builder, checkedScope);
 						isFirstBinder = false;
 					}
+
 					builder.Append("} ");
 					break;
 				case MemberBindingType.ListBinding:
@@ -819,10 +822,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					var isFirstInitializer = true;
 					foreach (var initializer in ((MemberListBinding)memberBinding).Initializers)
 					{
-						if (isFirstInitializer == false) builder.Append(", ");
+						if (!isFirstInitializer) builder.Append(", ");
 						RenderListInitializer(initializer, builder, checkedScope);
 						isFirstInitializer = false;
 					}
+
 					builder.Append(" }");
 					break;
 				default:
@@ -835,31 +839,29 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			if (builder == null) throw new ArgumentException("builder");
 
 			if (initializer.Arguments.Count == 1)
-			{
 				Render(initializer.Arguments[0], builder, true, checkedScope);
-			}
 			else
 			{
 				var isFirstArgument = true;
 				builder.Append("{ ");
 				foreach (var argument in initializer.Arguments)
 				{
-					if (isFirstArgument == false) builder.Append(", ");
+					if (!isFirstArgument) builder.Append(", ");
 					Render(argument, builder, true, checkedScope);
 
 					isFirstArgument = false;
 				}
-				builder.Append("}");
+
+				builder.Append('}');
 			}
 		}
 
 		private static void RenderType(Type type, StringBuilder builder)
 		{
-			if (type == null) throw new ArgumentNullException("type");
-			if (builder == null) throw new ArgumentNullException("builder");
+			if (type == null) throw new ArgumentNullException(nameof(type));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
 
 			type.GetCSharpFullName(builder, TypeNameFormatOptions.UseAliases | TypeNameFormatOptions.IncludeGenericArguments);
 		}
-
 	}
 }

@@ -31,7 +31,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 	using System.Collections.Generic;
 
 	/// <summary>
-	/// Localization resource for current assembly
+	///     Localization resource for current assembly
 	/// </summary>
 	public static class Resources
 	{
@@ -40,11 +40,11 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		private static int currentLanguageIdx;
 
 		/// <summary>
-		/// List of supported localization languages. <seealso cref="CurrentLanguage"/>.
+		///     List of supported localization languages. <seealso cref="CurrentLanguage" />.
 		/// </summary>
 		public static string[] SupportedLanguages { get { return (string[])supportedLanguages.Clone(); } }
 		/// <summary>
-		/// Current selected language of localization.
+		///     Current selected language of localization.
 		/// </summary>
 		public static string CurrentLanguage
 		{
@@ -52,6 +52,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			set
 			{
 				if (value == null) throw new ArgumentNullException("value");
+
 				var langIndex = Array.IndexOf(supportedLanguages, value);
 				if (langIndex < 0) throw new ArgumentException("Unsupported language '" + value + "'.", "value");
 
@@ -60,14 +61,13 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		}
 
 		/// <summary>
-		/// Return all localization strings by current <see cref="CurrentLanguage"/>.
+		///     Return all localization strings by current <see cref="CurrentLanguage" />.
 		/// </summary>
 		public static Dictionary<string, string> All
 		{
 			get
 			{
-				return new Dictionary<string, string>(77)
-				{
+				return new Dictionary<string, string>(77) {
 					{ "EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH", EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH },
 					{ "EXCEPTION_BIND_UNABLETOBINDINDEXER", EXCEPTION_BIND_UNABLETOBINDINDEXER },
 					{ "EXCEPTION_BIND_MEMBERISNOTMETHOD", EXCEPTION_BIND_MEMBERISNOTMETHOD },
@@ -144,13 +144,13 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_TOKENIZER_INVALIDCHARLITERAL", EXCEPTION_TOKENIZER_INVALIDCHARLITERAL },
 					{ "EXCEPTION_EXECUTION_CANTDONULLVALUE", EXCEPTION_EXECUTION_CANTDONULLVALUE },
 					{ "EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS", EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS },
-					{ "EXCEPTION_BIND_RENDERFAILED", EXCEPTION_BIND_RENDERFAILED },
+					{ "EXCEPTION_BIND_RENDERFAILED", EXCEPTION_BIND_RENDERFAILED }
 				};
 			}
 		}
 
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH
+		///     Localization string with key EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH
 		{
@@ -164,7 +164,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETOBINDINDEXER
+		///     Localization string with key EXCEPTION_BIND_UNABLETOBINDINDEXER
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOBINDINDEXER
 		{
@@ -178,7 +178,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_MEMBERISNOTMETHOD
+		///     Localization string with key EXCEPTION_BIND_MEMBERISNOTMETHOD
 		/// </summary>
 		public static string EXCEPTION_BIND_MEMBERISNOTMETHOD
 		{
@@ -192,7 +192,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE
+		///     Localization string with key EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE
 		/// </summary>
 		public static string EXCEPTION_PARSER_INVALIDCHILDTYPESOFNODE
 		{
@@ -206,7 +206,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETOBINDCALL
+		///     Localization string with key EXCEPTION_BIND_UNABLETOBINDCALL
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOBINDCALL
 		{
@@ -220,7 +220,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_UNEXPECTEDTOKEN
+		///     Localization string with key EXCEPTION_PARSER_UNEXPECTEDTOKEN
 		/// </summary>
 		public static string EXCEPTION_PARSER_UNEXPECTEDTOKEN
 		{
@@ -234,7 +234,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT
+		///     Localization string with key EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT
 		/// </summary>
 		public static string EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT
 		{
@@ -248,7 +248,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED
+		///     Localization string with key EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED
 		/// </summary>
 		public static string EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED
 		{
@@ -262,7 +262,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_TOOMANYARGUMENTS
+		///     Localization string with key EXCEPTION_BIND_TOOMANYARGUMENTS
 		/// </summary>
 		public static string EXCEPTION_BIND_TOOMANYARGUMENTS
 		{
@@ -276,7 +276,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_FAILEDTOBINDGENERICARGUMENTSTOTYPE
+		///     Localization string with key EXCEPTION_BIND_FAILEDTOBINDGENERICARGUMENTSTOTYPE
 		/// </summary>
 		public static string EXCEPTION_BIND_FAILEDTOBINDGENERICARGUMENTSTOTYPE
 		{
@@ -290,7 +290,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE
+		///     Localization string with key EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETORESOLVEMETHODONTYPE
 		{
@@ -304,7 +304,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNKNOWNEXPRTYPE
+		///     Localization string with key EXCEPTION_BIND_UNKNOWNEXPRTYPE
 		/// </summary>
 		public static string EXCEPTION_BIND_UNKNOWNEXPRTYPE
 		{
@@ -318,7 +318,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF
+		///     Localization string with key EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOAPPLYNULLCONDITIONALOPERATORONTYPEREF
 		{
@@ -332,7 +332,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE
+		///     Localization string with key EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETORESOLVEMEMBERONTYPE
 		{
@@ -346,7 +346,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS
+		///     Localization string with key EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS
 		/// </summary>
 		public static string EXCEPTION_BIND_FAILEDTOBINDLISTINITIALIZERS
 		{
@@ -360,7 +360,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES
+		///     Localization string with key EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES
 		/// </summary>
 		public static string EXCEPTION_UNBOUNDEXPR_TYPESDOESNTMATCHNAMES
 		{
@@ -374,7 +374,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_TYPENAMEEXPECTED
+		///     Localization string with key EXCEPTION_PARSER_TYPENAMEEXPECTED
 		/// </summary>
 		public static string EXCEPTION_PARSER_TYPENAMEEXPECTED
 		{
@@ -388,7 +388,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT
+		///     Localization string with key EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT
 		/// </summary>
 		public static string EXCEPTION_UNBOUNDEXPR_INVALIDPARAMCOUNT
 		{
@@ -402,7 +402,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS
+		///     Localization string with key EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS
 		/// </summary>
 		public static string EXCEPTION_BOUNDEXPR_ARGSDOESNTMATCHPARAMS
 		{
@@ -416,7 +416,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE
+		///     Localization string with key EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE
 		/// </summary>
 		public static string EXCEPTION_PARSER_INVALIDCHILDCOUNTOFNODE
 		{
@@ -430,7 +430,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION
+		///     Localization string with key EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION
 		/// </summary>
 		public static string EXCEPTION_BIND_RESTRICTED_MEMBER_INVOCATION
 		{
@@ -444,7 +444,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_MISSING_OPERATOR
+		///     Localization string with key EXCEPTION_PARSER_MISSING_OPERATOR
 		/// </summary>
 		public static string EXCEPTION_PARSER_MISSING_OPERATOR
 		{
@@ -458,7 +458,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR
+		///     Localization string with key EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR
 		{
@@ -472,7 +472,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_COMPIL_NOUNARYOPONTYPE
+		///     Localization string with key EXCEPTION_COMPIL_NOUNARYOPONTYPE
 		/// </summary>
 		public static string EXCEPTION_COMPIL_NOUNARYOPONTYPE
 		{
@@ -486,7 +486,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE
+		///     Localization string with key EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE
 		/// </summary>
 		public static string EXCEPTION_COMPIL_UNKNOWNBINARYEXPRTYPE
 		{
@@ -500,7 +500,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_INVALIDLAMBDABODYTYPE
+		///     Localization string with key EXCEPTION_BIND_INVALIDLAMBDABODYTYPE
 		/// </summary>
 		public static string EXCEPTION_BIND_INVALIDLAMBDABODYTYPE
 		{
@@ -514,7 +514,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_TERNARYOPREQOPERAND
+		///     Localization string with key EXCEPTION_PARSER_TERNARYOPREQOPERAND
 		/// </summary>
 		public static string EXCEPTION_PARSER_TERNARYOPREQOPERAND
 		{
@@ -528,7 +528,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETOBINDMEMBER
+		///     Localization string with key EXCEPTION_BIND_UNABLETOBINDMEMBER
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOBINDMEMBER
 		{
@@ -542,7 +542,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_MISSINGORWRONGARGUMENT
+		///     Localization string with key EXCEPTION_BIND_MISSINGORWRONGARGUMENT
 		/// </summary>
 		public static string EXCEPTION_BIND_MISSINGORWRONGARGUMENT
 		{
@@ -556,7 +556,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_MISSINGMETHOD
+		///     Localization string with key EXCEPTION_BIND_MISSINGMETHOD
 		/// </summary>
 		public static string EXCEPTION_BIND_MISSINGMETHOD
 		{
@@ -570,7 +570,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE
+		///     Localization string with key EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE
 		/// </summary>
 		public static string EXCEPTION_PARSER_UNEXPECTEDTOKENTYPE
 		{
@@ -584,7 +584,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE
+		///     Localization string with key EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE
 		/// </summary>
 		public static string EXCEPTION_COMPIL_UNKNOWNUNARYEXPRTYPE
 		{
@@ -598,7 +598,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE
+		///     Localization string with key EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE
 		/// </summary>
 		public static string EXCEPTION_BOUNDEXPR_BODYRESULTDOESNTMATCHRESULTTYPE
 		{
@@ -612,7 +612,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED
+		///     Localization string with key EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED
 		/// </summary>
 		public static string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED
 		{
@@ -626,7 +626,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE
+		///     Localization string with key EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE
 		/// </summary>
 		public static string EXCEPTION_BOUNDEXPR_WRONGPARAMETERTYPE
 		{
@@ -640,7 +640,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETORESOLVENAME
+		///     Localization string with key EXCEPTION_BIND_UNABLETORESOLVENAME
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETORESOLVENAME
 		{
@@ -654,7 +654,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS
+		///     Localization string with key EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS
 		/// </summary>
 		public static string EXCEPTION_BOUNDEXPR_WRONGNUMPARAMS
 		{
@@ -668,7 +668,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME
+		///     Localization string with key EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME
 		/// </summary>
 		public static string EXCEPTION_UNBOUNDEXPR_DUPLICATEPARAMNAME
 		{
@@ -682,7 +682,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_UNEXPECTEDMEMBERINITIALIZERINLISTINITIALIZERS
+		///     Localization string with key EXCEPTION_PARSER_UNEXPECTEDMEMBERINITIALIZERINLISTINITIALIZERS
 		/// </summary>
 		public static string EXCEPTION_PARSER_UNEXPECTEDMEMBERINITIALIZERINLISTINITIALIZERS
 		{
@@ -696,7 +696,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS
+		///     Localization string with key EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS
 		/// </summary>
 		public static string EXCEPTION_BIND_INVALIDLAMBDAARGUMENTS
 		{
@@ -710,7 +710,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_MISSINGMETHODPARAMETER
+		///     Localization string with key EXCEPTION_BIND_MISSINGMETHODPARAMETER
 		/// </summary>
 		public static string EXCEPTION_BIND_MISSINGMETHODPARAMETER
 		{
@@ -724,7 +724,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_BINARYOPREQOPERAND
+		///     Localization string with key EXCEPTION_PARSER_BINARYOPREQOPERAND
 		/// </summary>
 		public static string EXCEPTION_PARSER_BINARYOPREQOPERAND
 		{
@@ -738,7 +738,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_FAILEDTOBIND
+		///     Localization string with key EXCEPTION_BIND_FAILEDTOBIND
 		/// </summary>
 		public static string EXCEPTION_BIND_FAILEDTOBIND
 		{
@@ -752,7 +752,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_EXPRESSIONISEMPTY
+		///     Localization string with key EXCEPTION_PARSER_EXPRESSIONISEMPTY
 		/// </summary>
 		public static string EXCEPTION_PARSER_EXPRESSIONISEMPTY
 		{
@@ -766,7 +766,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS
+		///     Localization string with key EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS
 		/// </summary>
 		public static string EXCEPTION_BIND_FAILEDTOBINDMEMBERBINDINGS
 		{
@@ -780,7 +780,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED
+		///     Localization string with key EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED
 		/// </summary>
 		public static string EXCEPTION_BIND_VALIDDELEGATETYPEISEXPECTED
 		{
@@ -794,7 +794,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_INVALIDCHARLITERAL
+		///     Localization string with key EXCEPTION_BIND_INVALIDCHARLITERAL
 		/// </summary>
 		public static string EXCEPTION_BIND_INVALIDCHARLITERAL
 		{
@@ -808,7 +808,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE
+		///     Localization string with key EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE
 		/// </summary>
 		public static string EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEBUILDINGTREE
 		{
@@ -822,7 +822,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE
+		///     Localization string with key EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE
 		/// </summary>
 		public static string EXCEPTION_BIND_INVALIDLAMBDAPARAMETERTYPE
 		{
@@ -836,7 +836,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETOCREATEEXPRWITHPARAMS
+		///     Localization string with key EXCEPTION_BIND_UNABLETOCREATEEXPRWITHPARAMS
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOCREATEEXPRWITHPARAMS
 		{
@@ -850,7 +850,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_COLONISEXPRECTED
+		///     Localization string with key EXCEPTION_PARSER_COLONISEXPRECTED
 		/// </summary>
 		public static string EXCEPTION_PARSER_COLONISEXPRECTED
 		{
@@ -864,7 +864,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BOUNDEXPR_CANTCONVERTARG
+		///     Localization string with key EXCEPTION_BOUNDEXPR_CANTCONVERTARG
 		/// </summary>
 		public static string EXCEPTION_BOUNDEXPR_CANTCONVERTARG
 		{
@@ -878,7 +878,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES
+		///     Localization string with key EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES
 		/// </summary>
 		public static string EXCEPTION_COMPIL_NOCONVERTIONBETWEENTYPES
 		{
@@ -892,7 +892,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION
+		///     Localization string with key EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION
 		/// </summary>
 		public static string EXCEPTION_BIND_FAILEDTOBINDNEWEXPRESSION
 		{
@@ -906,7 +906,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED
+		///     Localization string with key EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED
 		/// </summary>
 		public static string EXCEPTION_EXECUTION_MULTIPARAMETERINDEXERNOTSUPPORTED
 		{
@@ -920,7 +920,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_CALLMEMBERISNOTMETHOD
+		///     Localization string with key EXCEPTION_BIND_CALLMEMBERISNOTMETHOD
 		/// </summary>
 		public static string EXCEPTION_BIND_CALLMEMBERISNOTMETHOD
 		{
@@ -934,7 +934,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_COMPIL_NOBINARYOPONTYPE
+		///     Localization string with key EXCEPTION_COMPIL_NOBINARYOPONTYPE
 		/// </summary>
 		public static string EXCEPTION_COMPIL_NOBINARYOPONTYPE
 		{
@@ -948,7 +948,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_MISSINGATTRONNODE
+		///     Localization string with key EXCEPTION_BIND_MISSINGATTRONNODE
 		/// </summary>
 		public static string EXCEPTION_BIND_MISSINGATTRONNODE
 		{
@@ -962,7 +962,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_OPREQUIRESOPERAND
+		///     Localization string with key EXCEPTION_PARSER_OPREQUIRESOPERAND
 		/// </summary>
 		public static string EXCEPTION_PARSER_OPREQUIRESOPERAND
 		{
@@ -976,7 +976,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION
+		///     Localization string with key EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION
 		/// </summary>
 		public static string EXCEPTION_BIND_INVALIDCONSTANTEXPRESSION
 		{
@@ -990,7 +990,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETOBINDMETHOD
+		///     Localization string with key EXCEPTION_BIND_UNABLETOBINDMETHOD
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOBINDMETHOD
 		{
@@ -1004,7 +1004,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ
+		///     Localization string with key EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ
 		/// </summary>
 		public static string EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ
 		{
@@ -1018,7 +1018,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETOBINDDELEG
+		///     Localization string with key EXCEPTION_BIND_UNABLETOBINDDELEG
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOBINDDELEG
 		{
@@ -1032,7 +1032,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION
+		///     Localization string with key EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION
 		/// </summary>
 		public static string EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION
 		{
@@ -1046,7 +1046,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND
+		///     Localization string with key EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND
 		/// </summary>
 		public static string EXCEPTION_PARSER_OPREQUIRESSECONDOPERAND
 		{
@@ -1060,7 +1060,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETOINVOKENONDELEG
+		///     Localization string with key EXCEPTION_BIND_UNABLETOINVOKENONDELEG
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETOINVOKENONDELEG
 		{
@@ -1074,7 +1074,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED
+		///     Localization string with key EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED
 		/// </summary>
 		public static string EXCEPTION_BIND_CLOSEDDELEGATETYPEISEXPECTED
 		{
@@ -1088,7 +1088,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETORESOLVETYPEMULTIPLE
+		///     Localization string with key EXCEPTION_BIND_UNABLETORESOLVETYPEMULTIPLE
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETORESOLVETYPEMULTIPLE
 		{
@@ -1102,7 +1102,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL
+		///     Localization string with key EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL
 		/// </summary>
 		public static string EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL
 		{
@@ -1116,7 +1116,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_UNABLETORESOLVETYPE
+		///     Localization string with key EXCEPTION_BIND_UNABLETORESOLVETYPE
 		/// </summary>
 		public static string EXCEPTION_BIND_UNABLETORESOLVETYPE
 		{
@@ -1130,7 +1130,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_COMPIL_UNKNOWNEXPRTYPE
+		///     Localization string with key EXCEPTION_COMPIL_UNKNOWNEXPRTYPE
 		/// </summary>
 		public static string EXCEPTION_COMPIL_UNKNOWNEXPRTYPE
 		{
@@ -1144,7 +1144,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_LIST_LISTISEMPTY
+		///     Localization string with key EXCEPTION_LIST_LISTISEMPTY
 		/// </summary>
 		public static string EXCEPTION_LIST_LISTISEMPTY
 		{
@@ -1158,7 +1158,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_UNARYOPREQOPERAND
+		///     Localization string with key EXCEPTION_PARSER_UNARYOPREQOPERAND
 		/// </summary>
 		public static string EXCEPTION_PARSER_UNARYOPREQOPERAND
 		{
@@ -1172,7 +1172,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_TOKENIZER_INVALIDCHARLITERAL
+		///     Localization string with key EXCEPTION_TOKENIZER_INVALIDCHARLITERAL
 		/// </summary>
 		public static string EXCEPTION_TOKENIZER_INVALIDCHARLITERAL
 		{
@@ -1186,7 +1186,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_EXECUTION_CANTDONULLVALUE
+		///     Localization string with key EXCEPTION_EXECUTION_CANTDONULLVALUE
 		/// </summary>
 		public static string EXCEPTION_EXECUTION_CANTDONULLVALUE
 		{
@@ -1200,7 +1200,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS
+		///     Localization string with key EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS
 		/// </summary>
 		public static string EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS
 		{
@@ -1214,7 +1214,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			}
 		}
 		/// <summary>
-		/// Localization string with key EXCEPTION_BIND_RENDERFAILED
+		///     Localization string with key EXCEPTION_BIND_RENDERFAILED
 		/// </summary>
 		public static string EXCEPTION_BIND_RENDERFAILED
 		{
@@ -1229,4 +1229,3 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 		}
 	}
 }
-

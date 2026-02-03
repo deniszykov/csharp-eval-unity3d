@@ -1,5 +1,4 @@
-﻿
-namespace GameDevWare.Dynamic.Expressions.Execution
+﻿namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class NullNode : ExecutionNode
 	{

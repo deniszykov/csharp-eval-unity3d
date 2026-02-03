@@ -8,7 +8,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 	{
 		public static Dictionary<string, object> Pack(LambdaExpression expression)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			var arguments = new Dictionary<string, object>(expression.Parameters.Count);
 			for (var p = 0; p < expression.Parameters.Count; p++)

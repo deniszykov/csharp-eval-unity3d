@@ -17,72 +17,86 @@
 using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class UnaryBinder
 	{
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
 			boundExpression = null;
 			bindingError = null;
 
-			var expressionType = node.GetExpressionType(throwOnError: true);
-			var operandNode = node.GetExpression(throwOnError: true);
-			var operand = default(Expression);
-			var methodName = node.GetMethodName(throwOnError: false);
+			var expressionType = node.GetExpressionType(true);
+			var operandNode = node.GetExpression(true);
+			var methodName = node.GetMethodName(false);
 			var methodMember = default(MemberDescription);
 
-			if (AnyBinder.TryBindInNewScope(operandNode, bindingContext, TypeDescription.ObjectType, out operand, out bindingError) == false)
+			if (!AnyBinder.TryBindInNewScope(operandNode, bindingContext, TypeDescription.ObjectType, out var operand, out bindingError))
 				return false;
 
-			if (methodName != null)
-			{
-				bindingContext.TryResolveMember(methodName, out methodMember);
-			}
+			if (methodName != null) bindingContext.TryResolveMember(methodName, out methodMember);
 
 			Debug.Assert(operand != null, "operand != null");
 
 			switch (expressionType)
 			{
 				case Constants.EXPRESSION_TYPE_NEGATE:
-					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.Negate, out boundExpression) == false)
+					if (!ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.Negate, out boundExpression))
 					{
 						// fixing b_u_g in mono expression compiler: Negate on float or double = exception
 						if (operand.Type == typeof(double) || operand.Type == typeof(float))
-							boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
+						{
+							boundExpression = Expression.Multiply(operand,
+								operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
+						}
 						else
+						{
 							boundExpression = Expression.Negate(operand, methodMember);
+						}
 					}
+
 					break;
 				case Constants.EXPRESSION_TYPE_NEGATE_CHECKED:
-					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.NegateChecked, out boundExpression) == false)
+					if (!ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.NegateChecked, out boundExpression))
 					{
 						// fixing b_u_g in mono expression compiler: Negate on float or double = exception
 						if (operand.Type == typeof(double) || operand.Type == typeof(float))
-							boundExpression = Expression.Multiply(operand, operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
+						{
+							boundExpression = Expression.Multiply(operand,
+								operand.Type == typeof(float) ? ExpressionUtils.NegativeSingle : ExpressionUtils.NegativeDouble);
+						}
 						else
+						{
 							boundExpression = Expression.NegateChecked(operand, methodMember);
+						}
 					}
+
 					break;
 				case Constants.EXPRESSION_TYPE_COMPLEMENT:
 				case Constants.EXPRESSION_TYPE_NOT:
-					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.Not, out boundExpression) == false)
+					if (!ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.Not, out boundExpression))
+					{
 						boundExpression = Expression.Not(operand, methodMember);
+					}
 					break;
 				case Constants.EXPRESSION_TYPE_UNARY_PLUS:
-					if (ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.UnaryPlus, out boundExpression) == false)
+					if (!ExpressionUtils.TryPromoteUnaryOperation(ref operand, ExpressionType.UnaryPlus, out boundExpression))
+					{
 						boundExpression = Expression.UnaryPlus(operand, methodMember);
+					}
 					break;
 				case Constants.EXPRESSION_TYPE_ARRAY_LENGTH:
 					boundExpression = Expression.ArrayLength(operand);
 					break;
 				default:
-					bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);
+					bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);
 					return false;
 			}
 			return true;

@@ -9,7 +9,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public QuoteNode(UnaryExpression unaryExpression)
 		{
-			if (unaryExpression == null) throw new ArgumentNullException("unaryExpression");
+			if (unaryExpression == null) throw new ArgumentNullException(nameof(unaryExpression));
 
 			this.unaryExpression = unaryExpression;
 		}

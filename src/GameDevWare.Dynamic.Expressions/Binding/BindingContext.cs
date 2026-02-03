@@ -19,42 +19,37 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal sealed class BindingContext
 	{
-		private readonly Expression global;
-		private readonly ReadOnlyCollection<ParameterExpression> parameters;
-		private List<Expression> nullPropagationTargets;
-		private readonly Type resultType;
 		private readonly ITypeResolver typeResolver;
+		private List<Expression> nullPropagationTargets;
 
-		public ReadOnlyCollection<ParameterExpression> Parameters { get { return this.parameters; } }
-		public Type ResultType { get { return this.resultType; } }
-		public Expression Global { get { return this.global; } }
+		public ReadOnlyCollection<ParameterExpression> Parameters { get; }
+		public Type ResultType { get; }
+		public Expression Global { get; }
 
 		public BindingContext(ITypeResolver typeResolver, ReadOnlyCollection<ParameterExpression> parameters, Type resultType, Expression global)
 		{
-			if (typeResolver == null) throw new ArgumentNullException("typeResolver");
-			if (parameters == null) throw new ArgumentNullException("parameters");
-			if (resultType == null) throw new ArgumentNullException("resultType");
+			if (typeResolver == null) throw new ArgumentNullException(nameof(typeResolver));
+			if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+			if (resultType == null) throw new ArgumentNullException(nameof(resultType));
 
 			this.typeResolver = typeResolver;
-			this.parameters = parameters;
-			this.resultType = resultType;
-			this.global = global;
+			this.Parameters = parameters;
+			this.ResultType = resultType;
+			this.Global = global;
 		}
 
 		public bool TryResolveType(object typeName, out Type type)
 		{
-			type = default(Type);
+			type = null;
 			if (typeName == null)
 				return false;
 
-			var typeReference = default(TypeReference);
-			if (TryGetTypeReference(typeName, out typeReference) == false || this.typeResolver.TryGetType(typeReference, out type) == false)
+			if (!TryGetTypeReference(typeName, out var typeReference) || !this.typeResolver.TryGetType(typeReference, out type))
 				return false;
 
 			return type != null;
@@ -62,25 +57,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public bool TryResolveMember(object memberName, out MemberDescription member)
 		{
 			member = null;
-			if (memberName is SyntaxTreeNode == false)
-			{
-				return false;
-			}
+			if (!(memberName is SyntaxTreeNode memberNode)) return false;
 
-			var memberNode = (SyntaxTreeNode)memberName;
-			var typeName = memberNode.GetTypeName(throwOnError: false);
-			var type = default(Type);
-			if (typeName == null || this.TryResolveType(typeName, out type) == false)
-			{
-				return false;
-			}
+			var typeName = memberNode.GetTypeName(false);
+			if (typeName == null || !this.TryResolveType(typeName, out var type)) return false;
 
-			var name = memberNode.GetName(throwOnError: false);
-			var nameRef = default(TypeReference);
-			if (name == null || TryGetTypeReference(name, out nameRef) == false)
-			{
-				return false;
-			}
+			var name = memberNode.GetName(false);
+			if (name == null || !TryGetTypeReference(name, out var nameRef)) return false;
 
 			var genericArguments = default(Type[]);
 			if (nameRef.IsGenericType)
@@ -89,15 +72,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				for (var i = 0; i < genericArguments.Length; i++)
 				{
 					var typeArgument = nameRef.TypeArguments[i];
-					if (this.TryResolveType(typeArgument, out genericArguments[i]) == false)
-					{
-						return false;
-					}
+					if (!this.TryResolveType(typeArgument, out genericArguments[i])) return false;
 				}
 			}
 
 			var typeDescription = TypeDescription.GetTypeDescription(type);
-			var argumentNames = memberNode.GetArgumentNames(throwOnError: false);
+			var argumentNames = memberNode.GetArgumentNames(false);
 			var members = nameRef.Name == ".ctor" ? typeDescription.Constructors : typeDescription.GetMembers(nameRef.Name);
 			foreach (var declaredMember in members)
 			{
@@ -106,7 +86,6 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					var paramsCount = declaredMember.GetParametersCount();
 					if (paramsCount != argumentNames.Count)
 					{
-						continue;
 					}
 					else if (paramsCount > 0)
 					{
@@ -115,17 +94,11 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 							var parameter = declaredMember.GetParameter(i);
 							var parameterIndex = Constants.GetIndexAsString(parameter.Position);
 
-							var argumentName = default(string);
-							if (argumentNames.TryGetValue(parameterIndex, out argumentName) == false)
-							{
-								break;
-							}
+							if (!argumentNames.TryGetValue(parameterIndex, out var argumentName)) break;
 
-							if (string.Equals(argumentName, parameter.Name, StringComparison.OrdinalIgnoreCase) == false &&
-								string.Equals(argumentName, parameterIndex, StringComparison.OrdinalIgnoreCase) == false)
-							{
+							if (!string.Equals(argumentName, parameter.Name, StringComparison.OrdinalIgnoreCase) &&
+								!string.Equals(argumentName, parameterIndex, StringComparison.OrdinalIgnoreCase))
 								break;
-							}
 
 							if (i == paramsCount - 1)
 							{
@@ -146,56 +119,56 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 					return TryMakeGenericMethod(ref member, genericArguments);
 				}
 			}
+
 			return false;
 		}
 		public bool TryGetParameter(string parameterName, out Expression parameter)
 		{
-			if (parameterName == null) throw new ArgumentNullException("parameterName");
+			if (parameterName == null) throw new ArgumentNullException(nameof(parameterName));
 
 			// ReSharper disable once ForCanBeConvertedToForeach
-			for (var i = 0; i < this.parameters.Count; i++)
+			for (var i = 0; i < this.Parameters.Count; i++)
 			{
-				parameter = this.parameters[i];
+				parameter = this.Parameters[i];
 				if (string.Equals(((ParameterExpression)parameter).Name, parameterName, StringComparison.Ordinal))
 					return true;
 			}
+
 			parameter = null;
 			return false;
 		}
 		public bool IsKnownType(Type type)
 		{
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			return this.typeResolver.IsKnownType(type);
 		}
 
 		public static bool TryGetTypeReference(object value, out TypeReference typeReference)
 		{
-			if (value == null) throw new ArgumentNullException("value");
+			if (value == null) throw new ArgumentNullException(nameof(value));
 
-			typeReference = default(TypeReference);
+			typeReference = null;
 
-			if (value is TypeReference)
+			if (value is TypeReference reference)
 			{
-				typeReference = (TypeReference)value;
+				typeReference = reference;
 				return true;
 			}
-			else if (value is SyntaxTreeNode)
+
+			if (value is SyntaxTreeNode current)
 			{
 				var parts = new List<SyntaxTreeNode>(10);
-				var current = (SyntaxTreeNode)value;
 				while (current != null)
 				{
-					var expressionType = current.GetExpressionType(throwOnError: false);
+					var expressionType = current.GetExpressionType(false);
 					if (expressionType != Constants.EXPRESSION_TYPE_PROPERTY_OR_FIELD &&
 						expressionType != Constants.EXPRESSION_TYPE_MEMBER_RESOLVE &&
 						expressionType != Constants.EXPRESSION_TYPE_TYPE_REFERENCE)
-					{
 						return false;
-					}
 
 					parts.Add(current);
-					current = current.GetExpression(throwOnError: false);
+					current = current.GetExpression(false);
 				}
 
 				var typeNameParts = default(List<string>);
@@ -203,8 +176,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				for (var p = 0; p < parts.Count; p++)
 				{
 					var part = parts[parts.Count - 1 - p]; // reverse order
-					var arguments = part.GetTypeArguments(throwOnError: false);
-					var typeNamePart = part.GetMemberName(throwOnError: true);
+					var arguments = part.GetTypeArguments(false);
+					var typeNamePart = part.GetMemberName(true);
 					if (typeNameParts == null) typeNameParts = new List<string>();
 					var typeArgumentsCount = 0;
 					if (arguments != null && arguments.Count > 0)
@@ -213,93 +186,67 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 						for (var i = 0; i < arguments.Count; i++)
 						{
-							var typeArgumentObj = default(object);
-							var typeArgumentTypeReference = default(TypeReference);
 							var key = Constants.GetIndexAsString(i);
-							if (arguments.TryGetValue(key, out typeArgumentObj) == false || typeArgumentObj == null)
-							{
-								return false;
-							}
+							if (!arguments.TryGetValue(key, out var typeArgumentObj) || typeArgumentObj == null) return false;
 
-							if (TryGetTypeReference(typeArgumentObj, out typeArgumentTypeReference) == false)
-							{
-								return false;
-							}
+							if (!TryGetTypeReference(typeArgumentObj, out var typeArgumentTypeReference)) return false;
 
 							typeArguments.Add(typeArgumentTypeReference);
 							typeArgumentsCount++;
 						}
+
 						typeNamePart = typeNamePart + "`" + Constants.GetIndexAsString(typeArgumentsCount);
 					}
+
 					typeNameParts.Add(typeNamePart);
 				}
 
 				if (typeNameParts == null || typeNameParts.Count == 0 || (typeNameParts.Count == 1 && string.IsNullOrEmpty(typeNameParts[0])))
-				{
 					typeReference = TypeReference.Empty;
-				}
 				else
-				{
 					typeReference = new TypeReference(typeNameParts, typeArguments ?? TypeReference.EmptyTypeArguments);
-				}
+
 				return true;
 			}
+
+			var typeName = Convert.ToString(value, Constants.DefaultFormatProvider);
+			if (string.IsNullOrEmpty(typeName))
+				typeReference = TypeReference.Empty;
 			else
-			{
-				var typeName = Convert.ToString(value, Constants.DefaultFormatProvider);
-				if (string.IsNullOrEmpty(typeName))
-				{
-					typeReference = TypeReference.Empty;
-				}
-				else
-				{
-					typeReference = new TypeReference(new[] { typeName }, TypeReference.EmptyTypeArguments);
-				}
-				return true;
-			}
+				typeReference = new TypeReference(new[] { typeName }, TypeReference.EmptyTypeArguments);
+
+			return true;
 		}
 		public static bool TryGetMethodReference(object value, out TypeReference methodReference)
 		{
-			if (value == null) throw new ArgumentNullException("value");
+			if (value == null) throw new ArgumentNullException(nameof(value));
 
-			methodReference = default(TypeReference);
+			methodReference = null;
 
-			if (value is TypeReference)
+			if (value is TypeReference reference)
 			{
-				methodReference = (TypeReference)value;
+				methodReference = reference;
 				return true;
 			}
-			else if (value is SyntaxTreeNode)
+
+			if (value is SyntaxTreeNode methodNameTree)
 			{
 				var typeArguments = default(List<TypeReference>);
-				var methodNameTree = (SyntaxTreeNode)value;
 
-				var arguments = methodNameTree.GetTypeArguments(throwOnError: false);
-				var methodName = methodNameTree.GetMemberName(throwOnError: true);
+				var arguments = methodNameTree.GetTypeArguments(false);
+				var methodName = methodNameTree.GetMemberName(true);
 				if (arguments != null && arguments.Count > 0)
 				{
 					typeArguments = new List<TypeReference>(10);
 
 					for (var i = 0; i < arguments.Count; i++)
 					{
-
-						var typeArgumentObj = default(object);
-						var typeArgumentTypeReference = default(TypeReference);
 						var key = Constants.GetIndexAsString(i);
-						if (arguments.TryGetValue(key, out typeArgumentObj) == false || typeArgumentObj == null)
-						{
-							return false; // cant get argument 
-						}
+						if (!arguments.TryGetValue(key, out var typeArgumentObj) || typeArgumentObj == null) return false; // cant get argument
 
-						if (TryGetTypeReference(typeArgumentObj, out typeArgumentTypeReference) == false)
-						{
-							return false; // type resolution failed
-						}
+						if (!TryGetTypeReference(typeArgumentObj, out var typeArgumentTypeReference)) return false; // type resolution failed
 
-						if (ReferenceEquals(typeArgumentTypeReference, TypeReference.Empty))
-						{
-							return false; // no open generic methods are allowed
-						}
+						if (ReferenceEquals(typeArgumentTypeReference, TypeReference.Empty)) return false; // no open generic methods are allowed
 
 						typeArguments.Add(typeArgumentTypeReference);
 					}
@@ -308,28 +255,26 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				methodReference = new TypeReference(new[] { methodName }, typeArguments ?? TypeReference.EmptyTypeArguments);
 				return true;
 			}
-			else
-			{
-				methodReference = new TypeReference(new[] { Convert.ToString(value, Constants.DefaultFormatProvider) }, TypeReference.EmptyTypeArguments);
-				return true;
-			}
+
+			methodReference = new TypeReference(new[] { Convert.ToString(value, Constants.DefaultFormatProvider) }, TypeReference.EmptyTypeArguments);
+			return true;
 		}
 
 		public BindingContext CreateNestedContext()
 		{
-			return new BindingContext(this.typeResolver, this.parameters, this.resultType, this.global);
+			return new BindingContext(this.typeResolver, this.Parameters, this.ResultType, this.Global);
 		}
 		public BindingContext CreateNestedContext(ReadOnlyCollection<ParameterExpression> newParameters, Type resultType)
 		{
-			if (newParameters == null) throw new ArgumentNullException("newParameters");
-			if (resultType == null) throw new ArgumentNullException("resultType");
+			if (newParameters == null) throw new ArgumentNullException(nameof(newParameters));
+			if (resultType == null) throw new ArgumentNullException(nameof(resultType));
 
-			return new BindingContext(this.typeResolver, newParameters, resultType, this.global);
+			return new BindingContext(this.typeResolver, newParameters, resultType, this.Global);
 		}
 
 		public void RegisterNullPropagationTarget(Expression target)
 		{
-			if (target == null) throw new ArgumentNullException("target");
+			if (target == null) throw new ArgumentNullException(nameof(target));
 
 			if (this.nullPropagationTargets == null)
 				this.nullPropagationTargets = new List<Expression>();
@@ -344,7 +289,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		}
 		private static bool TryMakeGenericMethod(ref MemberDescription methodDescription, Type[] typeArguments)
 		{
-			if (methodDescription == null) throw new ArgumentNullException("methodDescription");
+			if (methodDescription == null) throw new ArgumentNullException(nameof(methodDescription));
 
 			try
 			{

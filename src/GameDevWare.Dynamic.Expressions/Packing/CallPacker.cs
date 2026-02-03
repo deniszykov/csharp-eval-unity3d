@@ -9,16 +9,16 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 	{
 		public static Dictionary<string, object> Pack(MethodCallExpression expression)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			var arguments = expression.Arguments.ToArray();
-			var argumentNames = ArrayUtils.ConvertAll(expression.Method.GetParameters(), p => p.Name);
+			var argumentNames = expression.Method.GetParameters().ConvertAll(p => p.Name);
 
 			return new Dictionary<string, object>(4) {
-				{Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_CALL},
-				{Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(expression.Object)},
-				{Constants.METHOD_ATTRIBUTE, AnyPacker.Pack(expression.Method)},
-				{Constants.ARGUMENTS_ATTRIBUTE, AnyPacker.Pack(arguments, argumentNames)},
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_CALL },
+				{ Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(expression.Object) },
+				{ Constants.METHOD_ATTRIBUTE, AnyPacker.Pack(expression.Method) },
+				{ Constants.ARGUMENTS_ATTRIBUTE, AnyPacker.Pack(arguments, argumentNames) }
 			};
 		}
 	}

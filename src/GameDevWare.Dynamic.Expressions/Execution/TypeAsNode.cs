@@ -6,24 +6,28 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class TypeAsNode : ExecutionNode
 	{
-		private readonly UnaryExpression typeAsExpression;
 		private readonly ConvertNode convertNode;
 		private readonly ExecutionNode targetNode;
 		private readonly TypeDescription targetType;
+		private readonly UnaryExpression typeAsExpression;
 
 		public TypeAsNode(UnaryExpression typeAsExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (typeAsExpression == null) throw new ArgumentNullException("typeAsExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (typeAsExpression == null) throw new ArgumentNullException(nameof(typeAsExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.typeAsExpression = typeAsExpression;
 
 			this.targetType = TypeDescription.GetTypeDescription(typeAsExpression.Type);
 			if (this.targetType.IsValueType)
+			{
 				this.convertNode = new ConvertNode(typeAsExpression, constExpressions, parameterExpressions);
+			}
 			else
+			{
 				this.targetNode = AotCompiler.Compile(typeAsExpression.Operand, constExpressions, parameterExpressions);
+			}
 		}
 
 		/// <inheritdoc />
@@ -36,10 +40,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			if (target == null)
 				return null;
 
-			if (this.targetType.IsAssignableFrom(target.GetType()) == false)
-				return null;
-
-			return target;
+			return !this.targetType.IsAssignableFrom(target.GetType()) ? null : target;
 		}
 
 		/// <inheritdoc />

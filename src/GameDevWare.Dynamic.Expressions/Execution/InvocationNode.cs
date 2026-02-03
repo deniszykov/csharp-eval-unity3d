@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Linq.Expressions;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class InvocationNode : ExecutionNode
 	{
+		private readonly ExecutionNode[] argumentNodes;
 		private readonly InvocationExpression invocationExpression;
 		private readonly ExecutionNode target;
-		private readonly ExecutionNode[] argumentNodes;
 
 		public InvocationNode(InvocationExpression invocationExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (invocationExpression == null) throw new ArgumentNullException("invocationExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (invocationExpression == null) throw new ArgumentNullException(nameof(invocationExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.invocationExpression = invocationExpression;
 			this.target = AotCompiler.Compile(invocationExpression.Expression, constExpressions, parameterExpressions);
@@ -31,7 +32,10 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				invokeArguments[i] = closure.Unbox<object>(this.argumentNodes[i].Run(closure));
 
 			if (targetDelegate == null)
-				throw new NullReferenceException(string.Format(Properties.Resources.EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT, this.invocationExpression.Expression));
+			{
+				throw new NullReferenceException(string.Format(Resources.EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT,
+					this.invocationExpression.Expression));
+			}
 
 			return targetDelegate.DynamicInvoke(invokeArguments);
 		}

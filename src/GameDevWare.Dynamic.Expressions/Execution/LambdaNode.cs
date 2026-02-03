@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Execution
 {
@@ -14,19 +15,23 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public LambdaNode(LambdaExpression lambdaExpression, ParameterExpression[] parameterExpressions)
 		{
-			if (lambdaExpression == null) throw new ArgumentNullException("lambdaExpression");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (lambdaExpression == null) throw new ArgumentNullException(nameof(lambdaExpression));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.lambdaExpression = lambdaExpression;
 			this.parameterExpressions = parameterExpressions;
 
 			var lambdaExpressionType = lambdaExpression.Type.GetTypeInfo();
-			if (lambdaExpressionType.IsGenericType == false)
-				throw new NotSupportedException(Properties.Resources.EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED);
+			if (!lambdaExpressionType.IsGenericType)
+				throw new NotSupportedException(Resources.EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED);
 
 			var funcDefinition = lambdaExpression.Type.GetGenericTypeDefinition();
-			if (funcDefinition != typeof(Func<>) && funcDefinition != typeof(Func<,>) && funcDefinition != typeof(Func<,,>) && funcDefinition != typeof(Func<,,,>) && funcDefinition != typeof(Func<,,,,>))
-				throw new NotSupportedException(Properties.Resources.EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED);
+			if (funcDefinition != typeof(Func<>) &&
+				funcDefinition != typeof(Func<,>) &&
+				funcDefinition != typeof(Func<,,>) &&
+				funcDefinition != typeof(Func<,,,>) &&
+				funcDefinition != typeof(Func<,,,,>))
+				throw new NotSupportedException(Resources.EXCEPTION_COMPIL_ONLYFUNCLAMBDASISSUPPORTED);
 
 			var funcArguments = lambdaExpressionType.GetGenericArguments();
 			var prepareMethodDefinition = typeof(AotCompiler)
@@ -54,6 +59,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					var parameterValue = closure.Locals[LOCAL_FIRST_PARAMETER + Array.IndexOf(this.parameterExpressions, parameterExpr)];
 					substitutions.Add(parameterExpr, Expression.Constant(parameterValue, parameterExpr.Type));
 				}
+
 				body = ExpressionSubstitutor.Visit(body, substitutions);
 			}
 

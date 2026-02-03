@@ -13,24 +13,25 @@
 	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
+
 using System;
 
 namespace GameDevWare.Dynamic.Expressions
 {
 	/// <summary>
-	/// Interface for type resolution services.
+	///     Interface for type resolution services.
 	/// </summary>
 	public interface ITypeResolver
 	{
 		/// <summary>
-		/// Tries to retrieve type by it's name and generic parameters.
+		///     Tries to retrieve type by it's name and generic parameters.
 		/// </summary>
-		/// <param name="typeReference">Type name. Not null. Not <see cref="TypeReference.Empty"/></param>
+		/// <param name="typeReference">Type name. Not null. Not <see cref="TypeReference.Empty" /></param>
 		/// <param name="foundType">Found type or null.</param>
 		/// <returns>True if type is found. Overwise is false.</returns>
 		bool TryGetType(TypeReference typeReference, out Type foundType);
 		/// <summary>
-		/// Checks if specified type is known by current type resolver;
+		///     Checks if specified type is known by current type resolver;
 		/// </summary>
 		/// <param name="type">Type to lookup. Not null.</param>
 		/// <returns>True if type is known by this resolver. Overwise false.</returns>

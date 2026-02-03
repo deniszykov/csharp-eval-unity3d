@@ -1,17 +1,19 @@
-
-
 using System;
 
 namespace GameDevWare.Dynamic.Expressions
 {
 	internal static class ArrayUtils
 	{
+#if !NETCOREAPP
 		private class EmptyArray<T>
 		{
 			public static T[] Value = new T[0];
 		}
+#endif
 
-		public static ResultT[] ConvertAll<T, ResultT>(this T[] array,
+		public static ResultT[] ConvertAll<T, ResultT>
+		(
+			this T[] array,
 #if NETSTANDARD
 			Func<T, ResultT> converter
 #else
@@ -19,8 +21,8 @@ namespace GameDevWare.Dynamic.Expressions
 #endif
 		)
 		{
-			if (array == null) throw new ArgumentNullException("array");
-			if (converter == null) throw new ArgumentNullException("converter");
+			if (array == null) throw new ArgumentNullException(nameof(array));
+			if (converter == null) throw new ArgumentNullException(nameof(converter));
 
 #if NETSTANDARD
 			var result = new ResultT[array.Length];
@@ -28,7 +30,6 @@ namespace GameDevWare.Dynamic.Expressions
 				result[i] = converter(array[i]);
 			return result;
 #else
-
 			return Array.ConvertAll(array, converter);
 #endif
 		}

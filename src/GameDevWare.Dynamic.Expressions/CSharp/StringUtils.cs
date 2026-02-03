@@ -2,28 +2,29 @@
 	Copyright (c) 2016 Denis Zykov, GameDevWare.com
 
 	This a part of "C# Eval()" Unity Asset - https://www.assetstore.unity3d.com/en/#!/content/56706
-	
-	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND 
-	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE 
-	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY, 
-	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE 
+
+	THIS SOFTWARE IS DISTRIBUTED "AS-IS" WITHOUT ANY WARRANTIES, CONDITIONS AND
+	REPRESENTATIONS WHETHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE
+	IMPLIED WARRANTIES AND CONDITIONS OF MERCHANTABILITY, MERCHANTABLE QUALITY,
+	FITNESS FOR A PARTICULAR PURPOSE, DURABILITY, NON-INFRINGEMENT, PERFORMANCE
 	AND THOSE ARISING BY STATUTE OR FROM CUSTOM OR USAGE OF TRADE OR COURSE OF DEALING.
-	
-	This source code is distributed via Unity Asset Store, 
-	to use it in your project you should accept Terms of Service and EULA 
+
+	This source code is distributed via Unity Asset Store,
+	to use it in your project you should accept Terms of Service and EULA
 	https://unity3d.com/ru/legal/as_terms
 */
 
 using System;
 using System.Text;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
-	class StringUtils
+	internal static class StringUtils
 	{
 		public static string UnescapeAndUnquote(string stringToUnescape)
 		{
-			if (stringToUnescape == null) throw new ArgumentNullException("stringToUnescape");
+			if (stringToUnescape == null) throw new ArgumentNullException(nameof(stringToUnescape));
 
 			var start = 0;
 			var len = stringToUnescape.Length;
@@ -49,6 +50,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					if (ch == '\\')
 					{
 						var seqLength = 1;
+
 						// append unencoded chunk
 						if (plainTextLen != 0)
 						{
@@ -83,16 +85,19 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							case '\"':
 								sb.Append('\"');
 								break;
+
 							// unicode symbol
 							case 'u':
 								sb.Append((char)HexStringToUInt32(stringToUnescape, i + 2, 4));
 								seqLength = 5;
 								break;
+
 							// latin hex encoded symbol
 							case 'x':
 								sb.Append((char)HexStringToUInt32(stringToUnescape, i + 2, 2));
 								seqLength = 3;
 								break;
+
 							// latin dec encoded symbol
 							case '1':
 							case '2':
@@ -108,7 +113,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								seqLength = 3;
 								break;
 							default:
-								throw new InvalidOperationException(string.Format(Properties.Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ, "//" + escSymbol));
+								throw new InvalidOperationException(string.Format(Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ, "//" + escSymbol));
 						}
 
 						// set next chunk start right after this escape
@@ -127,14 +132,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 
 			if (isChar && string.IsNullOrEmpty(resultString) && resultString.Length != 1)
-				throw new InvalidOperationException(Properties.Resources.EXCEPTION_TOKENIZER_INVALIDCHARLITERAL);
+				throw new InvalidOperationException(Resources.EXCEPTION_TOKENIZER_INVALIDCHARLITERAL);
 
 			return resultString;
 		}
 
-		private static int StringToInt32(string value, int offset, int count, IFormatProvider formatProvider = null)
+		private static int StringToInt32(string value, int offset, int count)
 		{
-			const uint ZERO = (ushort)'0';
+			const uint ZERO = '0';
 
 			var result = 0u;
 			var neg = false;
@@ -146,6 +151,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					neg = true;
 					continue;
 				}
+
 				if (c < '0' || c > '9')
 					throw new FormatException();
 
@@ -153,7 +159,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 
 			if (neg)
-				return -(int)(result);
+				return -(int)result;
+
 			return (int)result;
 		}
 		private static uint HexStringToUInt32(string value, int offset, int count)
@@ -164,7 +171,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				var c = value[offset + i];
 				var d = 0u;
 				if (c >= '0' && c <= '9')
-					d = (c - (uint)'0');
+					d = c - (uint)'0';
 				else if (c >= 'a' && c <= 'f')
 					d = 10u + (c - (uint)'a');
 				else if (c >= 'A' && c <= 'F')

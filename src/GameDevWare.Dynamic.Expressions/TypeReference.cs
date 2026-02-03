@@ -23,67 +23,75 @@ using System.Text;
 namespace GameDevWare.Dynamic.Expressions
 {
 	/// <summary>
-	/// Type reference with type arguments.
+	///     Type reference with type arguments.
 	/// </summary>
 	public sealed class TypeReference : IEquatable<TypeReference>
 	{
 		/// <summary>
-		/// Empty type reference. Used for open generic types as parameter placeholder.
+		///     Empty type reference. Used for open generic types as parameter placeholder.
 		/// </summary>
 		public static readonly TypeReference Empty = new TypeReference();
 		/// <summary>
-		/// Empty list of type arguments.
+		///     Empty list of type arguments.
 		/// </summary>
 		public static readonly IList<TypeReference> EmptyTypeArguments = Empty.TypeArguments;
-
-		private string fullName;
 		private readonly int hashCode;
 		private readonly ReadOnlyCollection<string> typeName;
-		private readonly ReadOnlyCollection<TypeReference> typeArguments;
+
+		private string fullName;
 
 		/// <summary>
-		/// Full type name with namespace and declared types.
+		///     Full type name with namespace and declared types.
 		/// </summary>
-		public string FullName { get { return this.fullName ?? (this.fullName = this.CombineParts(this.typeName.Count)); } }
+		public string FullName => this.fullName ?? (this.fullName = this.CombineParts(this.typeName.Count));
 		/// <summary>
-		/// Type's name without namespace and declared types.
+		///     Type's name without namespace and declared types.
 		/// </summary>
-		public string Name { get { return this.typeName[this.typeName.Count - 1]; } }
+		public string Name => this.typeName[this.typeName.Count - 1];
 		/// <summary>
-		/// Types' namespace if any.
+		///     Types' namespace if any.
 		/// </summary>
-		public string Namespace { get { return this.CombineParts(this.typeName.Count - 1); } }
+		public string Namespace => this.CombineParts(this.typeName.Count - 1);
 		/// <summary>
-		/// Type's generic arguments.
+		///     Type's generic arguments.
 		/// </summary>
-		public ReadOnlyCollection<TypeReference> TypeArguments { get { return this.typeArguments; } }
+		public ReadOnlyCollection<TypeReference> TypeArguments { get; }
 		/// <summary>
-		/// Returns true if type has type arguments.
+		///     Returns true if type has type arguments.
 		/// </summary>
-		public bool IsGenericType { get { return this.typeArguments.Count > 0; } }
+		public bool IsGenericType => this.TypeArguments.Count > 0;
 
 		private TypeReference()
 		{
 			this.typeName = new ReadOnlyCollection<string>(new[] { string.Empty });
-			this.typeArguments = new ReadOnlyCollection<TypeReference>(new TypeReference[0]);
+			this.TypeArguments = new ReadOnlyCollection<TypeReference>(Array.Empty<TypeReference>());
 			this.fullName = string.Empty;
 		}
 		/// <summary>
-		/// Creates new type reference from type's path and type's generic arguments.
+		///     Creates new type reference from type's path and type's generic arguments.
 		/// </summary>
 		/// <param name="typeName">Type path.</param>
 		/// <param name="typeArguments">Type generic arguments.</param>
 		public TypeReference(IList<string> typeName, IList<TypeReference> typeArguments)
 		{
-			if (typeName == null) throw new ArgumentNullException("typeName");
-			if (typeName.Count == 0) throw new ArgumentOutOfRangeException("typeName");
-			if (typeArguments == null) throw new ArgumentNullException("typeArguments");
+			if (typeName == null) throw new ArgumentNullException(nameof(typeName));
+			if (typeName.Count == 0) throw new ArgumentOutOfRangeException(nameof(typeName));
+			if (typeArguments == null) throw new ArgumentNullException(nameof(typeArguments));
 
-			for (var i = 0; i < typeName.Count; i++) if (string.IsNullOrEmpty(typeName[i])) throw new ArgumentException("Type's name contains empty parts.", "typeName");
-			for (var i = 0; i < typeArguments.Count; i++) if (typeArguments[i] == null) throw new ArgumentException("Type's generic arguments contains null values.", "typeArguments");
+			foreach (var typeNamePart in typeName)
+			{
+				if (string.IsNullOrEmpty(typeNamePart))
+					throw new ArgumentException("Type's name contains empty parts.", nameof(typeName));
+			}
+
+			foreach (var typeArgument in typeArguments)
+			{
+				if (typeArgument == null)
+					throw new ArgumentException("Type's generic arguments contains null values.", nameof(typeArguments));
+			}
 
 			this.typeName = typeName as ReadOnlyCollection<string> ?? new ReadOnlyCollection<string>(typeName);
-			this.typeArguments = typeArguments as ReadOnlyCollection<TypeReference> ?? new ReadOnlyCollection<TypeReference>(typeArguments);
+			this.TypeArguments = typeArguments as ReadOnlyCollection<TypeReference> ?? new ReadOnlyCollection<TypeReference>(typeArguments);
 			this.hashCode = ComputeHashCode(this);
 
 			if (typeName.Count == 1) this.fullName = typeName[0];
@@ -91,7 +99,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 		private string CombineParts(int count, StringBuilder builder = null)
 		{
-			if (count > this.typeName.Count) throw new ArgumentOutOfRangeException("count");
+			if (count > this.typeName.Count) throw new ArgumentOutOfRangeException(nameof(count));
 
 			if (count == 0) return string.Empty;
 
@@ -101,6 +109,7 @@ namespace GameDevWare.Dynamic.Expressions
 				lengthReq += this.typeName[i].Length;
 				if (i != 0) lengthReq++;
 			}
+
 			builder = builder ?? new StringBuilder(lengthReq);
 			if (builder.Capacity - builder.Length < lengthReq)
 				builder.Capacity += lengthReq;
@@ -110,44 +119,36 @@ namespace GameDevWare.Dynamic.Expressions
 					builder.Append('.');
 				builder.Append(this.typeName[i]);
 			}
+
 			return builder.ToString();
 		}
 
 		private void Format(StringBuilder builder)
 		{
 			this.CombineParts(this.typeName.Count, builder);
-			if (this.typeArguments.Count > 0)
+
+			if (this.TypeArguments.Count > 0)
 			{
 				builder.Append('<');
-				for (var i = 0; i < this.typeArguments.Count; i++)
+				for (var i = 0; i < this.TypeArguments.Count; i++)
 				{
 					if (i != 0) builder.Append(", ");
-					this.typeArguments[i].Format(builder);
+					this.TypeArguments[i].Format(builder);
 				}
+
 				builder.Append('>');
 			}
 		}
 
 		/// <summary>
-		/// Compares two type references by value.
+		///     Compares two type references by value.
 		/// </summary>
 		public override bool Equals(object obj)
 		{
 			return this.Equals(obj as TypeReference);
 		}
 		/// <summary>
-		/// Compares two type references by value.
-		/// </summary>
-		public bool Equals(TypeReference other)
-		{
-			if (other == null) return false;
-			if (ReferenceEquals(this, other)) return true;
-
-			return this.typeName.Count == other.typeName.Count && this.typeName.SequenceEqual(other.typeName) &&
-				   this.typeArguments.Count == other.typeArguments.Count && this.typeArguments.SequenceEqual(other.typeArguments);
-		}
-		/// <summary>
-		/// Return hash code of type reference.
+		///     Return hash code of type reference.
 		/// </summary>
 		public override int GetHashCode()
 		{
@@ -155,34 +156,38 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 
 		/// <summary>
-		/// Checks if two type references are equals.
+		///     Checks if two type references are equals.
 		/// </summary>
 		public static bool operator ==(TypeReference x, TypeReference y)
 		{
 			return ReferenceEquals(x, y) || Equals(x, y);
 		}
 		/// <summary>
-		/// Checks if two type references are not equals.
+		///     Checks if two type references are not equals.
 		/// </summary>
 		public static bool operator !=(TypeReference x, TypeReference y)
 		{
-			return Equals(x, y) == false;
+			return !Equals(x, y);
 		}
 
 		private static int ComputeHashCode(TypeReference typeReference)
 		{
-			if (typeReference == null) throw new ArgumentNullException("typeReference");
+			if (typeReference == null) throw new ArgumentNullException(nameof(typeReference));
 
 			var hashCode = 0;
-			for (var i = 0; i < typeReference.typeName.Count; i++)
-				hashCode = unchecked(hashCode + typeReference.typeName[i].GetHashCode());
-			for (var i = 0; i < typeReference.typeArguments.Count; i++)
-				hashCode = unchecked(hashCode + typeReference.typeArguments[i].GetHashCode());
+			foreach (var typePart in typeReference.typeName)
+			{
+				hashCode = unchecked(hashCode + typePart.GetHashCode());
+			}
+			foreach (var typeArgument in typeReference.TypeArguments)
+			{
+				hashCode = unchecked(hashCode + typeArgument.GetHashCode());
+			}
 			return hashCode;
 		}
 
 		/// <summary>
-		/// Converts type reference to string representation for debug purpose.
+		///     Converts type reference to string representation for debug purpose.
 		/// </summary>
 		public override string ToString()
 		{
@@ -192,6 +197,19 @@ namespace GameDevWare.Dynamic.Expressions
 			var builder = new StringBuilder(1000);
 			this.Format(builder);
 			return builder.ToString();
+		}
+		/// <summary>
+		///     Compares two type references by value.
+		/// </summary>
+		public bool Equals(TypeReference other)
+		{
+			if (other == null) return false;
+			if (ReferenceEquals(this, other)) return true;
+
+			return this.typeName.Count == other.typeName.Count &&
+				this.typeName.SequenceEqual(other.typeName) &&
+				this.TypeArguments.Count == other.TypeArguments.Count &&
+				this.TypeArguments.SequenceEqual(other.TypeArguments);
 		}
 	}
 }

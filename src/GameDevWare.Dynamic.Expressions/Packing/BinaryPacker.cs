@@ -8,9 +8,10 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 	{
 		public static Dictionary<string, object> Pack(BinaryExpression expression)
 		{
-			if (expression == null) throw new ArgumentNullException("expression");
+			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			var expressionType = string.Empty;
+
 			// ReSharper disable once SwitchStatementMissingSomeCases
 			switch (expression.NodeType)
 			{
@@ -41,18 +42,14 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			}
 
 			var node = new Dictionary<string, object>(4) {
-				{Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType},
-				{Constants.LEFT_ATTRIBUTE, AnyPacker.Pack(expression.Left)},
-				{Constants.RIGHT_ATTRIBUTE, AnyPacker.Pack(expression.Right)}
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, expressionType },
+				{ Constants.LEFT_ATTRIBUTE, AnyPacker.Pack(expression.Left) },
+				{ Constants.RIGHT_ATTRIBUTE, AnyPacker.Pack(expression.Right) }
 			};
-			if (expression.Method != null)
-			{
-				node.Add(Constants.METHOD_ATTRIBUTE, AnyPacker.Pack(expression.Method));
-			}
-			if (expression.Conversion != null)
-			{
-				node.Add(Constants.CONVERSION_ATTRIBUTE, AnyPacker.Pack(expression.Conversion));
-			}
+			if (expression.Method != null) node.Add(Constants.METHOD_ATTRIBUTE, AnyPacker.Pack(expression.Method));
+
+			if (expression.Conversion != null) node.Add(Constants.CONVERSION_ATTRIBUTE, AnyPacker.Pack(expression.Conversion));
+
 			return node;
 		}
 	}

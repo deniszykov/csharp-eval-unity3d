@@ -17,42 +17,39 @@
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
 	/// <summary>
-	/// Tokenizer's token data.
+	///     Tokenizer's token data.
 	/// </summary>
-	public struct Token : ILineInfo
+	public readonly struct Token : ILineInfo
 	{
 		/// <summary>
-		/// Type of token.
+		///     Type of token.
 		/// </summary>
 		public readonly TokenType Type;
 		/// <summary>
-		/// Value of token.
+		///     Value of token.
 		/// </summary>
 		public readonly string Value;
 		/// <summary>
-		/// Line number of token (position).
+		///     Line number of token (position).
 		/// </summary>
 		public readonly int LineNumber;
 		/// <summary>
-		/// Column number of token (position).
+		///     Column number of token (position).
 		/// </summary>
 		public readonly int ColumnNumber;
 		/// <summary>
-		/// Length of token (position).
+		///     Length of token (position).
 		/// </summary>
 		public readonly int TokenLength;
 
 		/// <summary>
-		/// Returns true if token is valid.
+		///     Returns true if token is valid.
 		/// </summary>
-		public bool IsValid { get { return this.Type != TokenType.None; } }
+		public bool IsValid => this.Type != TokenType.None;
 		/// <summary>
-		/// Returns token's position as string.
+		///     Returns token's position as string.
 		/// </summary>
-		public string Position
-		{
-			get { return string.Format("{0}:{1}+{2}", this.LineNumber.ToString(), this.ColumnNumber.ToString(), this.TokenLength.ToString()); }
-		}
+		public string Position => $"{this.LineNumber.ToString()}:{this.ColumnNumber.ToString()}+{this.TokenLength.ToString()}";
 
 		int ILineInfo.GetLineNumber()
 		{
@@ -68,7 +65,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		}
 
 		/// <summary>
-		/// Creates new token.
+		///     Creates new token.
 		/// </summary>
 		public Token(TokenType type, string value, int line, int col, int len)
 		{
@@ -80,7 +77,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		}
 
 		/// <summary>
-		/// Change type of token and return it as new token instance.
+		///     Change type of token and return it as new token instance.
 		/// </summary>
 		public Token ChangeType(TokenType newType)
 		{
@@ -88,7 +85,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		}
 
 		/// <summary>
-		/// Converts token to string for debugging.
+		///     Converts token to string for debugging.
 		/// </summary>
 		public override string ToString()
 		{

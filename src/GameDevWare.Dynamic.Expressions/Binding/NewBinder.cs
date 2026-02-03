@@ -17,7 +17,7 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
@@ -26,23 +26,18 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		public static bool TryBind
 			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
-			if (node == null) throw new ArgumentNullException("node");
+			if (node == null) throw new ArgumentNullException(nameof(node));
 
-			var arguments = node.GetArguments(throwOnError: false);
-			var methodName = node.GetMethodName(throwOnError: false);
-			if (methodName != null)
-			{
-				return TryBindToMethod(node, methodName, arguments, bindingContext, expectedType, out boundExpression, out bindingError);
-			}
-			else
-			{
-				var typeName = node.GetTypeName(throwOnError: true);
-				return TryBindToType(node, typeName, arguments, bindingContext, expectedType, out boundExpression, out bindingError);
-			}
+			var arguments = node.GetArguments(false);
+			var methodName = node.GetMethodName(false);
+			if (methodName != null) return TryBindToMethod(node, methodName, arguments, bindingContext, expectedType, out boundExpression, out bindingError);
+
+			var typeName = node.GetTypeName(true);
+			return TryBindToType(node, typeName, arguments, bindingContext, expectedType, out boundExpression, out bindingError);
 		}
 		private static bool TryBindToType
 		(
@@ -57,10 +52,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			boundExpression = null;
 			bindingError = null;
 
-			var type = default(Type);
-			if (bindingContext.TryResolveType(typeName, out type) == false)
+			if (!bindingContext.TryResolveType(typeName, out var type))
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETORESOLVETYPE, typeName), node);
 				return false;
 			}
 
@@ -70,15 +64,15 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var lambdaArgument = default(SyntaxTreeNode);
 			if (typeDescription.IsDelegate &&
 				arguments.Count == 1 &&
-				(lambdaArgument = arguments.Values.Single()).GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA)
+				(lambdaArgument = arguments.Values.Single()).GetExpressionType(true) == Constants.EXPRESSION_TYPE_LAMBDA)
+			{
 				return LambdaBinder.TryBind(lambdaArgument, bindingContext, typeDescription, out boundExpression, out bindingError);
+			}
 
 			var selectedConstructorQuality = MemberDescription.QUALITY_INCOMPATIBLE;
 			foreach (var constructorDescription in typeDescription.Constructors)
 			{
-				var constructorQuality = MemberDescription.QUALITY_INCOMPATIBLE;
-				var constructorCall = default(Expression);
-				if (constructorDescription.TryMakeCall(null, arguments, bindingContext, out constructorCall, out constructorQuality) == false)
+				if (!constructorDescription.TryMakeCall(null, arguments, bindingContext, out var constructorCall, out var constructorQuality))
 					continue;
 
 				if (float.IsNaN(constructorQuality) || constructorQuality <= selectedConstructorQuality)
@@ -88,12 +82,14 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				selectedConstructorQuality = constructorQuality;
 
 				if (Math.Abs(constructorQuality - MemberDescription.QUALITY_EXACT_MATCH) < float.Epsilon)
+				{
 					break; // best match
+				}
 			}
 
 			if (boundExpression == null)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, type), node);
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, type), node);
 				return false;
 			}
 
@@ -113,10 +109,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			boundExpression = null;
 			bindingError = null;
 
-			var constructorDescription = default(MemberDescription);
-			if (bindingContext.TryResolveMember(methodName, out constructorDescription) == false || constructorDescription.IsConstructor == false)
+			if (!bindingContext.TryResolveMember(methodName, out var constructorDescription) || !constructorDescription.IsConstructor)
 			{
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, methodName), node);
+				bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, methodName), node);
 				return false;
 			}
 
@@ -126,17 +121,13 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			var lambdaArgument = default(SyntaxTreeNode);
 			if (typeDescription.IsDelegate &&
 				arguments.Count == 1 &&
-				(lambdaArgument = arguments.Values.Single()).GetExpressionType(throwOnError: true) == Constants.EXPRESSION_TYPE_LAMBDA)
+				(lambdaArgument = arguments.Values.Single()).GetExpressionType(true) == Constants.EXPRESSION_TYPE_LAMBDA)
 				return LambdaBinder.TryBind(lambdaArgument, bindingContext, typeDescription, out boundExpression, out bindingError);
 
-			var constructorQuality = MemberDescription.QUALITY_INCOMPATIBLE;
-			if (constructorDescription.TryMakeCall(null, arguments, bindingContext, out boundExpression, out constructorQuality))
-			{
-				return true;
-			}
+			if (constructorDescription.TryMakeCall(null, arguments, bindingContext, out boundExpression, out _)) return true;
 
 			bindingError = new ExpressionParserException(
-				string.Format(Properties.Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, constructorDescription.DeclaringType), node);
+				string.Format(Resources.EXCEPTION_BIND_UNABLETOBINDCONSTRUCTOR, constructorDescription.DeclaringType), node);
 			return false;
 		}
 	}

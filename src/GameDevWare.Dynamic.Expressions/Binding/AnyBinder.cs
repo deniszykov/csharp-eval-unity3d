@@ -16,27 +16,30 @@
 
 using System;
 using System.Linq.Expressions;
+using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
 	internal static class AnyBinder
 	{
-		public static bool TryBindInNewScope(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBindInNewScope
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
 			bindingContext = bindingContext.CreateNestedContext();
 			var result = TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 			bindingContext.CompleteNullPropagation(ref boundExpression);
 			return result;
 		}
-		public static bool TryBind(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
+		public static bool TryBind
+			(SyntaxTreeNode node, BindingContext bindingContext, TypeDescription expectedType, out Expression boundExpression, out Exception bindingError)
 		{
-			if (node == null) throw new ArgumentNullException("node");
-			if (bindingContext == null) throw new ArgumentNullException("bindingContext");
-			if (expectedType == null) throw new ArgumentNullException("expectedType");
+			if (node == null) throw new ArgumentNullException(nameof(node));
+			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
+			if (expectedType == null) throw new ArgumentNullException(nameof(expectedType));
 
 			try
 			{
-				var expressionType = node.GetExpressionType(throwOnError: true);
+				var expressionType = node.GetExpressionType(true);
 				switch (expressionType)
 				{
 					case Constants.EXPRESSION_TYPE_MEMBER_RESOLVE:
@@ -115,7 +118,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						return QuoteBinder.TryBind(node, bindingContext, expectedType, out boundExpression, out bindingError);
 					default:
 						boundExpression = null;
-						bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);
+						bindingError = new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_UNKNOWNEXPRTYPE, expressionType), node);
 						return false;
 				}
 			}
@@ -128,10 +131,10 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			catch (Exception error)
 			{
 				boundExpression = null;
-				bindingError = new ExpressionParserException(string.Format(Properties.Resources.EXCEPTION_BIND_FAILEDTOBIND, node.GetExpressionType(throwOnError: false) ?? "<unknown>", error.Message), error, node);
+				bindingError = new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_FAILEDTOBIND, node.GetExpressionType(false) ?? "<unknown>", error.Message), error, node);
 				return false;
 			}
 		}
-
 	}
 }

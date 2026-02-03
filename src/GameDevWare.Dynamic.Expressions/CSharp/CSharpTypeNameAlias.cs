@@ -1,7 +1,7 @@
 using System;
-using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions.CSharp
 {
@@ -12,8 +12,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		static CSharpTypeNameAlias()
 		{
-			TypeNameByAlias = new Dictionary<string, string>
-			{
+			TypeNameByAlias = new Dictionary<string, string> {
 				// ReSharper disable StringLiteralTypo
 				{ "void", typeof(void).FullName },
 				{ "char", typeof(char).FullName },
@@ -31,6 +30,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				{ "short", typeof(short).FullName },
 				{ "ushort", typeof(ushort).FullName },
 				{ "string", typeof(string).FullName }
+
 				// ReSharper restore StringLiteralTypo
 			};
 			AliasByTypeName = TypeNameByAlias.ToDictionary(kv => kv.Value, kv => kv.Key);
@@ -38,13 +38,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		public static bool TryGetTypeName(string alias, out string typeName)
 		{
-			if (alias == null) throw new ArgumentNullException("alias");
+			if (alias == null) throw new ArgumentNullException(nameof(alias));
 
 			return TypeNameByAlias.TryGetValue(alias, out typeName);
 		}
 		public static bool TryGetAlias(string typeName, out string alias)
 		{
-			if (typeName == null) throw new ArgumentNullException("typeName");
+			if (typeName == null) throw new ArgumentNullException(nameof(typeName));
 
 			return AliasByTypeName.TryGetValue(typeName, out alias);
 		}
@@ -58,7 +58,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 #else
 		public static bool TryGetAlias(TypeInfo typeInfo, out string alias)
 		{
-			if (typeInfo == null) throw new ArgumentNullException("typeInfo");
+			if (typeInfo == null) throw new ArgumentNullException(nameof(typeInfo));
 
 			return TryGetAlias(typeInfo.FullName, out alias);
 		}

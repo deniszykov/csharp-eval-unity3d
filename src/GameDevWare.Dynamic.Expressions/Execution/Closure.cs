@@ -9,8 +9,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public Closure(object[] constants, object[] locals)
 		{
-			if (constants == null) throw new ArgumentNullException("constants");
-			if (locals == null) throw new ArgumentNullException("locals");
+			if (constants == null) throw new ArgumentNullException(nameof(constants));
+			if (locals == null) throw new ArgumentNullException(nameof(locals));
+
 			this.Constants = constants;
 			this.Locals = locals;
 		}
@@ -29,8 +30,8 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 			if (boxed is T || boxed == null)
 				return (T)boxed;
-			else
-				return (T)Convert.ChangeType(boxed, typeof(T));
+
+			return (T)Convert.ChangeType(boxed, typeof(T));
 		}
 
 		public bool Is<T>(object boxed)
@@ -42,6 +43,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		{
 			if (left == null)
 				return typeof(object);
+
 			return left.GetType();
 		}
 	}

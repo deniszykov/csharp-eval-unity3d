@@ -7,15 +7,15 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class ListInitNode : ExecutionNode
 	{
-		private readonly ListInitExpression listInitExpression;
 		private readonly KeyValuePair<MethodInfo, ExecutionNode[]>[] initializationNodes;
+		private readonly ListInitExpression listInitExpression;
 		private readonly NewNode newNode;
 
 		public ListInitNode(ListInitExpression listInitExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
 		{
-			if (listInitExpression == null) throw new ArgumentNullException("listInitExpression");
-			if (constExpressions == null) throw new ArgumentNullException("constExpressions");
-			if (parameterExpressions == null) throw new ArgumentNullException("parameterExpressions");
+			if (listInitExpression == null) throw new ArgumentNullException(nameof(listInitExpression));
+			if (constExpressions == null) throw new ArgumentNullException(nameof(constExpressions));
+			if (parameterExpressions == null) throw new ArgumentNullException(nameof(parameterExpressions));
 
 			this.listInitExpression = listInitExpression;
 
@@ -26,7 +26,9 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				var initialization = listInitExpression.Initializers[i];
 				var argumentNodes = new ExecutionNode[initialization.Arguments.Count];
 				for (var a = 0; a < initialization.Arguments.Count; a++)
+				{
 					argumentNodes[a] = AotCompiler.Compile(initialization.Arguments[a], constExpressions, parameterExpressions);
+				}
 				this.initializationNodes[i] = new KeyValuePair<MethodInfo, ExecutionNode[]>(initialization.AddMethod, argumentNodes);
 			}
 		}
@@ -50,6 +52,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 				addMethod.Invoke(list, addArguments);
 			}
+
 			return list;
 		}
 

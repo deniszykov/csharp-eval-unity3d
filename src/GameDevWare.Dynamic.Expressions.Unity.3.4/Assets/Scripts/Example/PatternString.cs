@@ -20,137 +20,131 @@ using System.Linq.Expressions;
 using GameDevWare.Dynamic.Expressions;
 using GameDevWare.Dynamic.Expressions.CSharp;
 
-namespace Assets
+namespace Assets;
+
+public sealed class PatternString<InstanceT>
 {
-	public sealed class PatternString<InstanceT>
+	private const int PART_EXPR = 1;
+	private const int PART_TEXT = 0;
+	private static readonly Func<object[], string> ConcatFunc = string.Concat;
+
+	private static readonly Binder ExpressionBinder = new(
+		new[] { Expression.Parameter(typeof(InstanceT), "p") },
+		typeof(object)
+	);
+	private readonly string pattern;
+
+	private readonly Func<InstanceT, string> transform;
+
+	public PatternString(string pattern)
 	{
-		private const int PART_TEXT = 0;
-		private const int PART_EXPR = 1;
+		if (pattern == null) throw new ArgumentNullException(nameof(pattern));
 
-		private static readonly Binder ExpressionBinder = new Binder
-		(
-			parameters: new[] { Expression.Parameter(typeof(InstanceT), "p") },
-			resultType: typeof(object)
-		);
-		private static readonly Func<object[], string> ConcatFunc = string.Concat;
+		this.pattern = pattern;
+		this.transform = this.CreateTransformFn(pattern);
+	}
 
-		private readonly Func<InstanceT, string> transform;
-		private readonly string pattern;
+	public string Tranform(InstanceT instance)
+	{
+		if (instance == null) throw new ArgumentNullException(nameof(instance));
 
-		public PatternString(string pattern)
+		return this.transform(instance);
+	}
+
+	private Func<InstanceT, string> CreateTransformFn(string pattern)
+	{
+		if (pattern == null) throw new ArgumentNullException(nameof(pattern));
+
+		var concatArguments = new List<Expression>();
+		foreach (var part in this.Split(pattern))
 		{
-			if (pattern == null) throw new ArgumentNullException("pattern");
-
-			this.pattern = pattern;
-			this.transform = this.CreateTransformFn(pattern);
-		}
-
-		public string Tranform(InstanceT instance)
-		{
-			if (instance == null) throw new ArgumentNullException("instance");
-
-			return this.transform(instance);
-		}
-
-		private Func<InstanceT, string> CreateTransformFn(string pattern)
-		{
-			if (pattern == null) throw new ArgumentNullException("pattern");
-
-			var concatArguments = new List<Expression>();
-			foreach (var part in this.Split(pattern))
+			if (part.Key == PART_TEXT)
 			{
-				if (part.Key == PART_TEXT)
-				{
-					// add it as concat argument
-					concatArguments.Add(Expression.Constant(part.Value, typeof(object)));
-				}
-				else
-				{
-					// tokenize expression
-					var tokens = Tokenizer.Tokenize(part.Value);
-					// build concrete tree
-					var expressionTree = Parser.Parse(tokens).ToSyntaxTree(false);
-					// build abstract tree
-					var lambdaExpression = ExpressionBinder.Bind(expressionTree, ExpressionBinder.Parameters[0]);
-					// add it as argument for concat
-					concatArguments.Add(lambdaExpression.Body);
-				}
+				// add it as concat argument
+				concatArguments.Add(Expression.Constant(part.Value, typeof(object)));
 			}
+			else
+			{
+				// tokenize expression
+				var tokens = Tokenizer.Tokenize(part.Value);
 
-			var transformExpr = Expression.Lambda<Func<InstanceT, string>>
-			(
+				// build concrete tree
+				var expressionTree = Parser.Parse(tokens).ToSyntaxTree(false);
+
+				// build abstract tree
+				var lambdaExpression = ExpressionBinder.Bind(expressionTree, ExpressionBinder.Parameters[0]);
+
+				// add it as argument for concat
+				concatArguments.Add(lambdaExpression.Body);
+			}
+		}
+
+		var transformExpr = Expression.Lambda<Func<InstanceT, string>>
+		(
 #if NETSTANDARD
-				Expression.Call(ConcatFunc.GetMethodInfo(), Expression.NewArrayInit(typeof(object), concatArguments)),
+			Expression.Call(ConcatFunc.GetMethodInfo(), Expression.NewArrayInit(typeof(object), concatArguments)),
 #else
 				Expression.Call(ConcatFunc.Method, Expression.NewArrayInit(typeof(object), concatArguments)),
 #endif
-				ExpressionBinder.Parameters
-			);
+			ExpressionBinder.Parameters
+		);
 
-			return transformExpr.CompileAot();
-		}
-		private IEnumerable<KeyValuePair<int, string>> Split(string pattern)
-		{
-			if (pattern == null) throw new ArgumentNullException("pattern");
-
-			var scanStart = 0;
-			var bracersLevel = 0;
-
-			for (var i = 0; i < pattern.Length; i++)
-			{
-				if (pattern[i] != '{' && pattern[i] != '}')
-					continue;
-
-				if (pattern[i] == '{' && bracersLevel > 0)
-				{
-					bracersLevel++;
-					continue;
-				}
-				else if (pattern[i] == '}' && bracersLevel > 1)
-				{
-					bracersLevel--;
-					continue;
-				}
-				else if (pattern[i] == '{')
-				{
-					if (i - scanStart != 0)
-						yield return new KeyValuePair<int, string>(PART_TEXT, pattern.Substring(scanStart, i - scanStart));
-
-					scanStart = i;
-					bracersLevel++;
-				}
-				else if (pattern[i] == '}')
-				{
-					if (i - scanStart > 2)
-						yield return new KeyValuePair<int, string>(PART_EXPR, pattern.Substring(scanStart + 1, i - scanStart - 1));
-
-					scanStart = i + 1;
-					bracersLevel--;
-				}
-			}
-
-			if (bracersLevel > 0)
-				throw new InvalidOperationException(string.Format("Unterminated expression at position {0} in '{1}'.", scanStart, pattern));
-
-			if (scanStart < pattern.Length)
-				yield return new KeyValuePair<int, string>(PART_TEXT, pattern.Substring(scanStart, pattern.Length - scanStart));
-		}
-
-		public override string ToString()
-		{
-			return this.pattern.ToString();
-		}
+		return transformExpr.CompileAot();
 	}
-
-	public static class PatternString
+	private IEnumerable<KeyValuePair<int, string>> Split(string pattern)
 	{
-		public static string TransformPattern<InstanceT>(this string pattern, InstanceT instance)
-		{
-			if (pattern == null) throw new ArgumentNullException("pattern");
-			if (instance == null) throw new ArgumentNullException("instance");
+		if (pattern == null) throw new ArgumentNullException(nameof(pattern));
 
-			return new PatternString<InstanceT>(pattern).Tranform(instance);
+		var scanStart = 0;
+		var bracersLevel = 0;
+
+		for (var i = 0; i < pattern.Length; i++)
+		{
+			if (pattern[i] != '{' && pattern[i] != '}')
+				continue;
+
+			if (pattern[i] == '{' && bracersLevel > 0)
+				bracersLevel++;
+			else if (pattern[i] == '}' && bracersLevel > 1)
+				bracersLevel--;
+			else if (pattern[i] == '{')
+			{
+				if (i - scanStart != 0)
+					yield return new KeyValuePair<int, string>(PART_TEXT, pattern.Substring(scanStart, i - scanStart));
+
+				scanStart = i;
+				bracersLevel++;
+			}
+			else if (pattern[i] == '}')
+			{
+				if (i - scanStart > 2)
+					yield return new KeyValuePair<int, string>(PART_EXPR, pattern.Substring(scanStart + 1, i - scanStart - 1));
+
+				scanStart = i + 1;
+				bracersLevel--;
+			}
 		}
+
+		if (bracersLevel > 0)
+			throw new InvalidOperationException(string.Format("Unterminated expression at position {0} in '{1}'.", scanStart, pattern));
+
+		if (scanStart < pattern.Length)
+			yield return new KeyValuePair<int, string>(PART_TEXT, pattern.Substring(scanStart, pattern.Length - scanStart));
 	}
 
+	public override string ToString()
+	{
+		return this.pattern;
+	}
+}
+
+public static class PatternString
+{
+	public static string TransformPattern<InstanceT>(this string pattern, InstanceT instance)
+	{
+		if (pattern == null) throw new ArgumentNullException(nameof(pattern));
+		if (instance == null) throw new ArgumentNullException(nameof(instance));
+
+		return new PatternString<InstanceT>(pattern).Tranform(instance);
+	}
 }
