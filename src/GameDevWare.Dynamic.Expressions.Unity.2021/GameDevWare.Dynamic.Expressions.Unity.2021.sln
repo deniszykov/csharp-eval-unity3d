@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "asset-store-tools-editor", "asset-store-tools-editor.csproj", "{ff14c7e5-8d8f-e0a7-24c6-538617544f77}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gamedevware-csharp-eval", "gamedevware-csharp-eval.csproj", "{3eb474fd-8302-8b6e-79d0-c09e5d268617}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{6b02597e-1fdf-6afd-d85f-0f5c2dd37a8b}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "asset-store-tools-editor", "asset-store-tools-editor.csproj", "{ff14c7e5-8d8f-e0a7-24c6-538617544f77}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gamedevware-csharp-eval", "gamedevware-csharp-eval.Player.csproj", "{e9d26f3f-1d12-9f30-eda9-48fd587c7b95}"
 EndProject
@@ -16,12 +16,12 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{ff14c7e5-8d8f-e0a7-24c6-538617544f77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ff14c7e5-8d8f-e0a7-24c6-538617544f77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3eb474fd-8302-8b6e-79d0-c09e5d268617}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3eb474fd-8302-8b6e-79d0-c09e5d268617}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6b02597e-1fdf-6afd-d85f-0f5c2dd37a8b}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6b02597e-1fdf-6afd-d85f-0f5c2dd37a8b}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ff14c7e5-8d8f-e0a7-24c6-538617544f77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ff14c7e5-8d8f-e0a7-24c6-538617544f77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{e9d26f3f-1d12-9f30-eda9-48fd587c7b95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{e9d26f3f-1d12-9f30-eda9-48fd587c7b95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65eaad53-77f2-10f1-f8a4-25ab1b5442fb}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

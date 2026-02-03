@@ -28,7 +28,7 @@
 
 	<Target Name="ReadPackageMetadataromFile" BeforeTargets="GenerateNuspec">
 		<ItemGroup>
-			<ReleaseNotesFile Include="..\..\RELEASE_NOTES.md"/>
+			<ReleaseNotesFile Include="../GameDevWare.Dynamic.Expressions.Unity.2021/Packages/com.gamedevware.csharpeval/CHANGELOG.md"/>
 		</ItemGroup>
 		<ReadLinesFromFile File="@(ReleaseNotesFile)">
 			<Output TaskParameter="Lines" ItemName="PackageReleaseNotesLines"/>

@@ -206,9 +206,17 @@ You can send suggestions at support@gamedevware.com
 * Parser: Type inference for generics
 * Parser: Full C#6 expression syntax
 * Parser: Extension methods
-* Parser: Type initializers, List initializers
+* ~Parser: Type initializers, List initializers~
 
 ## Changes
+
+# 3.0.0
+* BREAKING CHANGE: Changed the distribution form to Unity Package instead of a library.
+* feature: Added parser support for object initializers and collections initializers.
+* fix: fix for Mono failture to return underlying type code for Enum types
+* chore: Increased C# language support to version 7.3 and formatted the code.
+* BREAKING CHANGE: Raised the minimum .NET Framework version to 4.6.
+* chore: Added new compilation targets to support modern .NET versions.
 
 # 2.3.0
 
