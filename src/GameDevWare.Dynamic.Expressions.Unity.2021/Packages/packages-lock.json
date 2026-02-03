@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.gamedevware.csharpeval": {
+      "version": "file:com.gamedevware.csharpeval",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.9",
       "depth": 0,
@@ -8,6 +14,14 @@
         "com.unity.modules.ai": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "com.unity.asset-store-tools": {
+      "version": "file:com.unity.asset-store-tools",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "3.2.1"
+      }
     },
     "com.unity.collab-proxy": {
       "version": "2.10.0",
@@ -40,13 +54,6 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.ide.vscode": {
-      "version": "1.2.5",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
     "com.unity.multiplayer.center": {
       "version": "1.0.0",
       "depth": 0,
@@ -54,6 +61,13 @@
       "dependencies": {
         "com.unity.modules.uielements": "1.0.0"
       }
+    },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
       "version": "1.6.0",
