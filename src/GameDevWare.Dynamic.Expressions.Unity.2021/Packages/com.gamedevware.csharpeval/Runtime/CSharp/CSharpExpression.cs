@@ -474,7 +474,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
-			var expressionBinder = new Binder(Array.Empty<ParameterExpression>(), typeof(ResultT), typeResolver);
+			var expressionBinder = new Binder(ArrayUtils.Empty<ParameterExpression>(), typeof(ResultT), typeResolver);
 			return (Expression<Func<ResultT>>)expressionBinder.Bind(expressionTree, global);
 		}
 		/// <summary>
@@ -653,7 +653,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
-			var expressionBinder = new Binder(Array.Empty<ParameterExpression>(), typeof(void), typeResolver);
+			var expressionBinder = new Binder(ArrayUtils.Empty<ParameterExpression>(), typeof(void), typeResolver);
 			return (Expression<Action>)expressionBinder.Bind(expressionTree, global);
 		}
 		/// <summary>

@@ -1,0 +1,15 @@
+{
+	"name": "com.gamedevware.csharpeval",
+	"displayName": "C# Eval",
+	"version": "3.0.0",
+	"unity": "2021.3",
+	"description": "Easy to use C# expression parser and executor. This package includes source code of parser, compiler and examples. ",
+	"repository":"https://github.com/deniszykov/csharp-eval-unity3d",
+	"author": {
+		"name" : "Denis Zykov",
+		"email" : "support@gamedevware.com",
+		"url" : "https://github.com/deniszykov/"
+	},
+	"documentationUrl": "https://github.com/deniszykov/csharp-eval-unity3d/blob/master/Readme.md",
+	"keywords": ["Eval", "Parser", "Interpeter", "Formulas", "C#", "Compiler", "Lexer", "Dynamic"]
+}

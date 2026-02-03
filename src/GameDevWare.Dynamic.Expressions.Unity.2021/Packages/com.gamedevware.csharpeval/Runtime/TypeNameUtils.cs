@@ -103,7 +103,7 @@ namespace GameDevWare.Dynamic.Expressions
 			}
 		}
 
-		private static readonly string[] EmptyNames = Array.Empty<string>();
+		private static readonly string[] EmptyNames = ArrayUtils.Empty<string>();
 
 		public static string[] GetTypeNames(this TypeInfo typeInfo)
 		{

@@ -64,7 +64,7 @@ namespace GameDevWare.Dynamic.Expressions
 		private TypeReference()
 		{
 			this.typeName = new ReadOnlyCollection<string>(new[] { string.Empty });
-			this.TypeArguments = new ReadOnlyCollection<TypeReference>(Array.Empty<TypeReference>());
+			this.TypeArguments = new ReadOnlyCollection<TypeReference>(ArrayUtils.Empty<TypeReference>());
 			this.fullName = string.Empty;
 		}
 		/// <summary>

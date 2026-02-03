@@ -26,7 +26,7 @@ namespace GameDevWare.Dynamic.Expressions
 	/// </summary>
 	public sealed class AssemblyTypeResolver : KnownTypeResolver
 	{
-#if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
+#if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_2021_3_OR_NEWER
 		public static readonly AssemblyTypeResolver UnityEngine = new AssemblyTypeResolver(typeof(UnityEngine.Application).Assembly);
 #endif
 

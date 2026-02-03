@@ -7,6 +7,7 @@ using GameDevWare.Dynamic.Expressions.CSharp;
 using Newtonsoft.Json;
 using Xunit;
 using Xunit.Abstractions;
+// ReSharper disable PreferConcreteValueOverDefault
 
 namespace GameDevWare.Dynamic.Expressions.Tests;
 
@@ -93,15 +94,15 @@ public class PackerTests
 			(Expression<Func<int[]>>)(() => new[] { 10 }),
 			(Expression<Func<int[]>>)(() => new int[10]),
 			(Expression<Func<int, int>>)(p => p),
-			(Expression<Func<Expression>>)(() => default(object) as Expression),
-			(Expression<Func<bool>>)(() => string.Empty is string)
+			(Expression<Func<Expression>>)(() => default(Expression)),
+			(Expression<Func<bool>>)(() => string.Empty != null)
 		};
 		return from expr in expressions
 				select new object[] { CSharpExpression.Format(expr), expr };
 	}
 
 	[Theory, MemberData(nameof(PackUnpackExpressionData))]
-	public void PackUnpackExpression(string expr, LambdaExpression lambdaExpression)
+	public void PackUnpackExpression(string expression, LambdaExpression lambdaExpression)
 	{
 		this.output.WriteLine("Original: " + lambdaExpression);
 
@@ -116,6 +117,7 @@ public class PackerTests
 		this.output.WriteLine("Unpacked: " + unpackedExpression);
 
 		Assert.NotNull(unpackedExpression);
+		Assert.NotNull(expression);
 		Assert.Equal(lambdaExpression.Body.NodeType, unpackedExpression.Body.NodeType);
 	}
 }

@@ -23,7 +23,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			}
 		}
 
-		public static readonly MemberListBindingsNode Empty = new MemberListBindingsNode(new ReadOnlyCollection<MemberBinding>(Array.Empty<MemberBinding>()), Array.Empty<ConstantExpression>(), Array.Empty<ParameterExpression>());
+		public static readonly MemberListBindingsNode Empty = new MemberListBindingsNode(new ReadOnlyCollection<MemberBinding>(ArrayUtils.Empty<MemberBinding>()), ArrayUtils.Empty<ConstantExpression>(), ArrayUtils.Empty<ParameterExpression>());
 
 		private readonly ILookup<MemberInfo, PreparedListBinding> bindingsByMember;
 

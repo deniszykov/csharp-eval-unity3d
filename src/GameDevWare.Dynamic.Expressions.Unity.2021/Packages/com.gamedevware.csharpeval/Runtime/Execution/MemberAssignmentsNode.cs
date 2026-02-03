@@ -21,7 +21,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			}
 		}
 
-		public static readonly MemberAssignmentsNode Empty = new MemberAssignmentsNode(new ReadOnlyCollection<MemberBinding>(Array.Empty<MemberBinding>()), Array.Empty<ConstantExpression>(), Array.Empty<ParameterExpression>());
+		public static readonly MemberAssignmentsNode Empty = new MemberAssignmentsNode(new ReadOnlyCollection<MemberBinding>(ArrayUtils.Empty<MemberBinding>()), ArrayUtils.Empty<ConstantExpression>(), ArrayUtils.Empty<ParameterExpression>());
 
 		private readonly PreparedMemberAssignment[] memberAssignments;
 

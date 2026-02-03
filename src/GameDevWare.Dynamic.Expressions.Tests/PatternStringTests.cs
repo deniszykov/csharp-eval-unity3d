@@ -53,7 +53,7 @@ public class PatternStringTests
 			var tokens = Tokenizer.Tokenize(expression);
 			var parseTree = Parser.Parse(tokens);
 			var expressionTree = parseTree.ToSyntaxTree(cSharpExpression: expression);
-			var expressionBinder = new Binder(Array.Empty<ParameterExpression>(), typeof(void));
+			var expressionBinder = new Binder(ArrayUtils.Empty<ParameterExpression>(), typeof(void));
 			var globalExpression = Expression.Constant(global);
 			var boundExpression = (Expression<Action>)expressionBinder.Bind(expressionTree, globalExpression);
 			boundExpression.CompileAot().Invoke();

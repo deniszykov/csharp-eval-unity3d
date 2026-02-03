@@ -19,7 +19,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			if (propertyInfo != null)
 			{
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 				var accessor = propertyInfo.GetMethod ?? propertyInfo.SetMethod;
 #else
 				var accessor = (propertyInfo.GetGetMethod(nonPublic: true) ?? propertyInfo.GetSetMethod(nonPublic: true));
@@ -31,7 +31,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			if (eventInfo != null)
 			{
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 				var accessor = eventInfo.AddMethod ?? eventInfo.RemoveMethod;
 #else
 				var accessor = (eventInfo.GetAddMethod(nonPublic: true) ?? eventInfo.GetRemoveMethod(nonPublic: true));
@@ -47,7 +47,7 @@ namespace GameDevWare.Dynamic.Expressions
 		{
 			if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
 
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 			var accessor = propertyInfo.GetMethod ?? propertyInfo.SetMethod;
 #else
 			var accessor = (propertyInfo.GetGetMethod(nonPublic: true) ?? propertyInfo.GetSetMethod(nonPublic: true));
@@ -56,7 +56,7 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		public static MethodInfo GetAnyGetter(this PropertyInfo propertyInfo)
 		{
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 			var accessor = propertyInfo.GetMethod;
 #else
 			var accessor = propertyInfo.GetGetMethod(nonPublic: true);
@@ -65,7 +65,7 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		public static MethodInfo GetPublicGetter(this PropertyInfo propertyInfo)
 		{
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 			var accessor = propertyInfo.GetMethod;
 			if (accessor == null || !accessor.IsPublic)
 				return null;
@@ -76,7 +76,7 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		public static MethodInfo GetPublicSetter(this PropertyInfo propertyInfo)
 		{
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 			var accessor = propertyInfo.SetMethod;
 			if (accessor == null || !accessor.IsPublic)
 				return null;
@@ -87,7 +87,7 @@ namespace GameDevWare.Dynamic.Expressions
 		}
 		public static MethodInfo GetAnySetter(this PropertyInfo propertyInfo)
 		{
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 			var accessor = propertyInfo.SetMethod;
 #else
 			var accessor = propertyInfo.GetSetMethod(nonPublic: true);
@@ -102,10 +102,10 @@ namespace GameDevWare.Dynamic.Expressions
 			while (type != null && type != typeof(object))
 			{
 				var properties = methodInfo.DeclaringType?
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 					.GetTypeInfo()
 #endif
-					.GetDeclaredProperties() ?? Array.Empty<PropertyInfo>();
+					.GetDeclaredProperties() ?? ArrayUtils.Empty<PropertyInfo>();
 
 				foreach (var property in properties)
 				{
@@ -115,7 +115,7 @@ namespace GameDevWare.Dynamic.Expressions
 				}
 
 				type = type
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 					.GetTypeInfo()
 #endif
 					.BaseType;
@@ -124,7 +124,7 @@ namespace GameDevWare.Dynamic.Expressions
 			return false;
 		}
 
-#if NETSTANDARD
+#if NETSTANDARD || NETCOREAPP
 		public static IEnumerable<FieldInfo> GetDeclaredFields(this TypeInfo type)
 		{
 			if (type == null) throw new ArgumentNullException(nameof(type));

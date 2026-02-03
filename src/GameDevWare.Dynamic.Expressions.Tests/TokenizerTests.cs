@@ -7,9 +7,12 @@ namespace GameDevWare.Dynamic.Expressions.Tests;
 
 public class TokenizerTests
 {
-	[Theory, InlineData("\" string literal with numbers and quote \\\" \"", " string literal with numbers and quote \\\" "),
-	InlineData("\"'%$#!@%^&*))([]\"", "'%$#!@%^&*))([]"), InlineData("\"\\\"\"", "\\"), InlineData("\"\\\"\"", "\""), InlineData("\"\\n\"", "\n")]
-	public void TokenizeLiterals(string expression, string expected)
+	[Theory,
+	InlineData("\" string literal with numbers and quote \\\" \""),
+	InlineData("\"'%$#!@%^&*))([]\""),
+	InlineData("\"\\\"\""),
+	InlineData("\"\\n\"")]
+	public void TokenizeLiterals(string expression)
 	{
 		var actual = Tokenizer.Tokenize(expression).Single();
 		Assert.Equal(TokenType.Literal, actual.Type);

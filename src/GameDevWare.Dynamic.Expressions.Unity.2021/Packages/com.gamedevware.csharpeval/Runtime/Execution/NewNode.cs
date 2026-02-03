@@ -6,7 +6,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 {
 	internal sealed class NewNode : ExecutionNode
 	{
-		private static readonly object[] EmptyArguments = Array.Empty<object>();
+		private static readonly object[] EmptyArguments = ArrayUtils.Empty<object>();
 		private readonly int constructorParametersCount;
 		private readonly ExecutionNode[] initializationValueNodes;
 		private readonly bool isNullableType;

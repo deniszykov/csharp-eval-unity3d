@@ -1,5 +1,5 @@
 using System;
-#if !NETSTANDARD1_3
+#if !(NETSTANDARD || NETCOREAPP)
 using System.Reflection.Emit;
 #endif
 
@@ -17,7 +17,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			try
 			{
-#if NETSTANDARD1_3
+#if NETSTANDARD || NETCOREAPP
 				// check lambdas are supported
 				System.Linq.Expressions.Expression.Lambda<Func<bool>>(System.Linq.Expressions.Expression.Constant(true)).Compile();
 #else

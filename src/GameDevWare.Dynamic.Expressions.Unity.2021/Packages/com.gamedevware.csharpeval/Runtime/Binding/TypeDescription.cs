@@ -82,8 +82,8 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		static TypeDescription()
 		{
 			Types = new TypeCache();
-			EmptyMembers = Array.Empty<MemberDescription>();
-			EmptyTypes = Array.Empty<TypeDescription>();
+			EmptyMembers = ArrayUtils.Empty<MemberDescription>();
+			EmptyTypes = ArrayUtils.Empty<TypeDescription>();
 			ObjectType = GetTypeDescription(typeof(object));
 			Int32Type = GetTypeDescription(typeof(int));
 

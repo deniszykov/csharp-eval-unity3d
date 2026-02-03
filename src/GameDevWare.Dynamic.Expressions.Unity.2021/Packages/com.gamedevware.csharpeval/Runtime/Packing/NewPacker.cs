@@ -12,7 +12,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			if (expression == null) throw new ArgumentNullException(nameof(expression));
 
 			var arguments = expression.Arguments.ToArray();
-			var argumentNames = expression.Constructor?.GetParameters().ConvertAll(p => p.Name) ?? Array.Empty<string>();
+			var argumentNames = expression.Constructor?.GetParameters().ConvertAll(p => p.Name) ?? ArrayUtils.Empty<string>();
 
 			return new Dictionary<string, object>(3) {
 				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_NEW },

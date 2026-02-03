@@ -69,7 +69,7 @@ namespace GameDevWare.Dynamic.Expressions
 				typeof(Func<,,>),
 				typeof(Func<,,,>),
 				typeof(Func<,,,,>),
-#if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
+#if UNITY_5 || UNITY_4 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5 || UNITY_2021_3_OR_NEWER
 				typeof(UnityEngine.Mathf),
 				typeof(UnityEngine.Quaternion),
 				typeof(UnityEngine.Vector4),

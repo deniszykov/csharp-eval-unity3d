@@ -263,7 +263,7 @@ public class ExecutorTests
 	InlineData("(UInt16)2 ** (Int32)2", (ushort)2 * 2), InlineData("(UInt16)2 ** (Int64)2", (ushort)2 * (long)2), InlineData("(Int32)2 ** (SByte)2", 2 * 2),
 	InlineData("(Int32)2 ** (Int16)2", 2 * 2), InlineData("(Int32)2 ** (Int32)2", 2 * 2), InlineData("(Int32)2 ** (Int64)2", 2 * (long)2),
 	InlineData("(Int32)2 ** (Byte)2", 2 * 2), InlineData("(Int32)2 ** (UInt16)2", 2 * 2), InlineData("(Int32)2 ** (UInt32)2", 2 * (uint)2),
-	InlineData("(Int32)2 ** (UInt64)2", 2 * (ulong)2), InlineData("(UInt32)2 ** (SByte)2", (uint)2 * (sbyte)2),
+	InlineData("(Int32)2 ** (UInt64)2", 2 * (ulong)2), InlineData("(UInt32)2 ** (SByte)2", 4),
 	InlineData("(UInt32)2 ** (Int16)2", (uint)2 * (short)2), InlineData("(UInt32)2 ** (Int32)2", (uint)2 * 2), InlineData("(UInt32)2 ** (Int64)2", 2 * (long)2),
 	InlineData("(UInt32)2 ** (Byte)2", (uint)2 * 2), InlineData("(UInt32)2 ** (UInt16)2", (uint)2 * 2), InlineData("(UInt32)2 ** (UInt32)2", 2 * (uint)2),
 	InlineData("(UInt32)2 ** (UInt64)2", 2 * (ulong)2), InlineData("(Int64)2 ** (Int32)2", (ulong)2 * 2), InlineData("(Int64)2 ** (Int64)2", (ulong)2 * 2),

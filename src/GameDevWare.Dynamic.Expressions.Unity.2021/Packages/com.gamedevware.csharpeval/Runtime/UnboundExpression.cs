@@ -66,7 +66,7 @@ namespace GameDevWare.Dynamic.Expressions
 					return ((Expression<Func<ResultT>>)expression).CompileAot();
 				}
 
-				var parameters = new ReadOnlyCollection<ParameterExpression>(Array.Empty<ParameterExpression>());
+				var parameters = new ReadOnlyCollection<ParameterExpression>(ArrayUtils.Empty<ParameterExpression>());
 				var builder = new Binder(parameters, typeof(ResultT));
 				expression = builder.Bind(this.SyntaxTree);
 				this.compiledExpressions.Add(key, expression);

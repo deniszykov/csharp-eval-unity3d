@@ -119,7 +119,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string VALUE_TRUE_STRING = "true";
 
 		public static readonly CultureInfo DefaultFormatProvider = CultureInfo.InvariantCulture;
-		public static readonly ParameterExpression[] EmptyParameters = Array.Empty<ParameterExpression>();
+		public static readonly ParameterExpression[] EmptyParameters = ArrayUtils.Empty<ParameterExpression>();
 		public static readonly ReadOnlyCollection<ParameterExpression> EmptyReadonlyParameters = new ReadOnlyCollection<ParameterExpression>(EmptyParameters);
 		public static readonly object FalseObject = false;
 
