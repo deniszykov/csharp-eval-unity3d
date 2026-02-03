@@ -66,29 +66,11 @@
 			<AutoGen>True</AutoGen>
 			<DependentUpon>Aot.tt</DependentUpon>
 		</Compile>
-		<Compile Update="UnityResources.cs">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>UnityResources.tt</DependentUpon>
-		</Compile>
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="Aot.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
 			<LastGenOutput>Aot.cs</LastGenOutput>
-		</None>
-		<None Update="TypeScriptResources.ts">
-			<DesignTime>True</DesignTime>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>TypeScriptResources.tt</DependentUpon>
-		</None>
-		<None Update="TypeScriptResources.tt">
-			<Generator>TextTemplatingFileGenerator</Generator>
-			<LastGenOutput>TypeScriptResources.ts</LastGenOutput>
-		</None>
-		<None Update="UnityResources.tt">
-			<Generator>TextTemplatingFileGenerator</Generator>
-			<LastGenOutput>UnityResources.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
 
