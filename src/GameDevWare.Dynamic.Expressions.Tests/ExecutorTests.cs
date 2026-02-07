@@ -1002,7 +1002,7 @@ new ExecutorTests.TestClass
 	TestClassField = new ExecutorTests.TestClass { { 1, 2 } },
 	TestGenericClassFieldNotNull = { GenericField = 123 },
 	ListField = new List<int>() { 2, 3 },
-	ListProperty = { 4, 5 }
+	ListProperty = { 4, 5, },
 }";
 		var knownTypes = new KnownTypeResolver(typeof(TestClass), typeof(List<int>));
 		var expected = new TestClass {

@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>$(NetTargetPlatforms);</TargetFrameworks>
 		<Authors>Denis Zykov</Authors>
-		<Version>3.0.0</Version>
+		<Version>3.0.1</Version>
 		<PackageId>GameDevWare.Dynamic.Expressions</PackageId>
 		<Product>GameDevWare.Dynamic.Expressions</Product>
 		<Description>C# expression parsing and execution library. Designed for AOT runtimes (Unity's IL2CPP, .NET Native, Mono AOT).</Description>

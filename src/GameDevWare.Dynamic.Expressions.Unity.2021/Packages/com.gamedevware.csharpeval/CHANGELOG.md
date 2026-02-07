@@ -1,3 +1,7 @@
+# 3.0.1
+fix: Added formatting of new expression types (Member Init/List Init) from the syntax tree.
+fix: changed the name of `Assignment` binding name to `AssignmentBinding`, the code is backwards compatible with the old name.
+
 # 3.0.0
 BREAKING CHANGE: Changed the distribution form to Unity Package instead of a library.
 feature: Added parser support for object initializers and collections initializers.

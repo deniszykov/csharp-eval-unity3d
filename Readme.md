@@ -210,13 +210,17 @@ You can send suggestions at support@gamedevware.com
 
 ## Changes
 
+# 3.0.1
+fix: Added formatting of new expression types (Member Init/List Init) from the syntax tree.
+fix: changed the name of `Assignment` binding name to `AssignmentBinding`, the code is backwards compatible with the old name.
+
 # 3.0.0
-* BREAKING CHANGE: Changed the distribution form to Unity Package instead of a library.
-* feature: Added parser support for object initializers and collections initializers.
-* fix: fix for Mono failture to return underlying type code for Enum types
-* chore: Increased C# language support to version 7.3 and formatted the code.
-* BREAKING CHANGE: Raised the minimum .NET Framework version to 4.6.
-* chore: Added new compilation targets to support modern .NET versions.
+BREAKING CHANGE: Changed the distribution form to Unity Package instead of a library.
+feature: Added parser support for object initializers and collections initializers.
+fix: fix for Mono failture to return underlying type code for Enum types
+chore: Increased C# language support to version 7.3 and formatted the code.
+BREAKING CHANGE: Raised the minimum .NET Framework version to 4.6.
+chore: Added new compilation targets to support modern .NET versions.
 
 # 2.3.0
 
