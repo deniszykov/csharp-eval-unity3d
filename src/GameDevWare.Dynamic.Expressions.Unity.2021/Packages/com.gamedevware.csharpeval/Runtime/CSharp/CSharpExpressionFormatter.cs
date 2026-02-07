@@ -815,10 +815,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						isFirstBinder = false;
 					}
 
-					builder.Append("} ");
+					builder.Append(" }");
 					break;
 				case MemberBindingType.ListBinding:
-					builder.Append(" { ");
+					builder.Append("{ ");
 					var isFirstInitializer = true;
 					foreach (var initializer in ((MemberListBinding)memberBinding).Initializers)
 					{
@@ -842,8 +842,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				Render(initializer.Arguments[0], builder, true, checkedScope);
 			else
 			{
+				if (initializer.Arguments.Count > 1)
+				{
+					builder.Append("{ ");
+				}
 				var isFirstArgument = true;
-				builder.Append("{ ");
 				foreach (var argument in initializer.Arguments)
 				{
 					if (!isFirstArgument) builder.Append(", ");
@@ -851,8 +854,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 					isFirstArgument = false;
 				}
-
-				builder.Append('}');
+				if (initializer.Arguments.Count > 1)
+				{
+					builder.Append(" }");
+				}
 			}
 		}
 

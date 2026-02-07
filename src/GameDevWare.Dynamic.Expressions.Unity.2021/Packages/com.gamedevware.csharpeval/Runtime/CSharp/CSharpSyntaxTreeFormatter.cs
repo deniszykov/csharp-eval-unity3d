@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using GameDevWare.Dynamic.Expressions.Properties;
 
@@ -64,6 +65,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case Constants.EXPRESSION_TYPE_DEFAULT: RenderDefault(syntaxTree, builder); break;
 					case Constants.EXPRESSION_TYPE_NEW_ARRAY_BOUNDS:
 					case Constants.EXPRESSION_TYPE_NEW: RenderNew(syntaxTree, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_NEW_ARRAY_INIT: RenderNewArrayInit(syntaxTree, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_MEMBER_INIT: RenderMemberInit(syntaxTree, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_LIST_INIT: RenderListInit(syntaxTree, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_ELEMENT_INIT_BINDING: RenderElementInit(syntaxTree, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING:
+					case Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING_ALT: RenderAssignmentBinding(syntaxTree, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_LIST_BINDING: RenderListBinding(syntaxTree, builder, checkedScope); break;
+					case Constants.EXPRESSION_TYPE_MEMBER_BINDING: RenderMemberBinding(syntaxTree, builder, checkedScope); break;
 					case Constants.EXPRESSION_TYPE_UNARY_PLUS:
 					case Constants.EXPRESSION_TYPE_NEGATE_CHECKED:
 					case Constants.EXPRESSION_TYPE_NEGATE:
@@ -376,6 +385,176 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				builder.Append(']');
 			else
 				builder.Append(')');
+		}
+		private static void RenderListInit(SyntaxTreeNode syntaxTree, StringBuilder builder, bool checkedScope)
+		{
+			if (syntaxTree == null) throw new ArgumentNullException(nameof(syntaxTree));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+
+			var newExpression = syntaxTree.GetNewExpression(true);
+			var initializers = syntaxTree.GetInitializerOrBindingList(Constants.INITIALIZERS_ATTRIBUTE, true);
+
+			Render(newExpression, builder, wrapped: false, checkedScope);
+			builder.Append(" { ");
+
+			var isFirst = true;
+			foreach (var initializer in initializers)
+			{
+				if (!isFirst)
+				{
+					builder.Append(", ");
+				}
+				isFirst = false;
+
+				Render(initializer, builder, true, checkedScope);
+			}
+
+			builder.Append(" }");
+		}
+		private static void RenderMemberInit(SyntaxTreeNode syntaxTree, StringBuilder builder, bool checkedScope)
+		{
+			if (syntaxTree == null) throw new ArgumentNullException(nameof(syntaxTree));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+
+			var newExpression = syntaxTree.GetNewExpression(true);
+			var bindings = syntaxTree.GetInitializerOrBindingList(Constants.BINDINGS_ATTRIBUTE, true);
+
+			Render(newExpression, builder, wrapped: false, checkedScope);
+			builder.Append(" { ");
+
+			var isFirst = true;
+			foreach (var binding in bindings)
+			{
+				if (!isFirst)
+				{
+					builder.Append(", ");
+				}
+				isFirst = false;
+
+				Render(binding, builder, true, checkedScope);
+			}
+
+			builder.Append(" }");
+		}
+		private static void RenderNewArrayInit(SyntaxTreeNode syntaxTree, StringBuilder builder, bool checkedScope)
+		{
+			if (syntaxTree == null) throw new ArgumentNullException(nameof(syntaxTree));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+
+			var typeName = syntaxTree.GetTypeName(true);
+			var initializers = syntaxTree.GetInitializerOrBindingList(Constants.INITIALIZERS_ATTRIBUTE, true);
+
+			builder.Append("new ");
+			RenderTypeName(typeName, builder);
+			builder.Append("[] { ");
+
+			var isFirst = true;
+			foreach (var initializer in initializers)
+			{
+				if (!isFirst)
+				{
+					builder.Append(", ");
+				}
+				isFirst = false;
+
+				Render(initializer, builder, true, checkedScope);
+			}
+
+			builder.Append(" }");
+		}
+		private static void RenderMemberBinding(SyntaxTreeNode syntaxTree, StringBuilder builder, bool checkedScope)
+		{
+			if (syntaxTree == null) throw new ArgumentNullException(nameof(syntaxTree));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+
+			var memberName = syntaxTree.GetName(throwOnError: true);
+			var bindings = syntaxTree.GetInitializerOrBindingList(Constants.BINDINGS_ATTRIBUTE, throwOnError: true);
+
+			builder.Append(memberName);
+			builder.Append(" = { ");
+
+			var isFirst = true;
+			foreach (var binding in bindings)
+			{
+				if (!isFirst)
+				{
+					builder.Append(", ");
+				}
+				isFirst = false;
+
+				Render(binding, builder, true, checkedScope);
+			}
+
+			builder.Append(" }");
+		}
+		private static void RenderListBinding(SyntaxTreeNode syntaxTree, StringBuilder builder, bool checkedScope)
+		{
+			if (syntaxTree == null) throw new ArgumentNullException(nameof(syntaxTree));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+
+			var memberName = syntaxTree.GetName(throwOnError: true);
+			var initializers = syntaxTree.GetInitializerOrBindingList(Constants.INITIALIZERS_ATTRIBUTE, throwOnError: true);
+
+			builder.Append(memberName);
+			builder.Append(" = { ");
+
+			var isFirst = true;
+			foreach (var initializer in initializers)
+			{
+				if (!isFirst)
+				{
+					builder.Append(", ");
+				}
+				isFirst = false;
+
+				Render(initializer, builder, true, checkedScope);
+			}
+
+			builder.Append(" }");
+		}
+		private static void RenderAssignmentBinding(SyntaxTreeNode syntaxTree, StringBuilder builder, bool checkedScope)
+		{
+			if (syntaxTree == null) throw new ArgumentNullException(nameof(syntaxTree));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+
+			if (syntaxTree == null) throw new ArgumentNullException(nameof(syntaxTree));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+
+			var memberName = syntaxTree.GetName(throwOnError: true);
+			var expression = syntaxTree.GetExpression(throwOnError: true);
+
+			builder.Append(memberName);
+			builder.Append(" = ");
+			Render(expression, builder, true, checkedScope);
+		}
+		private static void RenderElementInit(SyntaxTreeNode syntaxTree, StringBuilder builder, bool checkedScope)
+		{
+			if (syntaxTree == null) throw new ArgumentNullException(nameof(syntaxTree));
+			if (builder == null) throw new ArgumentNullException(nameof(builder));
+
+			var initializers = syntaxTree.GetInitializerOrBindingList(Constants.INITIALIZERS_ATTRIBUTE, throwOnError: true);
+
+			if (initializers.Count > 1)
+			{
+				builder.Append("{ ");
+			}
+
+			var isFirst = true;
+			foreach (var initializer in initializers)
+			{
+				if (!isFirst)
+				{
+					builder.Append(", ");
+				}
+				isFirst = false;
+
+				Render(initializer, builder, true, checkedScope);
+			}
+
+			if (initializers.Count > 1)
+			{
+				builder.Append(" }");
+			}
 		}
 		private static void RenderDefault(SyntaxTreeNode syntaxTree, StringBuilder builder)
 		{
