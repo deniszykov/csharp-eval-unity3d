@@ -69,7 +69,7 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			if (memberAssignment == null) throw new ArgumentNullException(nameof(memberAssignment));
 
 			return new Dictionary<string, object> {
-				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING },
+				{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING_ALT },
 				{ Constants.MEMBER_ATTRIBUTE, AnyPacker.Pack(memberAssignment.Member) },
 				{ Constants.EXPRESSION_ATTRIBUTE, AnyPacker.Pack(memberAssignment.Expression) }
 			};

@@ -210,6 +210,33 @@ namespace GameDevWare.Dynamic.Expressions
 
 			return ArgumentsTree.Empty;
 		}
+		internal List<SyntaxTreeNode> GetInitializerOrBindingList(string propertyName, bool throwOnError)
+		{
+			var binderOrInitializer = new List<SyntaxTreeNode>();
+			if (this.TryGetValue(propertyName, out var argumentsObj) && argumentsObj is SyntaxTreeNode syntaxTreeNode)
+			{
+				for (var index = 0; index < syntaxTreeNode.Count; index++)
+				{
+					if (!syntaxTreeNode.TryGetValue(Constants.GetIndexAsString(index), out var argumentValue) ||
+						!(argumentValue is SyntaxTreeNode argument))
+					{
+						throw new ExpressionParserException(string.Format(Resources.EXCEPTION_BIND_MISSINGORWRONGARGUMENT, index), this);
+					}
+					binderOrInitializer.Add(argument);
+				}
+				return binderOrInitializer;
+			}
+
+			if (throwOnError)
+			{
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_BIND_MISSINGATTRONNODE, Constants.ARGUMENTS_ATTRIBUTE,
+						this.GetExpressionType(false) ?? "<null>"), this);
+			}
+
+			return binderOrInitializer;
+		}
+
 		internal Dictionary<string, string> GetArgumentNames(bool throwOnError)
 		{
 			if (this.TryGetValue(Constants.ARGUMENTS_ATTRIBUTE, out var argumentsObj) && argumentsObj is SyntaxTreeNode syntaxTreeNode)

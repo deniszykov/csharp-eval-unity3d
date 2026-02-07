@@ -42,7 +42,8 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string EXPRESSION_TYPE_AND = "And";
 		public const string EXPRESSION_TYPE_AND_ALSO = "AndAlso";
 		public const string EXPRESSION_TYPE_ARRAY_LENGTH = "ArrayLength";
-		public const string EXPRESSION_TYPE_ASSIGNMENT_BINDING = "Assignment";
+		public const string EXPRESSION_TYPE_ASSIGNMENT_BINDING = "AssignmentBinding";
+		public const string EXPRESSION_TYPE_ASSIGNMENT_BINDING_ALT = "Assignment";
 		public const string EXPRESSION_TYPE_ATTRIBUTE = "expressionType";
 		public const string EXPRESSION_TYPE_CALL = "Call";
 		public const string EXPRESSION_TYPE_CHECKED_SCOPE = "CheckedScope";

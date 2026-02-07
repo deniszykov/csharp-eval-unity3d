@@ -91,6 +91,7 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			switch (bindingType)
 			{
 				case Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING:
+				case Constants.EXPRESSION_TYPE_ASSIGNMENT_BINDING_ALT:
 					var expressionNode = bindingNodeTree.GetExpression(true);
 					if (!AnyBinder.TryBindInNewScope(expressionNode, bindingContext, memberValueType, out var expression,
 							out bindingError))
