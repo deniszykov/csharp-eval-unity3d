@@ -57,6 +57,10 @@ namespace GameDevWare.Dynamic.Expressions
 		/// </summary>
 		public ReadOnlyCollection<TypeReference> TypeArguments { get; }
 		/// <summary>
+		///     Array rank if any.
+		/// </summary>
+		public int Rank { get; }
+		/// <summary>
 		///     Returns true if type has type arguments.
 		/// </summary>
 		public bool IsGenericType => this.TypeArguments.Count > 0;
@@ -66,13 +70,23 @@ namespace GameDevWare.Dynamic.Expressions
 			this.typeName = new ReadOnlyCollection<string>(new[] { string.Empty });
 			this.TypeArguments = new ReadOnlyCollection<TypeReference>(ArrayUtils.Empty<TypeReference>());
 			this.fullName = string.Empty;
+			this.Rank = 0;
 		}
 		/// <summary>
 		///     Creates new type reference from type's path and type's generic arguments.
 		/// </summary>
 		/// <param name="typeName">Type path.</param>
 		/// <param name="typeArguments">Type generic arguments.</param>
-		public TypeReference(IList<string> typeName, IList<TypeReference> typeArguments)
+		public TypeReference(IList<string> typeName, IList<TypeReference> typeArguments) : this(typeName, typeArguments, 0)
+		{
+		}
+		/// <summary>
+		///     Creates new type reference from type's path, type's generic arguments and array rank.
+		/// </summary>
+		/// <param name="typeName">Type path.</param>
+		/// <param name="typeArguments">Type generic arguments.</param>
+		/// <param name="rank">Array rank.</param>
+		public TypeReference(IList<string> typeName, IList<TypeReference> typeArguments, int rank)
 		{
 			if (typeName == null) throw new ArgumentNullException(nameof(typeName));
 			if (typeName.Count == 0) throw new ArgumentOutOfRangeException(nameof(typeName));
@@ -92,6 +106,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			this.typeName = typeName as ReadOnlyCollection<string> ?? new ReadOnlyCollection<string>(typeName);
 			this.TypeArguments = typeArguments as ReadOnlyCollection<TypeReference> ?? new ReadOnlyCollection<TypeReference>(typeArguments);
+			this.Rank = rank;
 			this.hashCode = ComputeHashCode(this);
 
 			if (typeName.Count == 1) this.fullName = typeName[0];

@@ -63,6 +63,13 @@ namespace GameDevWare.Dynamic.Expressions
 
 			var syntaxTree = new SyntaxTreeNode(packedExpression);
 			var binder = new Binder(delegateType, typeResolver);
+
+			if (syntaxTree.GetExpressionType(false) == Constants.EXPRESSION_TYPE_LAMBDA &&
+				LambdaBinder.ExtractArgumentNames(syntaxTree).Length == binder.Parameters.Count)
+			{
+				syntaxTree = syntaxTree.GetExpression(true);
+			}
+
 			var unpackedExpression = binder.Bind(syntaxTree, global);
 			return unpackedExpression;
 		}

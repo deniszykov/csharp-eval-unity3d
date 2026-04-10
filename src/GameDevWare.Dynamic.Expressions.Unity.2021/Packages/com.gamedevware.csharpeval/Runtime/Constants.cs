@@ -110,6 +110,7 @@ namespace GameDevWare.Dynamic.Expressions
 		public const string NAME_ATTRIBUTE = "name";
 		public const string NEW_ATTRIBUTE = "new";
 		public const string PROPERTY_OR_FIELD_NAME_ATTRIBUTE = "propertyOrFieldName";
+		public const string RANK_ATTRIBUTE = "rank";
 		public const string RIGHT_ATTRIBUTE = "right";
 		public const string TEST_ATTRIBUTE = "test";
 		public const string TYPE_ATTRIBUTE = "type";

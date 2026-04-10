@@ -91,10 +91,11 @@ namespace GameDevWare.Dynamic.Expressions.Packing
 			if (type.IsArray)
 			{
 				var typeArguments = new[] { type.GetTypeInfo().GetElementType() };
-				var methodNameTree = new Dictionary<string, object>(3) {
+				var methodNameTree = new Dictionary<string, object>(4) {
 					{ Constants.EXPRESSION_TYPE_ATTRIBUTE, Constants.EXPRESSION_TYPE_TYPE_REFERENCE },
 					{ Constants.NAME_ATTRIBUTE, typeof(Array).GetCSharpFullName().ToString() },
-					{ Constants.ARGUMENTS_ATTRIBUTE, Pack(typeArguments) }
+					{ Constants.ARGUMENTS_ATTRIBUTE, Pack(typeArguments) },
+					{ Constants.RANK_ATTRIBUTE, type.GetArrayRank() }
 				};
 				return methodNameTree;
 			}

@@ -270,13 +270,14 @@ namespace GameDevWare.Dynamic.Expressions
 				return;
 			}
 
-			var arrayDepth = 0;
+			var arrayRanks = default(List<int>);
 			while (typeInfo.IsArray)
 			{
+				if (arrayRanks == null) arrayRanks = new List<int>();
+				arrayRanks.Add(typeInfo.GetArrayRank());
 				var elementType = typeInfo.GetElementType();
 				Debug.Assert(elementType != null, nameof(elementType) + " != null");
 				typeInfo = elementType.GetTypeInfo();
-				arrayDepth++;
 			}
 
 			var writeGenericArguments = (options & TypeNameFormatOptions.IncludeGenericArguments) == TypeNameFormatOptions.IncludeGenericArguments;
@@ -312,7 +313,15 @@ namespace GameDevWare.Dynamic.Expressions
 				genericArgumentOffset += genericArgumentsCount;
 			}
 
-			for (var d = 0; d < arrayDepth; d++) builder.Append("[]");
+			if (arrayRanks != null)
+			{
+				for (var d = 0; d < arrayRanks.Count; d++)
+				{
+					builder.Append('[');
+					for (var r = 0; r < arrayRanks[d] - 1; r++) builder.Append(',');
+					builder.Append(']');
+				}
+			}
 		}
 		private static void WriteNamePart(TypeInfo type, StringBuilder builder, ArraySegment<TypeInfo> genericArguments, TypeNameFormatOptions options)
 		{

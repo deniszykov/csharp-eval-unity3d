@@ -204,7 +204,12 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				if (typeNameParts == null || typeNameParts.Count == 0 || (typeNameParts.Count == 1 && string.IsNullOrEmpty(typeNameParts[0])))
 					typeReference = TypeReference.Empty;
 				else
-					typeReference = new TypeReference(typeNameParts, typeArguments ?? TypeReference.EmptyTypeArguments);
+				{
+					var rank = 0;
+					if (value is SyntaxTreeNode valueNode && valueNode.TryGetValue(Constants.RANK_ATTRIBUTE, out var rankObj))
+						rank = Convert.ToInt32(rankObj, Constants.DefaultFormatProvider);
+					typeReference = new TypeReference(typeNameParts, typeArguments ?? TypeReference.EmptyTypeArguments, rank);
+				}
 
 				return true;
 			}

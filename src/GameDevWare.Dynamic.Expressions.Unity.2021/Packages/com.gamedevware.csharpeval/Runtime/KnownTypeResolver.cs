@@ -288,7 +288,7 @@ namespace GameDevWare.Dynamic.Expressions
 					if (!this.TryGetType(typeReference.TypeArguments[0], out var elementType))
 						return false;
 
-					foundType = elementType.MakeArrayType();
+					foundType = typeReference.Rank > 1 ? elementType.MakeArrayType(typeReference.Rank) : elementType.MakeArrayType();
 					return true;
 				}
 
