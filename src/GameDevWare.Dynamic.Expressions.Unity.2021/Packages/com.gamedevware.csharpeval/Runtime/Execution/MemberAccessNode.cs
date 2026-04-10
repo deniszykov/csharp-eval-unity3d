@@ -11,6 +11,7 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		private readonly bool isStatic;
 		private readonly MemberExpression memberExpression;
 		private readonly MethodInfo propertyGetter;
+		private readonly MethodInfo propertySetter;
 		private readonly ExecutionNode targetNode;
 
 		public MemberAccessNode(MemberExpression memberExpression, ConstantExpression[] constExpressions, ParameterExpression[] parameterExpressions)
@@ -28,7 +29,10 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 			var properFieldInfo = member as PropertyInfo;
 			if (properFieldInfo != null)
+			{
 				this.propertyGetter = properFieldInfo.GetAnyGetter();
+				this.propertySetter = properFieldInfo.GetAnySetter();
+			}
 
 			this.isStatic = this.fieldInfo != null ? this.fieldInfo.IsStatic : this.propertyGetter != null && this.propertyGetter.IsStatic;
 		}
@@ -50,6 +54,31 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 			throw new InvalidOperationException(string.Format(Resources.EXCEPTION_EXECUTION_INVALIDMEMBERFOREXPRESSION,
 				this.memberExpression.Member));
+		}
+
+		public override bool WriteBack(Closure closure, object value)
+		{
+			var target = closure.Unbox<object>(this.targetNode.Run(closure));
+
+			if (!this.isStatic && target == null)
+			{
+				throw new NullReferenceException(string.Format(Resources.EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT,
+					this.memberExpression.Expression));
+			}
+
+			if (this.fieldInfo != null)
+			{
+				this.fieldInfo.SetValue(target, value);
+				return true;
+			}
+
+			if (this.propertySetter != null)
+			{
+				this.propertySetter.Invoke(target, new[] { value });
+				return true;
+			}
+
+			return false;
 		}
 
 		/// <inheritdoc />

@@ -121,7 +121,22 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 						bind.MemberMemberBindings.Run(closure);
 					}
 				}
+
+				// persist value types back to target
+#if NETSTANDARD || NET_STANDARD_2_0 || NET_STANDARD_2_1
+				if (bindTarget != null && System.Reflection.IntrospectionExtensions.GetTypeInfo(bindTarget.GetType()).IsValueType)
+#else
+				if (bindTarget != null && bindTarget.GetType().IsValueType)
+#endif
+				{
+					if (fieldInfo != null)
+						fieldInfo.SetValue(target, bindTarget);
+					else if (propertyInfo != null && propertyInfo.CanWrite)
+						propertyInfo.SetValue(target, bindTarget, null);
+				}
 			}
+
+			closure.Locals[LOCAL_OPERAND1] = target;
 
 			return target;
 		}

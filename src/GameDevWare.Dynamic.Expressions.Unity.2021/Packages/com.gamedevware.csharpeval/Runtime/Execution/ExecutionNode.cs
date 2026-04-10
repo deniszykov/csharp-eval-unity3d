@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq.Expressions;
 
 namespace GameDevWare.Dynamic.Expressions.Execution
@@ -12,6 +12,17 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 
 		public abstract object Run(Closure closure);
 
+		/// <summary>
+		///     Writes specified <paramref name="value" /> back to the expression's source.
+		///     Used for propagating <c>out</c> and <c>ref</c> parameters.
+		/// </summary>
+		/// <param name="closure">Current execution closure. Not null.</param>
+		/// <param name="value">Value to write back.</param>
+		/// <returns>True if value was written back; otherwise, false.</returns>
+		public virtual bool WriteBack(Closure closure, object value)
+		{
+			return false;
+		}
 		protected static bool IsNullable(Expression expression)
 		{
 			if (expression == null) throw new ArgumentException("expression");

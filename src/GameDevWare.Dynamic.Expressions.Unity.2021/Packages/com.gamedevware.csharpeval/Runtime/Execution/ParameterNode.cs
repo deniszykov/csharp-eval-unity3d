@@ -26,6 +26,12 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 			return parameter;
 		}
 
+		public override bool WriteBack(Closure closure, object value)
+		{
+			closure.Locals[LOCAL_FIRST_PARAMETER + this.parameterIndex] = value;
+			return true;
+		}
+
 		/// <inheritdoc />
 		public override string ToString()
 		{

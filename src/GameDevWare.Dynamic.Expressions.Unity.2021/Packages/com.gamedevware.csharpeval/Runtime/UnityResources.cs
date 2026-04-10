@@ -158,7 +158,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unable to remap expression's parameters with lamda syntax. Parameters count mismatch.";
+					case 0: return "The number of parameters in the expression does not match the expected delegate signature.";
 					default: return "EXCEPTION_BIND_UNABLEREMAPPARAMETERSCOUNTMISMATCH";
 				}
 			}
@@ -452,7 +452,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Missing operator between two or more expressions.";
+					case 0: return "Missing operator between expressions. Please check for missing semicolons, commas, or arithmetic operators.";
 					default: return "EXCEPTION_PARSER_MISSING_OPERATOR";
 				}
 			}
@@ -536,7 +536,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unable to bind member '{0}' on type '{1}'. Static, visibility, generic parameters or call parameters doesn't not match.";
+					case 0: return "Unable to bind member '{0}' on type '{1}'. Please check that the member exists, is public, and that its signature (parameters and generic arguments) matches the call.";
 					default: return "EXCEPTION_BIND_UNABLETOBINDMEMBER";
 				}
 			}
@@ -648,7 +648,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unable to resolve '{0}'. There is no formal parameter with this name.";
+					case 0: return "Unable to resolve '{0}'. It was not found as a parameter, property, or method in the current scope.";
 					default: return "EXCEPTION_BIND_UNABLETORESOLVENAME";
 				}
 			}
@@ -956,7 +956,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Missing or wrong '{0}' attribute on one of expression nodes.";
+					case 0: return "The expression node is missing the required '{0}' property. Please ensure the expression is correctly serialized and matches the expected format.";
 					default: return "EXCEPTION_BIND_MISSINGATTRONNODE";
 				}
 			}
@@ -1124,7 +1124,7 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 			{
 				switch (currentLanguageIdx)
 				{
-					case 0: return "Unable to resolve type '{0}'.";
+					case 0: return "Unable to resolve type '{0}'. Please ensure the type is correctly named and its assembly is loaded and registered in the 'KnownTypes' list.";
 					default: return "EXCEPTION_BIND_UNABLETORESOLVETYPE";
 				}
 			}

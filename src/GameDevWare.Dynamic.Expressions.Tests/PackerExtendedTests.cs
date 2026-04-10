@@ -109,15 +109,12 @@ public class PackerExtendedTests
 		};
 		foreach (var expr in expressions)
 		{
-			string format;
-			try { format = CSharpExpression.Format(expr); }
-			catch { format = expr.ToString(); }
-			yield return new object[] { format, expr };
+			yield return new object[] { expr };
 		}
 	}
 
 	[Theory, MemberData(nameof(ExtendedPackUnpackExpressionData))]
-	public void PackUnpackExpression(string expressionStr, LambdaExpression lambdaExpression)
+	public void PackUnpackExpression(LambdaExpression lambdaExpression)
 	{
 		this.output.WriteLine("Original: " + lambdaExpression);
 

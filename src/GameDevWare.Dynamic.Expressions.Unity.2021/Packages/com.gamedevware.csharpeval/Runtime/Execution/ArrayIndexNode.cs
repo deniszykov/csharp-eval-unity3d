@@ -47,6 +47,24 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				: target.GetValue(closure.Unbox<int>(index));
 		}
 
+		public override bool WriteBack(Closure closure, object value)
+		{
+			if (this.methodCallNode != null) return false;
+
+			var target = closure.Unbox<Array>(this.targetNode.Run(closure));
+
+			if (target == null)
+				throw new NullReferenceException(string.Format(Resources.EXCEPTION_EXECUTION_EXPRESSIONGIVESNULLRESULT, this.expression));
+
+			var index = this.indexNode.Run(closure);
+			if (closure.Is<int[]>(index))
+				target.SetValue(value, closure.Unbox<int[]>(index));
+			else
+				target.SetValue(value, closure.Unbox<int>(index));
+
+			return true;
+		}
+
 		/// <inheritdoc />
 		public override string ToString()
 		{

@@ -1142,4 +1142,118 @@ new ExecutorTests.TestClass
 		Assert.Equal(expected, actual);
 		Assert.Equal(expectedAlt, actual);
 	}
+
+	public delegate void OutDelegate(out int x);
+	public class Container { public int Value; }
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void TestInvokeOutParameterToField(bool forceAot)
+	{
+		OutDelegate d = (out int val) => { val = 10; };
+		var container = new Container { Value = 0 };
+
+		// (del, c) => del(out c.Value)
+		var delParam = Expression.Parameter(typeof(OutDelegate), "del");
+		var cParam = Expression.Parameter(typeof(Container), "c");
+		var valueField = typeof(Container).GetField("Value");
+		var fieldAccess = Expression.Field(cParam, valueField);
+		var invoke = Expression.Invoke(delParam, fieldAccess);
+		var lambda = Expression.Lambda<Action<OutDelegate, Container>>(invoke, delParam, cParam);
+
+		var compiled = lambda.CompileAot(forceAot);
+
+		compiled(d, container);
+		Assert.Equal(10, container.Value);
+	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void TestInvokeOutParameterToProperty(bool forceAot)
+	{
+		OutDelegate d = (out int val) => { val = 10; };
+		var container = new ContainerPropertyOut { Value = 0 };
+
+		// (del, c) => del(out c.Value)
+		var delParam = Expression.Parameter(typeof(OutDelegate), "del");
+		var cParam = Expression.Parameter(typeof(ContainerPropertyOut), "c");
+		var valueProperty = typeof(ContainerPropertyOut).GetProperty("Value");
+		var propertyAccess = Expression.Property(cParam, valueProperty);
+		var invoke = Expression.Invoke(delParam, propertyAccess);
+		var lambda = Expression.Lambda<Action<OutDelegate, ContainerPropertyOut>>(invoke, delParam, cParam);
+
+		var compiled = lambda.CompileAot(forceAot);
+
+		compiled(d, container);
+		Assert.Equal(10, container.Value);
+	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void TestInvokeOutParameterToArrayElement(bool forceAot)
+	{
+		OutDelegate d = (out int val) => { val = 10; };
+		var array = new int[1];
+
+		// (del, arr) => del(out arr[0])
+		var delParam = Expression.Parameter(typeof(OutDelegate), "del");
+		var arrParam = Expression.Parameter(typeof(int[]), "arr");
+		var arrayAccess = Expression.ArrayIndex(arrParam, Expression.Constant(0));
+		var invoke = Expression.Invoke(delParam, arrayAccess);
+		var lambda = Expression.Lambda<Action<OutDelegate, int[]>>(invoke, delParam, arrParam);
+
+		var compiled = lambda.CompileAot(forceAot);
+
+		compiled(d, array);
+		Assert.Equal(10, array[0]);
+	}
+
+	public class ContainerPropertyOut { public int Value { get; set; } }
+
+	public class StaticContainerOut
+	{
+		public static void StaticOutMethod(out int x) { x = 20; }
+		public void InstanceOutMethod(out int x) { x = 30; }
+	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void TestCallOutParameterStatic(bool forceAot)
+	{
+		var container = new Container { Value = 0 };
+		var method = typeof(StaticContainerOut).GetMethod("StaticOutMethod");
+		var cParam = Expression.Parameter(typeof(Container), "c");
+		var valueField = typeof(Container).GetField("Value");
+		var fieldAccess = Expression.Field(cParam, valueField);
+		var call = Expression.Call(method, fieldAccess);
+		var lambda = Expression.Lambda<Action<Container>>(call, cParam);
+
+		var compiled = lambda.CompileAot(forceAot);
+		compiled(container);
+		Assert.Equal(20, container.Value);
+	}
+
+	[Theory]
+	[InlineData(true)]
+	[InlineData(false)]
+	public void TestCallOutParameterInstance(bool forceAot)
+	{
+		var staticContainer = new StaticContainerOut();
+		var container = new Container { Value = 0 };
+		var method = typeof(StaticContainerOut).GetMethod("InstanceOutMethod");
+		var scParam = Expression.Parameter(typeof(StaticContainerOut), "sc");
+		var cParam = Expression.Parameter(typeof(Container), "c");
+		var valueField = typeof(Container).GetField("Value");
+		var fieldAccess = Expression.Field(cParam, valueField);
+		var call = Expression.Call(scParam, method, fieldAccess);
+		var lambda = Expression.Lambda<Action<StaticContainerOut, Container>>(call, scParam, cParam);
+
+		var compiled = lambda.CompileAot(forceAot);
+		compiled(staticContainer, container);
+		Assert.Equal(30, container.Value);
+	}
 }

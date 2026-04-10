@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using GameDevWare.Dynamic.Expressions.Properties;
 
 namespace GameDevWare.Dynamic.Expressions.Execution
@@ -27,9 +28,6 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 		public override object Run(Closure closure)
 		{
 			var targetDelegate = closure.Unbox<Delegate>(this.target.Run(closure));
-			var invokeArguments = new object[this.argumentNodes.Length];
-			for (var i = 0; i < invokeArguments.Length; i++)
-				invokeArguments[i] = closure.Unbox<object>(this.argumentNodes[i].Run(closure));
 
 			if (targetDelegate == null)
 			{
@@ -37,7 +35,24 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 					this.invocationExpression.Expression));
 			}
 
-			return targetDelegate.DynamicInvoke(invokeArguments);
+			var invokeArguments = new object[this.argumentNodes.Length];
+			for (var i = 0; i < invokeArguments.Length; i++)
+				invokeArguments[i] = closure.Unbox<object>(this.argumentNodes[i].Run(closure));
+
+			var result = targetDelegate.DynamicInvoke(invokeArguments);
+
+			var invokeMethod = targetDelegate.GetType().GetTypeInfo().GetMethod(Constants.DELEGATE_INVOKE_NAME);
+			if (invokeMethod != null)
+			{
+				var parameters = invokeMethod.GetParameters();
+				for (var i = 0; i < parameters.Length && i < invokeArguments.Length; i++)
+				{
+					if (parameters[i].ParameterType.IsByRef)
+						this.argumentNodes[i].WriteBack(closure, invokeArguments[i]);
+				}
+			}
+
+			return result;
 		}
 
 		/// <inheritdoc />

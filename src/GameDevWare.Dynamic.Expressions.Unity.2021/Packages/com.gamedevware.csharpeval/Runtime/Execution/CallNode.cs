@@ -46,7 +46,16 @@ namespace GameDevWare.Dynamic.Expressions.Execution
 				arguments[i] = closure.Unbox<object>(this.argumentNodes[i].Run(closure));
 			}
 
-			return this.methodCallExpression.Method.Invoke(target, arguments);
+			var result = this.methodCallExpression.Method.Invoke(target, arguments);
+
+			var parameters = this.methodCallExpression.Method.GetParameters();
+			for (var i = 0; i < parameters.Length && i < arguments.Length; i++)
+			{
+				if (parameters[i].ParameterType.IsByRef)
+					this.argumentNodes[i].WriteBack(closure, arguments[i]);
+			}
+
+			return result;
 		}
 
 		/// <inheritdoc />
