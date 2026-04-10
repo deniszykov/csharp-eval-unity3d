@@ -130,7 +130,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// </summary>
 		/// <param name="node">Syntax tree. Not null.</param>
 		/// <param name="global">Global object expression. Can be null. Usually <see cref="Expression.Constant(object)" />.</param>
-		/// <returns></returns>
+		/// <returns>A bound lambda expression.</returns>
 		public LambdaExpression Bind(SyntaxTreeNode node, Expression global = null)
 		{
 			if (node == null) throw new ArgumentNullException(nameof(node));

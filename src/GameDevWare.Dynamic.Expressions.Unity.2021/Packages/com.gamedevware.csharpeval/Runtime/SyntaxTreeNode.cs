@@ -45,7 +45,7 @@ namespace GameDevWare.Dynamic.Expressions
 		///     Returns contained node by its name;
 		/// </summary>
 		/// <param name="key">Name of contained node. Can't be null.</param>
-		/// <returns></returns>
+		/// <returns>The contained node associated with the specified key.</returns>
 		public object this[string key] { get => this.innerDictionary[key]; set => throw new NotSupportedException(); }
 
 		/// <summary>
@@ -91,7 +91,7 @@ namespace GameDevWare.Dynamic.Expressions
 		///     Default value node node with <paramref name="key" /> doesn't exists or value can't be casted
 		///     to <typeparamref name="T" />.
 		/// </param>
-		/// <returns>True is node exists and value successfully casted to <typeparamref name="T" />, overwise false.</returns>
+		/// <returns>The value of the node if it exists and can be cast to <typeparamref name="T" />; otherwise, <paramref name="defaultValue"/>.</returns>
 		public T GetValueOrDefault<T>(string key, T defaultValue = default)
 		{
 			var value = default(T);
@@ -531,6 +531,8 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Compares two syntax tree by reference.
 		/// </summary>
+		/// <param name="obj">The object to compare with the current object.</param>
+		/// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
 		public override bool Equals(object obj)
 		{
 			return this.innerDictionary.Equals(obj);
@@ -538,6 +540,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Get hash code of syntax tree.
 		/// </summary>
+		/// <returns>A hash code for the current object.</returns>
 		public override int GetHashCode()
 		{
 			return this.innerDictionary.GetHashCode();
@@ -546,7 +549,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Format syntax tree as a C# expression. Throw exceptions if exception could not be formed.
 		/// </summary>
-		/// <returns>C# Expression.</returns>
+		/// <returns>C# Expression string.</returns>
 		public string ToCSharpExpression()
 		{
 			var expression = this.GetCSharpExpressionOrNull(false);
@@ -560,6 +563,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Format syntax tree as C# expression.
 		/// </summary>
+		/// <returns>A string that represents the current object.</returns>
 		public override string ToString()
 		{
 			try
@@ -589,6 +593,7 @@ namespace GameDevWare.Dynamic.Expressions
 		///     Check if syntax tree contain node with specified <paramref name="key" />.
 		/// </summary>
 		/// <param name="key">Name of contained node. Can't be null.</param>
+		/// <returns>true if the syntax tree contains a node with the specified key; otherwise, false.</returns>
 		public bool ContainsKey(string key)
 		{
 			return this.innerDictionary.ContainsKey(key);
@@ -602,6 +607,8 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Tries to retrieve node of syntax tree by its name.
 		/// </summary>
+		/// <param name="key">The name of the node to retrieve.</param>
+		/// <param name="value">When this method returns, contains the node associated with the specified name, if the name is found; otherwise, null.</param>
 		/// <returns>True is node exists, overwise false.</returns>
 		public bool TryGetValue(string key, out object value)
 		{

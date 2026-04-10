@@ -112,7 +112,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Converts exception to string representation for debug purpose.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A string that represents the current object.</returns>
 		public override string ToString()
 		{
 			if (this.TokenLength != 0)

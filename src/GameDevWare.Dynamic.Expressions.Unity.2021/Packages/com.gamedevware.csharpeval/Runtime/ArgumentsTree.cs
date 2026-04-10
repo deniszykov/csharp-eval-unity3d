@@ -43,10 +43,14 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Returns argument by its name.
 		/// </summary>
+		/// <param name="key">The name of the argument.</param>
+		/// <returns>The syntax tree node of the argument.</returns>
 		public SyntaxTreeNode this[string key] { get => this.innerDictionary[key]; set => throw new NotSupportedException(); }
 		/// <summary>
 		///     Returns argument by its position.
 		/// </summary>
+		/// <param name="position">The zero-based position of the argument.</param>
+		/// <returns>The syntax tree node of the argument.</returns>
 		public SyntaxTreeNode this[int position] { get => this.innerDictionary[Constants.GetIndexAsString(position)]; set => throw new NotSupportedException(); }
 
 		/// <summary>
@@ -66,7 +70,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Create list of arguments from existing dictionary.
 		/// </summary>
-		/// <param name="innerDictionary"></param>
+		/// <param name="innerDictionary">The dictionary containing the arguments.</param>
 		public ArgumentsTree(Dictionary<string, SyntaxTreeNode> innerDictionary)
 		{
 			if (innerDictionary == null) throw new ArgumentNullException(nameof(innerDictionary));
@@ -76,6 +80,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Check if passes positional argument is exists in list.
 		/// </summary>
+		/// <param name="position">The zero-based position of the argument.</param>
 		/// <returns>true is exists, overwise false.</returns>
 		public bool ContainsKey(int position)
 		{
@@ -84,6 +89,8 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Tries to retrieve argument by its position.
 		/// </summary>
+		/// <param name="position">The zero-based position of the argument.</param>
+		/// <param name="value">When this method returns, contains the argument associated with the specified position, if the position is found; otherwise, null.</param>
 		/// <returns>true is exists, overwise false.</returns>
 		public bool TryGetValue(int position, out SyntaxTreeNode value)
 		{
@@ -93,6 +100,8 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Compares two arguments list by reference.
 		/// </summary>
+		/// <param name="obj">The object to compare with the current object.</param>
+		/// <returns>true if the specified object is equal to the current object; otherwise, false.</returns>
 		public override bool Equals(object obj)
 		{
 			return this.innerDictionary.Equals(obj);
@@ -100,6 +109,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Returns hash code of arguments list.
 		/// </summary>
+		/// <returns>A hash code for the current object.</returns>
 		public override int GetHashCode()
 		{
 			return this.innerDictionary.GetHashCode();
@@ -108,6 +118,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Converts argument list to string.
 		/// </summary>
+		/// <returns>A string that represents the current object.</returns>
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
@@ -129,6 +140,7 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Check if passes named argument is exists in list.
 		/// </summary>
+		/// <param name="key">The name of the argument.</param>
 		/// <returns>true is exists, overwise false.</returns>
 		public bool ContainsKey(string key)
 		{
@@ -143,6 +155,8 @@ namespace GameDevWare.Dynamic.Expressions
 		/// <summary>
 		///     Tries to retrieve argument by its name.
 		/// </summary>
+		/// <param name="key">The name of the argument.</param>
+		/// <param name="value">When this method returns, contains the argument associated with the specified name, if the name is found; otherwise, null.</param>
 		/// <returns>true is exists, overwise false.</returns>
 		public bool TryGetValue(string key, out SyntaxTreeNode value)
 		{

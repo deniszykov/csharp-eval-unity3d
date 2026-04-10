@@ -207,13 +207,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private ParseTreeNodes nodes;
 
 		/// <summary>
-		///     Get child node by index.
+		///     Gets the child node at the specified index.
 		/// </summary>
-		/// <param name="index">Index of child node.</param>
-		/// <returns>Child node at index.</returns>
+		/// <param name="index">The zero-based index of the child node to get.</param>
+		/// <returns>The child node at the specified index.</returns>
 		public ParseTreeNode this[int index] => this.nodes[index];
 		/// <summary>
-		///     Returns number of child nodes.
+		///     Gets the number of child nodes.
 		/// </summary>
 		public int Count => this.nodes.Count;
 
@@ -283,25 +283,36 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return sb.ToString();
 		}
 
+		/// <summary>
+		///     Returns an enumerator that iterates through the child nodes.
+		/// </summary>
+		/// <returns>An enumerator for the child nodes.</returns>
 		IEnumerator<ParseTreeNode> IEnumerable<ParseTreeNode>.GetEnumerator()
 		{
 			for (var i = 0; i < this.nodes.Count; i++)
 				yield return this.nodes[i];
 		}
 
+		/// <summary>
+		///     Returns an enumerator that iterates through the child nodes.
+		/// </summary>
+		/// <returns>An enumerator for the child nodes.</returns>
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return ((IEnumerable<ParseTreeNode>)this).GetEnumerator();
 		}
 
+		/// <inheritdoc />
 		int ILineInfo.GetLineNumber()
 		{
 			return this.Token.LineNumber;
 		}
+		/// <inheritdoc />
 		int ILineInfo.GetColumnNumber()
 		{
 			return this.Token.ColumnNumber;
 		}
+		/// <inheritdoc />
 		int ILineInfo.GetTokenLength()
 		{
 			return this.Token.TokenLength;
