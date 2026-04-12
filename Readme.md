@@ -112,6 +112,10 @@ We are continuously improving the package. Planned features include:
 
 ## Change Log (Highlights)
 
+### 3.0.2
+- **Feature:** Added out/ref parameter write-back for Invoke node and AOT expression executor.
+- **Fix:** Fixed multi-dimensional array packing/unpacking.
+
 ### 3.0.1
 - **Fix:** Correctly format new expression types (Member/List Init) from syntax trees.
 - **Change:** Internal renaming of `Assignment` to `AssignmentBinding` (backward compatible).

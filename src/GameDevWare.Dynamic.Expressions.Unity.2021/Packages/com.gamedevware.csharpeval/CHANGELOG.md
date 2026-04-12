@@ -1,3 +1,8 @@
+# 3.0.2
+feature: Added out/ref parameter write-back for Invoke node and AOT expression executor.
+fix: Fixed multi-dimensional array packing/unpacking.
+chore: Added better documentation.
+
 # 3.0.1
 fix: Added formatting of new expression types (Member Init/List Init) from the syntax tree.
 fix: changed the name of `Assignment` binding name to `AssignmentBinding`, the code is backwards compatible with the old name.

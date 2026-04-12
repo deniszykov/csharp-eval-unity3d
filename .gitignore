@@ -18,6 +18,7 @@ _ReSharper*
 *.exe
 *.dll
 
+AGENT.MD
 .vs
 media/
 bin/
@@ -30,6 +31,7 @@ Temp/
 Assets/StreamingAssets/
 Assets/Bundles/
 ProjectSettings/
+UserSettings/
 AssetStoreTools/
 src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/PlayMaker/
 src/GameDevWare.Dynamic.Expressions.Playmaker/Assets/Gizmos/
