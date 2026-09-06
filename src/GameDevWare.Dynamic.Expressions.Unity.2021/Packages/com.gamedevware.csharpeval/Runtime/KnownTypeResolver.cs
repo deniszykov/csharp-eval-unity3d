@@ -24,7 +24,7 @@ namespace GameDevWare.Dynamic.Expressions
 	/// <summary>
 	///     <see cref="ITypeResolver" /> which allows access to specified number of types.
 	/// </summary>
-	public class KnownTypeResolver : ITypeResolver
+	public class KnownTypeResolver : ITypeResolver, IExtensionMethodResolver
 	{
 		private static readonly string ArrayFullName;
 
@@ -40,6 +40,9 @@ namespace GameDevWare.Dynamic.Expressions
 		private readonly Dictionary<string, List<Type>> knownTypesByFullName;
 		private readonly Dictionary<string, List<Type>> knownTypesByName;
 		private readonly ITypeResolver otherTypeResolver;
+
+		private readonly Dictionary<Type, Dictionary<string, MethodInfo[]>> extensionMethodsByTargetType;
+		private List<MethodInfo> declaredExtensionMethods;
 
 		static KnownTypeResolver()
 		{
@@ -63,6 +66,7 @@ namespace GameDevWare.Dynamic.Expressions
 				typeof(string),
 				typeof(Math),
 				typeof(Array),
+				typeof(Enumerable),
 				typeof(Nullable<>),
 				typeof(Func<>),
 				typeof(Func<,>),
@@ -125,6 +129,7 @@ namespace GameDevWare.Dynamic.Expressions
 
 			this.knownTypesByFullName = new Dictionary<string, List<Type>>(StringComparer.Ordinal);
 			this.knownTypesByName = new Dictionary<string, List<Type>>(StringComparer.Ordinal);
+			this.extensionMethodsByTargetType = new Dictionary<Type, Dictionary<string, MethodInfo[]>>();
 			this.knownTypes = GetKnownTypes(knownTypes, null, options);
 
 			foreach (var type in this.knownTypes)
@@ -344,6 +349,129 @@ namespace GameDevWare.Dynamic.Expressions
 			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			return this.knownTypes.Contains(type) || (this.otherTypeResolver != null && this.otherTypeResolver.IsKnownType(type));
+		}
+
+		/// <summary>
+		///     Tries to retrieve extension methods which could accept specified type as their receiver.
+		/// </summary>
+		/// <param name="targetType">Type of a value the method is invoked on. Not null.</param>
+		/// <param name="methodName">Name of the invoked method. Not null.</param>
+		/// <param name="extensionMethods">Found methods or null.</param>
+		/// <returns>True if at least one method is found. Overwise is false.</returns>
+		public bool TryGetExtensionMethods(Type targetType, string methodName, out MethodInfo[] extensionMethods)
+		{
+			if (targetType == null) throw new ArgumentNullException(nameof(targetType));
+			if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+
+			lock (this.extensionMethodsByTargetType)
+			{
+				if (!this.extensionMethodsByTargetType.TryGetValue(targetType, out var methodsByName))
+					this.extensionMethodsByTargetType[targetType] = methodsByName = this.CreateExtensionMethods(targetType);
+
+				if (methodsByName.TryGetValue(methodName, out extensionMethods))
+					return true;
+			}
+
+			if (this.otherTypeResolver is IExtensionMethodResolver otherExtensionMethodResolver)
+				return otherExtensionMethodResolver.TryGetExtensionMethods(targetType, methodName, out extensionMethods);
+
+			extensionMethods = null;
+			return false;
+		}
+
+		private Dictionary<string, MethodInfo[]> CreateExtensionMethods(Type targetType)
+		{
+			var methodListsByName = new Dictionary<string, List<MethodInfo>>(StringComparer.Ordinal);
+			foreach (var method in this.GetDeclaredExtensionMethods())
+			{
+				if (!IsPossibleReceiver(method.GetParameters()[0].ParameterType, targetType)) continue;
+
+				if (!methodListsByName.TryGetValue(method.Name, out var methodList))
+					methodListsByName.Add(method.Name, methodList = new List<MethodInfo>());
+				methodList.Add(method);
+			}
+
+			var methodsByName = new Dictionary<string, MethodInfo[]>(methodListsByName.Count, StringComparer.Ordinal);
+			foreach (var kv in methodListsByName)
+			{
+				methodsByName.Add(kv.Key, kv.Value.ToArray());
+			}
+
+			return methodsByName;
+		}
+		private List<MethodInfo> GetDeclaredExtensionMethods()
+		{
+			if (this.declaredExtensionMethods != null)
+				return this.declaredExtensionMethods;
+
+			var extensionMethods = new List<MethodInfo>();
+			foreach (var type in this.knownTypes)
+			{
+				var typeInfo = type.GetTypeInfo();
+				// only a non-generic static class could declare extension methods
+				if (!typeInfo.IsClass || !typeInfo.IsAbstract || !typeInfo.IsSealed || typeInfo.IsGenericType || !IsExtension(typeInfo))
+					continue;
+
+				foreach (var method in typeInfo.GetDeclaredMethods())
+				{
+					if (method.IsPublic && method.IsStatic && method.GetParameters().Length > 0 && IsExtension(method))
+						extensionMethods.Add(method);
+				}
+			}
+
+			return this.declaredExtensionMethods = extensionMethods;
+		}
+
+		/// <summary>
+		///     Checks if specified type could be passed as the receiver of an extension method declaring
+		///     <paramref name="receiverType" /> as its first parameter. An open receiver is matched by shape because its
+		///     type arguments are only bound during overload resolution.
+		/// </summary>
+		private static bool IsPossibleReceiver(Type receiverType, Type targetType)
+		{
+			var receiverTypeInfo = receiverType.GetTypeInfo();
+			if (!receiverTypeInfo.ContainsGenericParameters)
+				return receiverTypeInfo.IsAssignableFrom(targetType.GetTypeInfo());
+
+			if (receiverType.IsGenericParameter)
+				return true;
+
+			if (receiverTypeInfo.IsArray)
+				return targetType.GetTypeInfo().IsArray;
+
+			if (!receiverTypeInfo.IsGenericType)
+				return false;
+
+			var genericTypeDefinition = receiverType.GetGenericTypeDefinition();
+			var baseType = targetType;
+			while (baseType != null)
+			{
+				var baseTypeInfo = baseType.GetTypeInfo();
+				if (baseTypeInfo.IsGenericType && baseType.GetGenericTypeDefinition() == genericTypeDefinition)
+					return true;
+
+				baseType = baseTypeInfo.BaseType;
+			}
+
+			foreach (var interfaceType in targetType.GetTypeInfo().GetImplementedInterfaces())
+			{
+				var interfaceTypeInfo = interfaceType.GetTypeInfo();
+				if (interfaceTypeInfo.IsGenericType && interfaceType.GetGenericTypeDefinition() == genericTypeDefinition)
+					return true;
+			}
+
+			return false;
+		}
+		private static bool IsExtension(MemberInfo member)
+		{
+			foreach (var attribute in member.GetCustomAttributes(true))
+			{
+				var attributeType = attribute.GetType();
+				if (attributeType.Namespace == "System.Runtime.CompilerServices" && attributeType.Name == "ExtensionAttribute")
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

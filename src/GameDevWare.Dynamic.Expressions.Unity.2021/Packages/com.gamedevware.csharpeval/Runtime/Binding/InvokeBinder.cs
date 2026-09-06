@@ -120,22 +120,43 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 				return false;
 
 			var typeDescription = TypeDescription.GetTypeDescription(type);
-			foreach (var member in typeDescription.GetMembers(methodRef.Name))
+			if (!HasMethod(typeDescription, methodRef.Name, isStatic) && !HasExtensionMethod(typeDescription, methodRef.Name, methodTarget, bindingContext))
+				return false;
+
+			var callNode = new SyntaxTreeNode(new Dictionary<string, object> {
+				{ Constants.EXPRESSION_ATTRIBUTE, methodTarget ?? (object)type },
+				{ Constants.ARGUMENTS_ATTRIBUTE, node.GetValueOrDefault(Constants.ARGUMENTS_ATTRIBUTE, default(object)) },
+				{ Constants.METHOD_ATTRIBUTE, methodRef },
+				{ Constants.USE_NULL_PROPAGATION_ATTRIBUTE, methodNameNode.GetValueOrDefault(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, default(object)) },
+				{ Constants.EXPRESSION_POSITION, methodNameNode.GetPositionOrDefault(false) }
+			});
+
+			return CallBinder.TryBind(callNode, bindingContext, expectedType, out boundExpression, out bindingError);
+		}
+
+		private static bool HasMethod(TypeDescription typeDescription, string methodName, bool isStatic)
+		{
+			foreach (var member in typeDescription.GetMembers(methodName))
 			{
-				if (!member.IsMethod || member.IsStatic != isStatic) continue;
-
-				var callNode = new SyntaxTreeNode(new Dictionary<string, object> {
-					{ Constants.EXPRESSION_ATTRIBUTE, methodTarget ?? (object)type },
-					{ Constants.ARGUMENTS_ATTRIBUTE, node.GetValueOrDefault(Constants.ARGUMENTS_ATTRIBUTE, default(object)) },
-					{ Constants.METHOD_ATTRIBUTE, methodRef },
-					{ Constants.USE_NULL_PROPAGATION_ATTRIBUTE, methodNameNode.GetValueOrDefault(Constants.USE_NULL_PROPAGATION_ATTRIBUTE, default(object)) },
-					{ Constants.EXPRESSION_POSITION, methodNameNode.GetPositionOrDefault(false) }
-				});
-
-				return CallBinder.TryBind(callNode, bindingContext, expectedType, out boundExpression, out bindingError);
+				if (member.IsMethod && member.IsStatic == isStatic)
+					return true;
 			}
 
 			return false;
+		}
+		private static bool HasExtensionMethod(TypeDescription typeDescription, string methodName, Expression methodTarget, BindingContext bindingContext)
+		{
+			if (methodTarget == null)
+				return false;
+
+			// a member of a delegate type is invoked instead of an extension method of the same name
+			foreach (var member in typeDescription.GetMembers(methodName))
+			{
+				if (member.IsPropertyOrField && TypeDescription.GetTypeDescription(member.ResultType).IsDelegate)
+					return false;
+			}
+
+			return bindingContext.TryGetExtensionMethods(typeDescription, methodName, out _);
 		}
 	}
 }

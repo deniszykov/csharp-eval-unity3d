@@ -90,46 +90,17 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 
 			var targetTypeDescription = TypeDescription.GetTypeDescription(targetType);
 			var foundMethod = default(MethodInfo);
-			foreach (var memberDescription in targetTypeDescription.GetMembers(methodRef.Name))
+			BindMethodGroup(targetTypeDescription.GetMembers(methodRef.Name), target, false, isStatic, genericArguments, hasGenericParameters, arguments,
+				bindingContext, ref boundExpression, ref selectedMethodQuality, ref foundMethod, ref bindingError);
+
+			// extension methods are only looked up when no declared method of the target's type is applicable
+			if (boundExpression == null &&
+				bindingError == null &&
+				target != null &&
+				bindingContext.TryGetExtensionMethods(targetType, methodRef.Name, out var extensionMethods))
 			{
-				if (!memberDescription.IsMethod) continue;
-
-				var methodDescription = memberDescription;
-				var method = (MethodInfo)memberDescription;
-
-				foundMethod = foundMethod ?? method;
-
-				if (method.IsStatic != isStatic || method.IsGenericMethod != hasGenericParameters)
-					continue;
-
-				if (hasGenericParameters && memberDescription.GenericArgumentsCount != methodRef.TypeArguments.Count)
-					continue;
-
-				if (hasGenericParameters)
-				{
-					try
-					{
-						methodDescription = methodDescription.MakeGenericMethod(genericArguments);
-						method = methodDescription;
-					}
-					catch (ArgumentException exception)
-					{
-						bindingError = exception;
-						continue; /* An element of typeArguments does not satisfy the constraints specified for the corresponding type parameter of the current generic method definition. */
-					}
-				}
-
-				if (!methodDescription.TryMakeCall(target, arguments, bindingContext, out var methodCallExpression, out var methodQuality))
-					continue;
-
-				if (float.IsNaN(methodQuality) || methodQuality <= selectedMethodQuality)
-					continue;
-
-				boundExpression = methodCallExpression;
-				selectedMethodQuality = methodQuality;
-
-				if (Math.Abs(methodQuality - MemberDescription.QUALITY_EXACT_MATCH) < float.Epsilon)
-					break; // best match
+				BindMethodGroup(extensionMethods, target, true, isStatic, genericArguments, hasGenericParameters, arguments, bindingContext,
+					ref boundExpression, ref selectedMethodQuality, ref foundMethod, ref bindingError);
 			}
 
 			if (bindingError != null)
@@ -171,6 +142,83 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		///     Selects the best overload of a method group and binds a call to it. A generic method invoked without explicit
+		///     type arguments has them inferred from the call's arguments.
+		/// </summary>
+		private static void BindMethodGroup
+		(
+			MemberDescription[] members,
+			Expression target,
+			bool isExtension,
+			bool isStatic,
+			Type[] genericArguments,
+			bool hasGenericParameters,
+			ArgumentsTree arguments,
+			BindingContext bindingContext,
+			ref Expression boundExpression,
+			ref float selectedMethodQuality,
+			ref MethodInfo foundMethod,
+			ref Exception bindingError
+		)
+		{
+			foreach (var memberDescription in members)
+			{
+				if (!memberDescription.IsMethod) continue;
+
+				var methodDescription = memberDescription;
+				var method = (MethodInfo)memberDescription;
+
+				foundMethod = foundMethod ?? method;
+
+				if (!isExtension && method.IsStatic != isStatic)
+					continue;
+
+				if (hasGenericParameters && (!method.IsGenericMethod || memberDescription.GenericArgumentsCount != genericArguments.Length))
+					continue;
+
+				if (hasGenericParameters)
+				{
+					try
+					{
+						methodDescription = methodDescription.MakeGenericMethod(genericArguments);
+					}
+					catch (ArgumentException exception)
+					{
+						bindingError = exception;
+						continue; /* An element of typeArguments does not satisfy the constraints specified for the corresponding type parameter of the current generic method definition. */
+					}
+				}
+				else if (method.IsGenericMethod)
+				{
+					if (!TypeInference.TryInferGenericArguments(methodDescription, isExtension ? target : null, arguments, bindingContext,
+							out var inferredArguments))
+						continue;
+
+					try
+					{
+						methodDescription = methodDescription.MakeGenericMethod(inferredArguments);
+					}
+					catch (ArgumentException)
+					{
+						continue; // inferred type arguments don't satisfy the method's constraints
+					}
+				}
+
+				if (!methodDescription.TryMakeCall(target, arguments, bindingContext, isExtension, out var methodCallExpression, out var methodQuality))
+					continue;
+
+				if (float.IsNaN(methodQuality) || methodQuality <= selectedMethodQuality)
+					continue;
+
+				boundExpression = methodCallExpression;
+				selectedMethodQuality = methodQuality;
+
+				if (Math.Abs(methodQuality - MemberDescription.QUALITY_EXACT_MATCH) < float.Epsilon)
+					break; // best match
+			}
 		}
 
 		private static bool TryBindTarget(SyntaxTreeNode node, BindingContext bindingContext, out Expression target, out Type type, out Exception bindingError)

@@ -256,9 +256,26 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 		}
 		public bool TryMakeCall(Expression target, ArgumentsTree argumentsTree, BindingContext bindingContext, out Expression expression, out float expressionQuality)
 		{
+			return this.TryMakeCall(target, argumentsTree, bindingContext, false, out expression, out expressionQuality);
+		}
+		/// <summary>
+		///     Makes a call expression. An extension call passes <paramref name="target" /> as the method's first argument
+		///     and shifts every positional argument of <paramref name="argumentsTree" /> by one.
+		/// </summary>
+		public bool TryMakeCall
+		(
+			Expression target,
+			ArgumentsTree argumentsTree,
+			BindingContext bindingContext,
+			bool isExtensionCall,
+			out Expression expression,
+			out float expressionQuality
+		)
+		{
 			if (argumentsTree == null) throw new ArgumentNullException(nameof(argumentsTree));
 			if (bindingContext == null) throw new ArgumentNullException(nameof(bindingContext));
 			if (!this.IsStatic && !this.IsConstructor && target == null) throw new ArgumentNullException(nameof(target));
+			if (isExtensionCall && target == null) throw new ArgumentNullException(nameof(target));
 
 			expression = null;
 			expressionQuality = QUALITY_INCOMPATIBLE;
@@ -266,24 +283,39 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (this.parameters == null) // not a method, constructor, indexer
 				return false;
 
+			var argumentOffset = isExtensionCall ? 1 : 0;
+			if (isExtensionCall && (!this.IsStatic || this.parameters.Length == 0))
+				return false;
+
 			// check argument count
-			if (argumentsTree.Count > this.parameters.Length)
+			if (argumentsTree.Count + argumentOffset > this.parameters.Length)
 				return false; // not all arguments are bound to parameters
 
 			var requiredParametersCount = this.parameters.Length - this.parameters.Count(p => p.IsOptional);
-			if (argumentsTree.Count < requiredParametersCount)
+			if (argumentsTree.Count + argumentOffset < requiredParametersCount)
 				return false; // not all required parameters has values
 
 			// bind arguments
 			var parametersQuality = 0.0f;
 			var arguments = default(Expression[]);
+			if (isExtensionCall)
+			{
+				var receiver = target;
+				if (!ExpressionUtils.TryCoerceType(ref receiver, this.parameters[0].ParameterType, out var receiverQuality) || receiverQuality <= 0)
+					return false; // failed to bind receiver
+
+				arguments = new Expression[this.parameters.Length];
+				arguments[0] = receiver;
+				parametersQuality += receiverQuality;
+			}
+
 			foreach (var argumentName in argumentsTree.Keys)
 			{
 				var parameter = default(ParameterInfo);
 				var parameterIndex = 0;
 				if (HasDigitsOnly(argumentName))
 				{
-					parameterIndex = int.Parse(argumentName, Constants.DefaultFormatProvider);
+					parameterIndex = int.Parse(argumentName, Constants.DefaultFormatProvider) + argumentOffset;
 					if (parameterIndex >= this.parameters.Length)
 						return false; // position out of range
 
@@ -298,6 +330,9 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 						return false; // parameter is not found
 
 					parameterIndex = parameter.Position;
+
+					if (parameterIndex < argumentOffset)
+						return false; // named argument can't be bound to the receiver of an extension method
 				}
 
 				var expectedType = TypeDescription.GetTypeDescription(parameter.ParameterType);

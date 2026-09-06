@@ -15,6 +15,8 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using GameDevWare.Dynamic.Expressions.Execution;
 
@@ -172,6 +174,92 @@ namespace GameDevWare.Dynamic.Expressions
 				fn.Invoke();
 				fn.DynamicInvoke();
 				AotCompiler.PrepareFunc<ResultT>(default);
+			}
+		}
+
+		/// <summary>
+		///     Prepares <see cref="Enumerable" /> queries over a sequence of <typeparamref name="ItemT" /> for execution in AOT
+		///     compiled environment. Projections are only prepared for a result of <see cref="object" />, so a query projecting
+		///     elements to another type needs <see cref="RegisterLinqFunc{ItemT,ResultT}" /> for that type.
+		/// </summary>
+		/// <typeparam name="ItemT">Type of an element of a queried sequence.</typeparam>
+		public static void RegisterLinqFunc<ItemT>()
+		{
+			if (typeof(AotCompilation).Name == string.Empty)
+			{
+				RegisterFunc<ItemT, bool>();
+				RegisterFunc<ItemT, int, bool>();
+				RegisterLinqFunc<ItemT, object>();
+
+				var source = default(IEnumerable<ItemT>);
+				var predicate = default(Func<ItemT, bool>);
+				var indexedPredicate = default(Func<ItemT, int, bool>);
+
+				Enumerable.Where(source, predicate);
+				Enumerable.Where(source, indexedPredicate);
+				Enumerable.First(source);
+				Enumerable.First(source, predicate);
+				Enumerable.FirstOrDefault(source);
+				Enumerable.FirstOrDefault(source, predicate);
+				Enumerable.Last(source);
+				Enumerable.Last(source, predicate);
+				Enumerable.LastOrDefault(source);
+				Enumerable.LastOrDefault(source, predicate);
+				Enumerable.Single(source);
+				Enumerable.SingleOrDefault(source);
+				Enumerable.ElementAt(source, 0);
+				Enumerable.ElementAtOrDefault(source, 0);
+				Enumerable.Any(source);
+				Enumerable.Any(source, predicate);
+				Enumerable.All(source, predicate);
+				Enumerable.Count(source);
+				Enumerable.Count(source, predicate);
+				Enumerable.Contains(source, default(ItemT));
+				Enumerable.Take(source, 0);
+				Enumerable.TakeWhile(source, predicate);
+				Enumerable.Skip(source, 0);
+				Enumerable.SkipWhile(source, predicate);
+				Enumerable.Distinct(source);
+				Enumerable.Reverse(source);
+				Enumerable.DefaultIfEmpty(source);
+				Enumerable.Concat(source, source);
+				Enumerable.Union(source, source);
+				Enumerable.Intersect(source, source);
+				Enumerable.Except(source, source);
+				Enumerable.ToList(source);
+				Enumerable.ToArray(source);
+			}
+		}
+		/// <summary>
+		///     Prepares <see cref="Enumerable" /> queries projecting a sequence of <typeparamref name="ItemT" /> to
+		///     <typeparamref name="ResultT" /> for execution in AOT compiled environment. The projected sequence is prepared as
+		///     well, so a query continuing after the projection needs no further registration.
+		/// </summary>
+		/// <typeparam name="ItemT">Type of an element of a queried sequence.</typeparam>
+		/// <typeparam name="ResultT">Type an element is projected to: the result of Select or the key of OrderBy.</typeparam>
+		public static void RegisterLinqFunc<ItemT, ResultT>()
+		{
+			if (typeof(AotCompilation).Name == string.Empty)
+			{
+				RegisterFunc<ItemT, ResultT>();
+				RegisterFunc<ItemT, int, ResultT>();
+				RegisterLinqFunc<ResultT>();
+
+				var source = default(IEnumerable<ItemT>);
+				var orderedSource = default(IOrderedEnumerable<ItemT>);
+				var selector = default(Func<ItemT, ResultT>);
+				var indexedSelector = default(Func<ItemT, int, ResultT>);
+				var sequenceSelector = default(Func<ItemT, IEnumerable<ResultT>>);
+
+				Enumerable.Select(source, selector);
+				Enumerable.Select(source, indexedSelector);
+				Enumerable.SelectMany(source, sequenceSelector);
+				Enumerable.OrderBy(source, selector);
+				Enumerable.OrderByDescending(source, selector);
+				Enumerable.ThenBy(orderedSource, selector);
+				Enumerable.ThenByDescending(orderedSource, selector);
+				Enumerable.Min(source, selector);
+				Enumerable.Max(source, selector);
 			}
 		}
 

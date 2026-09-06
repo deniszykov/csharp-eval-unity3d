@@ -57,7 +57,8 @@ The parser implements C# 4.0+ grammar with support for:
 - **Types:** Casting, [is/as](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/type-testing-and-cast) operators, `typeof()`, and `default()`.
 - **Contexts:** [Checked/Unchecked](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/checked-and-unchecked) blocks.
 - **Advanced:** [Null-conditional (?. and ?[])](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/member-access-operators#null-conditional-operators--and-), Power operator (`**`), and [Lambda expressions](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/lambda-expressions).
-- **Generics:** Support for generic types and methods (requires explicit type specification; type inference is not supported).
+- **Generics:** Generic types and methods, with [limited inference](#generic-type-argument-inference) of a method's type arguments when they are not given explicitly.
+- **Extension methods:** [Extension methods](https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods) declared by known types, including [LINQ](https://learn.microsoft.com/en-us/dotnet/csharp/linq/) queries over sequences.
 - **Serialization:** Pack/Unpack expressions into serializable structures.
 
 ## Type Resolution & Security
@@ -73,6 +74,36 @@ CSharpExpression.Evaluate<float>("Mathf.Clamp(Time.time, 0f, 1f)", typeResolver)
 var assemblyResolver = new AssemblyTypeResolver(typeof(UnityEngine.Vector3).Assembly);
 ```
 
+A registered static class also makes its extension methods available on the types they extend. `System.Linq.Enumerable` is registered by default, so LINQ queries work without any registration:
+
+```csharp
+var items = new[] { 1, 2, 3 };
+CSharpExpression.Evaluate<int[], int>("a.Where(x => x > 1).Sum()", items, "a"); // 5
+```
+
+An extension method is only considered when the target's own type declares no applicable method, so a declared method always wins. A member of a delegate type is invoked in preference to an extension method of the same name.
+
+## Generic Type Argument Inference
+
+A generic method called without explicit type arguments has them inferred from the types of its arguments, including the receiver of an extension method. The result type of a lambda argument is inferred by binding its body, so projections stay strongly typed rather than degrading to `object`:
+
+```csharp
+var items = new[] { 1, 2, 3 };
+// binds Enumerable.Select<int, string>, the expression's type is IEnumerable<string>
+CSharpExpression.Evaluate<int[], IEnumerable<string>>("a.Select(x => x.ToString())", items, "a");
+```
+
+This is a limited form of inference, enough for `Enumerable` queries and ordinary extension methods, but not the full C# algorithm:
+
+- A type parameter is fixed by the first argument mentioning it; there is no best common type across several arguments. Given `Pair<T>(T a, T b)`, the call `Pair(2.0, 1)` binds `T` to `double`, while `Pair(1, 2.0)` fails to bind.
+- Type parameters are inferred from parameters only. One appearing solely in the return type has to be given explicitly, as it does in C#.
+- Constraints are verified after inference rather than used to drive it.
+- A lambda argument contributes only once its own parameter types are known, which they are for the `Enumerable` operators.
+
+Explicit type arguments are always honoured and skip inference entirely: `a.Where<int>(x => x > 1)`.
+
+On AOT runtimes an inferred call still instantiates the method at bind time, so see [AOT Considerations](#aot-considerations) for the registrations LINQ queries need.
+
 ## AOT Compilation Support
 
 High-performance execution on AOT platforms (iOS, WebGL, Consoles) is achieved via `CompileAot()`:
@@ -86,6 +117,7 @@ var fn = expr.CompileAot(); // Uses AOT-safe execution if needed
 1. Only `Expression<Func<...>>` and `Expression<Action<...>>` are supported.
 2. Register required delegate types: `AotCompilation.RegisterFunc<int, string>();`.
 3. Use `AotCompilation.RegisterForFastCall<TTarget, TResult>()` for maximum performance on critical paths.
+4. Register the element type of every sequence a LINQ query runs over: `AotCompilation.RegisterLinqFunc<int>();`, and use `AotCompilation.RegisterLinqFunc<int, string>()` when the query projects elements to another type (`Select`, `OrderBy`).
 
 ## Installation
 

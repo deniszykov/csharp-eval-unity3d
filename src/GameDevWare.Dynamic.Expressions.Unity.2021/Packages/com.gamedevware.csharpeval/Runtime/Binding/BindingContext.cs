@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace GameDevWare.Dynamic.Expressions.Binding
 {
@@ -142,6 +143,39 @@ namespace GameDevWare.Dynamic.Expressions.Binding
 			if (type == null) throw new ArgumentNullException(nameof(type));
 
 			return this.typeResolver.IsKnownType(type);
+		}
+		public bool TryGetExtensionMethods(Type targetType, string methodName, out MemberDescription[] extensionMethods)
+		{
+			if (targetType == null) throw new ArgumentNullException(nameof(targetType));
+			if (methodName == null) throw new ArgumentNullException(nameof(methodName));
+
+			extensionMethods = null;
+
+			if (!(this.typeResolver is IExtensionMethodResolver extensionMethodResolver) ||
+				!extensionMethodResolver.TryGetExtensionMethods(targetType, methodName, out var methods) ||
+				methods.Length == 0)
+				return false;
+
+			extensionMethods = new MemberDescription[methods.Length];
+			for (var i = 0; i < methods.Length; i++)
+			{
+				extensionMethods[i] = FindMemberDescription(methods[i]);
+				if (extensionMethods[i] == null)
+					return false;
+			}
+
+			return true;
+		}
+		private static MemberDescription FindMemberDescription(MethodInfo method)
+		{
+			var declaringTypeDescription = TypeDescription.GetTypeDescription(method.DeclaringType);
+			foreach (var member in declaringTypeDescription.GetMembers(method.Name))
+			{
+				if (member.Equals(method))
+					return member;
+			}
+
+			return null;
 		}
 
 		public static bool TryGetTypeReference(object value, out TypeReference typeReference)
