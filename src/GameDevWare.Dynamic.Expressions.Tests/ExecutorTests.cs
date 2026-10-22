@@ -954,6 +954,68 @@ public class ExecutorTests
 	}
 
 	[Fact]
+	public void ConvertToArrayType()
+	{
+		var array = new[] { 1, 2, 3 };
+
+		var actual = CSharpExpression.ParseFunc<object, int[]>("(int[])x", "x").CompileAot(true).Invoke(array);
+		var actualAlt = CSharpExpression.ParseFunc<object, int[]>("(int[])x", "x").CompileAot(false).Invoke(array);
+		var length = CSharpExpression.ParseFunc<object, int>("((int[])x).Length", "x").CompileAot(true).Invoke(array);
+
+		Assert.Same(array, actual);
+		Assert.Same(array, actualAlt);
+		Assert.Equal(3, length);
+	}
+
+	[Fact]
+	public void ConvertToJaggedArrayType()
+	{
+		var array = new[] { new[] { 1 }, new[] { 2, 3 } };
+
+		var actual = CSharpExpression.ParseFunc<object, int[][]>("(int[][])x", "x").CompileAot(true).Invoke(array);
+		var actualAlt = CSharpExpression.ParseFunc<object, int[][]>("(int[][])x", "x").CompileAot(false).Invoke(array);
+
+		Assert.Same(array, actual);
+		Assert.Same(array, actualAlt);
+	}
+
+	[Fact]
+	public void ListInitWithArrayTypeArgument()
+	{
+		var expression = "new List<int[]> { new int[] { 1, 2 }, new int[] { 3 } }";
+
+		var actual = (List<int[]>)ExpressionUtils.Evaluate(expression, new[] { typeof(List<int[]>) }, typeResolver: null, forceAot: true);
+		var actualAlt = (List<int[]>)ExpressionUtils.Evaluate(expression, new[] { typeof(List<int[]>) }, typeResolver: null, forceAot: false);
+
+		Assert.Equal(new[] { new[] { 1, 2 }, new[] { 3 } }, actual);
+		Assert.Equal(actualAlt, actual);
+	}
+
+	[Theory, InlineData(true), InlineData(false)]
+	public void ListInitInConditional(bool condition)
+	{
+		var expression = "a ? new List<int> { 1, 2 } : null";
+
+		var actual = CSharpExpression.ParseFunc<bool, List<int>>(expression, "a").CompileAot(true).Invoke(condition);
+		var actualAlt = CSharpExpression.ParseFunc<bool, List<int>>(expression, "a").CompileAot(false).Invoke(condition);
+
+		Assert.Equal(condition ? new List<int> { 1, 2 } : null, actual);
+		Assert.Equal(actualAlt, actual);
+	}
+
+	[Theory, InlineData(1, 2, 3, 4, "TrueFalse"), InlineData(2, 1, 4, 3, "FalseTrue")]
+	public void ComparisonsInCallArguments(int a, int b, int c, int d, string expected)
+	{
+		var expression = "string.Concat(a < b, c > d)";
+
+		var actual = CSharpExpression.ParseFunc<int, int, int, int, string>(expression, "a", "b", "c", "d").CompileAot(true).Invoke(a, b, c, d);
+		var actualAlt = CSharpExpression.ParseFunc<int, int, int, int, string>(expression, "a", "b", "c", "d").CompileAot(false).Invoke(a, b, c, d);
+
+		Assert.Equal(expected, actual);
+		Assert.Equal(expected, actualAlt);
+	}
+
+	[Fact]
 	public void MemberAccess()
 	{
 		Expression<Func<int>> staticFieldAccess = () => TestClass.StaticIntField;

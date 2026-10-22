@@ -394,7 +394,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							if (token.Type == TokenType.LeftParentheses &&
 								iterations == 0 &&
 								node.Count == 1 &&
-								(node[0].Type == TokenType.Identifier || node[0].Type == TokenType.Resolve))
+								IsTypeName(node[0]))
 							{
 								// conversion operation
 								if (this.Expression(TokenType.Convert, terminator) && this.stack.Any(n => ReferenceEquals(n, node)))
@@ -526,11 +526,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						continue;
 					case TokenType.LeftParentheses:
 					case TokenType.LeftBracket:
+					case TokenType.LeftCurlyBracket:
 					case TokenType.NullIndex:
 						depth++;
 						continue;
 					case TokenType.RightParentheses:
 					case TokenType.RightBracket:
+					case TokenType.RightCurlyBracket:
 						depth--;
 						continue;
 					case TokenType.Comma:
@@ -565,24 +567,69 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					case TokenType.GreaterThan:
 						depth--;
 						if (depth < 0)
-							return i;
+							return this.IsGenericArgFollower(i + 1) ? i : NOT_FOUND;
 
 						break;
 					case TokenType.RightShift:
 						depth -= 2;
+						if (depth == -1)
+							return this.IsGenericArgFollower(i + 1) ? i : NOT_FOUND;
 						if (depth < 0)
-							return i;
+							return i; // second '>' closes enclosing generic arguments
 
 						break;
 					case TokenType.LesserThan:
 						depth++;
 						break;
+					case TokenType.LeftBracket:
+						// array type rank specifier '[]'
+						if (i + 1 < this.tokens.Count && this.tokens[i + 1].Type == TokenType.RightBracket)
+						{
+							i++;
+							continue;
+						}
+
+						return NOT_FOUND;
 					default:
 						return NOT_FOUND;
 				}
 			}
 
 			return NOT_FOUND;
+		}
+
+		private bool IsGenericArgFollower(int index)
+		{
+			// like C# disambiguation rule: 'f(a < b, c > d)' is two comparisons, because 'd' can't follow a type name
+			if (index >= this.tokens.Count)
+				return true;
+
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+			switch (this.tokens[index].Type)
+			{
+				case TokenType.Identifier:
+				case TokenType.Literal:
+				case TokenType.Number:
+				case TokenType.Add:
+				case TokenType.Subtract:
+				case TokenType.Plus:
+				case TokenType.Minus:
+				case TokenType.Not:
+				case TokenType.Complement:
+				case TokenType.New:
+					return false;
+				default:
+					return true;
+			}
+		}
+
+		private static bool IsTypeName(ParseTreeNode node)
+		{
+			// 'Identifier', 'Resolve' or array type 'T[]' which is parsed as 'Call' with empty '[' arguments
+			while (node.Type == TokenType.Call && node.Count == 2 && node.Value == "[" && node[1].Count == 0)
+				node = node[0];
+
+			return node.Type == TokenType.Identifier || node.Type == TokenType.Resolve;
 		}
 
 		private void CheckAndConsumeToken(TokenType expectedType1, TokenType expectedType2 = 0, TokenType expectedType3 = 0)

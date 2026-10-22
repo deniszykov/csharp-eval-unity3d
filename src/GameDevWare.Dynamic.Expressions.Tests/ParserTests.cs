@@ -154,6 +154,61 @@ public class ParserTests
 			Assert.Equal(TokenType.Identifier, node[0].Type);
 	}
 
+	[Theory, InlineData("(int[])x"), InlineData("(x[])i"), InlineData("(x.y.z[])i"), InlineData("(x[][])i"), InlineData("(x[])a.b"), InlineData("(x[])(a)")]
+	public void ParseConvertToArrayType(string expression)
+	{
+		var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+		Assert.Equal(TokenType.Convert, node.Type);
+		Assert.Equal(2, node.Count);
+		Assert.Equal(TokenType.Call, node[0].Type);
+		Assert.Equal("[", node[0].Value);
+		Assert.Equal(0, node[0][1].Count);
+	}
+
+	[Theory, InlineData("new List<int> { 1, 2 }"), InlineData("new List<int[]> { }"), InlineData("new Dictionary<string, int[][]> { }"),
+	InlineData("List<int[]>"), InlineData("typeof(List<int[]>)")]
+	public void ParseGenericTypeWithArrayTypeArgument(string expression)
+	{
+		var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+		Assert.NotNull(node);
+	}
+
+	[Theory, InlineData("a ? new List<int> { 1, 2 } : null"), InlineData("a ? b : new List<int> { 1, 2 }"),
+	InlineData("a ? new int[] { 1, 2 } : new int[] { 3, 4 }")]
+	public void ParseInitializerInConditional(string expression)
+	{
+		var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+		Assert.Equal(TokenType.Conditional, node.Type);
+		Assert.Equal(3, node.Count);
+	}
+
+	[Theory, InlineData("f(a < b, c > d)"), InlineData("f(a < b, c > 1)"), InlineData("f(a < b, c > -d)"), InlineData("f(a < b, c > !d)"),
+	InlineData("f(a < b, c > \"d\")"), InlineData("f(a < b, c > new D())"), InlineData("f(a < b.c, d.e > f)")]
+	public void ParseComparisonsNotGenericArguments(string expression)
+	{
+		var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+		Assert.Equal(TokenType.Call, node.Type);
+		Assert.Equal(TokenType.Arguments, node[1].Type);
+		Assert.Equal(2, node[1].Count);
+		Assert.Equal(TokenType.LesserThan, node[1][0].Type);
+		Assert.Equal(TokenType.GreaterThan, node[1][1].Type);
+	}
+
+	[Theory, InlineData("f(a<b, c>(d))", TokenType.Call), InlineData("f(a<b, c>.d)", TokenType.Resolve), InlineData("f(a<b, c>)", TokenType.Identifier),
+	InlineData("f(a<b<c>>)", TokenType.Identifier), InlineData("f(a<b<c> >)", TokenType.Identifier)]
+	public void ParseGenericArgumentsInCall(string expression, TokenType argumentType)
+	{
+		var node = Parser.Parse(Tokenizer.Tokenize(expression));
+
+		Assert.Equal(TokenType.Call, node.Type);
+		Assert.Equal(1, node[1].Count);
+		Assert.Equal(argumentType, node[1][0].Type);
+	}
+
 	[Theory, InlineData("a + (b + c)"), InlineData("a * (b + c)"), InlineData("a.b * (c + d)")]
 	public void ParseEnclose(string expression)
 	{
