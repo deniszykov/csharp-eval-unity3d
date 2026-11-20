@@ -143,7 +143,7 @@ public class ParserTests
 	}
 
 	[Theory, InlineData("(x)i"), InlineData("(x.y.z)i"), InlineData("(x)1"), InlineData("(x)\"text\""), InlineData("(x)a()"), InlineData("(x)a(b)"),
-	InlineData("(x)(a + 1)"), InlineData("(x)+a"), InlineData("(x)+1"), InlineData("(x)~1"), InlineData("(x)!1")]
+	InlineData("(x)(a + 1)"), InlineData("(x)~1"), InlineData("(x)!1")]
 	public void ParseConvert(string expression)
 	{
 		var node = Parser.Parse(Tokenizer.Tokenize(expression));

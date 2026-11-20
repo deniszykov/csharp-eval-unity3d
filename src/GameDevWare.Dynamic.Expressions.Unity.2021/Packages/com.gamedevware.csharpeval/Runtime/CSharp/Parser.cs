@@ -398,7 +398,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							if (token.Type == TokenType.LeftParentheses &&
 								iterations == 0 &&
 								node.Count == 1 &&
-								IsTypeName(node[0]))
+								IsTypeName(node[0]) &&
+								(IsTypeOnlyName(node[0]) || this.IsCastFollower()))
 							{
 								// conversion operation
 								if (this.Expression(TokenType.Convert, terminator) && this.stack.Any(n => ReferenceEquals(n, node)))
@@ -636,6 +637,37 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			return node.Type == TokenType.Identifier || node.Type == TokenType.Resolve;
 		}
 
+		private static bool IsTypeOnlyName(ParseTreeNode node)
+		{
+			// C# spec: '(T)x' is a cast if 'T' is a type, but not an expression: 'int', 'int?', 'T[]'
+			if (node.Type == TokenType.Identifier && node.Count == 0 && CSharpTypeNameAlias.TryGetTypeName(node.Value, out _))
+				return true;
+			if (node.Type == TokenType.Identifier && node.Token.Type == TokenType.Conditional) // 'T?' made by TryMakeNullableType
+				return true;
+			if (node.Type == TokenType.Call && node.Count == 2 && node.Value == "[" && node[1].Count == 0) // 'T[]'
+				return true;
+
+			return false;
+		}
+		private bool IsCastFollower()
+		{
+			// C# spec: '(x)y' is a cast if token after ')' is '~', '!', '(', identifier, literal or keyword
+			// so '(x) - 1' and '(x) + 1' are binary operations
+			// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+			switch (this.PeekNextTokenType())
+			{
+				case TokenType.Complement:
+				case TokenType.Not:
+				case TokenType.LeftParentheses:
+				case TokenType.Identifier:
+				case TokenType.Literal:
+				case TokenType.Number:
+				case TokenType.New:
+					return true;
+				default:
+					return false;
+			}
+		}
 		private void CheckAndConsumeToken(TokenType expectedType1, TokenType expectedType2 = 0, TokenType expectedType3 = 0)
 		{
 			var token = this.tokens.Count > 0 ? this.DequeueToken() : default;
