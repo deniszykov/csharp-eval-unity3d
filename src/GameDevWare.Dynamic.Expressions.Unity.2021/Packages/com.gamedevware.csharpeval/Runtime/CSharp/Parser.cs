@@ -54,8 +54,11 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				// Unary
 				new[] { TokenType.Plus, TokenType.Minus, TokenType.Not, TokenType.Complement, TokenType.Convert },
 
+				// Power (not in C#, binds tighter than multiplicative like in other languages)
+				new[] { TokenType.Power },
+
 				// Multiplicative
-				new[] { TokenType.Division, TokenType.Multiplication, TokenType.Power, TokenType.Modulo },
+				new[] { TokenType.Division, TokenType.Multiplication, TokenType.Modulo },
 
 				// Additive
 				new[] { TokenType.Add, TokenType.Subtract },
@@ -747,8 +750,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 		private static bool IsRightAssociative(TokenType tokenType, TokenType enclosingOperator)
 		{
-			// 'x => y => x' is 'x => (y => x)'
-			return tokenType == enclosingOperator && tokenType == TokenType.Lambda;
+			// 'x => y => x' is 'x => (y => x)', 'a ** b ** c' is 'a ** (b ** c)'
+			return tokenType == enclosingOperator && (tokenType == TokenType.Lambda || tokenType == TokenType.Power);
 		}
 
 		private int ComputePrecedence(TokenType tokenType1, TokenType tokenType2)
