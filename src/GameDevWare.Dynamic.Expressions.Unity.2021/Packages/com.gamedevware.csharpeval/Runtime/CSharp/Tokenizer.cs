@@ -128,7 +128,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			var terminalCharacter = expression[offset];
 
-			return !isLiteralToken || !char.IsLetter(terminalCharacter);
+			return !isLiteralToken || !(char.IsLetterOrDigit(terminalCharacter) || terminalCharacter == '_');
 		}
 		private static Token LookForIdentifier(string expression, int offset, int line)
 		{
