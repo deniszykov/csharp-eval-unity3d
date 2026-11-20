@@ -65,7 +65,7 @@ public class BinderTests
 
 	[Theory, InlineData("\"\" + \"a\"", "a"), InlineData("\"\" + \"\"", ""), InlineData("\"a\" + \"b\"", "ab"), InlineData("\"a\" + \"b\"+ \"c\"", "abc"),
 	InlineData("\"\" + \"\"+ \"\"", ""), InlineData("\"\" + \"a\"+ \"\"", "a"), InlineData("\"\\r\" + \"\\n\"", "\r\n"), InlineData("\"\\\\\" + \"\\\\\"", @"\\"),
-	InlineData("\"\\\\\" + \"\\\\\\\\\"", @"\\\"), InlineData("\"a\\r\" + \"\\nb\"", "a\r\nb"), InlineData("\"\\x038\" + \"\\u0112\"+ \"\\112\"", "8\u0112p"),
+	InlineData("\"\\\\\" + \"\\\\\\\\\"", @"\\\"), InlineData("\"a\\r\" + \"\\nb\"", "a\r\nb"), InlineData("\"\\x038\" + \"\\u0112\"+ \"\\x70\"","8\u0112p"),
 	InlineData("\"a\" + 1", "a1"), InlineData("1 + \"a\"", "1a"), InlineData("\"1\" + 'a'", "1a"), InlineData("\"1\" + '\t'", "1\t")]
 
 	// string concatenation with object

@@ -42,7 +42,7 @@ public class FormattingTests
 			CSharpExpression.ParseFunc<string>("\"\\\\\" + \"\\\\\""),
 			CSharpExpression.ParseFunc<string>("\"\\\\\" + \"\\\\\\\\\""),
 			CSharpExpression.ParseFunc<string>("\"a\\r\" + \"\\nb\""),
-			CSharpExpression.ParseFunc<string>("\"\\x038\" + \"\\u0112\"+ \"\\112\""),
+			CSharpExpression.ParseFunc<string>("\"\\x038\" + \"\\u0112\"+ \"\\x70\""),
 			CSharpExpression.ParseFunc<string>("\"a\" + 1"),
 			CSharpExpression.ParseFunc<string>("1 + \"a\""),
 			CSharpExpression.ParseFunc<string>("\"1\" + 'a'"),

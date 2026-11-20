@@ -58,9 +58,18 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							plainTextLen = 0;
 						}
 
-						var escSymbol = stringToUnescape[i + 1];
+						var escSymbol = i + 1 < end ? stringToUnescape[i + 1] : '\0';
 						switch (escSymbol)
 						{
+							case 'a':
+								sb.Append('\a');
+								break;
+							case 'v':
+								sb.Append('\v');
+								break;
+							case '0':
+								sb.Append('\0');
+								break;
 							case 'n':
 								sb.Append('\n');
 								break;
@@ -86,34 +95,41 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								sb.Append('\"');
 								break;
 
-							// unicode symbol
+							// unicode symbol '\uXXXX'
 							case 'u':
-								sb.Append((char)HexStringToUInt32(stringToUnescape, i + 2, 4));
+								sb.Append((char)ReadHexEscape(stringToUnescape, i, end, 4, 4));
 								seqLength = 5;
 								break;
 
-							// latin hex encoded symbol
-							case 'x':
-								sb.Append((char)HexStringToUInt32(stringToUnescape, i + 2, 2));
-								seqLength = 3;
+							// unicode symbol '\UXXXXXXXX'
+							case 'U':
+								var codePoint = ReadHexEscape(stringToUnescape, i, end, 8, 8);
+								if (codePoint > 0x10FFFF)
+									throw new InvalidOperationException(string.Format(Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ, stringToUnescape.Substring(i, 10)));
+
+								if (codePoint > 0xFFFF)
+								{
+									codePoint -= 0x10000;
+									sb.Append((char)(0xD800 + (codePoint >> 10)));
+									sb.Append((char)(0xDC00 + (codePoint & 0x3FF)));
+								}
+								else
+									sb.Append((char)codePoint);
+
+								seqLength = 9;
 								break;
 
-							// latin dec encoded symbol
-							case '1':
-							case '2':
-							case '3':
-							case '4':
-							case '5':
-							case '6':
-							case '7':
-							case '8':
-							case '9':
-							case '0':
-								sb.Append((char)StringToInt32(stringToUnescape, i + 1, 3));
-								seqLength = 3;
+							// variable length hex encoded symbol '\xX', '\xXX', '\xXXX', '\xXXXX'
+							case 'x':
+								var hexDigits = 0;
+								while (hexDigits < 4 && i + 2 + hexDigits < end && IsHexDigit(stringToUnescape[i + 2 + hexDigits]))
+									hexDigits++;
+
+								sb.Append((char)ReadHexEscape(stringToUnescape, i, end, 1, hexDigits));
+								seqLength = 1 + hexDigits;
 								break;
 							default:
-								throw new InvalidOperationException(string.Format(Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ, "//" + escSymbol));
+								throw new InvalidOperationException(string.Format(Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ, "\\" + escSymbol));
 						}
 
 						// set next chunk start right after this escape
@@ -131,37 +147,36 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				resultString = sb.ToString();
 			}
 
-			if (isChar && string.IsNullOrEmpty(resultString) && resultString.Length != 1)
+			if (isChar && resultString.Length != 1)
 				throw new InvalidOperationException(Resources.EXCEPTION_TOKENIZER_INVALIDCHARLITERAL);
 
 			return resultString;
 		}
 
-		private static int StringToInt32(string value, int offset, int count)
+		private static uint ReadHexEscape(string value, int escapeStart, int end, int minDigits, int digits)
 		{
-			const uint ZERO = '0';
-
-			var result = 0u;
-			var neg = false;
-			for (var i = 0; i < count; i++)
+			// escapeStart points to '\', digits start after '\' and escape symbol
+			var digitsStart = escapeStart + 2;
+			if (digits < minDigits || digitsStart + digits > end)
 			{
-				var c = value[offset + i];
-				if (i == 0 && c == '-')
-				{
-					neg = true;
-					continue;
-				}
-
-				if (c < '0' || c > '9')
-					throw new FormatException();
-
-				result = checked(10u * result + (c - ZERO));
+				var sequence = value.Substring(escapeStart, Math.Min(end, digitsStart + digits) - escapeStart);
+				throw new InvalidOperationException(string.Format(Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ, sequence));
 			}
 
-			if (neg)
-				return -(int)result;
+			for (var i = 0; i < digits; i++)
+			{
+				if (!IsHexDigit(value[digitsStart + i]))
+				{
+					throw new InvalidOperationException(string.Format(Resources.EXCEPTION_STRINGUTILS_UNEXPECTEDESCAPESEQ,
+						value.Substring(escapeStart, digitsStart + i + 1 - escapeStart)));
+				}
+			}
 
-			return (int)result;
+			return HexStringToUInt32(value, digitsStart, digits);
+		}
+		private static bool IsHexDigit(char value)
+		{
+			return (value >= '0' && value <= '9') || (value >= 'a' && value <= 'f') || (value >= 'A' && value <= 'F');
 		}
 		private static uint HexStringToUInt32(string value, int offset, int count)
 		{
