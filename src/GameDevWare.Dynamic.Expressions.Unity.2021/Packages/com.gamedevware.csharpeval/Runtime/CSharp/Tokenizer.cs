@@ -83,6 +83,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					if (token == "." && i + 1 < expression.Length && char.IsDigit(expression[i + 1])) // skip: short number notation
 						continue;
 
+					if (token == "?." && i + 2 < expression.Length && char.IsDigit(expression[i + 2])) // skip: conditional with short number 'a?.5:1'
+						continue;
+
 					current = new Token(TokensBySymbols[token], token, line, col, token.Length);
 				}
 
