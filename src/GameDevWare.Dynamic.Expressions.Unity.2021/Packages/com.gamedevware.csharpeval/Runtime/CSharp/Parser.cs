@@ -206,7 +206,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 									this.CheckAndConsumeToken(TokenType.Comma);
 								}
 
-								this.CheckAndConsumeToken(TokenType.RightParentheses, TokenType.RightBracket);
+								this.CheckAndConsumeClosingToken(constructorNode.Token);
 								this.CombineUnary(constructorNode.Token); // collect Arguments for 'NEW'
 							}
 
@@ -389,7 +389,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 								this.CheckAndConsumeToken(TokenType.Comma);
 							}
 
-							this.CheckAndConsumeToken(TokenType.RightParentheses, TokenType.RightBracket, TokenType.RightCurlyBracket);
+							this.CheckAndConsumeClosingToken(token);
 
 							if (token.Type == TokenType.LeftParentheses &&
 								iterations == 0 &&
@@ -642,6 +642,26 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					(expectedType2 != TokenType.None ? expectedType2.ToString() : string.Empty) +
 					(expectedType3 != TokenType.None ? expectedType3.ToString() : string.Empty);
 				throw new ExpressionParserException(string.Format(Resources.EXCEPTION_PARSER_UNEXPECTEDTOKENWHILEOTHEREXPECTED, expectedTokens), token);
+			}
+		}
+		private void CheckAndConsumeClosingToken(Token openingToken)
+		{
+			// closing bracket should match opening one: '(' -> ')', '[' and '?[' -> ']', '{' -> '}'
+			switch (openingToken.Value)
+			{
+				case "(":
+					this.CheckAndConsumeToken(TokenType.RightParentheses);
+					break;
+				case "[":
+				case "?[":
+					this.CheckAndConsumeToken(TokenType.RightBracket);
+					break;
+				case "{":
+					this.CheckAndConsumeToken(TokenType.RightCurlyBracket);
+					break;
+				default:
+					this.CheckAndConsumeToken(TokenType.RightParentheses, TokenType.RightBracket, TokenType.RightCurlyBracket);
+					break;
 			}
 		}
 		private TokenType PeekNextTokenType()
