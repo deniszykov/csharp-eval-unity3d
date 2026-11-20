@@ -243,7 +243,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						break;
 					case '+':
 					case '-':
-						if (state != STATE_EXPONENT)
+						// sign is part of number only right after exponent mark: '1e-3', but not '1e5-3'
+						if (state != STATE_EXPONENT || char.ToLowerInvariant(expression[offset - 1]) != 'e')
 						{
 							state = STATE_COMPLETE;
 							offset--;
