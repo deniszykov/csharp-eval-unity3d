@@ -93,7 +93,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					else if (charValue == '"' || charValue == '\'') // string literal
 						current = LookForLiteral(expression, charValue, i, line, col);
 					else if (char.IsLetter(charValue) || charValue == '_' || charValue == '@') // identifier
-						current = LookForIdentifier(expression, i, line);
+						current = LookForIdentifier(expression, i, line, col);
 					else if (char.IsWhiteSpace(charValue))
 						continue;
 					else
@@ -103,8 +103,24 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 					}
 				}
 
+				if (current.Type == TokenType.Literal)
+				{
+					// string literal could span multiple lines
+					for (var c = i + 1; c < i + current.TokenLength; c++)
+					{
+						if (expression[c] == '\n')
+						{
+							line++;
+							col = 0;
+						}
+						else
+							col++;
+					}
+				}
+				else
+					col += current.TokenLength - 1;
+
 				i += current.TokenLength - 1;
-				col += current.TokenLength - 1;
 
 				if (current.IsValid)
 					yield return current;
@@ -130,7 +146,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 			return !isLiteralToken || !(char.IsLetterOrDigit(terminalCharacter) || terminalCharacter == '_');
 		}
-		private static Token LookForIdentifier(string expression, int offset, int line)
+		private static Token LookForIdentifier(string expression, int offset, int line, int col)
 		{
 			var startAt = offset;
 			var lettersOffsetFromStartAt = -1;
@@ -143,9 +159,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 					if (charCode == '@' && offset - (startAt + lettersOffsetFromStartAt) != 0)
 					{
+						var errorCol = col + (offset - startAt);
 						throw new ExpressionParserException(
-							string.Format(Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, expression[offset], offset + 1, 1),
-							new Token(TokenType.None, expression[offset].ToString(), line, offset + 1, 1));
+							string.Format(Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, expression[offset], line, errorCol),
+							new Token(TokenType.None, expression[offset].ToString(), line, errorCol, 1));
 					}
 
 					continue;
@@ -157,21 +174,22 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var isWhitespace = lettersOffsetFromStartAt < 0;
 			var start = isWhitespace ? startAt : startAt + lettersOffsetFromStartAt;
 			var length = offset - start;
+			var startCol = col + (start - startAt);
 
 			if (length == 1 && expression[start] == '@')
 			{
-				throw new ExpressionParserException(string.Format(Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, "@", start, length),
-					new Token(TokenType.None, "@", line, start + 1, length));
+				throw new ExpressionParserException(string.Format(Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, "@", line, startCol),
+					new Token(TokenType.None, "@", line, startCol, length));
 			}
 
 			if (length > 1 && expression[start] == '@' && char.IsDigit(expression[start + 1]))
 			{
-				throw new ExpressionParserException(string.Format(Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, expression[start + 1], start + 2, 1),
-					new Token(TokenType.None, expression[start + 1].ToString(), line, start + 2, 1));
+				throw new ExpressionParserException(string.Format(Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, expression[start + 1], line, startCol + 1),
+					new Token(TokenType.None, expression[start + 1].ToString(), line, startCol + 1, 1));
 			}
 
 			var value = expression.Substring(start, length).TrimStart('@');
-			return new Token(isWhitespace ? TokenType.None : TokenType.Identifier, value, line, start + 1, length);
+			return new Token(isWhitespace ? TokenType.None : TokenType.Identifier, value, line, startCol, length);
 		}
 		private static Token LookForLiteral(string expression, char termChar, int offset, int line, int col)
 		{
