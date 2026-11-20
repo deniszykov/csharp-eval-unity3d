@@ -279,7 +279,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 							if (token.Type == TokenType.Assignment && @operator != TokenType.Initializers)
 								goto default; // unexpected '=' token
 
-							if (@operator != TokenType.None && this.ComputePrecedence(node.Type, @operator) <= 0)
+							if (@operator != TokenType.None && this.ComputePrecedence(node.Type, @operator) <= 0 &&
+								!IsRightAssociative(node.Type, @operator))
 							{
 								this.tokens.Insert(0, token);
 								return changed;
@@ -742,6 +743,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			first.CopyTo(newTerms, 0);
 			second.CopyTo(newTerms, first.Length);
 			return newTerms;
+		}
+
+		private static bool IsRightAssociative(TokenType tokenType, TokenType enclosingOperator)
+		{
+			// 'x => y => x' is 'x => (y => x)'
+			return tokenType == enclosingOperator && tokenType == TokenType.Lambda;
 		}
 
 		private int ComputePrecedence(TokenType tokenType1, TokenType tokenType2)
