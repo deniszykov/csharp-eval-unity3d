@@ -404,4 +404,216 @@ public class ParserTests
 		Assert.Equal("arg2", node[1][1][0].Value);
 		Assert.Equal("b", node[1][1][1].Value);
 	}
+
+	private static void AssertConstant(object expected, object actual)
+	{
+		Assert.NotNull(actual);
+		Assert.Equal(expected.GetType(), actual.GetType());
+		Assert.Equal(expected, actual);
+	}
+
+	// P1
+	[Theory, InlineData("(a) - b", TokenType.Subtract), InlineData("(a) + b", TokenType.Add), InlineData("(a)-b", TokenType.Subtract), InlineData("(a.b) - c", TokenType.Subtract),
+	InlineData("(a) * b", TokenType.Multiplication), InlineData("(a)b", TokenType.Convert), InlineData("(a)!b", TokenType.Convert), InlineData("(a)~b", TokenType.Convert),
+	InlineData("(a)(b)", TokenType.Convert), InlineData("(a)1", TokenType.Convert), InlineData("(a)\"s\"", TokenType.Convert), InlineData("(a)new b()", TokenType.Convert),
+	InlineData("(a)typeof(b)", TokenType.Convert), InlineData("(a)default(b)", TokenType.Convert), InlineData("(a)true", TokenType.Convert),
+	InlineData("(a)null", TokenType.Convert), InlineData("(int)-b", TokenType.Convert), InlineData("(int)+b", TokenType.Convert), InlineData("(System.Int32)b", TokenType.Convert),
+	InlineData("(a[])b", TokenType.Convert)]
+	public void ParseCastOrGroup(string expression, TokenType expected)
+	{
+		var node = Parser.Parse(Tokenizer.Tokenize(expression));
+		Assert.Equal(expected, node.Type);
+	}
+
+	[Theory, InlineData("(x) - 1", 9), InlineData("(x) + 1", 11), InlineData("(x)-1", 9), InlineData("(x) * 2", 20), InlineData("(int)-x", -10), InlineData("(Int32)x", 10)]
+	public void EvaluateCastOrGroup(string expression, int expected)
+	{
+		var actual = CSharpExpression.ParseFunc<int, int>(expression, "x").Compile().Invoke(10);
+		Assert.Equal(expected, actual);
+	}
+
+	// P2
+	[Theory, InlineData("(1 + 2]"), InlineData("(1 + 2}"), InlineData("a[0)"), InlineData("a[0}"), InlineData("a?[0)"), InlineData("f(1}"), InlineData("f(1]"),
+	InlineData("new a(1]"), InlineData("new a(){ b = 1 )"), InlineData("new a(){ b = 1 ]")]
+	public void ParseMismatchedBrackets(string expression)
+	{
+		Assert.Throws<ExpressionParserException>(() => Parser.Parse(Tokenizer.Tokenize(expression)));
+	}
+
+	// P3
+	[Fact]
+	public void ParseCurriedLambda()
+	{
+		var node = Parser.Parse(Tokenizer.Tokenize("x => y => x"));
+		Assert.Equal(TokenType.Lambda, node.Type);
+		Assert.Equal(TokenType.Arguments, node[0].Type);
+		Assert.Equal("x", node[0][0].Value);
+		Assert.Equal(TokenType.Lambda, node[1].Type);
+		Assert.Equal(TokenType.Arguments, node[1][0].Type);
+		Assert.Equal("y", node[1][0][0].Value);
+		Assert.Equal(TokenType.Identifier, node[1][1].Type);
+		Assert.Equal("x", node[1][1].Value);
+	}
+
+	[Fact]
+	public void EvaluateCurriedLambda()
+	{
+		var add = CSharpExpression.ParseFunc<Func<int, Func<int, int>>>("x => y => x - y").Compile().Invoke();
+		Assert.Equal(7, add(10)(3));
+	}
+
+	// P4
+	[Fact]
+	public void ParsePowerIsRightAssociative()
+	{
+		var node = Parser.Parse(Tokenizer.Tokenize("a ** b ** c"));
+		Assert.Equal(TokenType.Power, node.Type);
+		Assert.Equal("a", node[0].Value);
+		Assert.Equal(TokenType.Power, node[1].Type);
+		Assert.Equal("b", node[1][0].Value);
+		Assert.Equal("c", node[1][1].Value);
+	}
+
+	[Theory, InlineData("a * b ** c", TokenType.Multiplication), InlineData("a ** b * c", TokenType.Multiplication), InlineData("a / b ** c", TokenType.Division),
+	InlineData("a ** b + c", TokenType.Add)]
+	public void ParsePowerPrecedence(string expression, TokenType expected)
+	{
+		var node = Parser.Parse(Tokenizer.Tokenize(expression));
+		Assert.Equal(expected, node.Type);
+	}
+
+	[Theory, InlineData("2 ** 3 ** 2", 512d), InlineData("2 * 3 ** 2", 18d), InlineData("3 ** 2 * 2", 18d)]
+	public void EvaluatePower(string expression, double expected)
+	{
+		var actual = CSharpExpression.Evaluate<double>(expression);
+		Assert.Equal(expected, actual);
+	}
+
+	// P5
+	[Theory, InlineData(5000), InlineData(100000)]
+	public void ParseTooDeepExpression(int depth)
+	{
+		var expression = new string('(', depth) + "1" + new string(')', depth);
+		Assert.Throws<ExpressionParserException>(() => Parser.Parse(Tokenizer.Tokenize(expression)));
+	}
+
+	[Fact]
+	public void ParseTooDeepUnaryExpression()
+	{
+		var expression = new string('-', 100000) + "1";
+		Assert.Throws<ExpressionParserException>(() => Parser.Parse(Tokenizer.Tokenize(expression)));
+	}
+
+	[Fact]
+	public void ParseDeepButAllowedExpression()
+	{
+		var expression = new string('(', 100) + "1" + new string(')', 100);
+		Assert.Equal(1, CSharpExpression.Evaluate<int>(expression));
+	}
+
+	// L1
+	[Fact]
+	public void EvaluateExponentOnlyLiterals()
+	{
+		AssertConstant(1e5, CSharpExpression.Evaluate<object>("1e5"));
+		AssertConstant(1e-3, CSharpExpression.Evaluate<object>("1e-3"));
+		AssertConstant(2E3, CSharpExpression.Evaluate<object>("2E3"));
+		AssertConstant(2e+3, CSharpExpression.Evaluate<object>("2e+3"));
+		AssertConstant(1e5f, CSharpExpression.Evaluate<object>("1e5f"));
+		AssertConstant(1e5m, CSharpExpression.Evaluate<object>("1e5m"));
+		AssertConstant(1e5 + 3, CSharpExpression.Evaluate<object>("1e5+3"));
+	}
+
+	// L2
+	[Fact]
+	public void EvaluateIntegerLiteralsWidening()
+	{
+		AssertConstant(2147483647, CSharpExpression.Evaluate<object>("2147483647"));
+		AssertConstant(2147483648u, CSharpExpression.Evaluate<object>("2147483648"));
+		AssertConstant(4294967295u, CSharpExpression.Evaluate<object>("4294967295"));
+		AssertConstant(4294967296L, CSharpExpression.Evaluate<object>("4294967296"));
+		AssertConstant(9007199254740993L, CSharpExpression.Evaluate<object>("9007199254740993"));
+		AssertConstant(9223372036854775807L, CSharpExpression.Evaluate<object>("9223372036854775807"));
+		AssertConstant(9223372036854775808UL, CSharpExpression.Evaluate<object>("9223372036854775808"));
+		AssertConstant(18446744073709551615UL, CSharpExpression.Evaluate<object>("18446744073709551615"));
+
+		AssertConstant(3000000000u, CSharpExpression.Evaluate<object>("3000000000u"));
+		AssertConstant(5000000000UL, CSharpExpression.Evaluate<object>("5000000000u"));
+		AssertConstant(1L, CSharpExpression.Evaluate<object>("1L"));
+		AssertConstant(9223372036854775808UL, CSharpExpression.Evaluate<object>("9223372036854775808L"));
+		AssertConstant(1UL, CSharpExpression.Evaluate<object>("1ul"));
+		AssertConstant(1UL, CSharpExpression.Evaluate<object>("1lu"));
+	}
+
+	[Theory, InlineData("18446744073709551616"), InlineData("18446744073709551616u"), InlineData("18446744073709551616L"), InlineData("18446744073709551616ul"),
+	InlineData("0x10000000000000000")]
+	public void EvaluateIntegerLiteralOutOfRange(string expression)
+	{
+		Assert.Throws<ExpressionParserException>(() => CSharpExpression.Evaluate<object>(expression));
+	}
+
+	// T4
+	[Fact]
+	public void EvaluateHexLiterals()
+	{
+		AssertConstant(0x10, CSharpExpression.Evaluate<object>("0x10"));
+		AssertConstant(0x1F, CSharpExpression.Evaluate<object>("0X1f"));
+		AssertConstant(0x1e, CSharpExpression.Evaluate<object>("0x1e"));
+		AssertConstant(0x7FFFFFFF, CSharpExpression.Evaluate<object>("0x7FFFFFFF"));
+		AssertConstant(0xFFFFFFFF, CSharpExpression.Evaluate<object>("0xFFFFFFFF"));
+		AssertConstant(0x100000000, CSharpExpression.Evaluate<object>("0x100000000"));
+		AssertConstant(0xFFFFFFFFFFFFFFFF, CSharpExpression.Evaluate<object>("0xFFFFFFFFFFFFFFFF"));
+		AssertConstant(0x10u, CSharpExpression.Evaluate<object>("0x10u"));
+		AssertConstant(0x10L, CSharpExpression.Evaluate<object>("0x10L"));
+		AssertConstant(0x10UL, CSharpExpression.Evaluate<object>("0x10ul"));
+		AssertConstant(0x1e + 1, CSharpExpression.Evaluate<object>("0x1e+1"));
+	}
+
+	// T5
+	[Theory, InlineData("@\"c:\\temp\"", "c:\\temp"), InlineData("@\"say \"\"hi\"\"\"", "say \"hi\""), InlineData("@\"\"", ""), InlineData("@\"\\\"", "\\"),
+	InlineData("@\"a\nb\"", "a\nb"), InlineData("@\"\\n\\t\\u0041\"", "\\n\\t\\u0041")]
+	public void EvaluateVerbatimStringLiterals(string expression, string expected)
+	{
+		AssertConstant(expected, CSharpExpression.Evaluate<object>(expression));
+	}
+
+	// T6
+	[Fact]
+	public void EvaluateConditionalWithShortNumber()
+	{
+		Assert.Equal(0.5, CSharpExpression.ParseFunc<bool, double>("x?.5:1", "x").Compile().Invoke(true));
+		Assert.Equal(1, CSharpExpression.ParseFunc<bool, double>("x?.5:1", "x").Compile().Invoke(false));
+	}
+
+	// T1
+	[Fact]
+	public void EvaluateIdentifiersStartingWithKeyword()
+	{
+		var actual = CSharpExpression.ParseFunc<int, int, int>("is_valid + new_value", "is_valid", "new_value").Compile().Invoke(1, 2);
+		Assert.Equal(3, actual);
+	}
+
+	// L3
+	[Theory, InlineData(@"""\a""", "\a"), InlineData(@"""\v""", "\v"), InlineData(@"""\U00000041""", "A"), InlineData(@"""\U0001F600""", "\U0001F600"),
+	InlineData(@"""\0""", "\0"), InlineData(@"""\0ab""", "\0ab"), InlineData(@"""\0123""", "\0" + "123"), InlineData(@"""\x4""", "\x4"), InlineData(@"""\x41""", "A"),
+	InlineData(@"""\x041""", "A"), InlineData(@"""\x0041""", "A"), InlineData(@"""\x00410""", "A0"), InlineData(@"""\x41g""", "Ag"), InlineData(@"""\u0041""", "A"),
+	InlineData(@"""it\'s""", "it's"), InlineData(@"""\""""", "\""), InlineData(@"""\\""", "\\"), InlineData(@"""\n\r\t\b\f""", "\n\r\t\b\f"), InlineData("\"a\tb\"", "a\tb")]
+	public void EvaluateStringEscapes(string expression, string expected)
+	{
+		AssertConstant(expected, CSharpExpression.Evaluate<object>(expression));
+	}
+
+	[Theory, InlineData(@"'\0'", '\0'), InlineData(@"'\a'", '\a'), InlineData(@"'\v'", '\v'), InlineData(@"'\''", '\''), InlineData(@"'""'", '"'), InlineData(@"'\x41'", 'A'),
+	InlineData(@"'\u0041'", 'A'), InlineData(@"'\U00000041'", 'A')]
+	public void EvaluateCharEscapes(string expression, char expected)
+	{
+		AssertConstant(expected, CSharpExpression.Evaluate<object>(expression));
+	}
+
+	[Theory, InlineData(@"""\1"""), InlineData(@"""\101"""), InlineData(@"""\9"""), InlineData(@"""\q"""), InlineData(@"""\x"""), InlineData(@"""\xg"""), InlineData(@"""\u004"""),
+	InlineData(@"""\U0000004"""), InlineData(@"""\U00110000"""), InlineData(@"'\U0001F600'"), InlineData(@"'ab'"), InlineData(@"''")]
+	public void EvaluateWrongEscapes(string expression)
+	{
+		Assert.Throws<ExpressionParserException>(() => CSharpExpression.Evaluate<object>(expression));
+	}
 }

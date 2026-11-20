@@ -112,4 +112,118 @@ public class TokenizerTests
 			Assert.True(expected == actual, string.Format("Tokens at {0} does not match: expected {1}, actual {2}.", i, expected, actual));
 		}
 	}
+
+	private static string[] TokenTypesAndValues(string expression)
+	{
+		return Tokenizer.Tokenize(expression).Select(t => t.Type + ":" + t.Value).ToArray();
+	}
+
+	// T1
+	[Theory, InlineData("is_valid"), InlineData("new_value"), InlineData("as_x"), InlineData("is2"), InlineData("new1"), InlineData("as_"), InlineData("isЦ")]
+	public void TokenizeIdentifierStartingWithKeyword(string expression)
+	{
+		var actual = Tokenizer.Tokenize(expression).Single();
+		Assert.Equal(TokenType.Identifier, actual.Type);
+		Assert.Equal(expression, actual.Value);
+	}
+
+	// T2
+	[Theory, InlineData("1e5+3", "Number:1e5", "Add:+", "Number:3"), InlineData("1e5-3", "Number:1e5", "Subtract:-", "Number:3"),
+	InlineData("1.5e+2-3", "Number:1.5e+2", "Subtract:-", "Number:3"), InlineData("2e-3+1", "Number:2e-3", "Add:+", "Number:1")]
+	public void TokenizeExponentFollowedByOperator(string expression, params string[] expected)
+	{
+		Assert.Equal(expected, TokenTypesAndValues(expression));
+	}
+
+	// T4
+	[Theory, InlineData("0x10", "0x10"), InlineData("0X1F", "0x1f"), InlineData("0xFFu", "0xffu"), InlineData("0x10L", "0x10l"), InlineData("0x10ul", "0x10ul"),
+	InlineData("0xABCDEF", "0xabcdef"), InlineData("0xdeadBEEF", "0xdeadbeef"), InlineData("0x1e", "0x1e"), InlineData("0xd", "0xd"), InlineData("0xf", "0xf")]
+	public void TokenizeHexNumbers(string expression, string expected)
+	{
+		var actual = Tokenizer.Tokenize(expression).Single();
+		Assert.Equal(TokenType.Number, actual.Type);
+		Assert.Equal(expected, actual.Value);
+	}
+
+	[Fact]
+	public void TokenizeHexNumberFollowedByOperator()
+	{
+		Assert.Equal(new[] { "Number:0x1e", "Add:+", "Number:1" }, TokenTypesAndValues("0x1e+1"));
+	}
+
+	[Theory, InlineData("0x"), InlineData("0xG"), InlineData("0x1G"), InlineData("0x1.5")]
+	public void TokenizeWrongHexNumbers(string expression)
+	{
+		Assert.Throws<ExpressionParserException>(() => { Tokenizer.Tokenize(expression).ToList(); });
+	}
+
+	// T5
+	[Theory, InlineData("@\"c:\\temp\""), InlineData("@\"say \"\"hi\"\"\""), InlineData("@\"\""), InlineData("@\"\\\""), InlineData("@\"a\nb\"")]
+	public void TokenizeVerbatimStringLiterals(string expression)
+	{
+		var actual = Tokenizer.Tokenize(expression).Single();
+		Assert.Equal(TokenType.Literal, actual.Type);
+		Assert.Equal(expression, actual.Value);
+	}
+
+	[Fact]
+	public void TokenizeVerbatimStringFollowedByOperator()
+	{
+		Assert.Equal(new[] { "Literal:@\"a\\\"", "Add:+", "Identifier:b" }, TokenTypesAndValues("@\"a\\\" + b"));
+	}
+
+	// T6
+	[Fact]
+	public void TokenizeConditionalFollowedByShortNumber()
+	{
+		Assert.Equal(new[] { "Identifier:x", "Conditional:?", "Number:0.5", "Colon::", "Number:1" }, TokenTypesAndValues("x?.5:1"));
+	}
+
+	[Fact]
+	public void TokenizeNullResolveIsNotBrokenByShortNumberCheck()
+	{
+		Assert.Equal(new[] { "Identifier:x", "NullResolve:?.", "Identifier:y" }, TokenTypesAndValues("x?.y"));
+	}
+
+	// T7
+	[Fact]
+	public void TokenizeIdentifierPositionOnSecondLine()
+	{
+		var tokens = Tokenizer.Tokenize("aa +\n   bb").ToArray();
+		Assert.Equal(1, tokens[0].LineNumber);
+		Assert.Equal(1, tokens[0].ColumnNumber);
+		Assert.Equal(1, tokens[1].LineNumber);
+		Assert.Equal(4, tokens[1].ColumnNumber);
+		Assert.Equal(2, tokens[2].LineNumber);
+		Assert.Equal(4, tokens[2].ColumnNumber);
+	}
+
+	[Fact]
+	public void TokenizeEscapedIdentifierPosition()
+	{
+		var tokens = Tokenizer.Tokenize("a +\n  @is").ToArray();
+		Assert.Equal("is", tokens[2].Value);
+		Assert.Equal(2, tokens[2].LineNumber);
+		Assert.Equal(3, tokens[2].ColumnNumber);
+	}
+
+	[Theory, InlineData("abc\n  x@y", 2, 4), InlineData("a +\n @1", 2, 3), InlineData("a +\n  @", 2, 3), InlineData("x@y", 1, 2)]
+	public void TokenizeWrongIdentifierErrorPosition(string expression, int line, int col)
+	{
+		var error = Assert.Throws<ExpressionParserException>(() => { Tokenizer.Tokenize(expression).ToList(); });
+		Assert.Equal(line, error.LineNumber);
+		Assert.Equal(col, error.ColumnNumber);
+	}
+
+	[Fact]
+	public void TokenizeStringLiteralWithNewLineAdvancesPosition()
+	{
+		var tokens = Tokenizer.Tokenize("\"a\nb\" + c").ToArray();
+		Assert.Equal(1, tokens[0].LineNumber);
+		Assert.Equal(1, tokens[0].ColumnNumber);
+		Assert.Equal(2, tokens[1].LineNumber);
+		Assert.Equal(4, tokens[1].ColumnNumber);
+		Assert.Equal(2, tokens[2].LineNumber);
+		Assert.Equal(6, tokens[2].ColumnNumber);
+	}
 }
