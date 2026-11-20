@@ -33,9 +33,13 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private static readonly TokenType[] NullableTerm = { TokenType.Comma, TokenType.RightParentheses, TokenType.GreaterThan, TokenType.RightShift };
 		private static readonly Dictionary<int, int> TokenPrecedence;
 		private static readonly Dictionary<int, int> UnaryReplacement;
+		// limits recursion in parser and later in syntax tree builder/binder to prevent StackOverflowException on deeply nested expressions
+		private const int MAX_EXPRESSION_DEPTH = 256;
+
 		private readonly Stack<ParseTreeNode> stack;
 
 		private readonly List<Token> tokens;
+		private int depth;
 
 		static Parser()
 		{
@@ -133,6 +137,30 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		}
 
 		private bool Expression(TokenType @operator = default, TokenType[] terminator = null)
+		{
+			if (this.depth >= MAX_EXPRESSION_DEPTH)
+			{
+				var nextToken = this.tokens.Count > 0 ? this.tokens[0] : default;
+				throw new ExpressionParserException(string.Format(Resources.EXCEPTION_PARSER_EXPRESSIONTOODEEP, MAX_EXPRESSION_DEPTH), nextToken);
+			}
+
+			// parser instance is not reused after exception, so no need to restore depth in 'finally'
+			this.depth++;
+			var changed = this.ExpressionCore(@operator, terminator);
+			this.depth--;
+			return changed;
+		}
+		private static bool IsWrappableException(Exception exception)
+		{
+			if (exception is ExpressionParserException)
+				return false;
+#if !NETSTANDARD
+			if (exception is System.Threading.ThreadAbortException)
+				return false;
+#endif
+			return true;
+		}
+		private bool ExpressionCore(TokenType @operator, TokenType[] terminator)
 		{
 			var iterations = 0;
 			var changed = false;
@@ -418,17 +446,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 					iterations++;
 				}
-				catch (ExpressionParserException)
-				{
-					throw;
-				}
-#if !NETSTANDARD
-				catch (System.Threading.ThreadAbortException)
-				{
-					throw;
-				}
-#endif
-				catch (Exception exception)
+				// filter instead of catch-and-rethrow: nested rethrows on every recursion level consume a lot of stack
+				catch (Exception exception) when (IsWrappableException(exception))
 				{
 					throw new ExpressionParserException(exception.Message, exception, token);
 				}

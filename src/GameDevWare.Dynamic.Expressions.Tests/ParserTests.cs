@@ -504,6 +504,13 @@ public class ParserTests
 		Assert.Throws<ExpressionParserException>(() => Parser.Parse(Tokenizer.Tokenize(expression)));
 	}
 
+	[Theory, InlineData("1 +"), InlineData("'ab'"), InlineData("unknownIdentifier"), InlineData("18446744073709551616")]
+	public void EvaluateErrorInsideDeepExpression(string innermost)
+	{
+		var expression = new string('(', 250) + innermost + new string(')', 250);
+		Assert.Throws<ExpressionParserException>(() => CSharpExpression.Evaluate<object>(expression));
+	}
+
 	[Fact]
 	public void ParseDeepButAllowedExpression()
 	{

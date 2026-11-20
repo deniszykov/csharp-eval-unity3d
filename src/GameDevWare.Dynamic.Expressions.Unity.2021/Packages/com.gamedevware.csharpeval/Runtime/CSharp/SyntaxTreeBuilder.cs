@@ -210,20 +210,21 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 				return new SyntaxTreeNode(syntaxNode);
 			}
-			catch (ExpressionParserException)
-			{
-				throw;
-			}
-#if !NETSTANDARD
-			catch (System.Threading.ThreadAbortException)
-			{
-				throw;
-			}
-#endif
-			catch (Exception exception)
+			// filter instead of catch-and-rethrow: nested rethrows on every recursion level consume a lot of stack
+			catch (Exception exception) when (IsWrappableException(exception))
 			{
 				throw new ExpressionParserException(exception.Message, exception, parseNode);
 			}
+		}
+		private static bool IsWrappableException(Exception exception)
+		{
+			if (exception is ExpressionParserException)
+				return false;
+#if !NETSTANDARD
+			if (exception is System.Threading.ThreadAbortException)
+				return false;
+#endif
+			return true;
 		}
 		private static void ToMemberOrListInitNode(ParseTreeNode parseNode, bool checkedScope, Dictionary<string, object> syntaxNode)
 		{
