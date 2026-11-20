@@ -144,6 +144,16 @@ We are continuously improving the package. Planned features include:
 
 ## Change Log (Highlights)
 
+### 3.1.0
+- **Feature:** Added extension method invocation and LINQ queries, with type argument inference for generic methods.
+- **Feature:** Added hexadecimal (`0x1F`) and verbatim string (`@"c:\temp"`) literals.
+- **Breaking:** C# cast disambiguation: `(x) - 1` is subtraction; write `(Int32)(-1)` or `(int)-1` instead of `(Int32)-1`.
+- **Breaking:** C# string escapes (`\a`, `\v`, `\0`, `\U`, 1-4 digit `\x`); decimal escapes like `"\112"` removed.
+- **Breaking:** `**` is right-associative and binds tighter than `*`, `/`, `%`.
+- **Fix:** Integer literals widen to `uint`/`long`/`ulong` per C# spec; `1e5` is `double`.
+- **Fix:** Many tokenizer/parser fixes (keyword-prefixed identifiers, `1e5+3`, mismatched brackets, curried lambdas, token positions).
+- **Fix:** Deeply nested expressions throw `ExpressionParserException` instead of crashing with `StackOverflowException`.
+
 ### 3.0.2
 - **Feature:** Added out/ref parameter write-back for Invoke node and AOT expression executor.
 - **Fix:** Fixed multi-dimensional array packing/unpacking.
