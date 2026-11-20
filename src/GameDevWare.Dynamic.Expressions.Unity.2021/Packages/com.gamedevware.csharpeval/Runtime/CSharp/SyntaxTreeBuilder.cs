@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using GameDevWare.Dynamic.Expressions.Properties;
 
@@ -395,7 +396,7 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		private static void ToNumberNode(ParseTreeNode parseNode, Dictionary<string, object> syntaxNode)
 		{
 			var floatTrait = parseNode.Value.IndexOf('f') >= 0;
-			var doubleTrait = parseNode.Value.IndexOf('.') >= 0 || parseNode.Value.IndexOf('d') >= 0;
+			var doubleTrait = parseNode.Value.IndexOf('.') >= 0 || parseNode.Value.IndexOf('d') >= 0 || parseNode.Value.IndexOf('e') >= 0;
 			var longTrait = parseNode.Value.IndexOf('l') >= 0;
 			var unsignedTrait = parseNode.Value.IndexOf('u') >= 0;
 			var decimalTrait = parseNode.Value.IndexOf('m') >= 0;
@@ -415,7 +416,14 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			else
 				syntaxNode[Constants.TYPE_ATTRIBUTE] = typeof(int).FullName;
 
-			syntaxNode[Constants.VALUE_ATTRIBUTE] = parseNode.Value.TrimEnd('f', 'F', 'd', 'd', 'l', 'L', 'u', 'U', 'm', 'M');
+			var value = parseNode.Value.TrimEnd('f', 'F', 'd', 'd', 'l', 'L', 'u', 'U', 'm', 'M');
+			if (decimalTrait && value.IndexOf('e') >= 0)
+			{
+				// decimal parsing doesn't accept exponent by default
+				value = decimal.Parse(value, NumberStyles.Float, Constants.DefaultFormatProvider).ToString(Constants.DefaultFormatProvider);
+			}
+
+			syntaxNode[Constants.VALUE_ATTRIBUTE] = value;
 		}
 		private static void ToIdentifierNode(ParseTreeNode parseNode, Dictionary<string, object> syntaxNode)
 		{
