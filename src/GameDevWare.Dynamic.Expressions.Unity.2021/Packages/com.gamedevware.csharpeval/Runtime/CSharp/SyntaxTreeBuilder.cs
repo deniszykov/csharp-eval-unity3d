@@ -395,6 +395,12 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		}
 		private static void ToNumberNode(ParseTreeNode parseNode, Dictionary<string, object> syntaxNode)
 		{
+			if (parseNode.Value.StartsWith("0x", StringComparison.Ordinal))
+			{
+				ToHexNumberNode(parseNode, syntaxNode);
+				return;
+			}
+
 			var floatTrait = parseNode.Value.IndexOf('f') >= 0;
 			var doubleTrait = parseNode.Value.IndexOf('.') >= 0 || parseNode.Value.IndexOf('d') >= 0 || parseNode.Value.IndexOf('e') >= 0;
 			var longTrait = parseNode.Value.IndexOf('l') >= 0;
@@ -426,6 +432,17 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			}
 
 			syntaxNode[Constants.VALUE_ATTRIBUTE] = value;
+		}
+		private static void ToHexNumberNode(ParseTreeNode parseNode, Dictionary<string, object> syntaxNode)
+		{
+			var hexDigits = parseNode.Value.Substring(2).TrimEnd('l', 'u');
+			var suffix = parseNode.Value.Substring(2 + hexDigits.Length);
+
+			if (!ulong.TryParse(hexDigits, NumberStyles.AllowHexSpecifier, Constants.DefaultFormatProvider, out var integer))
+				throw new ExpressionParserException(string.Format(Resources.EXCEPTION_PARSER_INTEGRALCONSTANTTOOLARGE, parseNode.Value), parseNode);
+
+			syntaxNode[Constants.TYPE_ATTRIBUTE] = GetIntegralTypeName(integer, suffix.IndexOf('u') >= 0, suffix.IndexOf('l') >= 0);
+			syntaxNode[Constants.VALUE_ATTRIBUTE] = integer.ToString(Constants.DefaultFormatProvider);
 		}
 		private static string GetIntegralTypeName(ulong value, bool unsignedTrait, bool longTrait)
 		{

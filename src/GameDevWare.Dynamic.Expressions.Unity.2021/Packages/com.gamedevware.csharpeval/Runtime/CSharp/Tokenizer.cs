@@ -224,6 +224,9 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			const int STATE_EXPONENT = 2;
 			const int STATE_COMPLETE = 3;
 
+			if (expression[offset] == '0' && offset + 1 < expression.Length && (expression[offset + 1] == 'x' || expression[offset + 1] == 'X'))
+				return LookForHexNumber(expression, offset, line, col);
+
 			var state = STATE_INTEGER;
 			var startAt = offset;
 			var fractionStartAt = -1;
@@ -313,6 +316,49 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 				result = "0" + result;
 
 			return new Token(TokenType.Number, result, line, col, length);
+		}
+		private static Token LookForHexNumber(string expression, int offset, int line, int col)
+		{
+			var startAt = offset;
+			offset += 2; // skip '0x'
+
+			var digitsStartAt = offset;
+			while (offset < expression.Length && IsHexDigit(expression[offset]))
+				offset++;
+			var hasDigits = offset > digitsStartAt;
+
+			// suffix: 'u', 'l', 'ul' or 'lu'
+			if (offset < expression.Length && (char.ToLowerInvariant(expression[offset]) == 'u' || char.ToLowerInvariant(expression[offset]) == 'l'))
+			{
+				var first = char.ToLowerInvariant(expression[offset]);
+				offset++;
+				if (offset < expression.Length)
+				{
+					var second = char.ToLowerInvariant(expression[offset]);
+					if ((first == 'u' && second == 'l') || (first == 'l' && second == 'u'))
+						offset++;
+				}
+			}
+
+			var isInvalidEnd = offset < expression.Length && (
+				char.IsLetterOrDigit(expression[offset]) || expression[offset] == '_' ||
+				(expression[offset] == '.' && offset + 1 < expression.Length && char.IsDigit(expression[offset + 1])));
+			if (!hasDigits || isInvalidEnd)
+			{
+				var errorOffset = Math.Min(offset, expression.Length - 1);
+				var invalidNumber = expression.Substring(startAt, errorOffset - startAt + 1);
+				throw new ExpressionParserException(
+					string.Format(Resources.EXCEPTION_TOKENIZER_UNEXPECTEDSYMBOL, expression[errorOffset], line, col + (errorOffset - startAt)),
+					new Token(TokenType.None, invalidNumber, line, col, invalidNumber.Length));
+			}
+
+			var length = offset - startAt;
+			var result = expression.Substring(startAt, length).ToLowerInvariant();
+			return new Token(TokenType.Number, result, line, col, length);
+		}
+		private static bool IsHexDigit(char value)
+		{
+			return (value >= '0' && value <= '9') || (value >= 'a' && value <= 'f') || (value >= 'A' && value <= 'F');
 		}
 		private static bool IsTerminationCharacter(char value)
 		{
