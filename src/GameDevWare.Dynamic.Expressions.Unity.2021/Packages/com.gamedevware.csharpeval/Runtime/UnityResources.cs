@@ -144,7 +144,8 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 					{ "EXCEPTION_TOKENIZER_INVALIDCHARLITERAL", EXCEPTION_TOKENIZER_INVALIDCHARLITERAL },
 					{ "EXCEPTION_EXECUTION_CANTDONULLVALUE", EXCEPTION_EXECUTION_CANTDONULLVALUE },
 					{ "EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS", EXCEPTION_PARSER_UNEXPECTEDLISTINITIALIZERINMEMBERINITIALIZERS },
-					{ "EXCEPTION_BIND_RENDERFAILED", EXCEPTION_BIND_RENDERFAILED }
+					{ "EXCEPTION_BIND_RENDERFAILED", EXCEPTION_BIND_RENDERFAILED },
+					{ "EXCEPTION_PARSER_INTEGRALCONSTANTTOOLARGE", EXCEPTION_PARSER_INTEGRALCONSTANTTOOLARGE }
 				};
 			}
 		}
@@ -1224,6 +1225,20 @@ namespace GameDevWare.Dynamic.Expressions.Properties
 				{
 					case 0: return "An error occured while trying to render '{0}' expression: {1}";
 					default: return "EXCEPTION_BIND_RENDERFAILED";
+				}
+			}
+		}
+		/// <summary>
+		///     Localization string with key EXCEPTION_PARSER_INTEGRALCONSTANTTOOLARGE
+		/// </summary>
+		public static string EXCEPTION_PARSER_INTEGRALCONSTANTTOOLARGE
+		{
+			get
+			{
+				switch (currentLanguageIdx)
+				{
+					case 0: return "Integral constant '{0}' is too large.";
+					default: return "EXCEPTION_PARSER_INTEGRALCONSTANTTOOLARGE";
 				}
 			}
 		}

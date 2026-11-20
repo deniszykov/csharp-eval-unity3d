@@ -401,29 +401,50 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 			var unsignedTrait = parseNode.Value.IndexOf('u') >= 0;
 			var decimalTrait = parseNode.Value.IndexOf('m') >= 0;
 
+			var value = parseNode.Value.TrimEnd('f', 'F', 'd', 'd', 'l', 'L', 'u', 'U', 'm', 'M');
+
 			if (decimalTrait)
+			{
 				syntaxNode[Constants.TYPE_ATTRIBUTE] = typeof(decimal).FullName;
+				if (value.IndexOf('e') >= 0)
+				{
+					// decimal parsing doesn't accept exponent by default
+					value = decimal.Parse(value, NumberStyles.Float, Constants.DefaultFormatProvider).ToString(Constants.DefaultFormatProvider);
+				}
+			}
 			else if (floatTrait)
 				syntaxNode[Constants.TYPE_ATTRIBUTE] = typeof(float).FullName;
 			else if (doubleTrait)
 				syntaxNode[Constants.TYPE_ATTRIBUTE] = typeof(double).FullName;
-			else if (longTrait && !unsignedTrait)
-				syntaxNode[Constants.TYPE_ATTRIBUTE] = typeof(long).FullName;
-			else if (longTrait)
-				syntaxNode[Constants.TYPE_ATTRIBUTE] = typeof(ulong).FullName;
-			else if (unsignedTrait)
-				syntaxNode[Constants.TYPE_ATTRIBUTE] = typeof(uint).FullName;
 			else
-				syntaxNode[Constants.TYPE_ATTRIBUTE] = typeof(int).FullName;
-
-			var value = parseNode.Value.TrimEnd('f', 'F', 'd', 'd', 'l', 'L', 'u', 'U', 'm', 'M');
-			if (decimalTrait && value.IndexOf('e') >= 0)
 			{
-				// decimal parsing doesn't accept exponent by default
-				value = decimal.Parse(value, NumberStyles.Float, Constants.DefaultFormatProvider).ToString(Constants.DefaultFormatProvider);
+				if (!ulong.TryParse(value, NumberStyles.None, Constants.DefaultFormatProvider, out var integer))
+					throw new ExpressionParserException(string.Format(Resources.EXCEPTION_PARSER_INTEGRALCONSTANTTOOLARGE, parseNode.Value), parseNode);
+
+				syntaxNode[Constants.TYPE_ATTRIBUTE] = GetIntegralTypeName(integer, unsignedTrait, longTrait);
+				value = integer.ToString(Constants.DefaultFormatProvider);
 			}
 
 			syntaxNode[Constants.VALUE_ATTRIBUTE] = value;
+		}
+		private static string GetIntegralTypeName(ulong value, bool unsignedTrait, bool longTrait)
+		{
+			// C# spec: type of integer literal is the first of these types in which its value can be represented
+			if (unsignedTrait && longTrait)
+				return typeof(ulong).FullName;
+			if (unsignedTrait)
+				return value <= uint.MaxValue ? typeof(uint).FullName : typeof(ulong).FullName;
+			if (longTrait)
+				return value <= long.MaxValue ? typeof(long).FullName : typeof(ulong).FullName;
+
+			if (value <= int.MaxValue)
+				return typeof(int).FullName;
+			if (value <= uint.MaxValue)
+				return typeof(uint).FullName;
+			if (value <= long.MaxValue)
+				return typeof(long).FullName;
+
+			return typeof(ulong).FullName;
 		}
 		private static void ToIdentifierNode(ParseTreeNode parseNode, Dictionary<string, object> syntaxNode)
 		{
