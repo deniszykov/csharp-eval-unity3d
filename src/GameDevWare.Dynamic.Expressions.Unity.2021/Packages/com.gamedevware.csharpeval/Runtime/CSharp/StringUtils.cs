@@ -26,6 +26,10 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 		{
 			if (stringToUnescape == null) throw new ArgumentNullException(nameof(stringToUnescape));
 
+			// verbatim string: no escapes except '""'
+			if (stringToUnescape.Length >= 3 && stringToUnescape[0] == '@' && stringToUnescape[1] == '"' && stringToUnescape[stringToUnescape.Length - 1] == '"')
+				return stringToUnescape.Substring(2, stringToUnescape.Length - 3).Replace("\"\"", "\"");
+
 			var start = 0;
 			var len = stringToUnescape.Length;
 			var isChar = false;

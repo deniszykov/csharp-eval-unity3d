@@ -95,6 +95,8 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 						current = LookForNumber(expression, i, line, col);
 					else if (charValue == '"' || charValue == '\'') // string literal
 						current = LookForLiteral(expression, charValue, i, line, col);
+					else if (charValue == '@' && i + 1 < expression.Length && expression[i + 1] == '"') // verbatim string literal
+						current = LookForVerbatimLiteral(expression, i, line, col);
 					else if (char.IsLetter(charValue) || charValue == '_' || charValue == '@') // identifier
 						current = LookForIdentifier(expression, i, line, col);
 					else if (char.IsWhiteSpace(charValue))
@@ -209,6 +211,27 @@ namespace GameDevWare.Dynamic.Expressions.CSharp
 
 				if (slashes % 2 != 0)
 					continue;
+
+				offset++;
+				break;
+			}
+
+			var result = expression.Substring(startAt, offset - startAt);
+			return new Token(TokenType.Literal, result, line, col, result.Length);
+		}
+		private static Token LookForVerbatimLiteral(string expression, int offset, int line, int col)
+		{
+			var startAt = offset;
+			for (offset += 2; offset < expression.Length; offset++) // skip '@"'
+			{
+				if (expression[offset] != '"')
+					continue;
+
+				if (offset + 1 < expression.Length && expression[offset + 1] == '"') // escaped quote '""'
+				{
+					offset++;
+					continue;
+				}
 
 				offset++;
 				break;
